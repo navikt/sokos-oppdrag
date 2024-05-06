@@ -20,14 +20,14 @@ import java.time.ZonedDateTime
 private val logger = KotlinLogging.logger {}
 
 class TpService(
-    private val tpHost: String = PropertiesConfig.EksterneHost().tpHost,
+    private val tpUrl: String = PropertiesConfig.EksterneHostConfig().tpUrl,
     private val client: HttpClient = httpClient,
 ) {
     suspend fun getLeverandorNavn(tssId: String): TssResponse =
         retry {
             logger.info("Henter leverandørnavn for $tssId fra TP.")
             val response =
-                client.get("$tpHost/api/ordninger/tss/$tssId") {
+                client.get("$tpUrl/api/ordninger/tss/$tssId") {
                     header("Nav-Call-Id", MDC.get("x-correlation-id"))
                 }
             Metrics.tpCallCounter.labels("${response.status.value}").inc()
@@ -41,7 +41,7 @@ class TpService(
                             response.status.value,
                             HttpStatusCode.NotFound.description,
                             "Fant ingen leverandørnavn med tssId $tssId",
-                            "$tpHost/api/ordninger/tss/{tssId}",
+                            "$tpUrl/api/ordninger/tss/{tssId}",
                         ),
                         response,
                     )
@@ -53,7 +53,7 @@ class TpService(
                             response.status.value,
                             response.status.description,
                             "Noe gikk galt ved oppslag av $tssId i TP",
-                            "$tpHost/api/ordninger/tss/{tssId}",
+                            "$tpUrl/api/ordninger/tss/{tssId}",
                         ),
                         response,
                     )

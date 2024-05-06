@@ -75,15 +75,15 @@ spec:
       value: "OS231Q1"
 
     # Ereg
-    - name: EREG_HOST
+    - name: EREG_URL
       value: "https://ereg-services-q1.dev.intern.nav.no"
 
     # Tp
-    - name: TP_HOST
+    - name: TP_URL
       value: "https://tp-q1.dev.intern.nav.no"
 
     # Pdl
-    - name: PDL_HOST
+    - name: PDL_URL
       value: "https://pdl-api-q1.dev.intern.nav.no/graphql"
     - name: PDL_SCOPE
       value: "api://dev-fss.pdl.pdl-api-q1/.default"

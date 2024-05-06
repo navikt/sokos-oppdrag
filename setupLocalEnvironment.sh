@@ -9,7 +9,7 @@ kubectl config use-context dev-gcp
 kubectl config set-context --current --namespace=okonomi
 
 # Get AZURE system variables
-envValue=$(kubectl exec -it $(kubectl get pods | grep sokos-oppdrag | cut -f1 -d' ') -c sokos-oppdrag -- env | egrep "^AZURE")
+envValue=$(kubectl exec -it $(kubectl get pods | grep sokos-oppdrag | cut -f1 -d' ') -c sokos-oppdrag -- env | egrep "^AZURE|^DATABASE|EREG_HOST|TP_HOST|PDL_HOST|PDL_SCOPE")
 
 # Set AZURE as local environment variables
 rm -f defaults.properties

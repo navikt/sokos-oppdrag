@@ -154,6 +154,7 @@ tasks {
         archiveFileName.set("app.jar")
         manifest {
             attributes["Main-Class"] = "no.nav.sokos.oppdrag.ApplicationKt"
+            attributes["Class-Path"] = "/var/run/secrets/db2license/db2jcc_license_cisuz.jar"
         }
         finalizedBy(jacocoTestReport)
     }

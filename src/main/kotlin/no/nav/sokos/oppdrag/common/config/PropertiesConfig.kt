@@ -76,14 +76,11 @@ object PropertiesConfig {
         val clientSecret: String = get("AZURE_APP_CLIENT_SECRET"),
     )
 
-    data class PdlConfig(
-        val pdlHost: String = get("PDL_HOST"),
+    data class EksterneHostConfig(
+        val pdlUrl: String = get("PDL_URL"),
         val pdlScope: String = get("PDL_SCOPE"),
-    )
-
-    data class EksterneHost(
-        val eregHost: String = get("EREG_HOST"),
-        val tpHost: String = get("TP_HOST"),
+        val eregUrl: String = get("EREG_URL"),
+        val tpUrl: String = get("TP_URL"),
     )
 
     enum class Profile {

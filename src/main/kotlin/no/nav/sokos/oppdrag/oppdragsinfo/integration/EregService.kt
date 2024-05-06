@@ -24,14 +24,14 @@ import java.time.ZonedDateTime
 private val logger = KotlinLogging.logger {}
 
 class EregService(
-    private val eregHost: String = PropertiesConfig.EksterneHost().eregHost,
+    private val eregUrl: String = PropertiesConfig.EksterneHostConfig().eregUrl,
     private val client: HttpClient = httpClient,
 ) {
     suspend fun getOrganisasjonsNavn(organisasjonsNummer: String): Organisasjon =
         retry {
             logger.info("Henter organisasjonsnavn for $organisasjonsNummer fra Ereg.")
             val response =
-                client.get("$eregHost/v2/organisasjon/$organisasjonsNummer/noekkelinfo") {
+                client.get("$eregUrl/v2/organisasjon/$organisasjonsNummer/noekkelinfo") {
                     header("Nav-Call-Id", MDC.get("x-correlation-id"))
                 }
             Metrics.eregCallCounter.labels("${response.status.value}").inc()
@@ -44,7 +44,7 @@ class EregService(
                             response.status.value,
                             HttpStatusCode.BadRequest.description,
                             response.errorMessage() ?: "",
-                            "$eregHost/v2/organisasjon/{orgnummer}/noekkelinfo",
+                            "$eregUrl/v2/organisasjon/{orgnummer}/noekkelinfo",
                         ),
                         response,
                     )
@@ -56,7 +56,7 @@ class EregService(
                             response.status.value,
                             HttpStatusCode.NotFound.description,
                             response.errorMessage() ?: "",
-                            "$eregHost/v2/organisasjon/{orgnummer}/noekkelinfo",
+                            "$eregUrl/v2/organisasjon/{orgnummer}/noekkelinfo",
                         ),
                         response,
                     )
@@ -68,7 +68,7 @@ class EregService(
                             response.status.value,
                             response.status.description,
                             response.errorMessage() ?: "",
-                            "$eregHost/v2/organisasjon/{orgnummer}/noekkelinfo",
+                            "$eregUrl/v2/organisasjon/{orgnummer}/noekkelinfo",
                         ),
                         response,
                     )

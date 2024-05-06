@@ -4,6 +4,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import mu.KotlinLogging
+import no.nav.sokos.oppdrag.common.JwtClaimHandler.getSaksbehandler
 import no.nav.sokos.oppdrag.common.config.DatabaseConfig
 import no.nav.sokos.oppdrag.common.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.pdl.PdlService
@@ -61,7 +62,6 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 import no.nav.sokos.oppdrag.oppdragsinfo.integration.EregService
 import no.nav.sokos.oppdrag.oppdragsinfo.integration.TpService
-import no.nav.sokos.oppdrag.oppdragsinfo.security.getSaksbehandler
 
 private val logger = KotlinLogging.logger {}
 val secureLogger = KotlinLogging.logger(SECURE_LOGGER)

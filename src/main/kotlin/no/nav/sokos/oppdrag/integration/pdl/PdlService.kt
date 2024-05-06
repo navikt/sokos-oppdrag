@@ -21,10 +21,10 @@ val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
 class PdlService(
     private val client: HttpClient = httpClient,
-    private val pdlConfig: PropertiesConfig.PdlConfig = PropertiesConfig.PdlConfig(),
+    private val pdlUrl: String = PropertiesConfig.EksterneHostConfig().pdlUrl,
     private val graphQLKtorClient: GraphQLKtorClient =
         GraphQLKtorClient(
-            URI(pdlConfig.pdlHost).toURL(),
+            URI(pdlUrl).toURL(),
             client,
         ),
     private val accessTokenClient: AccessTokenClient = AccessTokenClient(),
