@@ -33,10 +33,10 @@ val logstashVersion = "7.4"
 val natpryceVersion = "1.6.10.0"
 val hikariVersion = "5.1.0"
 val db2JccVersion = "11.5.9.0"
-val graphqlClientVersion = "7.0.2"
+val graphqlClientVersion = "7.1.1"
 val kotestVersion = "5.8.1"
 val mockkVersion = "1.13.10"
-val mockOAuth2ServerVersion = "2.1.4"
+val mockOAuth2ServerVersion = "2.1.5"
 val swaggerRequestValidatorVersion = "2.40.0"
 
 dependencies {
