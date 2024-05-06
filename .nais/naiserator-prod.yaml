@@ -1,0 +1,42 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: sokos-oppdrag
+  namespace: okonomi
+  labels:
+    team: okonomi
+spec:
+  image: "{{{ image }}}"
+  port: 8080
+  replicas:
+    min: 1
+    max: 2
+    cpuThresholdPercentage: 90
+  liveness:
+    path: /internal/isAlive
+    initialDelay: 5
+    timeout: 5
+    periodSeconds: 5
+    failureThreshold: 30
+  readiness:
+    path: /internal/isReady
+    initialDelay: 5
+    periodSeconds: 5
+    timeout: 5
+  resources:
+    limits:
+      memory: 4096Mi
+    requests:
+      cpu: 2000m
+      memory: 4096Mi
+  ingresses:
+    - https://sokos-oppdrag.intern.nav.no
+  prometheus:
+    enabled: true
+    path: /internal/metrics
+  azure:
+    application:
+      enabled: true
+  env:
+    - name: USE_AUTHENTICATION
+      value: "true"

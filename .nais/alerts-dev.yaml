@@ -1,0 +1,136 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: sokos-oppdrag
+  namespace: okonomi
+  labels:
+    team: okonomi
+spec:
+  groups:
+    - name: sokos-oppdrag-alerts
+      rules:
+        - alert: sokos-oppdrag er nede
+          expr: kube_deployment_status_replicas_available{deployment="sokos-oppdrag"} == 0
+          for: 5m
+          annotations:
+            action: "Sjekk hvorfor applikasjonen er nede"
+            summary: "{{ $labels.deployment }} er nede i namespace {{ $labels.namespace }}"
+          labels:
+            namespace: okonomi
+            severity: danger
+            sokos_oppdrag_type: sokos-oppdrag
+            alert_type: custom
+
+        - alert: sokos-oppdrag har restartet flere ganger de siste 5 minuttene!
+          expr: sum(increase(kube_pod_container_status_restarts_total{container=~"sokos-oppdrag"}[5m])) by (container) > 2
+          for: 5m
+          annotations:
+            action: "Sjekk hvorfor applikasjonen ikke klarer å restarte"
+            summary: "{{ $labels.container }} restarter mange ganger"
+          labels:
+            namespace: okonomi
+            severity: danger
+            sokos_oppdrag_type: sokos-oppdrag
+            alert_type: custom
+
+        - alert: Applikasjonen logger høy andel errors
+          expr:
+            'sum(max_over_time(log_messages_errors{namespace="okonomi",app="sokos-oppdrag",level="Error"}[15m])
+              or vector(0)) -
+              sum(max_over_time(log_messages_errors{namespace="okonomi",app="sokos-oppdrag",level="Error"}[15m]
+              offset 15m) or vector(0)) > 5'
+          for: 5m
+          annotations:
+            action: "Sjekk error loggene i sokos-oppdrag"
+            summary: "`kubectl logs <podname> -n okonomi`"
+          labels:
+            namespace: okonomi
+            severity: danger
+            sokos_oppdrag_type: sokos-oppdrag
+            alert_type: custom
+
+        - alert: Applikasjonen logger høy andel warnings
+          expr:
+            'sum(max_over_time(log_messages_errors{namespace="okonomi",app="sokos-oppdrag",level="Warning"}[15m])
+              or vector(0)) -
+              sum(max_over_time(log_messages_errors{namespace="okonomi",app="sokos-oppdrag",level="Warning"}[15m]
+              offset 15m) or vector(0)) > 5'
+          for: 5m
+          annotations:
+            action: "Sjekk warning loggene i sokos-oppdrag"
+            summary: "`kubectl logs <podname> -n okonomi`"
+          labels:
+            namespace: okonomi
+            severity: warning
+            sokos_oppdrag_type: sokos-oppdrag
+            alert_type: custom
+
+        - alert: sokos-oppdrag har høy andel HTTP serverfeil (5xx responser)
+          expr: floor(increase(ktor_http_server_requests_seconds_count{status=~"5.*", app="sokos-oppdrag"}[3m])) > 2
+          for: 5m
+          annotations:
+            action: "`kubectl logs {{ $labels.pod }} -n {{ $labels.namespace }}`"
+            summary: "Følgende request feilet: `Status {{ $labels.status }} - {{ $labels.method }} {{ $labels.route }}`.
+                      Sjekk loggene for å se hvorfor dette feiler."
+          labels:
+            namespace: okonomi
+            severity: danger
+            sokos_oppdrag_type: sokos-oppdrag
+            alert_type: custom
+
+        - alert: sokos-oppdrag har høy andel HTTP klientfeil (4xx responser)
+          expr: floor(increase(ktor_http_server_requests_seconds_count{status=~"4.*", status!~"404", app="sokos-oppdrag"}[3m])) > 2
+          for: 2m
+          annotations:
+            action: "`kubectl logs {{ $labels.pod }} -n {{ $labels.namespace }}`"
+            summary: "Følgende request feilet: `Status {{ $labels.status }} - {{ $labels.method }} {{ $labels.route }}`. 
+                      Sjekk loggene for å se hvorfor dette feiler"
+          labels:
+            namespace: okonomi
+            severity: danger
+            sokos_oppdrag_type: sokos-oppdrag
+            alert_type: custom
+
+---
+
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: sokos-oppdrag-slack
+  namespace: okonomi
+  labels:
+    alertmanagerConfig: sokos-oppdrag-slack
+spec:
+  receivers:
+    - name: sokos-oppdrag-receiver
+      slackConfigs:
+        - apiURL:
+            key: apiUrl
+            name: slack-webhook
+          channel: '#team-moby-alerts-dev'
+          iconEmoji: ':alert:'
+          username: 'Alert dev-gcp'
+          sendResolved: true
+          title: |-
+            [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }}
+          text: >-
+            {{ range .Alerts }}
+            {{ if or .Annotations.summary .Annotations.message }}
+            {{ or .Annotations.summary .Annotations.message }}
+            {{ println " " }}
+            {{- end }}
+            {{- if .Annotations.action }}
+            • *action*: {{ .Annotations.action }} {{ println " " }}
+            {{- end }}
+            {{ end }}
+  route:
+    groupBy:
+      - alertname
+    matchers:
+      - name: "sokos_oppdrag_type"
+        matchType: "="
+        value: "sokos-oppdrag"
+    groupInterval: 10s
+    groupWait: 5s
+    receiver: sokos-oppdrag-receiver
+    repeatInterval:

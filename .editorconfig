@@ -1,0 +1,6 @@
+# Top-most EditorConfig file
+root = true
+
+# All files
+[*]
+max_line_length = 200

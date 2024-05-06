@@ -1,0 +1,18 @@
+schema {
+    query: Query
+}
+
+type Query {
+    hentPerson(ident: ID!): Person
+}
+
+type Person {
+    navn(historikk: Boolean = false): [Navn!]!
+}
+
+type Navn {
+    fornavn: String!
+    mellomnavn: String
+    etternavn: String!
+    forkortetNavn: String
+}

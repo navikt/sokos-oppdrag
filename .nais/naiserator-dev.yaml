@@ -1,0 +1,89 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: sokos-oppdrag
+  namespace: okonomi
+  labels:
+    team: okonomi
+spec:
+  image: "{{{ image }}}"
+  port: 8080
+  replicas:
+    min: 1
+    max: 2
+    cpuThresholdPercentage: 90
+  liveness:
+    path: /internal/isAlive
+    initialDelay: 5
+    timeout: 5
+    periodSeconds: 5
+    failureThreshold: 30
+  readiness:
+    path: /internal/isReady
+    initialDelay: 5
+    periodSeconds: 5
+    timeout: 5
+  resources:
+    limits:
+      memory: 4096Mi
+    requests:
+      cpu: 2000m
+      memory: 4096Mi
+  ingresses:
+    - https://sokos-oppdrag.intern.dev.nav.no
+    - https://sokos-oppdrag.dev-fss-pub.nais.io
+  prometheus:
+    enabled: true
+    path: /internal/metrics
+  secureLogs:
+    enabled: true
+  azure:
+    application:
+      enabled: true
+      tenant: trygdeetaten.no
+      allowAllUsers: true
+      claims:
+        extra:
+          - NAVident
+  accessPolicy:
+    inbound:
+      rules:
+        - application: azure-token-generator
+          namespace: aura
+          cluster: dev-gcp
+        - application: sokos-utbetalingsportalen
+          namespace: okonomi
+          cluster: dev-gcp
+  webproxy: true
+  envFrom:
+    - secret: oppdrag-credentials
+  filesFrom:
+    - secret: db2license
+      mountPath: /var/run/secrets/db2license
+  env:
+    - name: USE_AUTHENTICATION
+      value: "true"
+
+    # Db2
+    - name: DATABASE_HOST
+      value: "155.55.1.82"
+    - name: DATABASE_PORT
+      value: "5025"
+    - name: DATABASE_NAME
+      value: "QDB2"
+    - name: DATABASE_SCHEMA
+      value: "OS231Q1"
+
+    # Ereg
+    - name: EREG_HOST
+      value: "https://ereg-services-q1.dev.intern.nav.no"
+
+    # Tp
+    - name: TP_HOST
+      value: "https://tp-q1.dev.intern.nav.no"
+
+    # Pdl
+    - name: PDL_HOST
+      value: "https://pdl-api-q1.dev.intern.nav.no/graphql"
+    - name: PDL_SCOPE
+      value: "api://dev-fss.pdl.pdl-api-q1/.default"

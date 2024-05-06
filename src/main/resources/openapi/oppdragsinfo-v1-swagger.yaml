@@ -1,0 +1,1221 @@
+openapi: '3.0.3'
+
+info:
+  version: 1.0.0
+  title: OppdragsInfo API (sokos-nav-oppdrag)
+  description: API-tjeneste for å hente og presentere oppdragsinformasjon tilknyttet person eller foretak
+  contact:
+    name: PO Utbetaling
+    email: okonomi@nav.no
+    url: https://nav-it.slack.com/archives/CKZADNFBP
+
+tags:
+  - name: oppdragsinfo
+    description: Opplysninger om oppdrag tilknyttet person eller foretak
+
+servers:
+  - url: /api/v1/oppdragsinfo
+
+
+paths:
+  /oppdrag:
+    post:
+      tags:
+        - oppdragsinfo
+      summary: Søk etter oppdragsinfo
+      description: Returnerer oppdragsopplysninger tilknyttet person eller foretak.
+      operationId: sokOppdrag
+      requestBody:
+        description: gjelderId er et krav, men fagGruppeKode er alternativ hvis filtrering er ønskelig
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SokOppdragRequest'
+        required: true
+      responses:
+        200:
+          description: OK - Hvis oppdrag ikke finnes, returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OppdragsInfo'
+        400:
+          description: Ugyldig request, oppfyller ikke swagger-kontrakt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+
+  /faggrupper:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent tilgjengelige faggrupper
+      description: Returnerer en liste av tilgjengelige faggrupper. Faggruppe kan brukes til å filtrere søket i endepunktet -> /oppdrag
+      operationId: hentFagGrupper
+      responses:
+        200:
+          description: OK - Hvis faggrupper ikke finnes så returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FagGruppe'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}:
+    post:
+      tags:
+        - oppdragsinfo
+      summary: Hent oppdrag
+      description: Returnerer oppdrag med tilhørende oppdragslinjer spesifisert av oppdragsId.
+      operationId: hentOppdrag
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: gjelderId er et krav
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GjelderIdRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OppdragDetaljer'
+        400:
+          description: Ugyldig request - Oppdragsid har ingen tilknytning til gjelderId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}/omposteringer:
+    post:
+      tags:
+        - oppdragsinfo
+      summary: Hent omposteringer
+      description: Returnerer omposteringer tilknyttet gjelderId og for fagruppe spesifisert av oppdragsId
+      operationId: hentOmposteringer
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: gjelderId er et krav
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GjelderIdRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ompostering'
+        400:
+          description: Ugyldig request - Oppdragsid har ingen tilknytning til gjelderId
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}/enhetshistorikk:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent oppdragets enhethistorikk
+      description: Returnerer enhetshistorikk tilknyttet oppdragsId
+      operationId: hentEnhetshistorikk
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OppdragsEnhet'
+        400:
+          description: Ugyldig request
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}/statushistorikk:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent oppdragets statushistorikk
+      description: Returnerer statushistorikk tilknyttet oppdragsId
+      operationId: hentStatushistorikk
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OppdragStatus'
+        400:
+          description: Ugyldig request
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}/{linjeId}/status:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent oppdragslinjens statuser
+      description: Returnerer statuser til oppdragslinjen
+      operationId: hentOppdragsLinjeStatuser
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+        - name: linjeId
+          in: path
+          description: Oppdragslinje id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LinjeStatus'
+        400:
+          description: Ugyldig request
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}/{linjeId}/attestant:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent oppdragslinjens attestanter
+      description: Returnerer attestanter til oppdragslinjen
+      operationId: hentOppdragsLinjeAttestanter
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+        - name: linjeId
+          in: path
+          description: Oppdragslinje id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attestant'
+        400:
+          description: Ugyldig request
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}/{linjeId}/detaljer:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent oppdragslinjens detaljer
+      description: Returnerer detaljer til oppdragslinjen
+      operationId: hentOppdragsLinjeDetaljer
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+        - name: linjeId
+          in: path
+          description: Oppdragslinje id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OppdragsLinjeDetaljer'
+        400:
+          description: Ugyldig request
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}/{linjeId}/valuta:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent oppdragslinjens valutaer
+      description: Returnerer valutaer til oppdragslinjen
+      operationId: hentOppdragsLinjeValutaer
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+        - name: linjeId
+          in: path
+          description: Oppdragslinje id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Valuta'
+        400:
+          description: Ugyldig request
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}/{linjeId}/skyldner:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent oppdragslinjens skyldnere
+      description: Returnerer skyldnere til oppdragslinjen
+      operationId: hentOppdragsLinjeSkyldnere
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+        - name: linjeId
+          in: path
+          description: Oppdragslinje id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Skyldner'
+        400:
+          description: Ugyldig request
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}/{linjeId}/kravhaver:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent oppdragslinjens kravhavere
+      description: Returnerer kravhavere til oppdragslinjen
+      operationId: hentOppdragsLinjeKravhavere
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+        - name: linjeId
+          in: path
+          description: Oppdragslinje id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Kravhaver'
+        400:
+          description: Ugyldig request
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}/{linjeId}/enhet:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent oppdragslinjens enheter
+      description: Returnerer enheter til oppdragslinjen
+      operationId: hentOppdragsLinjeEnheter
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+        - name: linjeId
+          in: path
+          description: Oppdragslinje id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LinjeEnhet'
+        400:
+          description: Ugyldig request
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}/{linjeId}/grad:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent oppdragslinjens grader
+      description: Returnerer grader til oppdragslinjen
+      operationId: hentOppdragsLinjeGrader
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+        - name: linjeId
+          in: path
+          description: Oppdragslinje id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Grad'
+        400:
+          description: Ugyldig request
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}/{linjeId}/tekst:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent oppdragslinjens tekster
+      description: Returnerer tekster til oppdragslinjen
+      operationId: hentOppdragsLinjeTekster
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+        - name: linjeId
+          in: path
+          description: Oppdragslinje id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tekst'
+        400:
+          description: Ugyldig request
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}/{linjeId}/kidliste:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent oppdragslinjens kidliste
+      description: Returnerer kidliste til oppdragslinjen
+      operationId: hentOppdragsLinjeKidliste
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+        - name: linjeId
+          in: path
+          description: Oppdragslinje id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Kid'
+        400:
+          description: Ugyldig request
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}/{linjeId}/maksdato:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent oppdragslinjens maksdatoer
+      description: Returnerer maksdatoer til oppdragslinjen
+      operationId: hentOppdragsLinjeMaksdatoer
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+        - name: linjeId
+          in: path
+          description: Oppdragslinje id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Maksdato'
+        400:
+          description: Ugyldig request
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}/{linjeId}/ovrig:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent oppdragslinjens øvrige felter
+      description: Returnerer øvrige felter til oppdragslinjen
+      operationId: hentOppdragsLinjeOvrige
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+        - name: linjeId
+          in: path
+          description: Oppdragslinje id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ovrig'
+        400:
+          description: Ugyldig request
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+components:
+  schemas:
+
+    SokOppdragRequest:
+      type: object
+      required:
+        - gjelderId
+      properties:
+        gjelderId:
+          type: string
+          example: "9 eller 11 siffer"
+          description: 9 eller 11 siffer
+        fagGruppeKode:
+          type: string
+          description: filtrering på faggruppeKode
+
+    GjelderIdRequest:
+      type: object
+      required:
+        - gjelderId
+      properties:
+        gjelderId:
+          type: string
+          example: "9 eller 11 siffer"
+          description: 9 eller 11 siffer
+
+    OppdragsInfo:
+      type: object
+      properties:
+        gjelderId:
+          type: string
+        gjelderNavn:
+          type: string
+        oppdragsListe:
+          type: array
+          items:
+            $ref: '#/components/schemas/Oppdrag'
+
+    OppdragDetaljer:
+      type: object
+      required:
+        - enhet
+        - harOmposteringer
+        - oppdragsLinjer
+      properties:
+        enhet:
+          $ref: '#/components/schemas/OppdragsEnhet'
+        behandlendeEnhet:
+          $ref: '#/components/schemas/OppdragsEnhet'
+        harOmposteringer:
+          type: boolean
+          description: Spesifiserer om oppdraget har omposteringer i samme faggruppe som oppdraget
+        oppdragsLinjer:
+          type: array
+          items:
+            $ref: '#/components/schemas/OppdragsLinje'
+
+    FagGruppe:
+      type: object
+      required:
+        - navn
+        - type
+      properties:
+        navn:
+          type: string
+        type:
+          type: string
+
+    Ompostering:
+      type: object
+      required:
+        - id
+        - kodeFaggruppe
+        - lopenr
+        - ompostering
+        - feilReg
+        - utfort
+        - brukerid
+        - tidspktReg
+      properties:
+        id:
+          type: string
+        kodeFaggruppe:
+          type: string
+        lopenr:
+          type: integer
+        ompostering:
+          type: string
+        omposteringFom:
+          type: string
+        feilReg:
+          type: string
+        beregningsId:
+          type: integer
+        utfort:
+          type: string
+        brukerid:
+          type: string
+        tidspktReg:
+          type: string
+
+    OppdragsEnhet:
+      type: object
+      required:
+        - type
+        - datoFom
+        - enhet
+      properties:
+        type:
+          type: string
+        datoFom:
+          type: string
+        enhet:
+          type: string
+
+    OppdragStatus:
+      type: object
+      required:
+        - kodeStatus
+        - tidspktReg
+        - brukerid
+      properties:
+        kodeStatus:
+          type: string
+        tidspktReg:
+          type: string
+        brukerid:
+          type: string
+
+    Oppdrag:
+      type: object
+      properties:
+        fagsystemId:
+          type: string
+        oppdragsId:
+          type: integer
+        navnFagGruppe:
+          type: string
+        navnFagOmraade:
+          type: string
+        kjorIdag:
+          type: string
+        typeBilag:
+          type: string
+        kodeStatus:
+          type: string
+
+    OppdragsLinje:
+      type: object
+      required:
+        - linjeId
+        - kodeKlasse
+        - datoVedtakFom
+        - sats
+        - typeSats
+        - datoFom
+        - delytelseId
+        - utbetalesTilId
+        - brukerId
+        - tidspktReg
+      properties:
+        linjeId:
+          type: integer
+        kodeKlasse:
+          type: string
+        datoVedtakFom:
+          type: string
+        datoVedtakTom:
+          type: string
+        sats:
+          type: number
+          format: double
+        typeSats:
+          type: string
+        kodeStatus:
+          type: string
+        datoFom:
+          type: string
+        linjeIdKorr:
+          type: integer
+        attestert:
+          type: string
+        delytelseId:
+          type: string
+        utbetalesTilId:
+          type: string
+        refunderesOrgnr:
+          type: string
+        brukerId:
+          type: string
+        tidspktReg:
+          type: string
+
+    OppdragsLinjeDetaljer:
+      type: object
+      required:
+        - harValutaer
+        - harSkyldnere
+        - harKravhavere
+        - harEnheter
+        - harGrader
+        - harTekster
+        - harKidliste
+        - harMaksdatoer
+      properties:
+        korrigerteLinjeIder:
+          type: array
+          items:
+            type: integer
+        harValutaer:
+          type: boolean
+        harSkyldnere:
+          type: boolean
+        harKravhavere:
+          type: boolean
+        harEnheter:
+          type: boolean
+        harGrader:
+          type: boolean
+        harTekster:
+          type: boolean
+        harKidliste:
+          type: boolean
+        harMaksdatoer:
+          type: boolean
+
+    LinjeStatus:
+      type: object
+      required:
+        - status
+        - datoFom
+        - tidspktReg
+        - brukerid
+      properties:
+        status:
+          type: string
+        datoFom:
+          type: string
+        tidspktReg:
+          type: string
+        brukerid:
+          type: string
+
+    Attestant:
+      type: object
+      required:
+        - attestantId
+        - ugyldigFom
+      properties:
+        attestantId:
+          type: string
+        ugyldigFom:
+          type: string
+
+    Valuta:
+      type: object
+      required:
+        - linjeId
+        - type
+        - datoFom
+        - nokkelId
+        - valuta
+        - tidspktReg
+        - brukerid
+      properties:
+        linjeId:
+          type: integer
+        type:
+          type: string
+        datoFom:
+          type: string
+        nokkelId:
+          type: integer
+        valuta:
+          type: string
+        feilreg:
+          type: string
+        tidspktReg:
+          type: string
+        brukerid:
+          type: string
+
+    Skyldner:
+      type: object
+      required:
+        - linjeId
+        - skyldnerId
+        - datoFom
+        - tidspktReg
+        - brukerid
+      properties:
+        linjeId:
+          type: integer
+        skyldnerId:
+          type: string
+        datoFom:
+          type: string
+        tidspktReg:
+          type: string
+        brukerid:
+          type: string
+
+    Kravhaver:
+      type: object
+      required:
+        - linjeId
+        - kravhaverId
+        - datoFom
+        - tidspktReg
+        - brukerid
+      properties:
+        linjeId:
+          type: integer
+        kravhaverId:
+          type: string
+        datoFom:
+          type: string
+        tidspktReg:
+          type: string
+        brukerid:
+          type: string
+
+    LinjeEnhet:
+      type: object
+      required:
+        - linjeId
+        - typeEnhet
+        - datoFom
+        - nokkelId
+        - tidspktReg
+        - brukerid
+      properties:
+        linjeId:
+          type: integer
+        typeEnhet:
+          type: string
+        enhet:
+          type: string
+        datoFom:
+          type: string
+        nokkelId:
+          type: integer
+        tidspktReg:
+          type: string
+        brukerid:
+          type: string
+
+    Grad:
+      type: object
+      required:
+        - linjeId
+        - typeGrad
+        - grad
+        - tidspktReg
+        - brukerid
+      properties:
+        linjeId:
+          type: integer
+        typeGrad:
+          type: string
+        grad:
+          type: integer
+        tidspktReg:
+          type: string
+        brukerid:
+          type: string
+    Tekst:
+      type: object
+      required:
+        - linjeId
+        - tekst
+      properties:
+        linjeId:
+          type: integer
+        tekst:
+          type: string
+
+    Kid:
+      type: object
+      required:
+        - linjeId
+        - kid
+        - datoFom
+        - tidspktReg
+        - brukerid
+      properties:
+        linjeId:
+          type: integer
+        kid:
+          type: string
+        datoFom:
+          type: string
+        tidspktReg:
+          type: string
+        brukerid:
+          type: string
+
+    Ovrig:
+      type: object
+      required:
+        - linjeId
+        - vedtaksId
+        - henvisning
+        - soknadsType
+      properties:
+        linjeId:
+          type: integer
+        vedtaksId:
+          type: string
+        henvisning:
+          type: string
+        soknadsType:
+          type: string
+
+    Maksdato:
+      type: object
+      required:
+        - linjeId
+        - maksdato
+        - datoFom
+        - tidspktReg
+        - brukerid
+      properties:
+        linjeId:
+          type: integer
+        maksdato:
+          type: string
+        datoFom:
+          type: string
+        tidspktReg:
+          type: string
+        brukerid:
+          type: string
+
+    ApiError:
+      type: object
+      required:
+        - timestamp
+        - status
+        - error
+        - message
+        - path
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Tidspunkt feilen oppsto
+        status:
+          type: integer
+          example: 4xx
+          description: HTTP status kode
+        error:
+          type: string
+          example: Bad Request
+          description: En kort, lesbar oppsummering av problemet
+        message:
+          type: string
+          example: Verdien er ikke tilatt
+          description: En lesbar forklaring som er spesifikk for denne forekomsten av problemet
+        path:
+          type: string
+          example: /api/v1/oppdragsinfo/oppdrag
+          description: Endepunktet hvor feilen oppstå
+
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      description: |-
+        OBO-token (JWT via OAuth2.0).<br> 
+          Følgende format må brukes i input-feltet "Value" under: <strong>\"Bearer {token}\"</strong>.<br> 
+          Eksempel på verdi i input-felt: <strong>Bearer eYdmifml0ejugm</strong>
+      name: Authorization
+      in: header

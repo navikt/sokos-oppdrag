@@ -1,0 +1,52 @@
+name: Manual deploy to dev
+
+on:
+  workflow_dispatch:
+env:
+  TZ: Europe/Oslo
+
+permissions:
+  contents: "write"
+  id-token: "write"
+
+jobs:
+  build:
+    name: Build/test & push image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v3
+      - run: ./gradlew --configuration-cache build shadowJar
+
+      - name: Build docker image
+        uses: docker/setup-buildx-action@v3
+
+      - name: Push docker image to Google Artifact Registry
+        uses: nais/docker-build-push@v0
+        id: docker-build-push
+        with:
+          team: okonomi
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          tag: dev
+    outputs:
+      image: ${{ steps.docker-build-push.outputs.image }}
+
+  deploy-dev:
+    name: Manual deploy to dev
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: dev-gcp
+          RESOURCE: .nais/naiserator-dev.yaml
+          IMAGE: ${{ needs.build.outputs.image }}
+          PRINT_PAYLOAD: true
