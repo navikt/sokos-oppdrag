@@ -55,6 +55,8 @@ spec:
           namespace: okonomi
           cluster: dev-gcp
   webproxy: true
+  vault:
+    enabled: true
   envFrom:
     - secret: oppdrag-credentials
   filesFrom:
