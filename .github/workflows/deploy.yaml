@@ -63,7 +63,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
         env:
-          CLUSTER: dev-gcp
+          CLUSTER: dev-fss
           RESOURCE: .nais/naiserator-dev.yaml
           IMAGE: ${{ needs.build.outputs.image }}
           PRINT_PAYLOAD: true
@@ -76,7 +76,7 @@ jobs:
 #      - uses: actions/checkout@v4
 #      - uses: nais/deploy/actions/deploy@v2
 #        env:
-#          CLUSTER: prod-gcp
+#          CLUSTER: prod-fss
 #          RESOURCE: .nais/naiserator-dev.yaml
 #          IMAGE: ${{ needs.build.outputs.image }}
 #          PRINT_PAYLOAD: true
