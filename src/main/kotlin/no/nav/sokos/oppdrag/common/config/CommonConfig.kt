@@ -17,13 +17,13 @@ import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.core.instrument.binder.system.UptimeMetrics
-import java.util.UUID
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import no.nav.sokos.oppdrag.common.Metrics
 import no.nav.sokos.oppdrag.oppdragsinfo.config.oppdragsInfoRequestValidationConfig
 import no.nav.sokos.oppdrag.oppdragsinfo.config.oppdragsInfoStatusPageConfig
 import org.slf4j.event.Level
+import java.util.UUID
 
 const val SECURE_LOGGER = "secureLogger"
 const val AUDIT_LOGGER = "auditLogger"
