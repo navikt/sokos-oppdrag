@@ -12,8 +12,9 @@ import no.nav.pdl.hentperson.Person
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import no.nav.sokos.oppdrag.common.config.DatabaseConfig
+import no.nav.sokos.oppdrag.integration.ereg.EregService
 import no.nav.sokos.oppdrag.integration.pdl.PdlService
-import no.nav.sokos.oppdrag.oppdragsinfo.OppdragsInfoService
+import no.nav.sokos.oppdrag.integration.tp.TpService
 import no.nav.sokos.oppdrag.oppdragsinfo.database.OppdragsInfoRepository
 import no.nav.sokos.oppdrag.oppdragsinfo.database.OppdragsInfoRepository.eksistererOmposteringer
 import no.nav.sokos.oppdrag.oppdragsinfo.database.OppdragsInfoRepository.erOppdragTilknyttetBruker
@@ -25,8 +26,6 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdrag
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsInfo
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
-import no.nav.sokos.oppdrag.oppdragsinfo.integration.EregService
-import no.nav.sokos.oppdrag.oppdragsinfo.integration.TpService
 import java.sql.Connection
 
 val applicationCall = mockk<ApplicationCall>()

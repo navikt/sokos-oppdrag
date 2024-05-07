@@ -7,9 +7,9 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import no.nav.sokos.oppdrag.oppdragsinfo.OppdragsInfoService
 import no.nav.sokos.oppdrag.oppdragsinfo.api.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.api.model.SokOppdragRequest
+import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
 
 private const val BASE_PATH = "/api/v1/oppdragsinfo"
 

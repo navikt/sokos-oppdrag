@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.oppdragsinfo.integration
+package no.nav.sokos.oppdrag.integration.tp
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -7,11 +7,10 @@ import io.ktor.client.request.header
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
 import mu.KotlinLogging
+import no.nav.sokos.oppdrag.common.Metrics
 import no.nav.sokos.oppdrag.common.config.PropertiesConfig
 import no.nav.sokos.oppdrag.common.config.httpClient
 import no.nav.sokos.oppdrag.oppdragsinfo.config.ApiError
-import no.nav.sokos.oppdrag.oppdragsinfo.integration.model.TssResponse
-import no.nav.sokos.oppdrag.oppdragsinfo.metrics.Metrics
 import no.nav.sokos.oppdrag.oppdragsinfo.util.TpException
 import no.nav.sokos.oppdrag.oppdragsinfo.util.retry
 import org.slf4j.MDC
@@ -46,6 +45,7 @@ class TpService(
                         response,
                     )
                 }
+
                 else -> {
                     throw TpException(
                         ApiError(

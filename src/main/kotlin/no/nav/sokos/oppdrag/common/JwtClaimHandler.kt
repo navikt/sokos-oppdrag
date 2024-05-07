@@ -2,7 +2,7 @@ package no.nav.sokos.oppdrag.common
 
 import com.auth0.jwt.JWT
 import io.ktor.server.application.ApplicationCall
-import no.nav.sokos.oppdrag.oppdragsinfo.audit.Saksbehandler
+import no.nav.sokos.oppdrag.audit.Saksbehandler
 
 const val JWT_CLAIM_NAVIDENT = "NAVident"
 

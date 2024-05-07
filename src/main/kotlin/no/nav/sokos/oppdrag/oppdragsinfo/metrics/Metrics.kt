@@ -16,20 +16,4 @@ object Metrics {
             .labelNames("errorCode", "sqlState")
             .help("Count database errors")
             .register(prometheusMeterRegistryOppdragsInfo.prometheusRegistry)
-
-    val eregCallCounter: Counter =
-        Counter.build()
-            .namespace(METRICS_NAMESPACE)
-            .name("ereg_call_counter")
-            .labelNames("responseCode")
-            .help("Counts calls to ereg with response status code")
-            .register(prometheusMeterRegistryOppdragsInfo.prometheusRegistry)
-
-    val tpCallCounter: Counter =
-        Counter.build()
-            .namespace(METRICS_NAMESPACE)
-            .name("tp_call_counter")
-            .labelNames("responseCode")
-            .help("Counts calls to tp with response status code")
-            .register(prometheusMeterRegistryOppdragsInfo.prometheusRegistry)
 }

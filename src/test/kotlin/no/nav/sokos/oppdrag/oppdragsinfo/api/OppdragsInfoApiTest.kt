@@ -22,7 +22,6 @@ import no.nav.sokos.oppdrag.common.config.commonConfig
 import no.nav.sokos.oppdrag.config.APPLICATION_JSON
 import no.nav.sokos.oppdrag.config.BASE_API_PATH
 import no.nav.sokos.oppdrag.config.OPPDRAGSINFO_API_PATH
-import no.nav.sokos.oppdrag.oppdragsinfo.OppdragsInfoService
 import no.nav.sokos.oppdrag.oppdragsinfo.api.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.api.model.SokOppdragRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
@@ -45,6 +44,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ovrig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
+import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
 import org.hamcrest.Matchers.equalTo
 import java.lang.Boolean.TRUE
 

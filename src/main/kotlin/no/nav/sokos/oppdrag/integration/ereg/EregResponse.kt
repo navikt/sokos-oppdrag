@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.oppdragsinfo.integration.model
+package no.nav.sokos.oppdrag.integration.ereg
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

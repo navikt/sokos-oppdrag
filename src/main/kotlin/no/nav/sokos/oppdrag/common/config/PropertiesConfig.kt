@@ -22,18 +22,6 @@ object PropertiesConfig {
             mapOf(
                 "APPLICATION_PROFILE" to Profile.LOCAL.toString(),
                 "USE_AUTHENTICATION" to "false",
-                // Azure
-                "AZURE_APP_CLIENT_ID" to "",
-                "AZURE_APP_WELL_KNOWN_URL" to "",
-                "AZURE_APP_TENANT_ID" to "",
-                "AZURE_APP_CLIENT_SECRET" to "",
-                // Database
-                "DATABASE_HOST" to "",
-                "DATABASE_PORT" to "",
-                "DATABASE_NAME" to "",
-                "DATABASE_SCHEMA" to "",
-                "DATABASE_USERNAME" to "",
-                "DATABASE_PASSWORD" to "",
             ),
         )
 
@@ -53,34 +41,36 @@ object PropertiesConfig {
 
     operator fun get(key: String): String = config[Key(key, stringType)]
 
+    fun getOrEmpty(key: String): String = config.getOrElse(Key(key, stringType), "")
+
     data class Configuration(
         val naisAppName: String = get("NAIS_APP_NAME"),
-        val profile: Profile = Profile.valueOf(this["APPLICATION_PROFILE"]),
+        val profile: Profile = Profile.valueOf(get("APPLICATION_PROFILE")),
         val useAuthentication: Boolean = get("USE_AUTHENTICATION").toBoolean(),
         val azureAdConfig: AzureAdConfig = AzureAdConfig(),
     )
 
     data class Db2DatabaseConfig(
-        val host: String = get("DATABASE_HOST"),
-        val port: String = get("DATABASE_PORT"),
-        val name: String = get("DATABASE_NAME"),
-        val schema: String = get("DATABASE_SCHEMA"),
-        val username: String = get("DATABASE_USERNAME"),
-        val password: String = get("DATABASE_PASSWORD"),
+        val host: String = getOrEmpty("DATABASE_HOST"),
+        val port: String = getOrEmpty("DATABASE_PORT"),
+        val name: String = getOrEmpty("DATABASE_NAME"),
+        val schema: String = getOrEmpty("DATABASE_SCHEMA"),
+        val username: String = getOrEmpty("DATABASE_USERNAME"),
+        val password: String = getOrEmpty("DATABASE_PASSWORD"),
     )
 
     data class AzureAdConfig(
-        val clientId: String = get("AZURE_APP_CLIENT_ID"),
-        val wellKnownUrl: String = get("AZURE_APP_WELL_KNOWN_URL"),
-        val tenantId: String = get("AZURE_APP_TENANT_ID"),
-        val clientSecret: String = get("AZURE_APP_CLIENT_SECRET"),
+        val clientId: String = getOrEmpty("AZURE_APP_CLIENT_ID"),
+        val wellKnownUrl: String = getOrEmpty("AZURE_APP_WELL_KNOWN_URL"),
+        val tenantId: String = getOrEmpty("AZURE_APP_TENANT_ID"),
+        val clientSecret: String = getOrEmpty("AZURE_APP_CLIENT_SECRET"),
     )
 
     data class EksterneHostConfig(
-        val pdlUrl: String = get("PDL_URL"),
-        val pdlScope: String = get("PDL_SCOPE"),
-        val eregUrl: String = get("EREG_URL"),
-        val tpUrl: String = get("TP_URL"),
+        val pdlUrl: String = getOrEmpty("PDL_URL"),
+        val pdlScope: String = getOrEmpty("PDL_SCOPE"),
+        val eregUrl: String = getOrEmpty("EREG_URL"),
+        val tpUrl: String = getOrEmpty("TP_URL"),
     )
 
     enum class Profile {

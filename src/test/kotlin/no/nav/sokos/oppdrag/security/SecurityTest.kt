@@ -24,9 +24,9 @@ import no.nav.sokos.oppdrag.config.APPLICATION_JSON
 import no.nav.sokos.oppdrag.config.BASE_API_PATH
 import no.nav.sokos.oppdrag.config.OPPDRAGSINFO_API_PATH
 import no.nav.sokos.oppdrag.config.configureTestApplication
-import no.nav.sokos.oppdrag.oppdragsinfo.OppdragsInfoService
 import no.nav.sokos.oppdrag.oppdragsinfo.api.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoApi
+import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
 
 val oppdragsInfoService: OppdragsInfoService = mockk()
 

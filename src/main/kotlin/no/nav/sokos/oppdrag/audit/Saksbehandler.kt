@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.oppdragsinfo.audit
+package no.nav.sokos.oppdrag.audit
 
 data class Saksbehandler(
     val ident: String,

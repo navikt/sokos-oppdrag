@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.oppdragsinfo.audit
+package no.nav.sokos.oppdrag.audit
 
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.common.config.AUDIT_LOGGER

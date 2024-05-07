@@ -1,16 +1,18 @@
-package no.nav.sokos.oppdrag.oppdragsinfo
+package no.nav.sokos.oppdrag.oppdragsinfo.service
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import mu.KotlinLogging
+import no.nav.sokos.oppdrag.audit.AuditLogg
+import no.nav.sokos.oppdrag.audit.AuditLogger
+import no.nav.sokos.oppdrag.audit.Saksbehandler
 import no.nav.sokos.oppdrag.common.JwtClaimHandler.getSaksbehandler
 import no.nav.sokos.oppdrag.common.config.DatabaseConfig
 import no.nav.sokos.oppdrag.common.config.SECURE_LOGGER
+import no.nav.sokos.oppdrag.integration.ereg.EregService
 import no.nav.sokos.oppdrag.integration.pdl.PdlService
-import no.nav.sokos.oppdrag.oppdragsinfo.audit.AuditLogg
-import no.nav.sokos.oppdrag.oppdragsinfo.audit.AuditLogger
-import no.nav.sokos.oppdrag.oppdragsinfo.audit.Saksbehandler
+import no.nav.sokos.oppdrag.integration.tp.TpService
 import no.nav.sokos.oppdrag.oppdragsinfo.database.OppdragsInfoRepository.eksistererEnheter
 import no.nav.sokos.oppdrag.oppdragsinfo.database.OppdragsInfoRepository.eksistererGrader
 import no.nav.sokos.oppdrag.oppdragsinfo.database.OppdragsInfoRepository.eksistererKidliste
@@ -60,8 +62,6 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ovrig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
-import no.nav.sokos.oppdrag.oppdragsinfo.integration.EregService
-import no.nav.sokos.oppdrag.oppdragsinfo.integration.TpService
 
 private val logger = KotlinLogging.logger {}
 val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
@@ -87,6 +87,7 @@ class OppdragsInfoService(
             AuditLogg(
                 saksbehandler = saksbehandler.ident,
                 gjelderId = gjelderId,
+                brukerBehandlingTekst = "NAV-ansatt har gjort et søk på oppdrag",
             ),
         )
 
