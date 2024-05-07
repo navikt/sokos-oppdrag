@@ -34,7 +34,7 @@ spec:
     - https://sokos-oppdrag.dev-fss-pub.nais.io
   prometheus:
     enabled: true
-    path: /metrics
+    path: /internal/metrics
   secureLogs:
     enabled: true
   azure:
