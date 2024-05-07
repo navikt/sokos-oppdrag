@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.audit
+package no.nav.sokos.oppdrag.common.audit
 
 data class AuditLogg(
     val saksbehandler: String,

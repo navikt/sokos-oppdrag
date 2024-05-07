@@ -1,8 +1,8 @@
-package no.nav.sokos.oppdrag.common
+package no.nav.sokos.oppdrag.common.security
 
 import com.auth0.jwt.JWT
 import io.ktor.server.application.ApplicationCall
-import no.nav.sokos.oppdrag.audit.Saksbehandler
+import no.nav.sokos.oppdrag.common.audit.Saksbehandler
 
 const val JWT_CLAIM_NAVIDENT = "NAVident"
 

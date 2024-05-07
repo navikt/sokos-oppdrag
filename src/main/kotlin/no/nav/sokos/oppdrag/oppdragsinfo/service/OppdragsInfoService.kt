@@ -4,12 +4,12 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import mu.KotlinLogging
-import no.nav.sokos.oppdrag.audit.AuditLogg
-import no.nav.sokos.oppdrag.audit.AuditLogger
-import no.nav.sokos.oppdrag.audit.Saksbehandler
-import no.nav.sokos.oppdrag.common.JwtClaimHandler.getSaksbehandler
+import no.nav.sokos.oppdrag.common.audit.AuditLogg
+import no.nav.sokos.oppdrag.common.audit.AuditLogger
+import no.nav.sokos.oppdrag.common.audit.Saksbehandler
 import no.nav.sokos.oppdrag.common.config.DatabaseConfig
 import no.nav.sokos.oppdrag.common.config.SECURE_LOGGER
+import no.nav.sokos.oppdrag.common.security.JwtClaimHandler.getSaksbehandler
 import no.nav.sokos.oppdrag.integration.ereg.EregService
 import no.nav.sokos.oppdrag.integration.pdl.PdlService
 import no.nav.sokos.oppdrag.integration.tp.TpService
