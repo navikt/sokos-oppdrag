@@ -5,6 +5,7 @@ import io.ktor.server.auth.authenticate
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.routing
 import no.nav.sokos.oppdrag.ApplicationState
+import no.nav.sokos.oppdrag.common.metricsApi
 import no.nav.sokos.oppdrag.common.naisApi
 import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoApi
 import no.nav.sokos.oppdrag.oppdragsinfo.api.swaggerApi as oppdragsinfoSwaggerApi
@@ -15,6 +16,7 @@ fun Application.routingConfig(
 ) {
     routing {
         naisApi({ applicationState.initialized }, { applicationState.running })
+        metricsApi()
         oppdragsinfoSwaggerApi()
         authenticate(useAuthentication, AUTHENTICATION_NAME) {
             oppdragsInfoApi()
