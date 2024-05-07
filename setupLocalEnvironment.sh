@@ -5,7 +5,7 @@ gcloud auth print-identity-token &> /dev/null
 if [ $? -gt 0 ]; then
     gcloud auth login
 fi
-kubectl config use-context dev-gcp
+kubectl config use-context dev-fss
 kubectl config set-context --current --namespace=okonomi
 
 # Get AZURE system variables

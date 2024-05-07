@@ -32,9 +32,6 @@ spec:
   ingresses:
     - https://sokos-oppdrag.intern.dev.nav.no
     - https://sokos-oppdrag.dev-fss-pub.nais.io
-  prometheus:
-    enabled: true
-    path: /internal/metrics
   secureLogs:
     enabled: true
   azure:
