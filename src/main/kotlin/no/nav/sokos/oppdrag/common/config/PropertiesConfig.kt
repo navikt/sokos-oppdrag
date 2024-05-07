@@ -22,7 +22,6 @@ object PropertiesConfig {
             mapOf(
                 "APPLICATION_PROFILE" to Profile.LOCAL.toString(),
                 "USE_AUTHENTICATION" to "false",
-
                 // Azure
                 "AZURE_APP_CLIENT_ID" to "",
                 "AZURE_APP_WELL_KNOWN_URL" to "",
