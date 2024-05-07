@@ -55,8 +55,6 @@ spec:
           namespace: okonomi
           cluster: dev-gcp
   webproxy: true
-  vault:
-    enabled: true
   filesFrom:
     - secret: db2license
       mountPath: /var/run/secrets/db2license
