@@ -14,6 +14,15 @@ object PropertiesConfig {
             mapOf(
                 "NAIS_APP_NAME" to "sokos-oppdrag",
                 "NAIS_NAMESPACE" to "okonomi",
+            ),
+        )
+
+    private val localDevProperties =
+        ConfigurationMap(
+            mapOf(
+                "APPLICATION_PROFILE" to Profile.LOCAL.toString(),
+                "USE_AUTHENTICATION" to "false",
+
                 // Azure
                 "AZURE_APP_CLIENT_ID" to "",
                 "AZURE_APP_WELL_KNOWN_URL" to "",
@@ -26,14 +35,6 @@ object PropertiesConfig {
                 "DATABASE_SCHEMA" to "",
                 "DATABASE_USERNAME" to "",
                 "DATABASE_PASSWORD" to "",
-            ),
-        )
-
-    private val localDevProperties =
-        ConfigurationMap(
-            mapOf(
-                "APPLICATION_PROFILE" to Profile.LOCAL.toString(),
-                "USE_AUTHENTICATION" to "false",
             ),
         )
 
