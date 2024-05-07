@@ -57,11 +57,11 @@ spec:
   webproxy: true
   vault:
     enabled: true
-  envFrom:
-    - secret: oppdrag-credentials
   filesFrom:
     - secret: db2license
       mountPath: /var/run/secrets/db2license
+  envFrom:
+    - secret: oppdrag-credentials
   env:
     - name: USE_AUTHENTICATION
       value: "true"

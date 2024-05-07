@@ -109,7 +109,7 @@ spec:
             name: slack-webhook
           channel: '#team-moby-alerts-prod'
           iconEmoji: ':alert:'
-          username: 'Alert prod-gcp'
+          username: 'Alert prod-fss'
           sendResolved: true
           title: |-
             [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }}
