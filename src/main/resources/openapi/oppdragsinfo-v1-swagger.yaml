@@ -2,7 +2,7 @@ openapi: '3.0.3'
 
 info:
   version: 1.0.0
-  title: OppdragsInfo API (sokos-nav-oppdrag)
+  title: OppdragsInfo API (sokos-oppdrag)
   description: API-tjeneste for å hente og presentere oppdragsinformasjon tilknyttet person eller foretak
   contact:
     name: PO Utbetaling
