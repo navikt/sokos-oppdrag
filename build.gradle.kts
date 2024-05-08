@@ -38,6 +38,7 @@ val kotestVersion = "5.8.1"
 val mockkVersion = "1.13.10"
 val mockOAuth2ServerVersion = "2.1.5"
 val swaggerRequestValidatorVersion = "2.40.0"
+val papertrailappVersion = "1.0.0"
 
 dependencies {
 
@@ -71,6 +72,7 @@ dependencies {
     runtimeOnly("org.codehaus.janino:janino:$janionVersion")
     runtimeOnly("ch.qos.logback:logback-classic:$logbackVersion")
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
+    runtimeOnly("com.papertrailapp:logback-syslog4j:$papertrailappVersion")
 
     // Config
     implementation("com.natpryce:konfig:$natpryceVersion")
