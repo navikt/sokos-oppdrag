@@ -7,12 +7,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    kotlin("jvm") version "1.9.23"
-    kotlin("plugin.serialization") version "1.9.23"
+    kotlin("jvm") version "1.9.24"
+    kotlin("plugin.serialization") version "1.9.24"
     id("org.openapi.generator") version "7.5.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.expediagroup.graphql") version "7.1.1"
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.0"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
     jacoco
 }
 
@@ -23,7 +23,7 @@ repositories {
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
 }
 
-val ktorVersion = "2.3.10"
+val ktorVersion = "2.3.11"
 val kotlinxSerializationVersion = "1.6.3"
 val prometheusVersion = "1.12.5"
 val kotlinLoggingVersion = "3.0.5"
@@ -34,7 +34,7 @@ val natpryceVersion = "1.6.10.0"
 val hikariVersion = "5.1.0"
 val db2JccVersion = "11.5.9.0"
 val graphqlClientVersion = "7.1.1"
-val kotestVersion = "5.8.1"
+val kotestVersion = "5.9.0"
 val mockkVersion = "1.13.10"
 val mockOAuth2ServerVersion = "2.1.5"
 val swaggerRequestValidatorVersion = "2.40.0"
