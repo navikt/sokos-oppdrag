@@ -1,19 +1,20 @@
 import com.expediagroup.graphql.plugin.gradle.config.GraphQLSerializer
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import kotlinx.kover.gradle.plugin.dsl.tasks.KoverReport
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    kotlin("jvm") version "1.9.24"
-    kotlin("plugin.serialization") version "1.9.24"
+    kotlin("jvm") version "2.0.0"
+    kotlin("plugin.serialization") version "2.0.0"
     id("org.openapi.generator") version "7.5.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.expediagroup.graphql") version "7.1.1"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
-    jacoco
+    id("org.jetbrains.kotlinx.kover") version "0.8.0"
 }
 
 group = "no.nav.sokos"
@@ -35,7 +36,7 @@ val hikariVersion = "5.1.0"
 val db2JccVersion = "11.5.9.0"
 val graphqlClientVersion = "7.1.1"
 val kotestVersion = "5.9.0"
-val mockkVersion = "1.13.10"
+val mockkVersion = "1.13.11"
 val mockOAuth2ServerVersion = "2.1.5"
 val swaggerRequestValidatorVersion = "2.40.0"
 val papertrailappVersion = "1.0.0"
@@ -158,17 +159,23 @@ tasks {
             attributes["Main-Class"] = "no.nav.sokos.oppdrag.ApplicationKt"
             attributes["Class-Path"] = "/var/run/secrets/db2license/db2jcc_license_cisuz.jar"
         }
-        finalizedBy(jacocoTestReport)
+        finalizedBy(koverHtmlReport)
     }
 
     ("jar") {
         enabled = false
     }
 
-    withType<JacocoReport>().configureEach {
+    withType<KoverReport>().configureEach {
         dependsOn(test)
-        reports {
-            html.required.set(true)
+        kover {
+            reports {
+                total {
+                    html {
+                        enabled = true
+                    }
+                }
+            }
         }
     }
 
