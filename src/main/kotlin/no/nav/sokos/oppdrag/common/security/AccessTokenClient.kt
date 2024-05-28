@@ -22,7 +22,6 @@ import kotlinx.serialization.json.jsonPrimitive
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.common.config.PropertiesConfig
 import no.nav.sokos.oppdrag.common.config.httpClient
-import no.nav.sokos.oppdrag.oppdragsinfo.util.retry
 import java.time.Instant
 
 private val logger = KotlinLogging.logger {}
@@ -53,35 +52,34 @@ class AccessTokenClient(
         }
     }
 
-    private suspend fun getAccessToken(): AzureAccessToken =
-        retry {
-            val response: HttpResponse =
-                client.post(aadAccessTokenUrl) {
-                    accept(ContentType.Application.Json)
-                    method = HttpMethod.Post
-                    setBody(
-                        FormDataContent(
-                            Parameters.build {
-                                append("tenant", azureAdClientConfig.tenantId)
-                                append("client_id", azureAdClientConfig.clientId)
-                                append("scope", pdlScope)
-                                append("client_secret", azureAdClientConfig.clientSecret)
-                                append("grant_type", "client_credentials")
-                            },
-                        ),
-                    )
-                }
+    private suspend fun getAccessToken(): AzureAccessToken {
+        val response: HttpResponse =
+            client.post(aadAccessTokenUrl) {
+                accept(ContentType.Application.Json)
+                method = HttpMethod.Post
+                setBody(
+                    FormDataContent(
+                        Parameters.build {
+                            append("tenant", azureAdClientConfig.tenantId)
+                            append("client_id", azureAdClientConfig.clientId)
+                            append("scope", pdlScope)
+                            append("client_secret", azureAdClientConfig.clientSecret)
+                            append("grant_type", "client_credentials")
+                        },
+                    ),
+                )
+            }
 
-            when {
-                response.status.isSuccess() -> response.body()
-                else -> {
-                    val errorMessage =
-                        "GetAccessToken returnerte ${response.status} med feilmelding: ${response.errorMessage()}"
-                    logger.error { errorMessage }
-                    throw RuntimeException(errorMessage)
-                }
+        return when {
+            response.status.isSuccess() -> response.body()
+            else -> {
+                val errorMessage =
+                    "GetAccessToken returnerte ${response.status} med feilmelding: ${response.errorMessage()}"
+                logger.error { errorMessage }
+                throw RuntimeException(errorMessage)
             }
         }
+    }
 }
 
 suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject["error_description"]?.jsonPrimitive?.content

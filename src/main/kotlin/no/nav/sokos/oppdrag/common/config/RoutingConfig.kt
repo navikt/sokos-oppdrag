@@ -14,7 +14,7 @@ fun Application.routingConfig(
     useAuthentication: Boolean,
 ) {
     routing {
-        naisApi({ applicationState.initialized }, { applicationState.running })
+        naisApi(applicationState)
         oppdragsinfoSwaggerApi()
         authenticate(useAuthentication, AUTHENTICATION_NAME) {
             oppdragsInfoApi()

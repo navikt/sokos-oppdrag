@@ -19,10 +19,10 @@ fun ApplicationTestBuilder.configureTestApplication() {
 
     application {
         commonConfig()
-        val applicationState = ApplicationState(ready = true)
+        val applicationState = ApplicationState()
 
         routing {
-            naisApi({ applicationState.initialized }, { applicationState.running })
+            naisApi(applicationState)
         }
     }
 }

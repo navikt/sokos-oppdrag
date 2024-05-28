@@ -1,19 +1,21 @@
 package no.nav.sokos.oppdrag.oppdragsinfo.metrics
 
-import io.micrometer.prometheus.PrometheusConfig
-import io.micrometer.prometheus.PrometheusMeterRegistry
-import io.prometheus.client.Counter
+import io.micrometer.prometheusmetrics.PrometheusConfig
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
+import io.prometheus.metrics.core.metrics.Counter
 
 private const val METRICS_NAMESPACE = "sokos_oppdrag_oppdragsinfo"
+
+private const val DATABASE_FAILURE_COUNTER = "${METRICS_NAMESPACE}_database_failure_counter"
 
 object Metrics {
     val prometheusMeterRegistryOppdragsInfo = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 
     val databaseFailureCounterOppdragsInfo: Counter =
-        Counter.build()
-            .namespace(METRICS_NAMESPACE)
-            .name("database_failure_counter")
-            .labelNames("errorCode", "sqlState")
+        Counter.builder()
+            .name(DATABASE_FAILURE_COUNTER)
             .help("Count database errors")
+            .withoutExemplars()
+            .labelNames("errorCode", "sqlState")
             .register(prometheusMeterRegistryOppdragsInfo.prometheusRegistry)
 }

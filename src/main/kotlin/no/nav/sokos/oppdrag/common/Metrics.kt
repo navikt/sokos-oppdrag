@@ -1,41 +1,30 @@
 package no.nav.sokos.oppdrag.common
 
-import io.micrometer.prometheus.PrometheusConfig
-import io.micrometer.prometheus.PrometheusMeterRegistry
-import io.prometheus.client.Counter
+import io.micrometer.prometheusmetrics.PrometheusConfig
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
+import io.prometheus.metrics.core.metrics.Counter
 
 private const val METRICS_NAMESPACE = "sokos_oppdrag"
+
+private const val EREG_CALL_COUNTER = "${METRICS_NAMESPACE}_ereg_call_counter"
+private const val TP_CALL_COUNTER = "${METRICS_NAMESPACE}_tp_call_counter"
 
 object Metrics {
     val prometheusMeterRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 
-    val appStateRunningFalse: Counter =
-        Counter.build()
-            .namespace(METRICS_NAMESPACE)
-            .name("app_state_running_false")
-            .help("app state running changed to false")
-            .register(prometheusMeterRegistry.prometheusRegistry)
-
-    val appStateReadyFalse: Counter =
-        Counter.build()
-            .namespace(METRICS_NAMESPACE)
-            .name("app_state_ready_false")
-            .help("app state ready changed to false")
-            .register(prometheusMeterRegistry.prometheusRegistry)
-
     val eregCallCounter: Counter =
-        Counter.build()
-            .namespace(METRICS_NAMESPACE)
-            .name("ereg_call_counter")
-            .labelNames("responseCode")
+        Counter.builder()
+            .name(EREG_CALL_COUNTER)
             .help("Counts calls to ereg with response status code")
+            .withoutExemplars()
+            .labelNames("responseCode")
             .register(prometheusMeterRegistry.prometheusRegistry)
 
     val tpCallCounter: Counter =
-        Counter.build()
-            .namespace(METRICS_NAMESPACE)
-            .name("tp_call_counter")
-            .labelNames("responseCode")
+        Counter.builder()
+            .name(TP_CALL_COUNTER)
             .help("Counts calls to tp with response status code")
+            .withoutExemplars()
+            .labelNames("responseCode")
             .register(prometheusMeterRegistry.prometheusRegistry)
 }

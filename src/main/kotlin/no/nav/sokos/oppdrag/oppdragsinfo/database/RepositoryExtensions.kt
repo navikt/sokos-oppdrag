@@ -20,7 +20,7 @@ object RepositoryExtensions {
                 return block(this)
             }
         } catch (ex: SQLException) {
-            Metrics.databaseFailureCounterOppdragsInfo.labels("${ex.errorCode}", ex.sqlState).inc()
+            Metrics.databaseFailureCounterOppdragsInfo.labelValues("${ex.errorCode}", ex.sqlState).inc()
             throw ex
         }
     }
