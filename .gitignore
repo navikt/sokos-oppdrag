@@ -40,3 +40,4 @@ out/
 
 ### Custom ###
 defaults.properties
+.kotlin
