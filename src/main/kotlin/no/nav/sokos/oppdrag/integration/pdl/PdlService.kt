@@ -21,7 +21,7 @@ val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
 class PdlService(
     private val client: HttpClient = httpClient,
-    private val pdlUrl: String = PropertiesConfig.EksterneHostConfig().pdlUrl,
+    private val pdlUrl: String = PropertiesConfig.EksterneHostProperties().pdlUrl,
     private val graphQLKtorClient: GraphQLKtorClient =
         GraphQLKtorClient(
             URI(pdlUrl).toURL(),

@@ -3,9 +3,8 @@ package no.nav.sokos.oppdrag.common.config
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.ApplicationStopped
-import no.nav.sokos.oppdrag.ApplicationState
 
-fun Application.configureLifecycleConfig(applicationState: ApplicationState) {
+fun Application.applicationLifeCycleConfig(applicationState: ApplicationState) {
     environment.monitor.subscribe(ApplicationStarted) {
         applicationState.ready = true
     }
@@ -14,3 +13,8 @@ fun Application.configureLifecycleConfig(applicationState: ApplicationState) {
         applicationState.ready = false
     }
 }
+
+class ApplicationState(
+    var ready: Boolean = true,
+    var alive: Boolean = true,
+)

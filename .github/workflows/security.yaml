@@ -2,7 +2,7 @@ name: Security
 
 on:
   workflow_run:
-    workflows: [ "Deploy" ]
+    workflows: [ "Deploy application" ]
     types:
       - completed
   schedule:

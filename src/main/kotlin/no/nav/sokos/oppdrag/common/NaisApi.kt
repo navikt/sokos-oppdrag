@@ -6,7 +6,7 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.Routing
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
-import no.nav.sokos.oppdrag.ApplicationState
+import no.nav.sokos.oppdrag.common.config.ApplicationState
 
 fun Routing.naisApi(
     applicationState: ApplicationState,

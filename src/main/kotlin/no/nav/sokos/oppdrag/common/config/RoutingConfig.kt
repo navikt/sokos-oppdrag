@@ -4,14 +4,13 @@ import io.ktor.server.application.Application
 import io.ktor.server.auth.authenticate
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.routing
-import no.nav.sokos.oppdrag.ApplicationState
 import no.nav.sokos.oppdrag.common.naisApi
 import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoApi
 import no.nav.sokos.oppdrag.oppdragsinfo.api.swaggerApi as oppdragsinfoSwaggerApi
 
 fun Application.routingConfig(
-    applicationState: ApplicationState,
     useAuthentication: Boolean,
+    applicationState: ApplicationState,
 ) {
     routing {
         naisApi(applicationState)

@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy application
 
 on:
   push:
@@ -15,7 +15,6 @@ on:
       - '.github/workflows/alerts.yaml'
       - '.nais/alerts-dev.yaml'
       - '.nais/alerts-prod.yaml'
-      - '.github/workflows/reviewdog.yaml'
       - '.github/dependabot.yaml'
 env:
   TZ: Europe/Oslo

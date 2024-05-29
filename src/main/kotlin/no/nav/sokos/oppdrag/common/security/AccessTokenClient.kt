@@ -27,10 +27,10 @@ import java.time.Instant
 private val logger = KotlinLogging.logger {}
 
 class AccessTokenClient(
-    private val azureAdClientConfig: PropertiesConfig.AzureAdConfig = PropertiesConfig.AzureAdConfig(),
-    private val pdlScope: String = PropertiesConfig.EksterneHostConfig().pdlScope,
+    private val azureAdProperties: PropertiesConfig.AzureAdProperties = PropertiesConfig.AzureAdProperties(),
+    private val pdlScope: String = PropertiesConfig.EksterneHostProperties().pdlScope,
     private val client: HttpClient = httpClient,
-    private val aadAccessTokenUrl: String = "https://login.microsoftonline.com/${azureAdClientConfig.tenantId}/oauth2/v2.0/token",
+    private val aadAccessTokenUrl: String = "https://login.microsoftonline.com/${azureAdProperties.tenantId}/oauth2/v2.0/token",
 ) {
     private val mutex = Mutex()
 
@@ -60,10 +60,10 @@ class AccessTokenClient(
                 setBody(
                     FormDataContent(
                         Parameters.build {
-                            append("tenant", azureAdClientConfig.tenantId)
-                            append("client_id", azureAdClientConfig.clientId)
+                            append("tenant", azureAdProperties.tenantId)
+                            append("client_id", azureAdProperties.clientId)
                             append("scope", pdlScope)
-                            append("client_secret", azureAdClientConfig.clientSecret)
+                            append("client_secret", azureAdProperties.clientSecret)
                             append("grant_type", "client_credentials")
                         },
                     ),

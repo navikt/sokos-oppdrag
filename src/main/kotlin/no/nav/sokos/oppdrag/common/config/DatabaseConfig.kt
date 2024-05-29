@@ -7,7 +7,7 @@ import com.zaxxer.hikari.HikariDataSource
 import java.sql.Connection
 
 class DatabaseConfig(
-    private val db2DatabaseConfig: PropertiesConfig.Db2DatabaseConfig = PropertiesConfig.Db2DatabaseConfig(),
+    private val db2Properties: PropertiesConfig.Db2Properties = PropertiesConfig.Db2Properties(),
 ) {
     private val dataSource: HikariDataSource = HikariDataSource(hikariConfig())
 
@@ -25,14 +25,14 @@ class DatabaseConfig(
                 DB2SimpleDataSource().apply {
                     driverType = 4
                     enableNamedParameterMarkers = DB2BaseDataSource.YES
-                    databaseName = db2DatabaseConfig.name
-                    serverName = db2DatabaseConfig.host
-                    portNumber = db2DatabaseConfig.port.toInt()
-                    currentSchema = db2DatabaseConfig.schema
+                    databaseName = db2Properties.name
+                    serverName = db2Properties.host
+                    portNumber = db2Properties.port.toInt()
+                    currentSchema = db2Properties.schema
                     connectionTimeout = 1000
                     commandTimeout = 10000
-                    user = db2DatabaseConfig.username
-                    setPassword(db2DatabaseConfig.password)
+                    user = db2Properties.username
+                    setPassword(db2Properties.password)
                 }
         }
 }

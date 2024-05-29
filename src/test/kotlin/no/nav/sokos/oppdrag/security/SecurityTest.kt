@@ -19,7 +19,7 @@ import no.nav.security.mock.oauth2.withMockOAuth2Server
 import no.nav.sokos.oppdrag.common.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.common.config.PropertiesConfig
 import no.nav.sokos.oppdrag.common.config.authenticate
-import no.nav.sokos.oppdrag.common.config.configureSecurity
+import no.nav.sokos.oppdrag.common.config.securityConfig
 import no.nav.sokos.oppdrag.config.APPLICATION_JSON
 import no.nav.sokos.oppdrag.config.BASE_API_PATH
 import no.nav.sokos.oppdrag.config.OPPDRAGSINFO_API_PATH
@@ -44,7 +44,7 @@ class SecurityTest : FunSpec({
             testApplication {
                 configureTestApplication()
                 this.application {
-                    configureSecurity(authConfig())
+                    securityConfig(true, authConfig())
                     routing {
                         authenticate(true, AUTHENTICATION_NAME) {
                             oppdragsInfoApi(oppdragsInfoService)
@@ -62,7 +62,7 @@ class SecurityTest : FunSpec({
             testApplication {
                 configureTestApplication()
                 this.application {
-                    configureSecurity(authConfig())
+                    securityConfig(true, authConfig())
                     routing {
                         authenticate(true, AUTHENTICATION_NAME) {
                             oppdragsInfoApi(oppdragsInfoService)
@@ -93,7 +93,7 @@ class SecurityTest : FunSpec({
 })
 
 private fun MockOAuth2Server.authConfig() =
-    PropertiesConfig.AzureAdConfig(
+    PropertiesConfig.AzureAdProperties(
         wellKnownUrl = wellKnownUrl("default").toString(),
         clientId = "default",
     )

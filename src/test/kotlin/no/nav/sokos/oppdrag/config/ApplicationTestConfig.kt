@@ -3,7 +3,7 @@ package no.nav.sokos.oppdrag.config
 import io.ktor.server.config.MapApplicationConfig
 import io.ktor.server.routing.routing
 import io.ktor.server.testing.ApplicationTestBuilder
-import no.nav.sokos.oppdrag.ApplicationState
+import no.nav.sokos.oppdrag.common.config.ApplicationState
 import no.nav.sokos.oppdrag.common.config.commonConfig
 import no.nav.sokos.oppdrag.common.naisApi
 
@@ -18,9 +18,9 @@ fun ApplicationTestBuilder.configureTestApplication() {
     }
 
     application {
-        commonConfig()
         val applicationState = ApplicationState()
 
+        commonConfig()
         routing {
             naisApi(applicationState)
         }

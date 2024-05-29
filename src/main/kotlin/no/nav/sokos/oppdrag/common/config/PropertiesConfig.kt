@@ -14,6 +14,7 @@ object PropertiesConfig {
             mapOf(
                 "NAIS_APP_NAME" to "sokos-oppdrag",
                 "NAIS_NAMESPACE" to "okonomi",
+                "USE_AUTHENTICATION" to "true",
             ),
         )
 
@@ -47,10 +48,10 @@ object PropertiesConfig {
         val naisAppName: String = get("NAIS_APP_NAME"),
         val profile: Profile = Profile.valueOf(get("APPLICATION_PROFILE")),
         val useAuthentication: Boolean = get("USE_AUTHENTICATION").toBoolean(),
-        val azureAdConfig: AzureAdConfig = AzureAdConfig(),
+        val azureAdProperties: AzureAdProperties = AzureAdProperties(),
     )
 
-    data class Db2DatabaseConfig(
+    data class Db2Properties(
         val host: String = getOrEmpty("DATABASE_HOST"),
         val port: String = getOrEmpty("DATABASE_PORT"),
         val name: String = getOrEmpty("DATABASE_NAME"),
@@ -59,14 +60,14 @@ object PropertiesConfig {
         val password: String = getOrEmpty("DATABASE_PASSWORD"),
     )
 
-    data class AzureAdConfig(
+    data class AzureAdProperties(
         val clientId: String = getOrEmpty("AZURE_APP_CLIENT_ID"),
         val wellKnownUrl: String = getOrEmpty("AZURE_APP_WELL_KNOWN_URL"),
         val tenantId: String = getOrEmpty("AZURE_APP_TENANT_ID"),
         val clientSecret: String = getOrEmpty("AZURE_APP_CLIENT_SECRET"),
     )
 
-    data class EksterneHostConfig(
+    data class EksterneHostProperties(
         val pdlUrl: String = getOrEmpty("PDL_URL"),
         val pdlScope: String = getOrEmpty("PDL_SCOPE"),
         val eregUrl: String = getOrEmpty("EREG_URL"),

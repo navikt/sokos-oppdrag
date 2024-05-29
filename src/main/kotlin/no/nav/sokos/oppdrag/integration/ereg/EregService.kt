@@ -22,7 +22,7 @@ import java.time.ZonedDateTime
 private val logger = KotlinLogging.logger {}
 
 class EregService(
-    private val eregUrl: String = PropertiesConfig.EksterneHostConfig().eregUrl,
+    private val eregUrl: String = PropertiesConfig.EksterneHostProperties().eregUrl,
     private val client: HttpClient = httpClient,
 ) {
     suspend fun getOrganisasjonsNavn(organisasjonsNummer: String): Organisasjon {

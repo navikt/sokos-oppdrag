@@ -11,7 +11,7 @@ import mu.KotlinLogging
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
 import java.net.ProxySelector
 
-private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
+private val logger = KotlinLogging.logger {}
 
 val httpClient =
     HttpClient(Apache) {
@@ -32,7 +32,7 @@ val httpClient =
         install(HttpRequestRetry) {
             retryOnExceptionOrServerErrors(5)
             modifyRequest { request ->
-                secureLogger.warn { "$retryCount retry feilet mot: ${request.url}" }
+                logger.warn { "$retryCount retry feilet mot: ${request.url}" }
             }
             exponentialDelay()
         }

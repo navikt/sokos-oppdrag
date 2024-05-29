@@ -18,7 +18,7 @@ import java.time.ZonedDateTime
 private val logger = KotlinLogging.logger {}
 
 class TpService(
-    private val tpUrl: String = PropertiesConfig.EksterneHostConfig().tpUrl,
+    private val tpUrl: String = PropertiesConfig.EksterneHostProperties().tpUrl,
     private val client: HttpClient = httpClient,
 ) {
     suspend fun getLeverandorNavn(tssId: String): TssResponse {
