@@ -60,12 +60,12 @@ private val mockOAuth2Server = MockOAuth2Server()
 
 internal class OppdragsInfoApiTest : FunSpec({
 
-    beforeEach {
+    beforeTest {
         server = embeddedServer(Netty, PORT, module = Application::myApplicationModule).start()
     }
 
-    afterEach {
-        server.stop(1000, 10000)
+    afterTest {
+        server.stop(5, 5)
     }
 
     test("sokOppdrag med gyldig gjelderId skal returnere 200 OK") {
