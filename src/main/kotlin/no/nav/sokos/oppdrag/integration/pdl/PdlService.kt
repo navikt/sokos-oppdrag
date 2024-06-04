@@ -3,7 +3,6 @@ package no.nav.sokos.oppdrag.integration.pdl
 import com.expediagroup.graphql.client.ktor.GraphQLKtorClient
 import com.expediagroup.graphql.client.types.GraphQLClientError
 import com.expediagroup.graphql.client.types.GraphQLClientResponse
-import io.ktor.client.HttpClient
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.runBlocking
@@ -20,14 +19,14 @@ private val logger = KotlinLogging.logger {}
 val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
 class PdlService(
-    private val client: HttpClient = httpClient,
     private val pdlUrl: String = PropertiesConfig.EksterneHostProperties().pdlUrl,
+    private val pdlScope: String = PropertiesConfig.EksterneHostProperties().pdlScope,
     private val graphQLKtorClient: GraphQLKtorClient =
         GraphQLKtorClient(
             URI(pdlUrl).toURL(),
-            client,
+            httpClient,
         ),
-    private val accessTokenClient: AccessTokenClient = AccessTokenClient(),
+    private val accessTokenClient: AccessTokenClient = AccessTokenClient(azureAdScope = pdlScope),
 ) {
     fun getPersonNavn(ident: String): Person? {
         val request = HentPerson(HentPerson.Variables(ident = ident))

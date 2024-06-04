@@ -12,6 +12,7 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.server.routing.routing
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import io.restassured.RestAssured
 import no.nav.security.mock.oauth2.MockOAuth2Server
@@ -23,7 +24,7 @@ import no.nav.sokos.oppdrag.config.APPLICATION_JSON
 import no.nav.sokos.oppdrag.config.BASE_API_PATH
 import no.nav.sokos.oppdrag.config.OPPDRAGSINFO_API_PATH
 import no.nav.sokos.oppdrag.oppdragsinfo.api.model.GjelderIdRequest
-import no.nav.sokos.oppdrag.oppdragsinfo.api.model.SokOppdragRequest
+import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsInfoRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
@@ -46,6 +47,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
 import org.hamcrest.Matchers.equalTo
+import java.lang.Boolean.FALSE
 import java.lang.Boolean.TRUE
 
 private const val PORT = 9090
@@ -55,8 +57,8 @@ private const val LINJE_ID = "1"
 private lateinit var server: NettyApplicationEngine
 
 private val validationFilter = OpenApiValidationFilter("openapi/oppdragsinfo-v1-swagger.yaml")
-private val oppdragsInfoService: OppdragsInfoService = mockk()
 private val mockOAuth2Server = MockOAuth2Server()
+private val oppdragsInfoService = mockk<OppdragsInfoService>()
 
 internal class OppdragsInfoApiTest : FunSpec({
 
@@ -84,7 +86,6 @@ internal class OppdragsInfoApiTest : FunSpec({
         val oppdragsInfo =
             OppdragsInfo(
                 gjelderId = "12345678901",
-                gjelderNavn = "Test Testesen",
                 oppdragsListe = listOf(oppdrag),
             )
 
@@ -95,7 +96,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
-                .body(SokOppdragRequest(gjelderId = "12345678901", fagGruppeKode = "ABC"))
+                .body(OppdragsInfoRequest(gjelderId = "12345678901", fagGruppeKode = "ABC"))
                 .port(PORT)
                 .post("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/oppdrag")
                 .then()
@@ -105,7 +106,6 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .response()
 
         response.body.jsonPath().getList<OppdragsInfo>("gjelderId").first().shouldBe("12345678901")
-        response.body.jsonPath().getList<OppdragsInfo>("gjelderNavn").first().shouldBe("Test Testesen")
         response.body.jsonPath().getList<Oppdrag>("oppdragsListe").shouldHaveSize(1)
     }
 
@@ -115,7 +115,7 @@ internal class OppdragsInfoApiTest : FunSpec({
             .filter(validationFilter)
             .header(HttpHeaders.ContentType, APPLICATION_JSON)
             .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
-            .body(SokOppdragRequest(gjelderId = "123", fagGruppeKode = ""))
+            .body(OppdragsInfoRequest(gjelderId = "123", fagGruppeKode = ""))
             .port(PORT)
             .post("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/oppdrag")
             .then()
@@ -396,10 +396,10 @@ internal class OppdragsInfoApiTest : FunSpec({
                 harGrader = TRUE,
                 harTekster = TRUE,
                 harKidliste = TRUE,
-                harMaksdatoer = TRUE,
+                harMaksdatoer = FALSE,
             )
 
-        coEvery { oppdragsInfoService.hentOppdragsLinjeDetaljer(any(), any()) } returns listOf(oppdragsLinjeDetaljer)
+        every { oppdragsInfoService.hentOppdragsLinjeDetaljer(any(), any()) } returns oppdragsLinjeDetaljer
 
         val response =
             RestAssured.given()
@@ -414,7 +414,10 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .extract()
                 .response()
 
-        response.body.jsonPath().getList<Boolean>("harValutaer").first().shouldBe(TRUE)
+        println(response.body.asString())
+
+        response.body.jsonPath().getBoolean("harValutaer").shouldBe(TRUE)
+        response.body.jsonPath().getBoolean("harMaksdatoer").shouldBe(FALSE)
         response.body.jsonPath().getList<Int>("korrigerteLinjeIder").shouldHaveSize(1)
     }
 

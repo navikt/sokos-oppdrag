@@ -43,7 +43,7 @@ class SecurityTest : FunSpec({
         withMockOAuth2Server {
             testApplication {
                 configureTestApplication()
-                this.application {
+                application {
                     securityConfig(true, authConfig())
                     routing {
                         authenticate(true, AUTHENTICATION_NAME) {
@@ -61,7 +61,7 @@ class SecurityTest : FunSpec({
         withMockOAuth2Server {
             testApplication {
                 configureTestApplication()
-                this.application {
+                application {
                     securityConfig(true, authConfig())
                     routing {
                         authenticate(true, AUTHENTICATION_NAME) {

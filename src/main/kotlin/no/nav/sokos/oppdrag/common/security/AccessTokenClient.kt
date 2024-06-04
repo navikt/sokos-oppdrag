@@ -28,9 +28,9 @@ private val logger = KotlinLogging.logger {}
 
 class AccessTokenClient(
     private val azureAdProperties: PropertiesConfig.AzureAdProperties = PropertiesConfig.AzureAdProperties(),
-    private val pdlScope: String = PropertiesConfig.EksterneHostProperties().pdlScope,
+    private val azureAdScope: String,
     private val client: HttpClient = httpClient,
-    private val aadAccessTokenUrl: String = "https://login.microsoftonline.com/${azureAdProperties.tenantId}/oauth2/v2.0/token",
+    private val azureAdAccessTokenUrl: String = "https://login.microsoftonline.com/${azureAdProperties.tenantId}/oauth2/v2.0/token",
 ) {
     private val mutex = Mutex()
 
@@ -54,7 +54,7 @@ class AccessTokenClient(
 
     private suspend fun getAccessToken(): AzureAccessToken {
         val response: HttpResponse =
-            client.post(aadAccessTokenUrl) {
+            client.post(azureAdAccessTokenUrl) {
                 accept(ContentType.Application.Json)
                 method = HttpMethod.Post
                 setBody(
@@ -62,7 +62,7 @@ class AccessTokenClient(
                         Parameters.build {
                             append("tenant", azureAdProperties.tenantId)
                             append("client_id", azureAdProperties.clientId)
-                            append("scope", pdlScope)
+                            append("scope", azureAdScope)
                             append("client_secret", azureAdProperties.clientSecret)
                             append("grant_type", "client_credentials")
                         },

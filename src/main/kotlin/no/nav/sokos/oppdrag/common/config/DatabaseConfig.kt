@@ -4,21 +4,13 @@ import com.ibm.db2.jcc.DB2BaseDataSource
 import com.ibm.db2.jcc.DB2SimpleDataSource
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import java.sql.Connection
 
-class DatabaseConfig(
-    private val db2Properties: PropertiesConfig.Db2Properties = PropertiesConfig.Db2Properties(),
-) {
-    private val dataSource: HikariDataSource = HikariDataSource(hikariConfig())
-
-    val connection: Connection get() = dataSource.connection
-
-    fun close() = dataSource.close()
-
-    private fun hikariConfig() =
-        HikariConfig().apply {
+object DatabaseConfig {
+    private fun db2HikariConfig(): HikariConfig {
+        val db2Properties: PropertiesConfig.Db2Properties = PropertiesConfig.Db2Properties()
+        return HikariConfig().apply {
+            minimumIdle = 1
             maximumPoolSize = 10
-            isAutoCommit = true
             poolName = "HikariPool-SOKOS-OPPDRAG"
             connectionTestQuery = "select 1 from sysibm.sysdummy1"
             dataSource =
@@ -35,4 +27,7 @@ class DatabaseConfig(
                     setPassword(db2Properties.password)
                 }
         }
+    }
+
+    fun db2DataSource(): HikariDataSource = HikariDataSource(db2HikariConfig())
 }
