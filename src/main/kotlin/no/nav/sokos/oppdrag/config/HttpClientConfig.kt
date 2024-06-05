@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.common.config
+package no.nav.sokos.oppdrag.config
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache

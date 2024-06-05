@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.common.config
+package no.nav.sokos.oppdrag.config
 
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationStarted

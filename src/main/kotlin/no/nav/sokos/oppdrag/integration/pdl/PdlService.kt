@@ -9,10 +9,10 @@ import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import no.nav.pdl.HentPerson
 import no.nav.pdl.hentperson.Person
-import no.nav.sokos.oppdrag.common.config.PropertiesConfig
-import no.nav.sokos.oppdrag.common.config.SECURE_LOGGER
-import no.nav.sokos.oppdrag.common.config.httpClient
-import no.nav.sokos.oppdrag.common.security.AccessTokenClient
+import no.nav.sokos.oppdrag.config.PropertiesConfig
+import no.nav.sokos.oppdrag.config.SECURE_LOGGER
+import no.nav.sokos.oppdrag.config.httpClient
+import no.nav.sokos.oppdrag.security.AccessTokenClient
 import java.net.URI
 
 private val logger = KotlinLogging.logger {}

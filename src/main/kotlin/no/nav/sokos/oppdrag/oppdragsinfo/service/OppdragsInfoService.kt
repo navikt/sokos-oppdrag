@@ -6,9 +6,7 @@ import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
-import no.nav.sokos.oppdrag.common.audit.Saksbehandler
-import no.nav.sokos.oppdrag.common.config.SECURE_LOGGER
-import no.nav.sokos.oppdrag.common.security.JwtClaimHandler.getSaksbehandler
+import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
@@ -28,6 +26,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsInfoRepository
+import no.nav.sokos.oppdrag.security.JwtClaimHandler.getSaksbehandler
 
 private val logger = KotlinLogging.logger {}
 val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
@@ -41,20 +40,21 @@ class OppdragsInfoService(
         faggruppeKode: String?,
         applicationCall: ApplicationCall,
     ): List<OppdragsInfo> {
-        val saksbehandler = hentSaksbehandler(applicationCall)
+        val navIdent = getSaksbehandler(applicationCall)
 
         secureLogger.info { "Søker etter oppdrag med gjelderId: $gjelderId" }
         auditLogger.auditLog(
             AuditLogg(
-                saksbehandler = saksbehandler.ident,
+                navIdent = navIdent.ident,
                 gjelderId = gjelderId,
-                brukerBehandlingTekst = "NAV-ansatt har gjort et søk på oppdrag",
+                brukerBehandlingTekst = "NAV-ansatt har gjort et søk på OppdragsInfo",
             ),
         )
 
         val oppdragsInfo = oppdragsInfoRepository.hentOppdragsInfo(gjelderId)
 
         if (oppdragsInfo == null) {
+            secureLogger.info { "Fant ingen oppdrag for gjelderId: $gjelderId" }
             return emptyList()
         } else {
             val oppdragsListe =
@@ -255,19 +255,5 @@ class OppdragsInfoService(
             korrigerteLinjeIder.add(linjeId.toInt())
         }
         return korrigerteLinjeIder
-    }
-
-    /*    private suspend fun hentNavnForGjelderId(gjelderId: String): String =
-        when {
-            gjelderId.toLong() > 80000000000 -> tpService.getLeverandorNavn(gjelderId).navn
-            gjelderId.toLong() < 80000000000 ->
-                pdlService.getPersonNavn(gjelderId)?.navn?.firstOrNull()
-                    ?.run { mellomnavn?.let { "$fornavn $mellomnavn $etternavn" } ?: "$fornavn $etternavn" } ?: ""
-
-            else -> eregService.getOrganisasjonsNavn(gjelderId).navn.sammensattnavn
-        }*/
-
-    private fun hentSaksbehandler(call: ApplicationCall): Saksbehandler {
-        return getSaksbehandler(call)
     }
 }

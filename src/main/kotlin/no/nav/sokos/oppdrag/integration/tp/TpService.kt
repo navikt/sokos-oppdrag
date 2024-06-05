@@ -7,9 +7,9 @@ import io.ktor.client.request.header
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
 import mu.KotlinLogging
-import no.nav.sokos.oppdrag.common.Metrics
-import no.nav.sokos.oppdrag.common.config.PropertiesConfig
-import no.nav.sokos.oppdrag.common.config.httpClient
+import no.nav.sokos.oppdrag.config.PropertiesConfig
+import no.nav.sokos.oppdrag.config.httpClient
+import no.nav.sokos.oppdrag.integration.Metrics
 import no.nav.sokos.oppdrag.oppdragsinfo.config.ApiError
 import no.nav.sokos.oppdrag.oppdragsinfo.util.TpException
 import org.slf4j.MDC

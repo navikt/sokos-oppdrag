@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.common.config
+package no.nav.sokos.oppdrag.config
 
 import com.auth0.jwk.JwkProvider
 import com.auth0.jwk.JwkProviderBuilder

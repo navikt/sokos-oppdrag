@@ -1,5 +1,5 @@
 package no.nav.sokos.oppdrag.common.audit
 
-data class Saksbehandler(
+data class NavIdent(
     val ident: String,
 )

@@ -1,19 +1,19 @@
-package no.nav.sokos.oppdrag.common.security
+package no.nav.sokos.oppdrag.security
 
 import com.auth0.jwt.JWT
 import io.ktor.server.application.ApplicationCall
-import no.nav.sokos.oppdrag.common.audit.Saksbehandler
+import no.nav.sokos.oppdrag.common.audit.NavIdent
 
 const val JWT_CLAIM_NAVIDENT = "NAVident"
 
 object JwtClaimHandler {
-    fun getSaksbehandler(call: ApplicationCall): Saksbehandler {
+    fun getSaksbehandler(call: ApplicationCall): NavIdent {
         val oboToken =
             call.request.headers["Authorization"]?.removePrefix("Bearer ")
                 ?: throw IllegalStateException("Could not get token from request header")
         val navIdent = getNAVIdentFromToken(oboToken)
 
-        return Saksbehandler(navIdent)
+        return NavIdent(navIdent)
     }
 
     private fun getNAVIdentFromToken(token: String): String {

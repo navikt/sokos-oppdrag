@@ -17,12 +17,12 @@ import io.mockk.mockk
 import io.restassured.RestAssured
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
-import no.nav.sokos.oppdrag.common.config.AUTHENTICATION_NAME
-import no.nav.sokos.oppdrag.common.config.authenticate
-import no.nav.sokos.oppdrag.common.config.commonConfig
 import no.nav.sokos.oppdrag.config.APPLICATION_JSON
+import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.BASE_API_PATH
 import no.nav.sokos.oppdrag.config.OPPDRAGSINFO_API_PATH
+import no.nav.sokos.oppdrag.config.authenticate
+import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.oppdragsinfo.api.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsInfoRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant

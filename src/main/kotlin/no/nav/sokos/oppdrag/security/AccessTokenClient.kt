@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.common.security
+package no.nav.sokos.oppdrag.security
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -20,8 +20,8 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import mu.KotlinLogging
-import no.nav.sokos.oppdrag.common.config.PropertiesConfig
-import no.nav.sokos.oppdrag.common.config.httpClient
+import no.nav.sokos.oppdrag.config.PropertiesConfig
+import no.nav.sokos.oppdrag.config.httpClient
 import java.time.Instant
 
 private val logger = KotlinLogging.logger {}

@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.common.config
+package no.nav.sokos.oppdrag.config
 
 import com.ibm.db2.jcc.DB2BaseDataSource
 import com.ibm.db2.jcc.DB2SimpleDataSource

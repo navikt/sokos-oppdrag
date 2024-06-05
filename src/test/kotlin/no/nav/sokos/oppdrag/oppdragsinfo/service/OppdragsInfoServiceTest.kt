@@ -7,7 +7,7 @@ import io.ktor.server.application.ApplicationCall
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.security.mock.oauth2.MockOAuth2Server
-import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
+import no.nav.sokos.oppdrag.config.token
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdrag
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsInfo
@@ -21,7 +21,6 @@ val oppdragsInfoService = OppdragsInfoService(oppdragsInfoRepository)
 internal class OppdragsInfoServiceTest : FunSpec({
 
     test("test sokOppdrag") {
-
         val oppdrag =
             Oppdrag(
                 fagsystemId = "12345678901",
@@ -38,7 +37,7 @@ internal class OppdragsInfoServiceTest : FunSpec({
                 gjelderId = "12345678901",
             )
 
-        every { applicationCall.request.headers["Authorization"] } returns MockOAuth2Server().tokenFromDefaultProvider()
+        every { applicationCall.request.headers["Authorization"] } returns MockOAuth2Server().token()
         every { oppdragsInfoRepository.hentOppdragsInfo("12345678901") } returns oppdragsInfo
         every { oppdragsInfoRepository.hentOppdragsListe("12345678901", "") } returns listOf(oppdrag)
 
@@ -103,16 +102,3 @@ internal class OppdragsInfoServiceTest : FunSpec({
         result.oppdragsLinjer.first().kodeKlasse shouldBe "ABC"
     }
 })
-
-private fun MockOAuth2Server.tokenFromDefaultProvider() =
-    issueToken(
-        issuerId = "default",
-        clientId = "default",
-        tokenCallback =
-            DefaultOAuth2TokenCallback(
-                claims =
-                    mapOf(
-                        "NAVident" to "Z123456",
-                    ),
-            ),
-    ).serialize()

@@ -11,9 +11,9 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import mu.KotlinLogging
-import no.nav.sokos.oppdrag.common.Metrics
-import no.nav.sokos.oppdrag.common.config.PropertiesConfig
-import no.nav.sokos.oppdrag.common.config.httpClient
+import no.nav.sokos.oppdrag.config.PropertiesConfig
+import no.nav.sokos.oppdrag.config.httpClient
+import no.nav.sokos.oppdrag.integration.Metrics
 import no.nav.sokos.oppdrag.oppdragsinfo.config.ApiError
 import no.nav.sokos.oppdrag.oppdragsinfo.util.EregException
 import org.slf4j.MDC

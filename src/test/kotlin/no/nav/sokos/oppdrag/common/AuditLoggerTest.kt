@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.audit
+package no.nav.sokos.oppdrag.common
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.string.shouldEndWith
@@ -10,12 +10,12 @@ internal class AuditLoggerTest : FunSpec({
     test("test auditLogger har riktig melding format") {
         val expectedLogMessageStart =
             "CEF:0|Utbetalingsportalen|sokos-oppdrag|1.0|audit:access|sokos-oppdrag|INFO|suid=Z12345 duid=24417337179 end="
-        val expectedLogMessageEnd = " msg=NAV-ansatt har gjort et søk på oppdrag"
+        val expectedLogMessageEnd = " msg=Dette er en brukerbehandlingstekst"
         val logData =
             AuditLogg(
-                saksbehandler = "Z12345",
+                navIdent = "Z12345",
                 gjelderId = "24417337179",
-                brukerBehandlingTekst = "NAV-ansatt har gjort et søk på oppdrag",
+                brukerBehandlingTekst = "Dette er en brukerbehandlingstekst",
             )
 
         logData.logMessage() shouldStartWith expectedLogMessageStart

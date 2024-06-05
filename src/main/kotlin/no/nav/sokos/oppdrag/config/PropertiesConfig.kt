@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.common.config
+package no.nav.sokos.oppdrag.config
 
 import com.natpryce.konfig.ConfigurationMap
 import com.natpryce.konfig.ConfigurationProperties

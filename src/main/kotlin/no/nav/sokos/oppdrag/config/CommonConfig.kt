@@ -1,6 +1,7 @@
-package no.nav.sokos.oppdrag.common.config
+package no.nav.sokos.oppdrag.config
 
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -14,9 +15,9 @@ import io.ktor.server.plugins.requestvalidation.RequestValidation
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.request.path
 import io.ktor.server.response.respondText
+import io.ktor.server.routing.Routing
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
-import io.ktor.server.routing.routing
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics
@@ -24,12 +25,12 @@ import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.core.instrument.binder.system.UptimeMetrics
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import no.nav.sokos.oppdrag.common.Metrics
+import no.nav.sokos.oppdrag.integration.Metrics
 import no.nav.sokos.oppdrag.oppdragsinfo.config.oppdragsInfoRequestValidationConfig
 import no.nav.sokos.oppdrag.oppdragsinfo.config.oppdragsInfoStatusPageConfig
 import org.slf4j.event.Level
 import java.util.UUID
-import no.nav.sokos.oppdrag.common.Metrics as AppMetrics
+import no.nav.sokos.oppdrag.integration.Metrics as AppMetrics
 import no.nav.sokos.oppdrag.oppdragsinfo.metrics.Metrics as OppdragsInfoMetrics
 
 const val SECURE_LOGGER = "secureLogger"
@@ -75,11 +76,36 @@ fun Application.commonConfig() {
                 ProcessorMetrics(),
             )
     }
-    routing {
-        route("internal") {
-            get("metrics") {
-                call.respondText(AppMetrics.prometheusMeterRegistry.scrape() + OppdragsInfoMetrics.prometheusMeterRegistryOppdragsInfo.scrape())
+}
+
+fun Routing.internalNaisRoutes(
+    applicationState: ApplicationState,
+    readynessCheck: () -> Boolean = { applicationState.ready },
+    alivenessCheck: () -> Boolean = { applicationState.alive },
+) {
+    route("internal") {
+        get("isAlive") {
+            when (alivenessCheck()) {
+                true -> call.respondText { "I'm alive :)" }
+                else ->
+                    call.respondText(
+                        text = "I'm dead x_x",
+                        status = HttpStatusCode.InternalServerError,
+                    )
             }
+        }
+        get("isReady") {
+            when (readynessCheck()) {
+                true -> call.respondText { "I'm ready! :)" }
+                else ->
+                    call.respondText(
+                        text = "Wait! I'm not ready yet! :O",
+                        status = HttpStatusCode.InternalServerError,
+                    )
+            }
+        }
+        get("metrics") {
+            call.respondText(AppMetrics.prometheusMeterRegistry.scrape() + OppdragsInfoMetrics.prometheusMeterRegistryOppdragsInfo.scrape())
         }
     }
 }
