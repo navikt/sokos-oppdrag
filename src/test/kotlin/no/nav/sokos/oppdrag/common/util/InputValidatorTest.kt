@@ -1,8 +1,8 @@
-package no.nav.sokos.oppdrag.oppdragsinfo.util
+package no.nav.sokos.oppdrag.common.util
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import no.nav.sokos.oppdrag.oppdragsinfo.util.Util.validGjelderId
+import no.nav.sokos.oppdrag.common.util.Util.validGjelderId
 
 internal class InputValidatorTest : FunSpec({
 

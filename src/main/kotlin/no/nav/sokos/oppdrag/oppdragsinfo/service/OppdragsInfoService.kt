@@ -26,16 +26,16 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsInfoRepository
-import no.nav.sokos.oppdrag.security.JwtClaimHandler.getSaksbehandler
+import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler
 
 private val logger = KotlinLogging.logger {}
-val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
+private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
 class OppdragsInfoService(
     private val oppdragsInfoRepository: OppdragsInfoRepository = OppdragsInfoRepository(),
     private val auditLogger: AuditLogger = AuditLogger(),
 ) {
-    fun sokOppdrag(
+    fun sokOppdragsInfo(
         gjelderId: String,
         faggruppeKode: String?,
         applicationCall: ApplicationCall,
@@ -69,6 +69,7 @@ class OppdragsInfoService(
     }
 
     fun hentFaggrupper(): List<FagGruppe> {
+        logger.info { "Henter faggrupper" }
         return oppdragsInfoRepository.hentFagGrupper()
     }
 
@@ -76,11 +77,12 @@ class OppdragsInfoService(
         gjelderId: String,
         oppdragsId: Int,
     ): OppdragDetaljer {
-        secureLogger.info("Henter oppdragslinjer med oppdragsId: $oppdragsId")
+        logger.info { "Henter oppdragslinjer med oppdragsId: $oppdragsId" }
 
         val oppdragTilknyttetBruker = oppdragsInfoRepository.erOppdragTilknyttetBruker(gjelderId, oppdragsId)
 
         if (!oppdragTilknyttetBruker) {
+            logger.error { "Oppdraget med id: $oppdragsId er ikke knyttet til bruker" }
             throw RequestValidationException(
                 HttpStatusCode.BadRequest.value,
                 listOf("Oppdraget er ikke knyttet til bruker"),
@@ -104,17 +106,17 @@ class OppdragsInfoService(
         gjelderId: String,
         oppdragsId: String,
     ): List<Ompostering> {
-        secureLogger.info("Henter omposteringer for gjelderId: $gjelderId")
+        logger.info { "Henter omposteringer for oppdragsId: $oppdragsId" }
         return oppdragsInfoRepository.hentOppdragsOmposteringer(gjelderId, oppdragsId.toInt())
     }
 
     fun hentOppdragsEnhetsHistorikk(oppdragsId: String): List<OppdragsEnhet> {
-        secureLogger.info("Henter oppdragsEnhetsHistorikk for oppdrag: $oppdragsId")
+        logger.info { "Henter enhetshistorikk for oppdragId: $oppdragsId" }
         return oppdragsInfoRepository.hentOppdragsEnhetsHistorikk(oppdragsId.toInt())
     }
 
     fun hentOppdragsStatusHistorikk(oppdragsId: String): List<OppdragStatus> {
-        secureLogger.info("Henter oppdragsStatusHistorikk for oppdrag: $oppdragsId")
+        logger.info { "Henter statushistorikk for oppdragId: $oppdragsId" }
         return oppdragsInfoRepository.hentOppdragsStatusHistorikk(oppdragsId.toInt())
     }
 
@@ -122,7 +124,7 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<LinjeStatus> {
-        secureLogger.info("Henter oppdragslinjstatuser for oppdrag : $oppdragsId, linje : $linjeId")
+        logger.info { "Henter linjstatus for oppdrag: $oppdragsId, linje: $linjeId" }
         return oppdragsInfoRepository.hentOppdragsLinjeStatuser(oppdragsId.toInt(), linjeId.toInt())
     }
 
@@ -130,7 +132,7 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Attestant> {
-        secureLogger.info("Henter oppdragslinjstatuser for oppdrag : $oppdragsId, linje : $linjeId")
+        logger.info { "Henter attestant for oppdrag: $oppdragsId, linje : $linjeId" }
         return oppdragsInfoRepository.hentOppdragsLinjeAttestanter(oppdragsId.toInt(), linjeId.toInt())
     }
 
@@ -138,7 +140,7 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): OppdragsLinjeDetaljer {
-        secureLogger.info("Henter oppdragslinjedetaljer for oppdrag : $oppdragsId, linje : $linjeId")
+        logger.info { "Henter detaljer for oppdrag: $oppdragsId, linje : $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
         val eksisterer = oppdragsInfoRepository.eksistererValutaSkyldnerKravhaverLinjeenhetGradTekstKidMaksDato(oppdragsId.toInt(), linjeId.toInt())
         return OppdragsLinjeDetaljer(
@@ -158,7 +160,7 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Valuta> {
-        secureLogger.info("Henter oppdragslinjevaluta for oppdrag : $oppdragsId, linje : $linjeId")
+        logger.info { "Henter valuta for oppdrag: $oppdragsId, linje : $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentValutaerList(oppdragsId.toInt(), korrigerteLinjeIder)
     }
@@ -167,7 +169,7 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Skyldner> {
-        secureLogger.info("Henter oppdragslinjeSkyldner for oppdrag : $oppdragsId, linje : $linjeId")
+        logger.info { "Henter skyldner for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentSkyldnereList(oppdragsId.toInt(), korrigerteLinjeIder)
     }
@@ -176,7 +178,7 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Kravhaver> {
-        secureLogger.info("Henter oppdragslinjeKravhaver for oppdrag : $oppdragsId, linje : $linjeId")
+        logger.info { "Henter kravhaver for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentKravhavereList(oppdragsId.toInt(), korrigerteLinjeIder)
     }
@@ -185,7 +187,7 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<LinjeEnhet> {
-        secureLogger.info("Henter oppdragslinjeEnheter for oppdrag : $oppdragsId, linje : $linjeId")
+        logger.info { "Henter enheter liste for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentEnheterList(oppdragsId.toInt(), korrigerteLinjeIder)
     }
@@ -194,7 +196,7 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Grad> {
-        secureLogger.info("Henter oppdragslinjeGrad for oppdrag : $oppdragsId, linje : $linjeId")
+        logger.info { "Henter grad for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentGraderList(oppdragsId.toInt(), korrigerteLinjeIder)
     }
@@ -203,7 +205,7 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Tekst> {
-        secureLogger.info("Henter oppdragslinjeTekst for oppdrag : $oppdragsId, linje : $linjeId")
+        logger.info { "Henter tekst liste for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentTeksterList(oppdragsId.toInt(), korrigerteLinjeIder)
     }
@@ -212,7 +214,7 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Kid> {
-        secureLogger.info("Henter oppdragslinjeKidliste for oppdrag : $oppdragsId, linje : $linjeId")
+        logger.info { "Henter kid for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentKidListe(oppdragsId.toInt(), korrigerteLinjeIder)
     }
@@ -221,7 +223,7 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Maksdato> {
-        secureLogger.info("Henter oppdragslinjeMaksdato for oppdrag : $oppdragsId, linje : $linjeId")
+        logger.info { "Henter maksdato for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentMaksdatoerListe(oppdragsId.toInt(), korrigerteLinjeIder)
     }
@@ -230,7 +232,7 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Ovrig> {
-        secureLogger.info("Henter oppdragslinjeOvrig for oppdrag : $oppdragsId, linje : $linjeId")
+        logger.info { "Henter øvrig for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentOvrigListe(oppdragsId.toInt(), korrigerteLinjeIder)
     }

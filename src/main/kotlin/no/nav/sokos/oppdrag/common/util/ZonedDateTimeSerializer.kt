@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.oppdragsinfo.util
+package no.nav.sokos.oppdrag.common.util
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind

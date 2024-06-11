@@ -13,17 +13,17 @@ import io.ktor.server.routing.routing
 import io.ktor.server.testing.testApplication
 import io.mockk.every
 import io.mockk.mockk
+import no.nav.security.mock.oauth2.MockOAuth2Server
+import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import no.nav.security.mock.oauth2.withMockOAuth2Server
-import no.nav.sokos.oppdrag.config.APPLICATION_JSON
+import no.nav.sokos.oppdrag.APPLICATION_JSON
+import no.nav.sokos.oppdrag.OPPDRAGSINFO_BASE_API_PATH
+import no.nav.sokos.oppdrag.TestUtil.mockAuthConfig
+import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
-import no.nav.sokos.oppdrag.config.BASE_API_PATH
-import no.nav.sokos.oppdrag.config.OPPDRAGSINFO_API_PATH
 import no.nav.sokos.oppdrag.config.authenticate
-import no.nav.sokos.oppdrag.config.configureTestApplication
-import no.nav.sokos.oppdrag.config.mockAuthConfig
+import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.config.securityConfig
-import no.nav.sokos.oppdrag.config.token
-import no.nav.sokos.oppdrag.oppdragsinfo.api.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoApi
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
 
@@ -41,7 +41,6 @@ class SecurityTest : FunSpec({
     test("http post til sikker endepunkt uten token bør returnere 401") {
         withMockOAuth2Server {
             testApplication {
-                configureTestApplication()
                 application {
                     securityConfig(true, mockAuthConfig())
                     routing {
@@ -50,7 +49,7 @@ class SecurityTest : FunSpec({
                         }
                     }
                 }
-                val response = client.post("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/oppdrag")
+                val response = client.post("$OPPDRAGSINFO_BASE_API_PATH/oppdrag")
                 response.status shouldBe HttpStatusCode.Unauthorized
             }
         }
@@ -59,8 +58,8 @@ class SecurityTest : FunSpec({
     test("http post til sikker endepunkt med token bør returnere 200") {
         withMockOAuth2Server {
             testApplication {
-                configureTestApplication()
                 application {
+                    commonConfig()
                     securityConfig(true, mockAuthConfig())
                     routing {
                         authenticate(true, AUTHENTICATION_NAME) {
@@ -69,7 +68,7 @@ class SecurityTest : FunSpec({
                     }
                 }
 
-                every { oppdragsInfoService.sokOppdrag(any(), any(), any()) } returns emptyList()
+                every { oppdragsInfoService.sokOppdragsInfo(any(), any(), any()) } returns emptyList()
 
                 val client =
                     createClient {
@@ -79,7 +78,7 @@ class SecurityTest : FunSpec({
                     }
 
                 val response =
-                    client.post("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/oppdrag") {
+                    client.post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsinfo") {
                         header(HttpHeaders.Authorization, "Bearer ${token()}")
                         header(HttpHeaders.ContentType, APPLICATION_JSON)
                         setBody(GjelderIdRequest(gjelderId = "12345678901"))
@@ -90,3 +89,11 @@ class SecurityTest : FunSpec({
         }
     }
 })
+
+private fun MockOAuth2Server.token() =
+    issueToken(
+        issuerId = "default",
+        clientId = "default",
+        tokenCallback =
+            DefaultOAuth2TokenCallback(),
+    ).serialize()

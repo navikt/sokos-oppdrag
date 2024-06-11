@@ -6,17 +6,16 @@ import io.kotest.matchers.shouldBe
 import io.ktor.server.application.ApplicationCall
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.security.mock.oauth2.MockOAuth2Server
-import no.nav.sokos.oppdrag.config.token
+import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdrag
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsInfo
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsInfoRepository
 
-val applicationCall = mockk<ApplicationCall>()
-val oppdragsInfoRepository = mockk<OppdragsInfoRepository>()
-val oppdragsInfoService = OppdragsInfoService(oppdragsInfoRepository)
+private val applicationCall = mockk<ApplicationCall>()
+private val oppdragsInfoRepository = mockk<OppdragsInfoRepository>()
+private val oppdragsInfoService = OppdragsInfoService(oppdragsInfoRepository)
 
 internal class OppdragsInfoServiceTest : FunSpec({
 
@@ -37,11 +36,11 @@ internal class OppdragsInfoServiceTest : FunSpec({
                 gjelderId = "12345678901",
             )
 
-        every { applicationCall.request.headers["Authorization"] } returns MockOAuth2Server().token()
+        every { applicationCall.request.headers["Authorization"] } returns tokenWithNavIdent
         every { oppdragsInfoRepository.hentOppdragsInfo("12345678901") } returns oppdragsInfo
         every { oppdragsInfoRepository.hentOppdragsListe("12345678901", "") } returns listOf(oppdrag)
 
-        val result = oppdragsInfoService.sokOppdrag("12345678901", "", applicationCall)
+        val result = oppdragsInfoService.sokOppdragsInfo("12345678901", "", applicationCall)
 
         result.first().gjelderId shouldBe "12345678901"
         result.first().oppdragsListe?.shouldHaveSize(1)

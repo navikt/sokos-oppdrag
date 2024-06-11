@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.oppdragsinfo.util
+package no.nav.sokos.oppdrag.common.util
 
 object Util {
     fun validGjelderId(gjelderId: String): Boolean {

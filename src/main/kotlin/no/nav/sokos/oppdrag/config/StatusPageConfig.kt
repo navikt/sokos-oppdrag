@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.oppdragsinfo.config
+package no.nav.sokos.oppdrag.config
 
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.http.HttpStatusCode
@@ -9,12 +9,12 @@ import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
 import io.ktor.server.response.respond
 import kotlinx.serialization.Serializable
-import no.nav.sokos.oppdrag.oppdragsinfo.util.EregException
-import no.nav.sokos.oppdrag.oppdragsinfo.util.TpException
-import no.nav.sokos.oppdrag.oppdragsinfo.util.ZonedDateTimeSerializer
+import no.nav.sokos.oppdrag.common.util.ZonedDateTimeSerializer
+import no.nav.sokos.oppdrag.integration.ereg.EregException
+import no.nav.sokos.oppdrag.integration.tp.TpException
 import java.time.ZonedDateTime
 
-fun StatusPagesConfig.oppdragsInfoStatusPageConfig() {
+fun StatusPagesConfig.statusPageConfig() {
     exception<Throwable> { call, cause ->
         val (responseStatus, apiError) =
             when (cause) {
@@ -72,7 +72,7 @@ fun StatusPagesConfig.oppdragsInfoStatusPageConfig() {
             }
 
         call.application.log.error(
-            "Feilet håndtering av ${call.request.httpMethod} - ${call.request.path()} status=$responseStatus",
+            "Feilet håndtering av ${call.request.httpMethod} - ${call.request.path()} - Status=$responseStatus - Message=${cause.message}",
             cause,
         )
         call.respond(responseStatus, apiError)

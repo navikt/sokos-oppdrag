@@ -1,0 +1,107 @@
+openapi: 3.0.1
+info:
+  version: 1.0.0
+  title: Integrasjon API (sokos-oppdrag)
+  description: API-tjeneste for å hente navn tilknyttet person eller foretak
+  contact:
+    name: Team Moby (Motta og Beregne Ytelser)
+    email: okonomi@nav.no
+    url: https://nav-it.slack.com/archives/CKZADNFBP
+
+tags:
+  - name: integration
+    description: Opplysninger om navn tilknyttet person eller foretak
+
+servers:
+  - url: /api/v1/integration
+
+paths:
+  /hent-navn:
+    post:
+      tags:
+        - integration
+      summary: Søk etter navn
+      description: Returnerer navn tilknyttet person eller foretak basert på 9 eller 11 siffer gjelderId.
+      operationId: hentNavnForGjelderId
+      requestBody:
+        description: gjelderId er et krav
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GjelderIdRequest'
+        required: true
+      responses:
+        200:
+          description: OK - Hvis navn ikke finnes, returneres tom streng
+          content:
+            application/json:
+              schema:
+                type: string
+        400:
+          description: Ugyldig request, oppfyller ikke swagger-kontrakt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+components:
+  schemas:
+    GjelderIdRequest:
+      type: object
+      required:
+        - gjelderId
+      properties:
+        gjelderId:
+          type: string
+          example: "9 eller 11 siffer"
+          description: 9 eller 11 siffer
+
+    ApiError:
+      type: object
+      required:
+        - timestamp
+        - status
+        - error
+        - message
+        - path
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Tidspunkt feilen oppsto
+        status:
+          type: integer
+          example: 4xx
+          description: HTTP status kode
+        error:
+          type: string
+          example: Bad Request
+          description: En kort, lesbar oppsummering av problemet
+        message:
+          type: string
+          example: Det skjedde en feil
+          description: En lesbar forklaring som er spesifikk for denne forekomsten av problemet
+        path:
+          type: string
+          example: /api/v1/integration/hent-navn
+          description: Endepunktet hvor feilen oppstå
+
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      description: |-
+        OBO-token (JWT via OAuth2.0).<br> 
+          Følgende format må brukes i input-feltet "Value" under: <strong>\"Bearer {token}\"</strong>.<br> 
+          Eksempel på verdi i input-felt: <strong>Bearer eYdmifml0ejugm</strong>
+      name: Authorization
+      in: header

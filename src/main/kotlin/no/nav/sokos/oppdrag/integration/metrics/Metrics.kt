@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.integration
+package no.nav.sokos.oppdrag.integration.metrics
 
 import io.micrometer.prometheusmetrics.PrometheusConfig
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry

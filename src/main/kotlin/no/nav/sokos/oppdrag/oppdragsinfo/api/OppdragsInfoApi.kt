@@ -7,7 +7,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import no.nav.sokos.oppdrag.oppdragsinfo.api.model.GjelderIdRequest
+import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsInfoRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
 
@@ -15,10 +15,10 @@ private const val BASE_PATH = "/api/v1/oppdragsinfo"
 
 fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInfoService()) {
     route(BASE_PATH) {
-        post("oppdrag") {
+        post("oppdragsinfo") {
             val oppdragsOppdragsInfoRequest = call.receive<OppdragsInfoRequest>()
             call.respond(
-                oppdragsInfoService.sokOppdrag(
+                oppdragsInfoService.sokOppdragsInfo(
                     oppdragsOppdragsInfoRequest.gjelderId,
                     oppdragsOppdragsInfoRequest.fagGruppeKode,
                     call,

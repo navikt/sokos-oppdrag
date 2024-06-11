@@ -25,12 +25,11 @@ import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.core.instrument.binder.system.UptimeMetrics
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import no.nav.sokos.oppdrag.integration.Metrics
-import no.nav.sokos.oppdrag.oppdragsinfo.config.oppdragsInfoRequestValidationConfig
-import no.nav.sokos.oppdrag.oppdragsinfo.config.oppdragsInfoStatusPageConfig
+import no.nav.sokos.oppdrag.integration.metrics.Metrics
+import no.nav.sokos.oppdrag.oppdragsinfo.config.requestValidationOppdragsInfoConfig
 import org.slf4j.event.Level
 import java.util.UUID
-import no.nav.sokos.oppdrag.integration.Metrics as AppMetrics
+import no.nav.sokos.oppdrag.integration.metrics.Metrics as AppMetrics
 import no.nav.sokos.oppdrag.oppdragsinfo.metrics.Metrics as OppdragsInfoMetrics
 
 const val SECURE_LOGGER = "secureLogger"
@@ -60,10 +59,11 @@ fun Application.commonConfig() {
         )
     }
     install(StatusPages) {
-        oppdragsInfoStatusPageConfig()
+        statusPageConfig()
     }
     install(RequestValidation) {
-        oppdragsInfoRequestValidationConfig()
+        requestValidationCommonConfig()
+        requestValidationOppdragsInfoConfig()
     }
     install(MicrometerMetrics) {
         registry = Metrics.prometheusMeterRegistry

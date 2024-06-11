@@ -42,12 +42,12 @@ class AccessTokenClient(
         return mutex.withLock {
             when {
                 token.expiresAt.isBefore(expiresInToMinutes) -> {
-                    logger.info("Henter ny accesstoken")
+                    logger.info { "Henter ny accesstoken" }
                     token = AccessToken(getAccessToken())
                     token.accessToken
                 }
 
-                else -> token.accessToken.also { logger.info("Henter accesstoken fra cache") }
+                else -> token.accessToken.also { logger.info { "Henter accesstoken fra cache" } }
             }
         }
     }

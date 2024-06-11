@@ -1,15 +1,16 @@
 package no.nav.sokos.oppdrag.integration.service
 
 import io.ktor.server.application.ApplicationCall
+import mu.KotlinLogging
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
+import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.ereg.EregService
 import no.nav.sokos.oppdrag.integration.pdl.PdlService
 import no.nav.sokos.oppdrag.integration.tp.TpService
-import no.nav.sokos.oppdrag.oppdragsinfo.service.secureLogger
-import no.nav.sokos.oppdrag.security.JwtClaimHandler.getSaksbehandler
+import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler
 
-private const val GJELDER_ID_VALUE_CHECK = 80000000000
+private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
 class IntegrationService(
     private val pdlService: PdlService = PdlService(),
@@ -33,11 +34,11 @@ class IntegrationService(
         )
 
         return when {
-            gjelderId.toLong() > GJELDER_ID_VALUE_CHECK -> tpService.getLeverandorNavn(gjelderId).navn
-            gjelderId.toLong() < GJELDER_ID_VALUE_CHECK ->
-                pdlService.getPersonNavn(gjelderId)?.navn?.first()?.let { navn ->
-                    navn.mellomnavn?.let { "${navn.fornavn} ${navn.mellomnavn} ${navn.etternavn}" } ?: "${navn.fornavn} ${navn.etternavn}"
-                } ?: ""
+            gjelderId.toLong() > 80000000000 -> tpService.getLeverandorNavn(gjelderId).navn
+            gjelderId.toLong() < 80000000000 && gjelderId.toLong() > "01000000000".toInt() ->
+                pdlService.getPersonNavn(gjelderId)?.navn?.first().let { navn ->
+                    navn?.mellomnavn?.let { "${navn.fornavn} ${navn.mellomnavn} ${navn.etternavn}" } ?: "${navn?.fornavn} ${navn?.etternavn}"
+                }
 
             else -> eregService.getOrganisasjonsNavn(gjelderId).navn.sammensattnavn
         }

@@ -5,8 +5,9 @@ import io.ktor.server.auth.authenticate
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.routing
 import no.nav.sokos.oppdrag.integration.api.integrationApi
+import no.nav.sokos.oppdrag.integration.api.integrationSwaggerApi
 import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoApi
-import no.nav.sokos.oppdrag.oppdragsinfo.api.swaggerApi as oppdragsinfoSwaggerApi
+import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoSwaggerApi as oppdragsinfoSwaggerApi
 
 fun Application.routingConfig(
     useAuthentication: Boolean,
@@ -15,6 +16,7 @@ fun Application.routingConfig(
     routing {
         internalNaisRoutes(applicationState)
         oppdragsinfoSwaggerApi()
+        integrationSwaggerApi()
         authenticate(useAuthentication, AUTHENTICATION_NAME) {
             integrationApi()
             oppdragsInfoApi()

@@ -1,9 +1,8 @@
-package no.nav.sokos.oppdrag.common
+package no.nav.sokos.oppdrag.common.audit
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.string.shouldEndWith
 import io.kotest.matchers.string.shouldStartWith
-import no.nav.sokos.oppdrag.common.audit.AuditLogg
 
 internal class AuditLoggerTest : FunSpec({
 

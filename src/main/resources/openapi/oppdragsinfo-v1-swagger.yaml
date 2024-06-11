@@ -16,19 +16,19 @@ servers:
   - url: /api/v1/oppdragsinfo
 
 paths:
-  /oppdrag:
+  /oppdragsinfo:
     post:
       tags:
         - oppdragsinfo
       summary: Søk etter oppdragsinfo
       description: Returnerer oppdragsopplysninger tilknyttet person eller foretak.
-      operationId: sokOppdrag
+      operationId: sokOppdragsInfo
       requestBody:
         description: gjelderId er et krav, men fagGruppeKode er alternativ hvis filtrering er ønskelig
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SokOppdragRequest'
+              $ref: '#/components/schemas/OppdragsInfoRequest'
         required: true
       responses:
         200:
@@ -744,7 +744,7 @@ paths:
 
 components:
   schemas:
-    SokOppdragRequest:
+    OppdragsInfoRequest:
       type: object
       required:
         - gjelderId
