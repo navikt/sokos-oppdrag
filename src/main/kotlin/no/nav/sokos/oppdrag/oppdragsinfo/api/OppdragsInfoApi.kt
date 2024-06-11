@@ -7,20 +7,20 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import no.nav.sokos.oppdrag.oppdragsinfo.api.model.GjelderIdRequest
-import no.nav.sokos.oppdrag.oppdragsinfo.api.model.SokOppdragRequest
+import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
+import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsInfoRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
 
 private const val BASE_PATH = "/api/v1/oppdragsinfo"
 
 fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInfoService()) {
     route(BASE_PATH) {
-        post("oppdrag") {
-            val oppdragsSokOppdragRequest = call.receive<SokOppdragRequest>()
+        post("oppdragsinfo") {
+            val oppdragsOppdragsInfoRequest = call.receive<OppdragsInfoRequest>()
             call.respond(
-                oppdragsInfoService.sokOppdrag(
-                    oppdragsSokOppdragRequest.gjelderId,
-                    oppdragsSokOppdragRequest.fagGruppeKode,
+                oppdragsInfoService.sokOppdragsInfo(
+                    oppdragsOppdragsInfoRequest.gjelderId,
+                    oppdragsOppdragsInfoRequest.fagGruppeKode,
                     call,
                 ),
             )
@@ -37,7 +37,7 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
             call.respond(
                 oppdragsInfoService.hentOppdrag(
                     gjelderIdRequest.gjelderId,
-                    call.parameters["oppdragsId"].orEmpty(),
+                    call.parameters["oppdragsId"].orEmpty().toInt(),
                 ),
             )
         }

@@ -1,22 +1,21 @@
 package no.nav.sokos.oppdrag.common.audit
 
+private const val VERSION = "0"
+private const val DEVICE_VENDOR = "Utbetalingsportalen"
+private const val DEVICE_PRODUCT = "sokos-oppdrag"
+private const val DEVICE_VERSION = "1.0"
+private const val DEVICE_EVENT_CLASS_ID = "audit:access"
+private const val NAME = "sokos-oppdrag"
+private const val SEVERITY = "INFO"
+
 data class AuditLogg(
-    val saksbehandler: String,
+    val navIdent: String,
     val gjelderId: String,
     val brukerBehandlingTekst: String,
 ) {
-    private val version = "0"
-    private val deviceVendor = "Utbetalingsportalen"
-    private val deviceProduct = "sokos-oppdrag"
-    private val deviceVersion = "1.0"
-    private val deviceEventClassId = "audit:access"
-    private val name = "sokos-oppdrag"
-    private val severity = "INFO"
-    private val brukerhandling = brukerBehandlingTekst
-
     fun logMessage(): String {
-        val extension = "suid=$saksbehandler duid=$gjelderId end=${System.currentTimeMillis()} msg=$brukerhandling"
+        val extension = "suid=$navIdent duid=$gjelderId end=${System.currentTimeMillis()} msg=$brukerBehandlingTekst"
 
-        return "CEF:$version|$deviceVendor|$deviceProduct|$deviceVersion|$deviceEventClassId|$name|$severity|$extension"
+        return "CEF:$VERSION|$DEVICE_VENDOR|$DEVICE_PRODUCT|$DEVICE_VERSION|$DEVICE_EVENT_CLASS_ID|$NAME|$SEVERITY|$extension"
     }
 }

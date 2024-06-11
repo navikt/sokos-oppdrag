@@ -4,7 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OppdragsInfo(
-    val gjelderId: String,
-    val gjelderNavn: String? = null,
+    val gjelderId: String? = null,
     val oppdragsListe: List<Oppdrag>? = null,
 )

@@ -10,20 +10,19 @@ import io.ktor.server.application.Application
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
+import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import io.ktor.server.routing.routing
-import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import io.restassured.RestAssured
-import no.nav.security.mock.oauth2.MockOAuth2Server
-import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
-import no.nav.sokos.oppdrag.common.config.AUTHENTICATION_NAME
-import no.nav.sokos.oppdrag.common.config.authenticate
-import no.nav.sokos.oppdrag.common.config.commonConfig
-import no.nav.sokos.oppdrag.config.APPLICATION_JSON
-import no.nav.sokos.oppdrag.config.BASE_API_PATH
-import no.nav.sokos.oppdrag.config.OPPDRAGSINFO_API_PATH
-import no.nav.sokos.oppdrag.oppdragsinfo.api.model.GjelderIdRequest
-import no.nav.sokos.oppdrag.oppdragsinfo.api.model.SokOppdragRequest
+import no.nav.sokos.oppdrag.APPLICATION_JSON
+import no.nav.sokos.oppdrag.OPPDRAGSINFO_BASE_API_PATH
+import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
+import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
+import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
+import no.nav.sokos.oppdrag.config.authenticate
+import no.nav.sokos.oppdrag.config.commonConfig
+import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsInfoRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
@@ -46,6 +45,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
 import org.hamcrest.Matchers.equalTo
+import java.lang.Boolean.FALSE
 import java.lang.Boolean.TRUE
 
 private const val PORT = 9090
@@ -55,21 +55,19 @@ private const val LINJE_ID = "1"
 private lateinit var server: NettyApplicationEngine
 
 private val validationFilter = OpenApiValidationFilter("openapi/oppdragsinfo-v1-swagger.yaml")
-private val oppdragsInfoService: OppdragsInfoService = mockk()
-private val mockOAuth2Server = MockOAuth2Server()
+private val oppdragsInfoService = mockk<OppdragsInfoService>()
 
 internal class OppdragsInfoApiTest : FunSpec({
 
     beforeTest {
-        server = embeddedServer(Netty, PORT, module = Application::myApplicationModule).start()
+        server = embeddedServer(Netty, PORT, module = Application::applicationTestModule).start()
     }
 
     afterTest {
         server.stop(5, 5)
     }
 
-    test("sokOppdrag med gyldig gjelderId skal returnere 200 OK") {
-
+    test("sok oppdragsinfo med gyldig gjelderId skal returnere 200 OK") {
         val oppdrag =
             Oppdrag(
                 fagsystemId = "12345678901",
@@ -84,20 +82,19 @@ internal class OppdragsInfoApiTest : FunSpec({
         val oppdragsInfo =
             OppdragsInfo(
                 gjelderId = "12345678901",
-                gjelderNavn = "Test Testesen",
                 oppdragsListe = listOf(oppdrag),
             )
 
-        coEvery { oppdragsInfoService.sokOppdrag(any(), any(), any()) } returns listOf(oppdragsInfo)
+        every { oppdragsInfoService.sokOppdragsInfo(any(), any(), any()) } returns listOf(oppdragsInfo)
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
-                .body(SokOppdragRequest(gjelderId = "12345678901", fagGruppeKode = "ABC"))
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                .body(OppdragsInfoRequest(gjelderId = "12345678901", fagGruppeKode = "ABC"))
                 .port(PORT)
-                .post("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/oppdrag")
+                .post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsinfo")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -105,19 +102,18 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .response()
 
         response.body.jsonPath().getList<OppdragsInfo>("gjelderId").first().shouldBe("12345678901")
-        response.body.jsonPath().getList<OppdragsInfo>("gjelderNavn").first().shouldBe("Test Testesen")
         response.body.jsonPath().getList<Oppdrag>("oppdragsListe").shouldHaveSize(1)
     }
 
-    test("sokOppdrag med ugyldig gjelderId skal returnere 400 Bad Request") {
+    test("sok oppdragsinfo med ugyldig gjelderId skal returnere 400 Bad Request") {
 
         RestAssured.given()
             .filter(validationFilter)
             .header(HttpHeaders.ContentType, APPLICATION_JSON)
-            .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
-            .body(SokOppdragRequest(gjelderId = "123", fagGruppeKode = ""))
+            .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+            .body(OppdragsInfoRequest(gjelderId = "123", fagGruppeKode = ""))
             .port(PORT)
-            .post("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/oppdrag")
+            .post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsinfo")
             .then()
             .assertThat()
             .statusCode(HttpStatusCode.BadRequest.value)
@@ -158,16 +154,16 @@ internal class OppdragsInfoApiTest : FunSpec({
                     ),
             )
 
-        coEvery { oppdragsInfoService.hentOppdrag(any(), any()) } returns oppdragDetaljer
+        every { oppdragsInfoService.hentOppdrag(any(), any()) } returns oppdragDetaljer
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .body(GjelderIdRequest(gjelderId = "12345678901"))
                 .port(PORT)
-                .post("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID")
+                .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -179,22 +175,51 @@ internal class OppdragsInfoApiTest : FunSpec({
         response.body.jsonPath().getList<OppdragsLinje>("oppdragsLinjer").shouldHaveSize(1)
     }
 
-    test("hent oppdrag med ugyldig gjelderId skal returnere 400 Bad Request") {
+    test("hent oppdrag med som ikke tilhører gjelderId skal kaste RequestValidationException med 400 Bad Request") {
+
+        every { oppdragsInfoService.hentOppdrag(any(), any()) } throws RequestValidationException(HttpStatusCode.BadRequest.value, listOf("Oppdraget tilhører ikke gjelderId"))
 
         RestAssured.given()
             .filter(validationFilter)
             .header(HttpHeaders.ContentType, APPLICATION_JSON)
-            .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
-            .body(GjelderIdRequest(gjelderId = "123ABC"))
+            .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+            .body(GjelderIdRequest(gjelderId = "123456789"))
             .port(PORT)
-            .post("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID")
+            .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID")
             .then()
             .assertThat()
             .statusCode(HttpStatusCode.BadRequest.value)
-            .body("message", equalTo("gjelderId er ugyldig. Tillatt format er 9 eller 11 siffer"))
+            .body("message", equalTo("Oppdraget tilhører ikke gjelderId"))
     }
 
-    test("hent oppdragsOmposteringer med gyldig gjelderId skal returnere 200 OK") {
+    test("hent alle faggrupper skal returnere 200 OK") {
+
+        val fagGruppe =
+            FagGruppe(
+                navn = "ABC",
+                type = "DEF",
+            )
+
+        every { oppdragsInfoService.hentFaggrupper() } returns listOf(fagGruppe)
+
+        val response =
+            RestAssured.given()
+                .filter(validationFilter)
+                .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                .port(PORT)
+                .get("$OPPDRAGSINFO_BASE_API_PATH/faggrupper")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatusCode.OK.value)
+                .extract()
+                .response()
+
+        response.body.jsonPath().getList<FagGruppe>("navn").first().shouldBe("ABC")
+        response.body.jsonPath().getList<FagGruppe>("type").first().shouldBe("DEF")
+    }
+
+    test("hent omposteringer for en oppdragsId skal returnere 200 OK") {
 
         val ompostering =
             Ompostering(
@@ -210,16 +235,16 @@ internal class OppdragsInfoApiTest : FunSpec({
                 tidspktReg = "2024-01-01",
             )
 
-        coEvery { oppdragsInfoService.hentOppdragsOmposteringer(any(), any()) } returns listOf(ompostering)
+        every { oppdragsInfoService.hentOppdragsOmposteringer(any(), any()) } returns listOf(ompostering)
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .body(GjelderIdRequest(gjelderId = "12345678901"))
                 .port(PORT)
-                .post("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID/omposteringer")
+                .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/omposteringer")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -230,22 +255,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         response.body.jsonPath().getList<Ompostering>("tidspktReg").first().shouldBe("2024-01-01")
     }
 
-    test("hent oppdragsOmposteringer med ugyldig gjelderId skal returnere 400 Bad Request") {
-
-        RestAssured.given()
-            .filter(validationFilter)
-            .header(HttpHeaders.ContentType, APPLICATION_JSON)
-            .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
-            .body(GjelderIdRequest(gjelderId = "1234567890123"))
-            .port(PORT)
-            .post("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID/omposteringer")
-            .then()
-            .assertThat()
-            .statusCode(HttpStatusCode.BadRequest.value)
-            .body("message", equalTo("gjelderId er ugyldig. Tillatt format er 9 eller 11 siffer"))
-    }
-
-    test("hent enhetshistorikk skal returnere 200 OK") {
+    test("hent enhetshistorikk for oppdragsId skal returnere 200 OK") {
 
         val oppdragsEnhet =
             OppdragsEnhet(
@@ -254,15 +264,15 @@ internal class OppdragsInfoApiTest : FunSpec({
                 enhet = "0502",
             )
 
-        coEvery { oppdragsInfoService.hentOppdragsEnhetsHistorikk(any()) } returns listOf(oppdragsEnhet)
+        every { oppdragsInfoService.hentOppdragsEnhetsHistorikk(any()) } returns listOf(oppdragsEnhet)
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID/enhetshistorikk")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/enhetshistorikk")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -273,7 +283,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         response.body.jsonPath().getList<OppdragsEnhet>("datoFom").first().shouldBe("2024-01-01")
     }
 
-    test("hent statushistorikk skal returnere 200 OK") {
+    test("hent statushistorikk for oppdragsId skal returnere 200 OK") {
 
         val oppdragStatus =
             OppdragStatus(
@@ -282,15 +292,15 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        coEvery { oppdragsInfoService.hentOppdragsStatusHistorikk(any()) } returns listOf(oppdragStatus)
+        every { oppdragsInfoService.hentOppdragsStatusHistorikk(any()) } returns listOf(oppdragStatus)
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID/statushistorikk")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/statushistorikk")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -301,34 +311,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         response.body.jsonPath().getList<OppdragStatus>("tidspktReg").first().shouldBe("2024-01-01")
     }
 
-    test("hent alle faggrupper skal returnere 200 OK") {
-
-        val fagGruppe =
-            FagGruppe(
-                navn = "ABC",
-                type = "DEF",
-            )
-
-        coEvery { oppdragsInfoService.hentFaggrupper() } returns listOf(fagGruppe)
-
-        val response =
-            RestAssured.given()
-                .filter(validationFilter)
-                .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
-                .port(PORT)
-                .get("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/faggrupper")
-                .then()
-                .assertThat()
-                .statusCode(HttpStatusCode.OK.value)
-                .extract()
-                .response()
-
-        response.body.jsonPath().getList<FagGruppe>("navn").first().shouldBe("ABC")
-        response.body.jsonPath().getList<FagGruppe>("type").first().shouldBe("DEF")
-    }
-
-    test("hent oppdragslinjestatus skal returnere 200 OK") {
+    test("hent linjestatus i kombinasjon med oppdragsId og linjeId skal returnere 200 OK") {
 
         val linjeStatus =
             LinjeStatus(
@@ -338,15 +321,15 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        coEvery { oppdragsInfoService.hentOppdragsLinjeStatuser(any(), any()) } returns listOf(linjeStatus)
+        every { oppdragsInfoService.hentOppdragsLinjeStatuser(any(), any()) } returns listOf(linjeStatus)
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID/$LINJE_ID/status")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/status")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -357,7 +340,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         response.body.jsonPath().getList<LinjeStatus>("datoFom").first().shouldBe("2024-01-01")
     }
 
-    test("hent oppdragslinjeattestant skal returnere 200 OK") {
+    test("hent attestant i kombinasjon med oppdragsId og linjeId skal returnere 200 OK") {
 
         val attestant =
             Attestant(
@@ -365,15 +348,15 @@ internal class OppdragsInfoApiTest : FunSpec({
                 ugyldigFom = "2024-01-01",
             )
 
-        coEvery { oppdragsInfoService.hentOppdragsLinjeAttestanter(any(), any()) } returns listOf(attestant)
+        every { oppdragsInfoService.hentOppdragsLinjeAttestanter(any(), any()) } returns listOf(attestant)
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID/$LINJE_ID/attestant")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/attestant")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -384,7 +367,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         response.body.jsonPath().getList<Attestant>("ugyldigFom").first().shouldBe("2024-01-01")
     }
 
-    test("hent oppdragslinjedetaljer skal returnere 200 OK") {
+    test("hent detaljer i kombinasjon med oppdragsId og linjeId skal returnere 200 OK") {
 
         val oppdragsLinjeDetaljer =
             OppdragsLinjeDetaljer(
@@ -396,29 +379,32 @@ internal class OppdragsInfoApiTest : FunSpec({
                 harGrader = TRUE,
                 harTekster = TRUE,
                 harKidliste = TRUE,
-                harMaksdatoer = TRUE,
+                harMaksdatoer = FALSE,
             )
 
-        coEvery { oppdragsInfoService.hentOppdragsLinjeDetaljer(any(), any()) } returns listOf(oppdragsLinjeDetaljer)
+        every { oppdragsInfoService.hentOppdragsLinjeDetaljer(any(), any()) } returns oppdragsLinjeDetaljer
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID/$LINJE_ID/detaljer")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/detaljer")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract()
                 .response()
 
-        response.body.jsonPath().getList<Boolean>("harValutaer").first().shouldBe(TRUE)
+        println(response.body.asString())
+
+        response.body.jsonPath().getBoolean("harValutaer").shouldBe(TRUE)
+        response.body.jsonPath().getBoolean("harMaksdatoer").shouldBe(FALSE)
         response.body.jsonPath().getList<Int>("korrigerteLinjeIder").shouldHaveSize(1)
     }
 
-    test("hent oppdragslinjevaluta skal returnere 200 OK") {
+    test("hent valuta i kombinasjon med oppdragsId og linjeId skal returnere 200 OK") {
 
         val valuta =
             Valuta(
@@ -432,15 +418,15 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        coEvery { oppdragsInfoService.hentOppdragsLinjeValuta(any(), any()) } returns listOf(valuta)
+        every { oppdragsInfoService.hentOppdragsLinjeValuta(any(), any()) } returns listOf(valuta)
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID/$LINJE_ID/valuta")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/valuta")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -451,7 +437,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         response.body.jsonPath().getList<Valuta>("tidspktReg").first().shouldBe("2024-01-01")
     }
 
-    test("hent oppdragslinjeskyldner skal returnere 200 OK") {
+    test("hent skyldner i kombinasjon med oppdragsId og linjeId skal returnere 200 OK") {
 
         val skyldner =
             Skyldner(
@@ -462,15 +448,15 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        coEvery { oppdragsInfoService.hentOppdragsLinjeSkyldner(any(), any()) } returns listOf(skyldner)
+        every { oppdragsInfoService.hentOppdragsLinjeSkyldner(any(), any()) } returns listOf(skyldner)
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID/$LINJE_ID/skyldner")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/skyldner")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -481,7 +467,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         response.body.jsonPath().getList<Skyldner>("tidspktReg").first().shouldBe("2024-01-01")
     }
 
-    test("hent oppdragslinjekravhaver skal returnere 200 OK") {
+    test("hent kravhaver i kombinasjon med oppdragsId og linjeId skal returnere 200 OK") {
 
         val kravhaver =
             Kravhaver(
@@ -492,15 +478,15 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        coEvery { oppdragsInfoService.hentOppdragsLinjeKravhaver(any(), any()) } returns listOf(kravhaver)
+        every { oppdragsInfoService.hentOppdragsLinjeKravhaver(any(), any()) } returns listOf(kravhaver)
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID/$LINJE_ID/kravhaver")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/kravhaver")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -511,7 +497,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         response.body.jsonPath().getList<Kravhaver>("tidspktReg").first().shouldBe("2024-01-01")
     }
 
-    test("hent oppdragslinjeenhet skal returnere 200 OK") {
+    test("hent enhet i kombinasjon med oppdragsId og linjeId skal returnere 200 OK") {
 
         val linjeEnhet =
             LinjeEnhet(
@@ -524,15 +510,15 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        coEvery { oppdragsInfoService.hentOppdragsLinjeEnheter(any(), any()) } returns listOf(linjeEnhet)
+        every { oppdragsInfoService.hentOppdragsLinjeEnheter(any(), any()) } returns listOf(linjeEnhet)
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID/$LINJE_ID/enhet")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/enhet")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -543,7 +529,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         response.body.jsonPath().getList<LinjeEnhet>("tidspktReg").first().shouldBe("2024-01-01")
     }
 
-    test("hent oppdragslinjegrad skal returnere 200 OK") {
+    test("hent grad i kombinasjon med oppdragsId og linjeId skal returnere 200 OK") {
 
         val grad =
             Grad(
@@ -554,15 +540,15 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        coEvery { oppdragsInfoService.hentOppdragsLinjeGrad(any(), any()) } returns listOf(grad)
+        every { oppdragsInfoService.hentOppdragsLinjeGrad(any(), any()) } returns listOf(grad)
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID/$LINJE_ID/grad")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/grad")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -573,7 +559,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         response.body.jsonPath().getList<Grad>("tidspktReg").first().shouldBe("2024-01-01")
     }
 
-    test("hent oppdragslinjetekst skal returnere 200 OK") {
+    test("hent tekst i kombinasjon med oppdragsId og linjeId skal returnere 200 OK") {
 
         val tekst =
             Tekst(
@@ -581,15 +567,15 @@ internal class OppdragsInfoApiTest : FunSpec({
                 tekst = "asd",
             )
 
-        coEvery { oppdragsInfoService.hentOppdragsLinjeTekst(any(), any()) } returns listOf(tekst)
+        every { oppdragsInfoService.hentOppdragsLinjeTekst(any(), any()) } returns listOf(tekst)
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID/$LINJE_ID/tekst")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/tekst")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -600,7 +586,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         response.body.jsonPath().getList<Tekst>("tekst").first().shouldBe("asd")
     }
 
-    test("hent oppdragslinjekidliste skal returnere 200 OK") {
+    test("hent kid i kombinasjon med oppdragsId og linjeId skal returnere 200 OK") {
 
         val kid =
             Kid(
@@ -611,15 +597,15 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        coEvery { oppdragsInfoService.hentOppdragsLinjeKidListe(any(), any()) } returns listOf(kid)
+        every { oppdragsInfoService.hentOppdragsLinjeKidListe(any(), any()) } returns listOf(kid)
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID/$LINJE_ID/kidliste")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/kidliste")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -630,7 +616,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         response.body.jsonPath().getList<Kid>("tidspktReg").first().shouldBe("2024-01-01")
     }
 
-    test("hent oppdragslinjemaksdato skal returnere 200 OK") {
+    test("hent maksdato i kombinasjon med oppdragsId og linjeId skal returnere 200 OK") {
 
         val maksdato =
             Maksdato(
@@ -641,15 +627,15 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        coEvery { oppdragsInfoService.hentOppdragsLinjeMaksdato(any(), any()) } returns listOf(maksdato)
+        every { oppdragsInfoService.hentOppdragsLinjeMaksdato(any(), any()) } returns listOf(maksdato)
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID/$LINJE_ID/maksdato")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/maksdato")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -660,7 +646,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         response.body.jsonPath().getList<Maksdato>("tidspktReg").first().shouldBe("2024-01-01")
     }
 
-    test("hent oppdragslinjeovrige skal returnere 200 OK") {
+    test("hent øvrig i kombinasjon med oppdragsId og linjeId skal returnere 200 OK") {
 
         val ovrig =
             Ovrig(
@@ -670,15 +656,15 @@ internal class OppdragsInfoApiTest : FunSpec({
                 soknadsType = "NN",
             )
 
-        coEvery { oppdragsInfoService.hentOppdragsLinjeOvrig(any(), any()) } returns listOf(ovrig)
+        every { oppdragsInfoService.hentOppdragsLinjeOvrig(any(), any()) } returns listOf(ovrig)
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer ${mockOAuth2Server.tokenFromDefaultProvider()}")
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$BASE_API_PATH$OPPDRAGSINFO_API_PATH/$OPPDRAGS_ID/$LINJE_ID/ovrig")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/ovrig")
                 .then()
                 .assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -690,7 +676,7 @@ internal class OppdragsInfoApiTest : FunSpec({
     }
 })
 
-private fun Application.myApplicationModule() {
+private fun Application.applicationTestModule() {
     commonConfig()
     routing {
         authenticate(false, AUTHENTICATION_NAME) {
@@ -698,16 +684,3 @@ private fun Application.myApplicationModule() {
         }
     }
 }
-
-private fun MockOAuth2Server.tokenFromDefaultProvider() =
-    issueToken(
-        issuerId = "default",
-        clientId = "default",
-        tokenCallback =
-            DefaultOAuth2TokenCallback(
-                claims =
-                    mapOf(
-                        "NAVident" to "Z123456",
-                    ),
-            ),
-    ).serialize()

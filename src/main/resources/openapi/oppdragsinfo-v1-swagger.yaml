@@ -4,7 +4,7 @@ info:
   title: OppdragsInfo API (sokos-oppdrag)
   description: API-tjeneste for å hente og presentere oppdragsinformasjon tilknyttet person eller foretak
   contact:
-    name: PO Utbetaling
+    name: Team Moby (Motta og Beregne Ytelser)
     email: okonomi@nav.no
     url: https://nav-it.slack.com/archives/CKZADNFBP
 
@@ -15,21 +15,20 @@ tags:
 servers:
   - url: /api/v1/oppdragsinfo
 
-
 paths:
-  /oppdrag:
+  /oppdragsinfo:
     post:
       tags:
         - oppdragsinfo
       summary: Søk etter oppdragsinfo
       description: Returnerer oppdragsopplysninger tilknyttet person eller foretak.
-      operationId: sokOppdrag
+      operationId: sokOppdragsInfo
       requestBody:
         description: gjelderId er et krav, men fagGruppeKode er alternativ hvis filtrering er ønskelig
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SokOppdragRequest'
+              $ref: '#/components/schemas/OppdragsInfoRequest'
         required: true
       responses:
         200:
@@ -351,9 +350,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/OppdragsLinjeDetaljer'
+                $ref: '#/components/schemas/OppdragsLinjeDetaljer'
         400:
           description: Ugyldig request
         401:
@@ -747,8 +744,7 @@ paths:
 
 components:
   schemas:
-
-    SokOppdragRequest:
+    OppdragsInfoRequest:
       type: object
       required:
         - gjelderId

@@ -11,11 +11,10 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import mu.KotlinLogging
-import no.nav.sokos.oppdrag.common.Metrics
-import no.nav.sokos.oppdrag.common.config.PropertiesConfig
-import no.nav.sokos.oppdrag.common.config.httpClient
-import no.nav.sokos.oppdrag.oppdragsinfo.config.ApiError
-import no.nav.sokos.oppdrag.oppdragsinfo.util.EregException
+import no.nav.sokos.oppdrag.config.ApiError
+import no.nav.sokos.oppdrag.config.PropertiesConfig
+import no.nav.sokos.oppdrag.config.httpClient
+import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import org.slf4j.MDC
 import java.time.ZonedDateTime
 
@@ -26,7 +25,7 @@ class EregService(
     private val client: HttpClient = httpClient,
 ) {
     suspend fun getOrganisasjonsNavn(organisasjonsNummer: String): Organisasjon {
-        logger.info("Henter organisasjonsnavn for $organisasjonsNummer fra Ereg.")
+        logger.info { "Henter organisasjonsnavn for $organisasjonsNummer fra Ereg." }
         val response =
             client.get("$eregUrl/v2/organisasjon/$organisasjonsNummer/noekkelinfo") {
                 header("Nav-Call-Id", MDC.get("x-correlation-id"))
@@ -41,7 +40,7 @@ class EregService(
                         response.status.value,
                         HttpStatusCode.BadRequest.description,
                         response.errorMessage() ?: "",
-                        "$eregUrl/v2/organisasjon/{orgnummer}/noekkelinfo",
+                        "$eregUrl/v2/organisasjon/$organisasjonsNummer/noekkelinfo",
                     ),
                     response,
                 )
@@ -54,7 +53,7 @@ class EregService(
                         response.status.value,
                         HttpStatusCode.NotFound.description,
                         response.errorMessage() ?: "",
-                        "$eregUrl/v2/organisasjon/{orgnummer}/noekkelinfo",
+                        "$eregUrl/v2/organisasjon/$organisasjonsNummer/noekkelinfo",
                     ),
                     response,
                 )
@@ -67,7 +66,7 @@ class EregService(
                         response.status.value,
                         response.status.description,
                         response.errorMessage() ?: "",
-                        "$eregUrl/v2/organisasjon/{orgnummer}/noekkelinfo",
+                        "$eregUrl/v2/organisasjon/$organisasjonsNummer/noekkelinfo",
                     ),
                     response,
                 )
@@ -77,3 +76,5 @@ class EregService(
 }
 
 suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject["melding"]?.jsonPrimitive?.content
+
+class EregException(val apiError: ApiError, val response: HttpResponse) : Exception(apiError.error)

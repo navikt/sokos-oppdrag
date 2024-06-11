@@ -38,6 +38,7 @@ val mockkVersion = "1.13.11"
 val mockOAuth2ServerVersion = "2.1.5"
 val swaggerRequestValidatorVersion = "2.40.0"
 val papertrailappVersion = "1.0.0"
+val kotliqueryVersion = "1.9.0"
 
 dependencies {
 
@@ -79,6 +80,7 @@ dependencies {
     // Database
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("com.ibm.db2:jcc:$db2JccVersion")
+    implementation("com.github.seratch:kotliquery:$kotliqueryVersion")
 
     // GraphQL
     implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphqlClientVersion") {
