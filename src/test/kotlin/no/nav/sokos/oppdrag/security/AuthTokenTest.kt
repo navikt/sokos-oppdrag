@@ -11,7 +11,7 @@ import org.junit.jupiter.api.assertThrows
 
 private val engine = TestApplicationEngine(createTestEnvironment())
 
-class AuthTokenTest : FunSpec({
+internal class AuthTokenTest : FunSpec({
 
     beforeTest {
         engine.start(wait = true)

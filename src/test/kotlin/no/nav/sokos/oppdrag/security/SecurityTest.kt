@@ -36,7 +36,7 @@ val oppdragsInfoService: OppdragsInfoService = mockk()
  * en authenticate() funksjon som sjekker om bruker er autentisert.
  */
 
-class SecurityTest : FunSpec({
+internal class SecurityTest : FunSpec({
 
     test("http post til sikker endepunkt uten token bør returnere 401") {
         withMockOAuth2Server {
