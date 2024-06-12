@@ -5,9 +5,9 @@ import kotliquery.LoanPattern.using
 import kotliquery.Row
 import kotliquery.queryOf
 import kotliquery.sessionOf
+import no.nav.sokos.oppdrag.common.model.Attestant
+import no.nav.sokos.oppdrag.common.model.FagGruppe
 import no.nav.sokos.oppdrag.config.DatabaseConfig
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kid
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Korreksjon
@@ -15,12 +15,12 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kravhaver
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Maksdato
+import no.nav.sokos.oppdrag.common.model.NokkelinfoOmOppdrag
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ompostering
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdrag
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsInfo
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsinfoTreffliste
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ovrig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
@@ -29,7 +29,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 class OppdragsInfoRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource(),
 ) {
-    fun hentOppdragsInfo(gjelderId: String): OppdragsInfo? {
+    fun hentOppdragsInfo(gjelderId: String): OppdragsinfoTreffliste? {
         return using(sessionOf(dataSource)) { session ->
             session.single(
                 queryOf(
@@ -40,7 +40,7 @@ class OppdragsInfoRepository(
                         "gjelderId" to gjelderId,
                     ),
                 ),
-                mapToOppdragsInfo,
+                mapToOppdragsinfoTreffliste,
             )
         }
     }
@@ -61,7 +61,7 @@ class OppdragsInfoRepository(
     fun hentOppdragsListe(
         gjelderId: String,
         fagGruppeKode: String?,
-    ): List<Oppdrag> {
+    ): List<NokkelinfoOmOppdrag> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -95,7 +95,7 @@ class OppdragsInfoRepository(
                         "fagGruppeKode" to fagGruppeKode,
                     ),
                 ),
-                mapToOppdrag,
+                mapToNokkelinfoOmOppdrag,
             )
         }
     }
@@ -633,14 +633,14 @@ class OppdragsInfoRepository(
         }
     }
 
-    private val mapToOppdragsInfo: (Row) -> OppdragsInfo = { row ->
-        OppdragsInfo(
+    private val mapToOppdragsinfoTreffliste: (Row) -> OppdragsinfoTreffliste = { row ->
+        OppdragsinfoTreffliste(
             gjelderId = row.string("OPPDRAG_GJELDER_ID"),
         )
     }
 
-    private val mapToOppdrag: (Row) -> Oppdrag = { row ->
-        Oppdrag(
+    private val mapToNokkelinfoOmOppdrag: (Row) -> NokkelinfoOmOppdrag = { row ->
+        NokkelinfoOmOppdrag(
             fagsystemId = row.string("FAGSYSTEM_ID"),
             oppdragsId = row.int("OPPDRAGS_ID"),
             navnFagGruppe = row.string("NAVN_FAGGRUPPE"),

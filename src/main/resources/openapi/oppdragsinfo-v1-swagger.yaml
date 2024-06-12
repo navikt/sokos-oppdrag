@@ -782,13 +782,13 @@ components:
     OppdragDetaljer:
       type: object
       required:
-        - enhet
+        - kostnadssted
         - harOmposteringer
         - oppdragsLinjer
       properties:
-        enhet:
+        kostnadssted:
           $ref: '#/components/schemas/OppdragsEnhet'
-        behandlendeEnhet:
+        ansvarssted:
           $ref: '#/components/schemas/OppdragsEnhet'
         harOmposteringer:
           type: boolean

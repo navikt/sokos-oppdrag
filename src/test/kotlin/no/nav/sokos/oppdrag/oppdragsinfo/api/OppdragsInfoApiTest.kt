@@ -18,27 +18,27 @@ import io.restassured.RestAssured
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.OPPDRAGSINFO_BASE_API_PATH
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
+import no.nav.sokos.oppdrag.common.model.Attestant
+import no.nav.sokos.oppdrag.common.model.FagGruppe
 import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
+import no.nav.sokos.oppdrag.common.model.SokOppdragRequestBody
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
-import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsInfoRequest
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kid
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kravhaver
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Maksdato
+import no.nav.sokos.oppdrag.common.model.NokkelinfoOmOppdrag
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ompostering
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdrag
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragDetaljer
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsInfo
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinjeDetaljer
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsinfoTreffliste
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ovrig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
@@ -68,8 +68,8 @@ internal class OppdragsInfoApiTest : FunSpec({
     }
 
     test("sok oppdragsinfo med gyldig gjelderId skal returnere 200 OK") {
-        val oppdrag =
-            Oppdrag(
+        val nokkelinfoOmOppdrag =
+            NokkelinfoOmOppdrag(
                 fagsystemId = "12345678901",
                 oppdragsId = 1234556,
                 navnFagGruppe = "faggruppeNavn",
@@ -79,20 +79,20 @@ internal class OppdragsInfoApiTest : FunSpec({
                 kodeStatus = "PASS",
             )
 
-        val oppdragsInfo =
-            OppdragsInfo(
+        val oppdragsinfoTreffliste =
+            OppdragsinfoTreffliste(
                 gjelderId = "12345678901",
-                oppdragsListe = listOf(oppdrag),
+                oppdragsListe = listOf(nokkelinfoOmOppdrag),
             )
 
-        every { oppdragsInfoService.sokOppdragsInfo(any(), any(), any()) } returns listOf(oppdragsInfo)
+        every { oppdragsInfoService.sokOppdragsInfo(any(), any(), any()) } returns listOf(oppdragsinfoTreffliste)
 
         val response =
             RestAssured.given()
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(OppdragsInfoRequest(gjelderId = "12345678901", fagGruppeKode = "ABC"))
+                .body(SokOppdragRequestBody(gjelderId = "12345678901", fagGruppeKode = "ABC"))
                 .port(PORT)
                 .post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsinfo")
                 .then()
@@ -101,8 +101,8 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .extract()
                 .response()
 
-        response.body.jsonPath().getList<OppdragsInfo>("gjelderId").first().shouldBe("12345678901")
-        response.body.jsonPath().getList<Oppdrag>("oppdragsListe").shouldHaveSize(1)
+        response.body.jsonPath().getList<OppdragsinfoTreffliste>("gjelderId").first().shouldBe("12345678901")
+        response.body.jsonPath().getList<NokkelinfoOmOppdrag>("oppdragsListe").shouldHaveSize(1)
     }
 
     test("sok oppdragsinfo med ugyldig gjelderId skal returnere 400 Bad Request") {
@@ -111,7 +111,7 @@ internal class OppdragsInfoApiTest : FunSpec({
             .filter(validationFilter)
             .header(HttpHeaders.ContentType, APPLICATION_JSON)
             .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-            .body(OppdragsInfoRequest(gjelderId = "123", fagGruppeKode = ""))
+            .body(SokOppdragRequestBody(gjelderId = "123", fagGruppeKode = ""))
             .port(PORT)
             .post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsinfo")
             .then()
@@ -122,15 +122,15 @@ internal class OppdragsInfoApiTest : FunSpec({
 
     test("hent oppdrag med gyldig gjelderId skal returnere 200 OK") {
 
-        val oppdragDetaljer =
-            OppdragDetaljer(
-                enhet =
+        val oppdrag =
+            Oppdrag(
+                kostnadssted =
                     OppdragsEnhet(
                         type = "BOS",
                         datoFom = "2024-01-01",
                         enhet = "0502",
                     ),
-                behandlendeEnhet = null,
+                ansvarssted = null,
                 harOmposteringer = TRUE,
                 oppdragsLinjer =
                     listOf(
@@ -154,7 +154,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                     ),
             )
 
-        every { oppdragsInfoService.hentOppdrag(any(), any()) } returns oppdragDetaljer
+        every { oppdragsInfoService.hentOppdrag(any(), any()) } returns oppdrag
 
         val response =
             RestAssured.given()
@@ -171,7 +171,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .response()
 
         response.body.jsonPath().get<Boolean>("harOmposteringer").shouldBe(TRUE)
-        response.body.jsonPath().get<String>("enhet.datoFom").shouldBe("2024-01-01")
+        response.body.jsonPath().get<String>("kostnadssted.datoFom").shouldBe("2024-01-01")
         response.body.jsonPath().getList<OppdragsLinje>("oppdragsLinjer").shouldHaveSize(1)
     }
 
