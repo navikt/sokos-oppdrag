@@ -7,6 +7,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.sokos.oppdrag.common.model.Attestant
 import no.nav.sokos.oppdrag.common.model.FagGruppe
+import no.nav.sokos.oppdrag.common.model.NokkelinfoOmOppdrag
 import no.nav.sokos.oppdrag.config.DatabaseConfig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kid
@@ -15,7 +16,6 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kravhaver
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Maksdato
-import no.nav.sokos.oppdrag.common.model.NokkelinfoOmOppdrag
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ompostering
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
