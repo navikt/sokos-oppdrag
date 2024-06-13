@@ -7,9 +7,9 @@ import io.ktor.server.application.ApplicationCall
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
-import no.nav.sokos.oppdrag.common.model.NokkelinfoOmOppdrag
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdragsegenskaper
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsinfoTreffliste
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsInfoRepository
 
@@ -20,8 +20,8 @@ private val oppdragsInfoService = OppdragsInfoService(oppdragsInfoRepository)
 internal class OppdragsInfoServiceTest : FunSpec({
 
     test("test sokOppdrag") {
-        val nokkelinfoOmOppdrag =
-            NokkelinfoOmOppdrag(
+        val oppdragsegenskaper =
+            Oppdragsegenskaper(
                 fagsystemId = "12345678901",
                 oppdragsId = 1234567890,
                 navnFagGruppe = "NAV Arbeid og ytelser",
@@ -38,7 +38,7 @@ internal class OppdragsInfoServiceTest : FunSpec({
 
         every { applicationCall.request.headers["Authorization"] } returns tokenWithNavIdent
         every { oppdragsInfoRepository.hentOppdragsInfo("12345678901") } returns oppdragsinfoTreffliste
-        every { oppdragsInfoRepository.hentOppdragsListe("12345678901", "") } returns listOf(nokkelinfoOmOppdrag)
+        every { oppdragsInfoRepository.hentOppdragsListe("12345678901", "") } returns listOf(oppdragsegenskaper)
 
         val result = oppdragsInfoService.sokOppdragsInfo("12345678901", "", applicationCall)
 
@@ -50,6 +50,17 @@ internal class OppdragsInfoServiceTest : FunSpec({
 
         val oppdragsId = 12345
         val gjelderId = "12345678901"
+
+        val oppdragsegenskaper =
+            Oppdragsegenskaper(
+                fagsystemId = "123456789",
+                oppdragsId = oppdragsId,
+                navnFagGruppe = "faggruppeNavn",
+                navnFagOmraade = "fagomraadeNavn",
+                kjorIdag = "kjorIdag",
+                typeBilag = "bilagsType",
+                kodeStatus = "PASS",
+            )
 
         val oppdragsenhet =
             OppdragsEnhet(
@@ -91,6 +102,7 @@ internal class OppdragsInfoServiceTest : FunSpec({
             )
         every { oppdragsInfoRepository.eksistererOmposteringer(gjelderId, oppdragsId) } returns true
         every { oppdragsInfoRepository.hentOppdragsLinjer(oppdragsId) } returns listOf(oppdragsLinje)
+        every { oppdragsInfoRepository.hentOppdragsegenskaper(oppdragsId) } returns listOf(oppdragsegenskaper)
 
         val result = oppdragsInfoService.hentOppdrag(gjelderId, oppdragsId)
 

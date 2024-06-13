@@ -1,9 +1,9 @@
-package no.nav.sokos.oppdrag.common.model
+package no.nav.sokos.oppdrag.oppdragsinfo.domain
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NokkelinfoOmOppdrag(
+data class Oppdragsegenskaper(
     val fagsystemId: String,
     val oppdragsId: Int,
     val navnFagGruppe: String,

@@ -7,7 +7,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
+import no.nav.sokos.oppdrag.common.model.GjelderIdRequestBody
 import no.nav.sokos.oppdrag.common.model.SokOppdragRequestBody
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
 
@@ -33,20 +33,20 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
         }
 
         post("{oppdragsId}") {
-            val gjelderIdRequest = call.receive<GjelderIdRequest>()
+            val gjelderIdRequestBody = call.receive<GjelderIdRequestBody>()
             call.respond(
                 oppdragsInfoService.hentOppdrag(
-                    gjelderIdRequest.gjelderId,
+                    gjelderIdRequestBody.gjelderId,
                     call.parameters["oppdragsId"].orEmpty().toInt(),
                 ),
             )
         }
 
         post("{oppdragsId}/omposteringer") {
-            val gjelderIdRequest = call.receive<GjelderIdRequest>()
+            val gjelderIdRequestBody = call.receive<GjelderIdRequestBody>()
             call.respond(
                 oppdragsInfoService.hentOppdragsOmposteringer(
-                    gjelderIdRequest.gjelderId,
+                    gjelderIdRequestBody.gjelderId,
                     call.parameters["oppdragsId"].orEmpty(),
                 ),
             )

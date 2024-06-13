@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Oppdrag(
+    val oppdragsegenskaper: Oppdragsegenskaper,
     val kostnadssted: OppdragsEnhet,
     val ansvarssted: OppdragsEnhet? = null,
     val harOmposteringer: Boolean,

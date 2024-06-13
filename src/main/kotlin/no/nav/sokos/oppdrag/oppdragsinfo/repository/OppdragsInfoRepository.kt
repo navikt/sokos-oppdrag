@@ -7,7 +7,6 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.sokos.oppdrag.common.model.Attestant
 import no.nav.sokos.oppdrag.common.model.FagGruppe
-import no.nav.sokos.oppdrag.common.model.NokkelinfoOmOppdrag
 import no.nav.sokos.oppdrag.config.DatabaseConfig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kid
@@ -20,6 +19,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ompostering
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdragsegenskaper
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsinfoTreffliste
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ovrig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
@@ -61,7 +61,7 @@ class OppdragsInfoRepository(
     fun hentOppdragsListe(
         gjelderId: String,
         fagGruppeKode: String?,
-    ): List<NokkelinfoOmOppdrag> {
+    ): List<Oppdragsegenskaper> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -95,7 +95,44 @@ class OppdragsInfoRepository(
                         "fagGruppeKode" to fagGruppeKode,
                     ),
                 ),
-                mapToNokkelinfoOmOppdrag,
+                mapToOppdragsegenskaper,
+            )
+        }
+    }
+
+    fun hentOppdragsegenskaper(oppdragsId: Int): List<Oppdragsegenskaper> {
+        return using(sessionOf(dataSource)) { session ->
+            session.list(
+                queryOf(
+                    """
+                    SELECT OP.OPPDRAGS_ID,
+                        OP.FAGSYSTEM_ID,
+                        FO.NAVN_FAGOMRAADE,
+                        OP.OPPDRAG_GJELDER_ID,
+                        OP.KJOR_IDAG,
+                        OP.TYPE_BILAG,
+                        FG.NAVN_FAGGRUPPE,
+                        OS.KODE_STATUS,
+                        OS.TIDSPKT_REG
+                    FROM T_OPPDRAG OP,
+                        T_FAGOMRAADE FO, 
+                        T_FAGGRUPPE FG,
+                        T_OPPDRAG_STATUS OS
+                    WHERE OP.OPPDRAGS_ID = :oppdragsId 
+                    AND FO.KODE_FAGOMRAADE = OP.KODE_FAGOMRAADE
+                    AND FG.KODE_FAGGRUPPE = FO.KODE_FAGGRUPPE
+                    AND OS.OPPDRAGS_ID = :oppdragsId
+                    AND OS.TIDSPKT_REG = (
+                        SELECT MAX(OS2.TIDSPKT_REG)
+                        FROM T_OPPDRAG_STATUS OS2
+                        WHERE OS2.OPPDRAGS_ID = OS.OPPDRAGS_ID
+                    )
+                    """.trimIndent(),
+                    mapOf(
+                        "oppdragsId" to oppdragsId,
+                    ),
+                ),
+                mapToOppdragsegenskaper,
             )
         }
     }
@@ -639,8 +676,8 @@ class OppdragsInfoRepository(
         )
     }
 
-    private val mapToNokkelinfoOmOppdrag: (Row) -> NokkelinfoOmOppdrag = { row ->
-        NokkelinfoOmOppdrag(
+    private val mapToOppdragsegenskaper: (Row) -> Oppdragsegenskaper = { row ->
+        Oppdragsegenskaper(
             fagsystemId = row.string("FAGSYSTEM_ID"),
             oppdragsId = row.int("OPPDRAGS_ID"),
             navnFagGruppe = row.string("NAVN_FAGGRUPPE"),

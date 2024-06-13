@@ -89,12 +89,14 @@ class OppdragsInfoService(
             )
         }
 
+        val oppdragsegenskaper = oppdragsInfoRepository.hentOppdragsegenskaper(oppdragsId).first()
         val enhet = oppdragsInfoRepository.hentOppdragsEnhet(oppdragsId = oppdragsId).first()
         val behandlendeEnhet = oppdragsInfoRepository.hentOppdragsEnhet("BEH", oppdragsId).firstOrNull()
         val harOmposteringer = oppdragsInfoRepository.eksistererOmposteringer(gjelderId, oppdragsId)
         val oppdragsLinjer = oppdragsInfoRepository.hentOppdragsLinjer(oppdragsId)
 
         return Oppdrag(
+            oppdragsegenskaper,
             enhet,
             behandlendeEnhet,
             harOmposteringer,

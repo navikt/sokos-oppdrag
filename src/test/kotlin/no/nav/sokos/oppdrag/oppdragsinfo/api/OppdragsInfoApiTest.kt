@@ -20,8 +20,7 @@ import no.nav.sokos.oppdrag.OPPDRAGSINFO_BASE_API_PATH
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
 import no.nav.sokos.oppdrag.common.model.Attestant
 import no.nav.sokos.oppdrag.common.model.FagGruppe
-import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
-import no.nav.sokos.oppdrag.common.model.NokkelinfoOmOppdrag
+import no.nav.sokos.oppdrag.common.model.GjelderIdRequestBody
 import no.nav.sokos.oppdrag.common.model.SokOppdragRequestBody
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
@@ -38,6 +37,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinjeDetaljer
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdragsegenskaper
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsinfoTreffliste
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ovrig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
@@ -68,8 +68,8 @@ internal class OppdragsInfoApiTest : FunSpec({
     }
 
     test("sok oppdragsinfo med gyldig gjelderId skal returnere 200 OK") {
-        val nokkelinfoOmOppdrag =
-            NokkelinfoOmOppdrag(
+        val oppdragsegenskaper =
+            Oppdragsegenskaper(
                 fagsystemId = "12345678901",
                 oppdragsId = 1234556,
                 navnFagGruppe = "faggruppeNavn",
@@ -82,7 +82,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         val oppdragsinfoTreffliste =
             OppdragsinfoTreffliste(
                 gjelderId = "12345678901",
-                oppdragsListe = listOf(nokkelinfoOmOppdrag),
+                oppdragsListe = listOf(oppdragsegenskaper),
             )
 
         every { oppdragsInfoService.sokOppdragsInfo(any(), any(), any()) } returns listOf(oppdragsinfoTreffliste)
@@ -95,7 +95,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .extract().response()
 
         response.body.jsonPath().getList<OppdragsinfoTreffliste>("gjelderId").first().shouldBe("12345678901")
-        response.body.jsonPath().getList<NokkelinfoOmOppdrag>("oppdragsListe").shouldHaveSize(1)
+        response.body.jsonPath().getList<Oppdragsegenskaper>("oppdragsListe").shouldHaveSize(1)
     }
 
     test("sok oppdragsinfo med ugyldig gjelderId skal returnere 400 Bad Request") {
@@ -112,6 +112,16 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         val oppdrag =
             Oppdrag(
+                oppdragsegenskaper =
+                    Oppdragsegenskaper(
+                        fagsystemId = "12345678901",
+                        oppdragsId = 1234556,
+                        navnFagGruppe = "faggruppeNavn",
+                        navnFagOmraade = "fagomraadeNavn",
+                        kjorIdag = "kjorIdag",
+                        typeBilag = "bilagsType",
+                        kodeStatus = "PASS",
+                    ),
                 kostnadssted =
                     OppdragsEnhet(
                         type = "BOS",
@@ -147,7 +157,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         val response =
             RestAssured.given().filter(validationFilter).header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(GjelderIdRequest(gjelderId = "12345678901")).port(PORT)
+                .body(GjelderIdRequestBody(gjelderId = "12345678901")).port(PORT)
                 .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID").then().assertThat().statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
@@ -169,7 +179,7 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         RestAssured.given().filter(validationFilter).header(HttpHeaders.ContentType, APPLICATION_JSON)
             .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-            .body(GjelderIdRequest(gjelderId = "123456789")).port(PORT).post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID")
+            .body(GjelderIdRequestBody(gjelderId = "123456789")).port(PORT).post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID")
             .then().assertThat().statusCode(HttpStatusCode.BadRequest.value)
             .body("message", equalTo("Oppdraget tilhører ikke gjelderId"))
     }
@@ -215,7 +225,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         val response =
             RestAssured.given().filter(validationFilter).header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(GjelderIdRequest(gjelderId = "12345678901")).port(PORT)
+                .body(GjelderIdRequestBody(gjelderId = "12345678901")).port(PORT)
                 .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/omposteringer").then().assertThat()
                 .statusCode(HttpStatusCode.OK.value).extract().response()
 
