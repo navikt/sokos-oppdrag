@@ -38,7 +38,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/OppdragsInfo'
+                  $ref: '#/components/schemas/Oppdragsegenskaper'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:

@@ -4,6 +4,8 @@ import io.ktor.server.application.Application
 import io.ktor.server.auth.authenticate
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.routing
+import no.nav.sokos.oppdrag.attestasjon.api.attestasjonApi
+import no.nav.sokos.oppdrag.attestasjon.api.attestasjonSwaggerApi
 import no.nav.sokos.oppdrag.integration.api.integrationApi
 import no.nav.sokos.oppdrag.integration.api.integrationSwaggerApi
 import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoApi
@@ -17,9 +19,11 @@ fun Application.routingConfig(
         internalNaisRoutes(applicationState)
         oppdragsinfoSwaggerApi()
         integrationSwaggerApi()
+        attestasjonSwaggerApi()
         authenticate(useAuthentication, AUTHENTICATION_NAME) {
             integrationApi()
             oppdragsInfoApi()
+            attestasjonApi()
         }
     }
 }
