@@ -38,7 +38,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Oppdragsegenskaper'
+                  $ref: '#/components/schemas/OppdragsinfoTreffliste'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
@@ -767,7 +767,7 @@ components:
           example: "9 eller 11 siffer"
           description: 9 eller 11 siffer
 
-    OppdragsInfo:
+    OppdragsinfoTreffliste:
       type: object
       properties:
         gjelderId:
