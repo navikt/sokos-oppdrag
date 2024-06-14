@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.oppdragsinfo.domain
+package no.nav.sokos.oppdrag.common.model
 
 import kotlinx.serialization.Serializable
 

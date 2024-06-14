@@ -23,7 +23,7 @@ repositories {
 }
 
 val ktorVersion = "2.3.11"
-val kotlinxSerializationVersion = "1.6.3"
+val kotlinxSerializationVersion = "1.7.0"
 val micrometerVersion = "1.13.0"
 val kotlinLoggingVersion = "3.0.5"
 val janionVersion = "3.1.12"
@@ -33,7 +33,7 @@ val natpryceVersion = "1.6.10.0"
 val hikariVersion = "5.1.0"
 val db2JccVersion = "11.5.9.0"
 val graphqlClientVersion = "7.1.1"
-val kotestVersion = "5.9.0"
+val kotestVersion = "5.9.1"
 val mockkVersion = "1.13.11"
 val mockOAuth2ServerVersion = "2.1.5"
 val swaggerRequestValidatorVersion = "2.40.0"

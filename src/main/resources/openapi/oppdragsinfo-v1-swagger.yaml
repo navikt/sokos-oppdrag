@@ -103,7 +103,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OppdragDetaljer'
+                $ref: '#/components/schemas/Oppdrag'
         400:
           description: Ugyldig request - Oppdragsid har ingen tilknytning til gjelderId
           content:
@@ -777,18 +777,21 @@ components:
         oppdragsListe:
           type: array
           items:
-            $ref: '#/components/schemas/Oppdrag'
+            $ref: '#/components/schemas/Oppdragsegenskaper'
 
-    OppdragDetaljer:
+    Oppdrag:
       type: object
       required:
-        - enhet
+        - oppdragsegenskaper
+        - kostnadssted
         - harOmposteringer
         - oppdragsLinjer
       properties:
-        enhet:
+        oppdragsegenskaper:
+          $ref: '#/components/schemas/Oppdragsegenskaper'
+        kostnadssted:
           $ref: '#/components/schemas/OppdragsEnhet'
-        behandlendeEnhet:
+        ansvarssted:
           $ref: '#/components/schemas/OppdragsEnhet'
         harOmposteringer:
           type: boolean
@@ -870,7 +873,7 @@ components:
         brukerid:
           type: string
 
-    Oppdrag:
+    Oppdragsegenskaper:
       type: object
       properties:
         fagsystemId:
@@ -949,7 +952,7 @@ components:
         korrigerteLinjeIder:
           type: array
           items:
-            type: integer
+            $ref: '#/components/schemas/OppdragsLinje'
         harValutaer:
           type: boolean
         harSkyldnere:
