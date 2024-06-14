@@ -91,7 +91,8 @@ internal class OppdragsInfoApiTest : FunSpec({
             RestAssured.given().filter(validationFilter).header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .body(SokOppdragRequestBody(gjelderId = "12345678901", fagGruppeKode = "ABC")).port(PORT)
-                .post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsinfo").then().assertThat().statusCode(HttpStatusCode.OK.value)
+                .post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsinfo").then().assertThat()
+                .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
         response.body.jsonPath().getList<OppdragsinfoTreffliste>("gjelderId").first().shouldBe("12345678901")
@@ -158,7 +159,8 @@ internal class OppdragsInfoApiTest : FunSpec({
             RestAssured.given().filter(validationFilter).header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .body(GjelderIdRequestBody(gjelderId = "12345678901")).port(PORT)
-                .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID").then().assertThat().statusCode(HttpStatusCode.OK.value)
+                .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID").then().assertThat()
+                .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
         response.body.jsonPath().get<Boolean>("harOmposteringer").shouldBe(TRUE)
@@ -179,7 +181,8 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         RestAssured.given().filter(validationFilter).header(HttpHeaders.ContentType, APPLICATION_JSON)
             .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-            .body(GjelderIdRequestBody(gjelderId = "123456789")).port(PORT).post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID")
+            .body(GjelderIdRequestBody(gjelderId = "123456789")).port(PORT)
+            .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID")
             .then().assertThat().statusCode(HttpStatusCode.BadRequest.value)
             .body("message", equalTo("Oppdraget tilhører ikke gjelderId"))
     }
@@ -321,7 +324,26 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         val oppdragsLinjeDetaljer =
             OppdragsLinjeDetaljer(
-                korrigerteLinjeIder = listOf(1),
+                korrigerteLinjeIder =
+                    listOf(
+                        OppdragsLinje(
+                            linjeId = 11,
+                            kodeKlasse = "ABC",
+                            datoVedtakFom = "2024-01-01",
+                            datoVedtakTom = null,
+                            sats = 99.9,
+                            typeSats = "DAG",
+                            kodeStatus = "X",
+                            datoFom = "2024-01-01",
+                            linjeIdKorr = 22,
+                            attestert = "J",
+                            delytelseId = "D3",
+                            utbetalesTilId = "A1B2",
+                            refunderesOrgnr = "123456789",
+                            brukerId = "abc123",
+                            tidspktReg = "2024-01-01",
+                        ),
+                    ),
                 harValutaer = TRUE,
                 harSkyldnere = TRUE,
                 harKravhavere = TRUE,

@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OppdragsLinjeDetaljer(
-    val korrigerteLinjeIder: List<Int>? = null,
+    val korrigerteLinjeIder: List<OppdragsLinje>? = null,
     val harValutaer: Boolean,
     val harSkyldnere: Boolean,
     val harKravhavere: Boolean,

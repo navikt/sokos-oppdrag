@@ -143,10 +143,11 @@ class OppdragsInfoService(
         linjeId: String,
     ): OppdragsLinjeDetaljer {
         logger.info { "Henter detaljer for oppdrag: $oppdragsId, linje : $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
+        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
+        val oppdragslinjer = oppdragsInfoRepository.hentOppdragsLinjer(oppdragsId.toInt())
         val eksisterer = oppdragsInfoRepository.eksistererValutaSkyldnerKravhaverLinjeenhetGradTekstKidMaksDato(oppdragsId.toInt(), linjeId.toInt())
         return OppdragsLinjeDetaljer(
-            korrigerteLinjeIder = korrigerteLinjeIder,
+            korrigerteLinjeIder = oppdragslinjer.filter { it.linjeId in korrigerteLinjeIder },
             harValutaer = eksisterer["T_VALUTA"] ?: false,
             harSkyldnere = eksisterer["T_SKYLDNER"] ?: false,
             harKravhavere = eksisterer["T_KRAVHAVER"] ?: false,
@@ -163,7 +164,7 @@ class OppdragsInfoService(
         linjeId: String,
     ): List<Valuta> {
         logger.info { "Henter valuta for oppdrag: $oppdragsId, linje : $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
+        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentValutaerList(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
@@ -172,7 +173,7 @@ class OppdragsInfoService(
         linjeId: String,
     ): List<Skyldner> {
         logger.info { "Henter skyldner for oppdrag: $oppdragsId, linje: $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
+        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentSkyldnereList(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
@@ -181,7 +182,7 @@ class OppdragsInfoService(
         linjeId: String,
     ): List<Kravhaver> {
         logger.info { "Henter kravhaver for oppdrag: $oppdragsId, linje: $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
+        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentKravhavereList(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
@@ -190,7 +191,7 @@ class OppdragsInfoService(
         linjeId: String,
     ): List<LinjeEnhet> {
         logger.info { "Henter enheter liste for oppdrag: $oppdragsId, linje: $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
+        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentEnheterList(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
@@ -199,7 +200,7 @@ class OppdragsInfoService(
         linjeId: String,
     ): List<Grad> {
         logger.info { "Henter grad for oppdrag: $oppdragsId, linje: $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
+        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentGraderList(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
@@ -208,7 +209,7 @@ class OppdragsInfoService(
         linjeId: String,
     ): List<Tekst> {
         logger.info { "Henter tekst liste for oppdrag: $oppdragsId, linje: $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
+        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentTeksterList(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
@@ -217,7 +218,7 @@ class OppdragsInfoService(
         linjeId: String,
     ): List<Kid> {
         logger.info { "Henter kid for oppdrag: $oppdragsId, linje: $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
+        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentKidListe(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
@@ -226,7 +227,7 @@ class OppdragsInfoService(
         linjeId: String,
     ): List<Maksdato> {
         logger.info { "Henter maksdato for oppdrag: $oppdragsId, linje: $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
+        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentMaksdatoerListe(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
@@ -235,11 +236,11 @@ class OppdragsInfoService(
         linjeId: String,
     ): List<Ovrig> {
         logger.info { "Henter øvrig for oppdrag: $oppdragsId, linje: $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjer(oppdragsId, linjeId)
+        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsInfoRepository.hentOvrigListe(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    private fun finnKorrigerteLinjer(
+    private fun finnKorrigerteLinjeIder(
         oppdragsId: String,
         linjeId: String,
     ): List<Int> {
