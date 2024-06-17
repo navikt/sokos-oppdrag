@@ -49,10 +49,10 @@ class AttestasjonRepository(
 
     private val mapToOppdragsegenskaper: (Row) -> Oppdragsegenskaper = { row ->
         Oppdragsegenskaper(
-            fagsystemId = row.string("FAGSYSTEM_ID"),
+            fagsystemId = row.string("FAGSYSTEM_ID").trim(),
             oppdragsId = row.int("OPPDRAGS_ID"),
-            navnFagGruppe = row.string("NAVN_FAGGRUPPE"),
-            navnFagOmraade = row.string("NAVN_FAGOMRAADE"),
+            navnFagGruppe = row.string("NAVN_FAGGRUPPE").trim(),
+            navnFagOmraade = row.string("NAVN_FAGOMRAADE").trim(),
             kjorIdag = row.string("KJOR_IDAG"),
             kodeStatus = row.string("KODE_STATUS"),
         )
