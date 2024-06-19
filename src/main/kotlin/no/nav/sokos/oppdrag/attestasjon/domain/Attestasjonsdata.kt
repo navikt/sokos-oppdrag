@@ -12,6 +12,6 @@ data class Attestasjonsdata(
     val linje_id: Int,
     val attestert: String,
     val dato_vedtak_fom: String,
-    val dato_vedtak_tom: String,
+    val dato_vedtak_tom: String?,
     val kode_status: String,
 )
