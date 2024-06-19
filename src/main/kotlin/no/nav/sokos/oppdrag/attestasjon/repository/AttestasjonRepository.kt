@@ -79,7 +79,7 @@ class AttestasjonRepository(
             attestert = row.string("attestert").trim(),
             dato_vedtak_fom = row.string("dato_vedtak_fom").trim(),
             dato_vedtak_tom = row.stringOrNull("dato_vedtak_fom")?.trim(),
-            kode_status = row.string("kode_status").trim()
+            kode_status = row.string("kode_status").trim(),
         )
     }
 }
