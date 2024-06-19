@@ -67,19 +67,19 @@ class AttestasjonRepository(
 
     private val mapToAttestasjonsdata: (Row) -> Attestasjonsdata = { row ->
         Attestasjonsdata(
-            kode_faggruppe = row.string("kode_faggruppe").trim(),
-            navn_faggruppe = row.string("navn_faggruppe").trim(),
-            kode_fagomraade = row.string("kode_fagomraade").trim(),
-            navn_fagomraade = row.string("navn_fagomraade").trim(),
-            oppdrags_id = row.int("oppdrags_id"),
-            fagsystem_id = row.string("fagsystem_id").trim(),
-            oppdrag_gjelder_id = row.string("oppdrag_gjelder_id").trim(),
-            ant_attestanter = row.int("ant_attestanter"),
-            linje_id = row.int("linje_id"),
+            kodeFaggruppe = row.string("kode_faggruppe").trim(),
+            navnFaggruppe = row.string("navn_faggruppe").trim(),
+            kodeFagomraade = row.string("kode_fagomraade").trim(),
+            navnFagomraade = row.string("navn_fagomraade").trim(),
+            oppdragsId = row.int("oppdrags_id"),
+            fagsystemId = row.string("fagsystem_id").trim(),
+            oppdragGjelderId = row.string("oppdrag_gjelder_id").trim(),
+            antAttestanter = row.int("ant_attestanter"),
+            linjeId = row.int("linje_id"),
             attestert = row.string("attestert").trim(),
-            dato_vedtak_fom = row.string("dato_vedtak_fom").trim(),
-            dato_vedtak_tom = row.stringOrNull("dato_vedtak_fom")?.trim(),
-            kode_status = row.string("kode_status").trim(),
+            datoVedtakFom = row.string("dato_vedtak_fom").trim(),
+            datoVedtakTom = row.stringOrNull("dato_vedtak_fom")?.trim(),
+            kodeStatus = row.string("kode_status").trim(),
         )
     }
 }
