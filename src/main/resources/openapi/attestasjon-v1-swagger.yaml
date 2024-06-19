@@ -38,7 +38,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Oppdragsegenskaper'
+                  $ref: '#/components/schemas/Attestasjonsdata'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
@@ -68,20 +68,34 @@ components:
           example: "9 eller 11 siffer"
           description: 9 eller 11 siffer
 
-    Oppdragsegenskaper:
+    Attestasjonsdata:
       type: object
       properties:
-        fagsystemId:
+        kode_faggruppe:
           type: string
-        oppdragsId:
+        navn_faggruppe:
+          type: string
+        kode_fagomraade:
+          type: string
+        navn_fagomraade:
+          type: string
+        oppdrags_id:
           type: integer
-        navnFagGruppe:
+        fagsystem_id:
           type: string
-        navnFagOmraade:
+        oppdrag_gjelder_id:
           type: string
-        kjorIdag:
+        ant_attestanter:
+          type: integer
+        linje_id:
+          type: integer
+        attestert:
           type: string
-        kodeStatus:
+        dato_vedtak_fom:
+          type: string
+        dato_vedtak_tom:
+          type: string
+        kode_status:
           type: string
 
     ApiError:
