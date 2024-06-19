@@ -71,31 +71,31 @@ components:
     Attestasjonsdata:
       type: object
       properties:
-        kode_faggruppe:
+        kodeFaggruppe:
           type: string
-        navn_faggruppe:
+        navnFaggruppe:
           type: string
-        kode_fagomraade:
+        kodeFagomraade:
           type: string
-        navn_fagomraade:
+        navnFagomraade:
           type: string
-        oppdrags_id:
+        oppdragsId:
           type: integer
-        fagsystem_id:
+        fagsystemId:
           type: string
-        oppdrag_gjelder_id:
+        oppdragGjelderId:
           type: string
-        ant_attestanter:
+        antAttestanter:
           type: integer
-        linje_id:
+        linjeId:
           type: integer
         attestert:
           type: string
-        dato_vedtak_fom:
+        datoVedtakFom:
           type: string
-        dato_vedtak_tom:
+        datoVedtakTom:
           type: string
-        kode_status:
+        kodeStatus:
           type: string
 
     ApiError:
