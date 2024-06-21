@@ -5,7 +5,6 @@ import io.ktor.client.engine.apache.Apache
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import mu.KotlinLogging
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
@@ -23,8 +22,6 @@ val httpClient =
                     prettyPrint = true
                     ignoreUnknownKeys = true
                     encodeDefaults = true
-
-                    @OptIn(ExperimentalSerializationApi::class)
                     explicitNulls = false
                 },
             )

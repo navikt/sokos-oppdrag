@@ -10,8 +10,6 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 object ZonedDateTimeSerializer : KSerializer<ZonedDateTime> {
-    private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX")
-
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("ZonedDateTime", PrimitiveKind.STRING)
 
@@ -19,12 +17,11 @@ object ZonedDateTimeSerializer : KSerializer<ZonedDateTime> {
         encoder: Encoder,
         value: ZonedDateTime,
     ) {
-        val formattedValue = value.format(formatter)
-        encoder.encodeString(formattedValue)
+        encoder.encodeString(value.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
     }
 
     override fun deserialize(decoder: Decoder): ZonedDateTime {
-        val stringValue = decoder.decodeString()
-        return ZonedDateTime.parse(stringValue, formatter)
+        val value = decoder.decodeString()
+        return ZonedDateTime.parse(value)
     }
 }
