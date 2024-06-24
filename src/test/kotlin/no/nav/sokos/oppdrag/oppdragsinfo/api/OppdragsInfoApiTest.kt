@@ -18,13 +18,12 @@ import io.restassured.RestAssured
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.OPPDRAGSINFO_BASE_API_PATH
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
 import no.nav.sokos.oppdrag.common.model.GjelderIdRequestBody
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.SokOppdragRequestBody
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kid
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kravhaver
@@ -41,6 +40,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdragsegenskaper
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsinfoTreffliste
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ovrig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.SokOppdragRequestBody
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
@@ -114,43 +114,43 @@ internal class OppdragsInfoApiTest : FunSpec({
         val oppdrag =
             Oppdrag(
                 oppdragsegenskaper =
-                Oppdragsegenskaper(
-                    fagsystemId = "12345678901",
-                    oppdragsId = 1234556,
-                    navnFagGruppe = "faggruppeNavn",
-                    navnFagOmraade = "fagomraadeNavn",
-                    kjorIdag = "kjorIdag",
-                    typeBilag = "bilagsType",
-                    kodeStatus = "PASS",
-                ),
+                    Oppdragsegenskaper(
+                        fagsystemId = "12345678901",
+                        oppdragsId = 1234556,
+                        navnFagGruppe = "faggruppeNavn",
+                        navnFagOmraade = "fagomraadeNavn",
+                        kjorIdag = "kjorIdag",
+                        typeBilag = "bilagsType",
+                        kodeStatus = "PASS",
+                    ),
                 kostnadssted =
-                OppdragsEnhet(
-                    type = "BOS",
-                    datoFom = "2024-01-01",
-                    enhet = "0502",
-                ),
+                    OppdragsEnhet(
+                        type = "BOS",
+                        datoFom = "2024-01-01",
+                        enhet = "0502",
+                    ),
                 ansvarssted = null,
                 harOmposteringer = TRUE,
                 oppdragsLinjer =
-                listOf(
-                    OppdragsLinje(
-                        linjeId = 11,
-                        kodeKlasse = "ABC",
-                        datoVedtakFom = "2024-01-01",
-                        datoVedtakTom = null,
-                        sats = 99.9,
-                        typeSats = "DAG",
-                        kodeStatus = "X",
-                        datoFom = "2024-01-01",
-                        linjeIdKorr = 22,
-                        attestert = "J",
-                        delytelseId = "D3",
-                        utbetalesTilId = "A1B2",
-                        refunderesOrgnr = "123456789",
-                        brukerId = "abc123",
-                        tidspktReg = "2024-01-01",
+                    listOf(
+                        OppdragsLinje(
+                            linjeId = 11,
+                            kodeKlasse = "ABC",
+                            datoVedtakFom = "2024-01-01",
+                            datoVedtakTom = null,
+                            sats = 99.9,
+                            typeSats = "DAG",
+                            kodeStatus = "X",
+                            datoFom = "2024-01-01",
+                            linjeIdKorr = 22,
+                            attestert = "J",
+                            delytelseId = "D3",
+                            utbetalesTilId = "A1B2",
+                            refunderesOrgnr = "123456789",
+                            brukerId = "abc123",
+                            tidspktReg = "2024-01-01",
+                        ),
                     ),
-                ),
             )
 
         every { oppdragsInfoService.hentOppdrag(any(), any()) } returns oppdrag
@@ -175,9 +175,9 @@ internal class OppdragsInfoApiTest : FunSpec({
                 any(), any(),
             )
         } throws
-                RequestValidationException(
-                    HttpStatusCode.BadRequest.value, listOf("Oppdraget tilhører ikke gjelderId"),
-                )
+            RequestValidationException(
+                HttpStatusCode.BadRequest.value, listOf("Oppdraget tilhører ikke gjelderId"),
+            )
 
         RestAssured.given().filter(validationFilter).header(HttpHeaders.ContentType, APPLICATION_JSON)
             .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
@@ -325,25 +325,25 @@ internal class OppdragsInfoApiTest : FunSpec({
         val oppdragsLinjeDetaljer =
             OppdragsLinjeDetaljer(
                 korrigerteLinjeIder =
-                listOf(
-                    OppdragsLinje(
-                        linjeId = 11,
-                        kodeKlasse = "ABC",
-                        datoVedtakFom = "2024-01-01",
-                        datoVedtakTom = null,
-                        sats = 99.9,
-                        typeSats = "DAG",
-                        kodeStatus = "X",
-                        datoFom = "2024-01-01",
-                        linjeIdKorr = 22,
-                        attestert = "J",
-                        delytelseId = "D3",
-                        utbetalesTilId = "A1B2",
-                        refunderesOrgnr = "123456789",
-                        brukerId = "abc123",
-                        tidspktReg = "2024-01-01",
+                    listOf(
+                        OppdragsLinje(
+                            linjeId = 11,
+                            kodeKlasse = "ABC",
+                            datoVedtakFom = "2024-01-01",
+                            datoVedtakTom = null,
+                            sats = 99.9,
+                            typeSats = "DAG",
+                            kodeStatus = "X",
+                            datoFom = "2024-01-01",
+                            linjeIdKorr = 22,
+                            attestert = "J",
+                            delytelseId = "D3",
+                            utbetalesTilId = "A1B2",
+                            refunderesOrgnr = "123456789",
+                            brukerId = "abc123",
+                            tidspktReg = "2024-01-01",
+                        ),
                     ),
-                ),
                 harValutaer = TRUE,
                 harSkyldnere = TRUE,
                 harKravhavere = TRUE,

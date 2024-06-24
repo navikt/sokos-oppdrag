@@ -6,9 +6,9 @@ import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
+import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
-import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kid
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kravhaver
