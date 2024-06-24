@@ -5,8 +5,8 @@ import kotliquery.LoanPattern.using
 import kotliquery.Row
 import kotliquery.queryOf
 import kotliquery.sessionOf
-import no.nav.sokos.oppdrag.common.model.Attestant
-import no.nav.sokos.oppdrag.common.model.FagGruppe
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
 import no.nav.sokos.oppdrag.config.DatabaseConfig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kid
