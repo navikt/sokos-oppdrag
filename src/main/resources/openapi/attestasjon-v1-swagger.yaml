@@ -38,7 +38,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Attestasjonsdata'
+                  $ref: '#/components/schemas/AttestasjonTreff'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
@@ -56,6 +56,38 @@ paths:
       security:
         - Bearer: [ ]
 
+  /{oppdragsId}:
+    get:
+      tags:
+        - attestasjon
+      summary: Søk med oppdragsid
+      description: Returnerer oppdragslinjene til valgte oppdrag.
+      operationId: hentOppdragslinjerForAttestering
+      responses:
+        200:
+          description: OK - Hvis oppdrag ikke finnes, returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attestasjonsdetaljer'
+        400:
+          description: Ugyldig request, oppfyller ikke swagger-kontrakt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
 components:
   schemas:
     GjelderIdRequest:
@@ -68,14 +100,10 @@ components:
           example: "9 eller 11 siffer"
           description: 9 eller 11 siffer
 
-    Attestasjonsdata:
+    AttestasjonTreff:
       type: object
       properties:
-        kodeFaggruppe:
-          type: string
         navnFaggruppe:
-          type: string
-        kodeFagomraade:
           type: string
         navnFagomraade:
           type: string
@@ -83,21 +111,39 @@ components:
           type: integer
         fagsystemId:
           type: string
-        oppdragGjelderId:
+
+    Attestasjonsdetaljer:
+      type: object
+      required:
+        - klasse
+        - delytelsesId
+        - sats
+        - satstype
+        - datoVedtakFom
+        - attestert
+        - navnFagomraade
+        - fagsystemId
+      properties:
+        klasse:
           type: string
-        antAttestanter:
-          type: integer
-        linjeId:
-          type: integer
-        attestert:
+        delytelsesId:
+          type: string
+        sats:
+          type: number
+        satstype:
           type: string
         datoVedtakFom:
           type: string
         datoVedtakTom:
           type: string
-        kodeStatus:
+        attestert:
           type: string
-
+        attestant:
+          type: string
+        navnFagomraade:
+          type: string
+        fagsystemId:
+          type: string
     ApiError:
       type: object
       required:

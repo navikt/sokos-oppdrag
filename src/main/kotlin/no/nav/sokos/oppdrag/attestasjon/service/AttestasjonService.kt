@@ -2,7 +2,8 @@ package no.nav.sokos.oppdrag.attestasjon.service
 
 import io.ktor.server.application.ApplicationCall
 import mu.KotlinLogging
-import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjonsdata
+import no.nav.sokos.oppdrag.attestasjon.domain.AttestasjonTreff
+import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjonsdetaljer
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
@@ -18,7 +19,7 @@ class AttestasjonService(
     fun hentOppdragForAttestering(
         gjelderId: String,
         applicationCall: ApplicationCall,
-    ): List<Attestasjonsdata> {
+    ): List<AttestasjonTreff> {
         val saksbehandler = getSaksbehandler(applicationCall)
 
         secureLogger.info { "Henter attestasjonsdata for gjelderId: $gjelderId" }
@@ -31,5 +32,9 @@ class AttestasjonService(
         )
 
         return attestasjonRepository.sok(gjelderId)
+    }
+
+    fun hentOppdragslinjerForAttestering(oppdragsId: Int): List<Attestasjonsdetaljer> {
+        return attestasjonRepository.hentOppdragslinjer(oppdragsId)
     }
 }
