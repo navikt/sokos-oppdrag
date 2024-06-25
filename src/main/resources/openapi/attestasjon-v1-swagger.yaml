@@ -16,7 +16,7 @@ servers:
   - url: /api/v1/attestasjon
 
 paths:
-  /personsok:
+  /gjeldersok:
     post:
       tags:
         - attestasjon
@@ -178,7 +178,7 @@ components:
           description: En lesbar forklaring som er spesifikk for denne forekomsten av problemet
         path:
           type: string
-          example: /api/v1/integration/personsok
+          example: /api/v1/integration/gjeldersok
           description: Endepunktet hvor feilen oppstå
 
   securitySchemes:

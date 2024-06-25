@@ -14,7 +14,7 @@ private const val BASE_PATH = "/api/v1/attestasjon"
 
 fun Route.attestasjonApi(service: AttestasjonService = AttestasjonService()) {
     route(BASE_PATH) {
-        post("personsok") {
+        post("gjeldersok") {
             val gjelderIdRequestBody = call.receive<GjelderIdRequestBody>()
             call.respond(
                 service.hentOppdragForAttestering(
