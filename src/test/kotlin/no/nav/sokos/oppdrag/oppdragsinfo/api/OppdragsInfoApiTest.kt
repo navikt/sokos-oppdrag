@@ -18,13 +18,12 @@ import io.restassured.RestAssured
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.OPPDRAGSINFO_BASE_API_PATH
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
-import no.nav.sokos.oppdrag.common.model.Attestant
-import no.nav.sokos.oppdrag.common.model.FagGruppe
 import no.nav.sokos.oppdrag.common.model.GjelderIdRequestBody
-import no.nav.sokos.oppdrag.common.model.SokOppdragRequestBody
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kid
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kravhaver
@@ -41,6 +40,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdragsegenskaper
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsinfoTreffliste
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ovrig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.SokOppdragRequestBody
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
