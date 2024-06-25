@@ -56,16 +56,23 @@ paths:
       security:
         - Bearer: [ ]
 
-  /{oppdragsId}:
+  /oppdragslinjer/{oppdragsId}:
     get:
       tags:
         - attestasjon
       summary: Søk med oppdragsid
       description: Returnerer oppdragslinjene til valgte oppdrag.
       operationId: hentOppdragslinjerForAttestering
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdragets id
+          required: true
+          schema:
+            type: string
       responses:
         200:
-          description: OK - Hvis oppdrag ikke finnes, returneres tom liste
+          description: OK - Hvis oppdraget ikke finnes, returneres tom liste
           content:
             application/json:
               schema:

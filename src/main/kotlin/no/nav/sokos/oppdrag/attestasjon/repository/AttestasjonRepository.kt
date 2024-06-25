@@ -72,15 +72,15 @@ class AttestasjonRepository(
                         oppdragslinje.dato_vedtak_fom as dato_vedtak_fom,
                         oppdragslinje.dato_vedtak_tom as dato_vedtak_tom,
                         oppdragslinje.attestert       as attestert,
-                        attestasjon.attestant_id      as attestant_id
+                        attestasjon.attestant_id      as attestant_id,
                         oppdrag.fagsystem_id          as fagsystem_id,
                         fagomraade.navn_fagomraade    as navn_fagomraade
                     from t_oppdragslinje oppdragslinje
-                    join t_fagomraade fagomraade on fagomraade.kode_fagomraade = oppdrag.kode_fagomraade
-                    join t_oppdrag oppdrag on oppdrag.oppdrags_id = oppdragslinje.oppdrags_id
-                    left outer join t_attestasjon attestasjon 
-                        on attestasjon.oppdrags_id = oppdragslinje.oppdrags_id
-                        and attestasjon.linje_id = oppdragslinje.linje_id
+                             join t_oppdrag oppdrag on oppdrag.oppdrags_id = oppdragslinje.oppdrags_id
+                             join t_fagomraade fagomraade on fagomraade.kode_fagomraade = oppdrag.kode_fagomraade
+                             left outer join t_attestasjon attestasjon
+                                             on attestasjon.oppdrags_id = oppdragslinje.oppdrags_id
+                                                 and attestasjon.linje_id = oppdragslinje.linje_id
                     where oppdragslinje.oppdrags_id = :oppdragsId
                     """.trimIndent(),
                     mapOf("oppdragsId" to oppdragsId),
@@ -101,7 +101,7 @@ class AttestasjonRepository(
 
     private val mapToOppdragslinjerTilAttestasjon: (Row) -> Attestasjonsdetaljer = { row ->
         Attestasjonsdetaljer(
-            klasse = row.string("kode_klasse").trim(),
+            klasse = row.string("kode").trim(),
             delytelsesId = row.string("delytelse_id").trim(),
             sats = row.double("sats"),
             satstype = row.string("type_sats").trim(),
@@ -109,8 +109,8 @@ class AttestasjonRepository(
             datoVedtakTom = row.stringOrNull("dato_vedtak_tom")?.trim(),
             attestert = row.string("attestert").trim(),
             attestant = row.string("attestant_id").trim(),
-            navnFagomraade = row.string("navn_fagomraade").trim(),
             fagsystemId = row.string("fagsystem_id").trim(),
+            navnFagomraade = row.string("navn_fagomraade").trim(),
         )
     }
 }

@@ -24,7 +24,7 @@ fun Route.attestasjonApi(service: AttestasjonService = AttestasjonService()) {
             )
         }
 
-        get("oppdragslinjer") {
+        get("oppdragslinjer/{oppdragsId}") {
             call.respond(
                 service.hentOppdragslinjerForAttestering(
                     call.parameters["oppdragsId"].orEmpty().toInt(),
