@@ -49,4 +49,5 @@ jobs:
           CLUSTER: dev-fss
           RESOURCE: .nais/naiserator-dev.yaml
           IMAGE: ${{ needs.build.outputs.image }}
+          TIMEOUT: 10m
           PRINT_PAYLOAD: true
