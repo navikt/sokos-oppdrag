@@ -70,18 +70,22 @@ class AttestasjonRepository(
                         oppdragslinje.sats            as sats,
                         oppdragslinje.type_sats       as type_sats,
                         oppdragslinje.dato_vedtak_fom as dato_vedtak_fom,
-                        oppdragslinje.dato_vedtak_tom as dato_vedtak_tom,
+                        l2.dato_vedtak_fom - 1 day    as dato_vedtak_tom,
                         oppdragslinje.attestert       as attestert,
                         attestasjon.attestant_id      as attestant_id,
                         oppdrag.fagsystem_id          as fagsystem_id,
                         fagomraade.navn_fagomraade    as navn_fagomraade
                     from t_oppdragslinje oppdragslinje
+                             left outer join T_KORREKSJON k on oppdragslinje.OPPDRAGS_ID = k.OPPDRAGS_ID and oppdragslinje.LINJE_ID = k.LINJE_ID
+                             left outer join T_OPPDRAGSLINJE l2 on l2.OPPDRAGS_ID = oppdragslinje.OPPDRAGS_ID and l2.LINJE_ID = k.LINJE_ID_KORR
                              join t_oppdrag oppdrag on oppdrag.oppdrags_id = oppdragslinje.oppdrags_id
                              join t_fagomraade fagomraade on fagomraade.kode_fagomraade = oppdrag.kode_fagomraade
                              left outer join t_attestasjon attestasjon
                                              on attestasjon.oppdrags_id = oppdragslinje.oppdrags_id
                                                  and attestasjon.linje_id = oppdragslinje.linje_id
-                    where oppdragslinje.oppdrags_id = :oppdragsId
+                    where 1=1
+                        and (l2.DATO_VEDTAK_FOM is null or l2.DATO_VEDTAK_FOM > oppdragslinje.DATO_VEDTAK_FOM)
+                        and oppdragslinje.oppdrags_id = :oppdragsId
                     """.trimIndent(),
                     mapOf("oppdragsId" to oppdragsId),
                 ),
