@@ -12,46 +12,53 @@ import no.nav.sokos.oppdrag.config.DatabaseConfig
 class AttestasjonRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource(),
 ) {
-    fun sok(gjelderId: String): List<AttestasjonTreff> {
+    fun sok(
+        gjelderId: String,
+        fagsystemId: String,
+        kodeFaggruppe: String,
+        kodeFagomraade: String,
+        attestert: String,
+    ): List<AttestasjonTreff> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
                     """
-                    select 
-                        g.navn_faggruppe, 
-                        f.navn_fagomraade,
-                        o.oppdrags_id, 
-                        o.fagsystem_id, 
-                        f.ant_attestanter,
-                        l.linje_id, 
-                        l.attestert        
+                    select g.navn_faggruppe
+                         , f.navn_fagomraade
+                         , o.oppdrags_id
+                         , o.fagsystem_id
+                         , ls.kode_status
                     from t_faggruppe g join t_fagomraade f on g.kode_faggruppe = f.kode_faggruppe
-                        join t_oppdrag o on f.kode_fagomraade = o.kode_fagomraade
-                        join t_oppdragslinje l on o.oppdrags_id = l.oppdrags_id
-                        join t_oppdrag_status s on s.oppdrags_id = l.oppdrags_id
-                        join t_linje_status ls on ls.oppdrags_id = l.oppdrags_id and ls.linje_id = l.linje_id
-                        left outer join t_korreksjon k on l.oppdrags_id = k.oppdrags_id and l.linje_id = k.linje_id
+                      join t_oppdrag o on f.kode_fagomraade = o.kode_fagomraade
+                      join t_oppdragslinje l on o.oppdrags_id = l.oppdrags_id
+                      join t_oppdrag_status s on s.oppdrags_id = l.oppdrags_id
+                      join t_linje_status ls on ls.oppdrags_id = l.oppdrags_id and ls.linje_id = l.linje_id
+                      left outer join t_korreksjon k on l.oppdrags_id = k.oppdrags_id and l.linje_id = k.linje_id
                     where k.oppdrags_id IS NULL
-                    
-                    and s.kode_status = 'AKTI'
-                    and s.tidspkt_reg = ( select max(s2.tidspkt_reg)
-                      from t_oppdrag_status s2
-                      where s.oppdrags_id = s2.oppdrags_id)
-                    
-                    and ls.tidspkt_reg = (select max(tidspkt_reg)
-                      from t_linje_status ls2
-                      where ls2.oppdrags_id = ls.oppdrags_id
-                    and ls2.linje_id = ls.linje_id)
-                    
-                    and o.oppdrag_gjelder_id 			= :gjelderId
-                    
-                    order by o.oppdrags_id
+                      and s.kode_status = 'AKTI'
+                      and s.tidspkt_reg = (select max(s2.tidspkt_reg)
+                                             from t_oppdrag_status s2
+                                            where s.oppdrags_id = s2.oppdrags_id)
+                      and ls.tidspkt_reg = (select max(tidspkt_reg)
+                                              from t_linje_status ls2
+                                             where ls2.oppdrags_id = ls.oppdrags_id
+                                               and ls2.linje_id = ls.linje_id)
+                      and (:gjelderId = ' ' or o.oppdrag_gjelder_id = :gjelderId)
+                      and (:fagsystemId = ' ' or o.fagsystem_id = :fagsystemId)
+                      and (:kodeFagomraade = ' ' or f.kode_fagomraade = :kodeFagomraade)
+                      and (:kodeFaggruppe = ' ' or g.kode_faggruppe = :kodeFaggruppe)
+                      and l.attestert like :attestert
+                    order by oppdrags_id
                     fetch first 200 rows only
-                    for read only
-                    optimize for 1 row
-                    """.trimIndent(),
+                    """.trimIndent() +
+                        (if (gjelderId.isNotBlank()) " optimize for 1 row " else "") +
+                        " for fetch only ",
                     mapOf(
                         "gjelderId" to gjelderId,
+                        "fagsystemId" to fagsystemId,
+                        "kodeFagomraade" to kodeFagomraade,
+                        "kodeFaggruppe" to kodeFaggruppe,
+                        "attestert" to attestert,
                     ),
                 ),
                 mapToAttestasjonTreff,

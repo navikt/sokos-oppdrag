@@ -51,7 +51,7 @@ internal class AttestasjonApiTest : FunSpec({
 
         val attestasjonTreffliste = listOf(attestasjontreff)
 
-        every { attestasjonService.hentOppdragForAttestering(any(), any()) } returns attestasjonTreffliste
+        every { attestasjonService.hentOppdragForAttestering(any(), any(), any(), any(), any(), any()) } returns attestasjonTreffliste
 
         val response =
             RestAssured.given().filter(validationFilter).header(HttpHeaders.ContentType, APPLICATION_JSON)
