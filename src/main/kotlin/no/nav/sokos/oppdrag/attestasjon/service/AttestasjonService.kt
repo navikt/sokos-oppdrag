@@ -1,6 +1,8 @@
 package no.nav.sokos.oppdrag.attestasjon.service
 
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
+import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.attestasjon.domain.AttestasjonTreff
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjonsdetaljer
@@ -36,23 +38,68 @@ class AttestasjonService(
             )
         }
 
+        if (!validerSok(
+                gjelderId = gjelderId,
+                kodeFaggruppe = kodeFaggruppe,
+                kodeFagomraade = kodeFagomraade,
+                fagsystemId = fagsystemId,
+                attestert = attestert,
+            )
+        ) {
+            throw RequestValidationException(
+                HttpStatusCode.BadRequest.value,
+                listOf("Ugyldig kombinasjon av søkeparametre"),
+            )
+        }
+
         return attestasjonRepository.sok(
             gjelderId = gjelderId ?: "",
             fagsystemId = fagsystemId ?: "",
             kodeFaggruppe = kodeFaggruppe ?: "",
             kodeFagomraade = kodeFagomraade ?: "",
-            attestert =
-                if (attestert == null) {
-                    "%"
-                } else if (attestert) {
-                    "J"
-                } else {
-                    "N"
-                },
+            attestert = attestertSql(attestert),
         )
     }
 
     fun hentOppdragslinjerForAttestering(oppdragsId: Int): List<Attestasjonsdetaljer> {
         return attestasjonRepository.hentOppdragslinjer(oppdragsId)
+    }
+}
+
+/**
+ * Minimum ett av kriteriene må være utfylt
+ * Faggruppe og Ikke attesterte.
+ * Fagområde og Ikke attesterte.
+ * Gjelder ID
+ * Fagsystem ID og fagområde
+ */
+fun validerSok(
+    kodeFaggruppe: String?,
+    kodeFagomraade: String?,
+    gjelderId: String?,
+    fagsystemId: String?,
+    attestert: Boolean?,
+): Boolean {
+    var gyldig = false
+
+    kodeFaggruppe?.takeIf { attestert == false }?.let { gyldig = true }
+    kodeFagomraade?.takeIf { attestert == false }?.let { gyldig = true }
+    gjelderId?.let { gyldig = true }
+    fagsystemId?.let { kodeFagomraade?.let { gyldig = true } }
+
+    return gyldig
+}
+
+/**
+ * @param attestert:  null betyr at vi skal finne både attesterte og uattesterte, true betyr attesterte,
+ * false betyr uattesterte
+ */
+fun attestertSql(attestert: Boolean?): String {
+    return if (attestert == null) {
+        "%"
+    } else if (attestert) {
+        "J"
+    } else {
+        "N"
     }
 }
