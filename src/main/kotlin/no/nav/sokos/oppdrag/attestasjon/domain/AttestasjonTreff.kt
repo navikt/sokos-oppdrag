@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AttestasjonTreff(
+    val gjelderId: String,
     val navnFaggruppe: String,
     val navnFagomraade: String,
     val oppdragsId: Int,

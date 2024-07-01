@@ -168,13 +168,15 @@ components:
           example: "MBA"
           nullable: true
         attestert:
-          type: "string"
-          example: "N"
+          type: boolean
+          example: true
           nullable: true
 
     AttestasjonTreff:
       type: object
       properties:
+        gjelderId:
+          type: string
         navnFaggruppe:
           type: string
         navnFagomraade:

@@ -43,6 +43,7 @@ internal class AttestasjonApiTest : FunSpec({
     test("søk etter gjelderId på gjeldersok endepunktet skal returnere 200 OK") {
         val attestasjontreff =
             AttestasjonTreff(
+                gjelderId = "12345678901",
                 navnFaggruppe = "navnFaggruppe",
                 navnFagomraade = "navnFagomraade",
                 oppdragsId = 987654,
