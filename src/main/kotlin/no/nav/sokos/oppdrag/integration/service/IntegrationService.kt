@@ -6,6 +6,7 @@ import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.ereg.EregService
+import no.nav.sokos.oppdrag.integration.model.GjelderIdName
 import no.nav.sokos.oppdrag.integration.pdl.PdlService
 import no.nav.sokos.oppdrag.integration.tp.TpService
 import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler
@@ -21,7 +22,7 @@ class IntegrationService(
     suspend fun hentNavnForGjelderId(
         gjelderId: String,
         applicationCall: ApplicationCall,
-    ): String {
+    ): GjelderIdName {
         val saksbehandler = getSaksbehandler(applicationCall)
 
         secureLogger.info { "Henter navn for gjelderId: $gjelderId" }
@@ -29,18 +30,30 @@ class IntegrationService(
             AuditLogg(
                 navIdent = saksbehandler.ident,
                 gjelderId = gjelderId,
-                brukerBehandlingTekst = "NAV-ansatt har gjort et oppslag på navn",
+                brukerBehandlingTekst = "NAV-ansatt har gjort et oppslag på gjelderId for å hente navn",
             ),
         )
 
         return when {
-            gjelderId.toLong() > 80000000000 -> tpService.getLeverandorNavn(gjelderId).navn
-            gjelderId.toLong() < 80000000000 && gjelderId.toLong() > "01000000000".toInt() ->
-                pdlService.getPersonNavn(gjelderId)?.navn?.first().let { navn ->
-                    navn?.mellomnavn?.let { "${navn.fornavn} ${navn.mellomnavn} ${navn.etternavn}" } ?: "${navn?.fornavn} ${navn?.etternavn}"
-                }
-
-            else -> eregService.getOrganisasjonsNavn(gjelderId).navn.sammensattnavn
+            gjelderId.toLong() > 80000000000 -> getLeverandorName(gjelderId)
+            gjelderId.toLong() in 10000000001..79999999999 -> getPersonName(gjelderId)
+            else -> getOrganisasjonsName(gjelderId)
         }
+    }
+
+    private suspend fun getLeverandorName(gjelderId: String): GjelderIdName {
+        val leverandorName = tpService.getLeverandorNavn(gjelderId).navn
+        return GjelderIdName(leverandorName)
+    }
+
+    private suspend fun getPersonName(gjelderId: String): GjelderIdName {
+        val person = pdlService.getPersonNavn(gjelderId)?.navn?.first()
+        val personName = person?.mellomnavn?.let { "${person.fornavn} ${person.mellomnavn} ${person.etternavn}" } ?: "${person?.fornavn} ${person?.etternavn}"
+        return GjelderIdName(personName)
+    }
+
+    private suspend fun getOrganisasjonsName(gjelderId: String): GjelderIdName {
+        val organisasjonName = eregService.getOrganisasjonsNavn(gjelderId).navn.sammensattnavn
+        return GjelderIdName(organisasjonName)
     }
 }

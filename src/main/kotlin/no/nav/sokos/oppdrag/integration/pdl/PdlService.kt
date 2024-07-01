@@ -35,7 +35,7 @@ class PdlService(
 
         logger.info { "Henter Person fra PDL" }
         val response =
-            httpClient.post(pdlUrl) {
+            httpClient.post("$pdlUrl/graphql") {
                 header(HttpHeaders.Authorization, "Bearer $accessToken")
                 header("behandlingsnummer", "B154")
                 header("Nav-Call-Id", MDC.get("x-correlation-id"))
@@ -70,17 +70,17 @@ class PdlService(
         val errorCode = errorExtensions.mapNotNull { it["code"] }
         val errorMessage = errors.joinToString { it.message }
 
-        if (errorExtensions.any { it["code"] == "not_found" }) {
-            return null
-        } else {
-            val exceptionMessage = "Feil ved henting av person fra PDL: (Path: $path, Code: $errorCode, Message: $errorMessage)"
-            val secureExceptionMessage = "Feil ved henting av person fra PDL: (Ident: $ident, Path: $path, Code: $errorCode, Message: $errorMessage)"
+        val exceptionMessage = "(Path: $path, Code: $errorCode, Message: $errorMessage)"
+        val secureExceptionMessage = "(Ident: $ident, Path: $path, Code: $errorCode, Message: $errorMessage)"
 
-            secureLogger.error { secureExceptionMessage }
+        secureLogger.error { secureExceptionMessage }
 
-            throw PdlException(exceptionMessage)
-        }
+        throw PdlException(
+            exceptionMessage,
+        )
     }
 }
 
-class PdlException(override val message: String) : Exception(message)
+data class PdlException(
+    override val message: String,
+) : Exception(message)

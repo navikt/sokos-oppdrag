@@ -60,4 +60,4 @@ class TpService(
     }
 }
 
-class TpException(val apiError: ApiError, val response: HttpResponse) : Exception(apiError.error)
+data class TpException(val apiError: ApiError, val response: HttpResponse) : Exception(apiError.error)

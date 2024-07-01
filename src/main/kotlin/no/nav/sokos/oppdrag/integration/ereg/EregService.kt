@@ -31,6 +31,8 @@ class EregService(
                 header("Nav-Call-Id", MDC.get("x-correlation-id"))
             }
         Metrics.eregCallCounter.labelValues("${response.status.value}").inc()
+        println("HVA FÅR JEG HER?? ${response.body<String>()}")
+
         return when {
             response.status.isSuccess() -> response.body<Organisasjon>()
             response.status.value == 400 -> {
@@ -65,7 +67,7 @@ class EregService(
                         ZonedDateTime.now(),
                         response.status.value,
                         response.status.description,
-                        response.errorMessage() ?: "",
+                        "Noe gikk galt ved oppslag av $organisasjonsNummer i Ereg",
                         "$eregUrl/v2/organisasjon/$organisasjonsNummer/noekkelinfo",
                     ),
                     response,
@@ -77,4 +79,4 @@ class EregService(
 
 suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject["melding"]?.jsonPrimitive?.content
 
-class EregException(val apiError: ApiError, val response: HttpResponse) : Exception(apiError.error)
+data class EregException(val apiError: ApiError, val response: HttpResponse) : Exception(apiError.error)

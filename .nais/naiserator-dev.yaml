@@ -96,6 +96,6 @@ spec:
 
     # Pdl
     - name: PDL_URL
-      value: "https://pdl-api-q1.dev.intern.nav.no/graphql"
+      value: "https://pdl-api-q1.dev.intern.nav.no"
     - name: PDL_SCOPE
       value: "api://dev-fss.pdl.pdl-api-q1/.default"

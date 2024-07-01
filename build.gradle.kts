@@ -39,6 +39,7 @@ val mockOAuth2ServerVersion = "2.1.7"
 val swaggerRequestValidatorVersion = "2.41.0"
 val papertrailappVersion = "1.0.0"
 val kotliqueryVersion = "1.9.0"
+val kotestWiremockVersion = "3.1.0"
 
 dependencies {
 
@@ -93,6 +94,7 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
+    testImplementation("io.kotest.extensions:kotest-extensions-wiremock:$kotestWiremockVersion")
     testImplementation("com.atlassian.oai:swagger-request-validator-restassured:$swaggerRequestValidatorVersion")
 }
 
