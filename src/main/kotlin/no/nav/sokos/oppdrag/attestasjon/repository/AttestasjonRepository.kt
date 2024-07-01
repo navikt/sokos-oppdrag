@@ -43,10 +43,10 @@ class AttestasjonRepository(
                                               from t_linje_status ls2
                                              where ls2.oppdrags_id = ls.oppdrags_id
                                                and ls2.linje_id = ls.linje_id)
-                      and (:gjelderId = ' ' or o.oppdrag_gjelder_id = :gjelderId)
-                      and (:fagsystemId = ' ' or o.fagsystem_id = :fagsystemId)
-                      and (:kodeFagomraade = ' ' or f.kode_fagomraade = :kodeFagomraade)
-                      and (:kodeFaggruppe = ' ' or g.kode_faggruppe = :kodeFaggruppe)
+                      and (:gjelderId = '' or o.oppdrag_gjelder_id = :gjelderId)
+                      and (:fagsystemId = '' or o.fagsystem_id = :fagsystemId)
+                      and (:kodeFagomraade = '' or f.kode_fagomraade = :kodeFagomraade)
+                      and (:kodeFaggruppe = '' or g.kode_faggruppe = :kodeFaggruppe)
                       and l.attestert like :attestert
                     order by oppdrags_id
                     fetch first 200 rows only
