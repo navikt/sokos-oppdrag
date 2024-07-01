@@ -159,6 +159,7 @@ class AttestasjonRepository(
 
     private val mapToAttestasjonTreff: (Row) -> AttestasjonTreff = { row ->
         AttestasjonTreff(
+            gjelderId = row.string("oppdrag_gjelder_id").trim(),
             navnFaggruppe = row.string("navn_faggruppe").trim(),
             navnFagomraade = row.string("navn_fagomraade").trim(),
             oppdragsId = row.int("oppdrags_id"),
