@@ -154,18 +154,23 @@ components:
           type: string
           example: "9 eller 11 siffer"
           description: 9 eller 11 siffer
+          nullable: true
         fagsystemId:
           type: string
           example: "TU000123456789012"
+          nullable: true
         kodeFaggruppe:
           type: string
           example: "PEN"
+          nullable: true
         kodeFagomraade:
           type: string
           example: "MBA"
+          nullable: true
         attestert:
           type: "string"
           example: "N"
+          nullable: true
 
     AttestasjonTreff:
       type: object
