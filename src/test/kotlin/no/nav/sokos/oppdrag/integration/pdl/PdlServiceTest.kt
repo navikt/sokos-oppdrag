@@ -18,6 +18,7 @@ private val accessTokenClient = mockk<AccessTokenClient>()
 private val pdlService =
     PdlService(
         pdlUrl = wiremock.baseUrl(),
+        accessTokenClient = accessTokenClient,
     )
 
 internal class PdlServiceTest : FunSpec({
