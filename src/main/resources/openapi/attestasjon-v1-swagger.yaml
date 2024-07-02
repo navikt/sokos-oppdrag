@@ -245,7 +245,7 @@ components:
           description: En lesbar forklaring som er spesifikk for denne forekomsten av problemet
         path:
           type: string
-          example: /api/v1/integration/gjeldersok
+          example: /api/v1/integration/sok
           description: Endepunktet hvor feilen oppstå
 
   securitySchemes:

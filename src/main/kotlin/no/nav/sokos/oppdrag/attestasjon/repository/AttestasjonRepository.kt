@@ -20,11 +20,12 @@ class AttestasjonRepository(
         attestert: String,
     ): List<AttestasjonTreff> {
         return using(sessionOf(dataSource)) { session ->
-            session.list(
-                queryOf(
+            val statementParts =
+                mutableListOf(
                     """
                     select g.navn_faggruppe
                          , f.navn_fagomraade
+                         , o.oppdrag_gjelder_id
                          , o.oppdrags_id
                          , o.fagsystem_id
                          , ls.kode_status
@@ -43,16 +44,21 @@ class AttestasjonRepository(
                                               from t_linje_status ls2
                                              where ls2.oppdrags_id = ls.oppdrags_id
                                                and ls2.linje_id = ls.linje_id)
-                      and (:gjelderId = '' or o.oppdrag_gjelder_id = :gjelderId)
-                      and (:fagsystemId = '' or o.fagsystem_id = :fagsystemId)
-                      and (:kodeFagomraade = '' or f.kode_fagomraade = :kodeFagomraade)
-                      and (:kodeFaggruppe = '' or g.kode_faggruppe = :kodeFaggruppe)
-                      and l.attestert like :attestert
-                    order by oppdrags_id
-                    fetch first 200 rows only
-                    """.trimIndent() +
-                        (if (gjelderId.isNotBlank()) " optimize for 1 row " else "") +
-                        " for fetch only ",
+                    """.trimIndent(),
+                )
+
+            if (gjelderId.isNotBlank()) statementParts.add("and o.oppdrag_gjelder_id = :gjelderId")
+            if (fagsystemId.isNotBlank()) statementParts.add("and o.fagsystem_id = :fagsystemId")
+            if (kodeFagomraade.isNotBlank()) statementParts.add("and f.kode_fagomraade = :kodeFagomraade")
+            if (kodeFaggruppe.isNotBlank()) statementParts.add("and g.kode_faggruppe = :kodeFaggruppe")
+
+            statementParts.add("fetch first 200 rows only")
+
+            if (gjelderId.isNotBlank() || fagsystemId.isNotBlank()) statementParts.add("optimize for 1 row")
+
+            session.list(
+                queryOf(
+                    statementParts.joinToString("\n"),
                     mapOf(
                         "gjelderId" to gjelderId,
                         "fagsystemId" to fagsystemId,
