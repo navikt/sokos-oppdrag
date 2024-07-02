@@ -53,9 +53,10 @@ class PdlService(
             }
 
             else -> {
+                secureLogger.error { "Noe gikk galt ved oppslag mot PDL for ident: $ident" }
                 throw ClientRequestException(
                     response,
-                    "Noe gikk galt ved oppslag av person med ident $ident i PDL",
+                    "Noe gikk galt ved oppslag mot PDL",
                 )
             }
         }

@@ -27,7 +27,7 @@ internal class PdlServiceTest : FunSpec({
         coEvery { accessTokenClient.getSystemToken() } returns "token"
     }
 
-    test("hent navn fra PDL") {
+    test("hent navn fra PDL returnerer 200 OK") {
         wiremock.stubFor(
             post(urlEqualTo("/graphql"))
                 .willReturn(
@@ -39,12 +39,13 @@ internal class PdlServiceTest : FunSpec({
         )
 
         val response = pdlService.getPersonNavn("12345678912")
+
         response?.navn?.first()?.fornavn shouldBe "Ola"
         response?.navn?.first()?.mellomnavn shouldBe null
         response?.navn?.first()?.etternavn shouldBe "Nordmann"
     }
 
-    test("finner ikke navn fra PDL") {
+    test("hent navn fra pdl returnerer json svar at person ikke finnes") {
         wiremock.stubFor(
             post(urlEqualTo("/graphql"))
                 .willReturn(
@@ -61,6 +62,25 @@ internal class PdlServiceTest : FunSpec({
             }
 
         exception.message shouldBe "(Path: [\"hentPerson\"], Code: [\"not_found\"], Message: Fant ikke person)"
+    }
+
+    test("hent navn fra pdl returnerer json svar at clienten ikke er autentisert") {
+        wiremock.stubFor(
+            post(urlEqualTo("/graphql"))
+                .willReturn(
+                    aResponse()
+                        .withHeader(HttpHeaders.ContentType, APPLICATION_JSON)
+                        .withStatus(HttpStatusCode.OK.value)
+                        .withBody(jsonResponseIkkeAutentisert),
+                ),
+        )
+
+        val exception =
+            assertThrows<PdlException> {
+                pdlService.getPersonNavn("12345678912")
+            }
+
+        exception.message shouldBe "(Path: [\"hentPerson\"], Code: [\"unauthenticated\"], Message: Ikke autentisert)"
     }
 })
 
@@ -98,6 +118,33 @@ private val jsonResponseNavnIkkeFunnet =
           ],
           "extensions": {
             "code": "not_found",
+            "classification": "ExecutionAborted"
+          }
+        }
+      ],
+      "data": {
+        "hentPerson": null
+      }
+    }
+    """.trimIndent()
+
+private val jsonResponseIkkeAutentisert =
+    """
+    {
+      "errors": [
+        {
+          "message": "Ikke autentisert",
+          "locations": [
+            {
+              "line": 2,
+              "column": 2
+            }
+          ],
+          "path": [
+            "hentPerson"
+          ],
+          "extensions": {
+            "code": "unauthenticated",
             "classification": "ExecutionAborted"
           }
         }

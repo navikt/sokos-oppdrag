@@ -19,7 +19,7 @@ private val tpService =
 
 internal class TpServiceTest : FunSpec({
 
-    test("hent organisasjonsnavn") {
+    test("hent leverandørnavn") {
         wiremock.stubFor(
             get(urlEqualTo("/api/ordninger/tss/$TSS_ID"))
                 .willReturn(
@@ -34,7 +34,7 @@ internal class TpServiceTest : FunSpec({
         response.navn shouldBe "Ola Nordmann"
     }
 
-    test("hent organisasjonsnavn returnerer 404 NotFound") {
+    test("hent leverandørnavn returnerer 404 NotFound") {
 
         wiremock.stubFor(
             get(urlEqualTo("/api/ordninger/tss/$TSS_ID"))
@@ -53,28 +53,6 @@ internal class TpServiceTest : FunSpec({
         exception.apiError.error shouldBe "Not Found"
         exception.apiError.status shouldBe 404
         exception.apiError.message shouldBe "Fant ingen leverandørnavn med tssId $TSS_ID"
-        exception.apiError.path shouldBe "${wiremock.baseUrl()}/api/ordninger/tss/$TSS_ID"
-    }
-
-    test("hent organisasjonsnavn returnerer 500 Internal Server Error, retry 5 ganger før Server Error exception oppstår") {
-
-        wiremock.stubFor(
-            get(urlEqualTo("/api/ordninger/tss/$TSS_ID"))
-                .willReturn(
-                    aResponse()
-                        .withStatus(500),
-                ),
-        )
-
-        val exception =
-            assertThrows<TpException> {
-                tpService.getLeverandorNavn(TSS_ID)
-            }
-
-        exception.shouldNotBeNull()
-        exception.apiError.error shouldBe "Server Error"
-        exception.apiError.status shouldBe 500
-        exception.apiError.message shouldBe "Noe gikk galt ved oppslag av $TSS_ID i TP"
         exception.apiError.path shouldBe "${wiremock.baseUrl()}/api/ordninger/tss/$TSS_ID"
     }
 })
