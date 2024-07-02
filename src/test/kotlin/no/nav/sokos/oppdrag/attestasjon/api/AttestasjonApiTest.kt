@@ -43,6 +43,7 @@ internal class AttestasjonApiTest : FunSpec({
     test("søk etter gjelderId på gjeldersok endepunktet skal returnere 200 OK") {
         val attestasjontreff =
             AttestasjonTreff(
+                gjelderId = "12345678901",
                 navnFaggruppe = "navnFaggruppe",
                 navnFagomraade = "navnFagomraade",
                 oppdragsId = 987654,
@@ -51,7 +52,7 @@ internal class AttestasjonApiTest : FunSpec({
 
         val attestasjonTreffliste = listOf(attestasjontreff)
 
-        every { attestasjonService.hentOppdragForAttestering(any(), any()) } returns attestasjonTreffliste
+        every { attestasjonService.hentOppdragForAttestering(any(), any(), any(), any(), any(), any()) } returns attestasjonTreffliste
 
         val response =
             RestAssured.given().filter(validationFilter).header(HttpHeaders.ContentType, APPLICATION_JSON)

@@ -9,7 +9,7 @@ info:
     url: https://nav-it.slack.com/archives/CKZADNFBP
 
 tags:
-  - name: attestasjon
+  - name: Attestasjon
     description: Opplysninger om attesterte oppdrag
 
 servers:
@@ -22,13 +22,53 @@ paths:
         - attestasjon
       summary: Søk med gjelderId
       description: Returnerer oppdrag tilknyttet person eller foretak basert på 9 eller 11 siffer gjelderId.
-      operationId: hentOppdragForAttestering
+      operationId: hentOppdragForAttesteringGjelderId
       requestBody:
         description: gjelderId er et krav
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/GjelderIdRequest'
+        required: true
+      responses:
+        200:
+          description: OK - Hvis oppdrag ikke finnes, returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttestasjonTreff'
+        400:
+          description: Ugyldig request, oppfyller ikke swagger-kontrakt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /sok:
+    post:
+      tags:
+        - attestasjon
+      summary: Søk etter oppdrag
+      description: Returnerer oppdrag som er aktuelle for attestasjon
+      operationId: hentOppdragForAttestering
+      requestBody:
+        description: gjelderId, faggruppe, fagområde, fagsystem-id,
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SokAttestasjonRequestBody'
         required: true
       responses:
         200:
@@ -107,9 +147,36 @@ components:
           example: "9 eller 11 siffer"
           description: 9 eller 11 siffer
 
+    SokAttestasjonRequestBody:
+      type: object
+      properties:
+        gjelderId:
+          type: string
+          example: "9 eller 11 siffer"
+          description: 9 eller 11 siffer
+          nullable: true
+        fagsystemId:
+          type: string
+          example: "TU000123456789012"
+          nullable: true
+        kodeFaggruppe:
+          type: string
+          example: "PEN"
+          nullable: true
+        kodeFagomraade:
+          type: string
+          example: "MBA"
+          nullable: true
+        attestert:
+          type: boolean
+          example: true
+          nullable: true
+
     AttestasjonTreff:
       type: object
       properties:
+        gjelderId:
+          type: string
         navnFaggruppe:
           type: string
         navnFagomraade:
@@ -178,7 +245,7 @@ components:
           description: En lesbar forklaring som er spesifikk for denne forekomsten av problemet
         path:
           type: string
-          example: /api/v1/integration/gjeldersok
+          example: /api/v1/integration/sok
           description: Endepunktet hvor feilen oppstå
 
   securitySchemes:
