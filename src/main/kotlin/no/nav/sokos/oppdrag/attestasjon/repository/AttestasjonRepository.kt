@@ -17,7 +17,7 @@ class AttestasjonRepository(
         fagsystemId: String,
         kodeFaggruppe: String,
         kodeFagomraade: String,
-        attestert: String,
+        attestert: Boolean?,
     ): List<AttestasjonTreff> {
         return using(sessionOf(dataSource)) { session ->
             val statementParts =
@@ -51,6 +51,14 @@ class AttestasjonRepository(
             if (fagsystemId.isNotBlank()) statementParts.add("and o.fagsystem_id = :fagsystemId")
             if (kodeFagomraade.isNotBlank()) statementParts.add("and f.kode_fagomraade = :kodeFagomraade")
             if (kodeFaggruppe.isNotBlank()) statementParts.add("and g.kode_faggruppe = :kodeFaggruppe")
+
+            if (attestert == false) {
+                statementParts.add("and l.attestert = 'N'")
+            } else if (attestert == true) {
+                statementParts.add("and l.attestert = 'J'")
+            } else if (attestert == null) {
+                statementParts.add("and l.attestert like '%'")
+            }
 
             statementParts.add("fetch first 200 rows only")
 

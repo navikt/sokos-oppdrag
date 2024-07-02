@@ -57,7 +57,7 @@ class AttestasjonService(
             fagsystemId = fagsystemId ?: "",
             kodeFaggruppe = kodeFaggruppe ?: "",
             kodeFagomraade = kodeFagomraade ?: "",
-            attestert = attestertSql(attestert),
+            attestert = attestert,
         )
     }
 
@@ -88,18 +88,4 @@ fun validerSok(
     fagsystemId?.let { kodeFagomraade?.let { gyldig = true } }
 
     return gyldig
-}
-
-/**
- * @param attestert:  null betyr at vi skal finne både attesterte og uattesterte, true betyr attesterte,
- * false betyr uattesterte
- */
-fun attestertSql(attestert: Boolean?): String {
-    return if (attestert == null) {
-        "%"
-    } else if (attestert) {
-        "J"
-    } else {
-        "N"
-    }
 }
