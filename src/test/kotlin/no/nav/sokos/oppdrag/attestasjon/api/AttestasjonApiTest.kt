@@ -13,10 +13,14 @@ import io.ktor.server.routing.routing
 import io.mockk.every
 import io.mockk.mockk
 import io.restassured.RestAssured
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.ATTESTASJON_BASE_API_PATH
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
 import no.nav.sokos.oppdrag.attestasjon.domain.AttestasjonTreff
+import no.nav.sokos.oppdrag.attestasjon.model.AttestasjondetaljerRequestBody
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
 import no.nav.sokos.oppdrag.common.model.GjelderIdRequestBody
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
@@ -63,6 +67,13 @@ internal class AttestasjonApiTest : FunSpec({
                 .extract().response()
 
         response.body.jsonPath().getList<AttestasjonTreff>("oppdragsId").first().shouldBe(987654)
+    }
+
+    test("foo") {
+        val attestasjondetaljerRequest = AttestasjondetaljerRequestBody(listOf(1, 2, 3))
+
+        val jsonString = Json.encodeToString(AttestasjondetaljerRequestBody.serializer(), attestasjondetaljerRequest)
+        println(jsonString)
     }
 })
 

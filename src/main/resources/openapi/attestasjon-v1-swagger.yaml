@@ -135,6 +135,46 @@ paths:
                 $ref: '#/components/schemas/ApiError'
       security:
         - Bearer: [ ]
+
+  /oppdragslinjer:
+    post:
+      tags:
+        - attestasjon
+      summary: Søk med oppdragsider
+      description: Returnerer oppdragslinjene til valgte oppdrag.
+      operationId: hentListeMedOppdragslinjerForAttestering
+      requestBody:
+        description: oppdragsIder
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttestasjondetaljerRequestBody'
+      responses:
+        200:
+          description: OK - Hvis oppdragene ikke finnes, returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attestasjonsdetaljer'
+        400:
+          description: Ugyldig request, oppfyller ikke swagger-kontrakt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
 components:
   schemas:
     GjelderIdRequest:
@@ -146,6 +186,19 @@ components:
           type: string
           example: "9 eller 11 siffer"
           description: 9 eller 11 siffer
+
+    AttestasjondetaljerRequestBody:
+        type: object
+        required:
+          - oppdragsIder
+        properties:
+            oppdragsIder:
+                type: array
+                items:
+                  type: integer
+                example: ["123", "456"]
+                description: Liste med oppdragsIder
+
 
     SokAttestasjonRequestBody:
       type: object
