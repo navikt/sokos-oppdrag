@@ -151,11 +151,6 @@ tasks {
         dependsOn(test)
         kover {
             reports {
-                total {
-                    html {
-                        enabled = true
-                    }
-                }
                 filters {
                     excludes {
                         // exclusion rules - classes to exclude from report
