@@ -64,6 +64,10 @@ class AttestasjonService(
     fun hentOppdragslinjerForAttestering(oppdragsId: Int): List<Attestasjonsdetaljer> {
         return attestasjonRepository.hentOppdragslinjer(oppdragsId)
     }
+
+    fun hentListeMedOppdragslinjerForAttestering(oppdragsIder: List<Int>): List<Attestasjonsdetaljer> {
+        return attestasjonRepository.hentOppdragslinjerForFlereOppdragsId(oppdragsIder)
+    }
 }
 
 /**

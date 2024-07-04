@@ -8,6 +8,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import no.nav.sokos.oppdrag.attestasjon.domain.SokAttestasjonRequestBody
+import no.nav.sokos.oppdrag.attestasjon.model.AttestasjondetaljerRequestBody
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
 import no.nav.sokos.oppdrag.common.model.GjelderIdRequestBody
 
@@ -43,6 +44,14 @@ fun Route.attestasjonApi(service: AttestasjonService = AttestasjonService()) {
             call.respond(
                 service.hentOppdragslinjerForAttestering(
                     call.parameters["oppdragsId"].orEmpty().toInt(),
+                ),
+            )
+        }
+        post("oppdragslinjer") {
+            val sokAttestasjonRequestBody = call.receive<AttestasjondetaljerRequestBody>()
+            call.respond(
+                service.hentListeMedOppdragslinjerForAttestering(
+                    sokAttestasjonRequestBody.oppdragsIder,
                 ),
             )
         }
