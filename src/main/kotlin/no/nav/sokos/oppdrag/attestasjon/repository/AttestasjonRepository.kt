@@ -172,6 +172,9 @@ class AttestasjonRepository(
     }
 
     fun hentOppdragslinjerForFlereOppdragsId(oppdragsIder: List<Int>): List<Attestasjonsdetaljer> {
+        val parameterMap = oppdragsIder.mapIndexed { index, id -> "id$index" to id }.toMap()
+        val placeholder = parameterMap.keys.joinToString(",") { ":$it" }
+
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -213,7 +216,7 @@ class AttestasjonRepository(
                                                                  where a2.oppdrags_id = l.oppdrags_id
                                                                    and a2.linje_id = l.linje_id
                                                                    and a2.attestant_id = a.attestant_id))
-                      and o.oppdrags_id  IN (:oppdragsIder)
+                      and o.oppdrags_id  IN ($placeholder)
                     union
                     select o.oppdrags_id
                         , l.linje_id
@@ -255,7 +258,7 @@ class AttestasjonRepository(
                       and o.oppdrags_id  IN (:oppdragsIder)
                     order by oppdrags_id, LINJE_ID
                     """.trimIndent(),
-                    mapOf("oppdragsIder" to oppdragsIder.joinToString(",")),
+                    parameterMap,
                 ),
                 mapToOppdragslinjerTilAttestasjon,
             )

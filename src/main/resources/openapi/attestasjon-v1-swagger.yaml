@@ -109,7 +109,7 @@ paths:
           description: Oppdragets id
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         200:
           description: OK - Hvis oppdraget ikke finnes, returneres tom liste
@@ -196,7 +196,7 @@ components:
                 type: array
                 items:
                   type: integer
-                example: ["123", "456"]
+                example: [123, 456]
                 description: Liste med oppdragsIder
 
 
