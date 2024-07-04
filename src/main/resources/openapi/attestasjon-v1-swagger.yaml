@@ -247,7 +247,6 @@ components:
         - sats
         - satstype
         - datoVedtakFom
-        - attestert
         - navnFagomraade
         - fagsystemId
       properties:
@@ -262,8 +261,6 @@ components:
         datoVedtakFom:
           type: string
         datoVedtakTom:
-          type: string
-        attestert:
           type: string
         attestant:
           type: string
