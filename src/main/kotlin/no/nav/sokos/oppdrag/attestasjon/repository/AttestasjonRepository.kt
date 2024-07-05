@@ -172,6 +172,8 @@ class AttestasjonRepository(
     }
 
     fun hentOppdragslinjerForFlereOppdragsId(oppdragsIder: List<Int>): List<Attestasjonsdetaljer> {
+        if (oppdragsIder.isEmpty()) return emptyList()
+
         val parameterMap = oppdragsIder.mapIndexed { index, id -> "id$index" to id }.toMap()
         val placeholder = parameterMap.keys.joinToString(",") { ":$it" }
 
