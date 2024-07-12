@@ -136,6 +136,27 @@ paths:
       security:
         - Bearer: [ ]
 
+
+  /fagomraader:
+    get:
+      tags:
+        - attestasjon
+      summary: Hent tilgjengelige fagområder
+      description: Returnerer en liste av tilgjengelige fagområder. Fagområde kan brukes til å filtrere søket i endepunktet -> /sok
+      operationId: hentFagomraader
+      responses:
+        200:
+          description: OK - Hvis fagområder ikke finnes så returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Fagomraade'
+      security:
+        - Bearer: [ ]
+
+
   /oppdragslinjer:
     post:
       tags:
@@ -186,6 +207,16 @@ components:
           type: string
           example: "9 eller 11 siffer"
           description: 9 eller 11 siffer
+    Fagomraade:
+      type: object
+      required:
+        - navn
+        - kode
+      properties:
+        navn:
+          type: string
+        kode:
+          type: string
 
     AttestasjondetaljerRequestBody:
         type: object
