@@ -6,6 +6,7 @@ import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.attestasjon.domain.AttestasjonTreff
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjonsdetaljer
+import no.nav.sokos.oppdrag.attestasjon.domain.Fagomraade
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
@@ -63,6 +64,10 @@ class AttestasjonService(
 
     fun hentOppdragslinjerForAttestering(oppdragsId: Int): List<Attestasjonsdetaljer> {
         return attestasjonRepository.hentOppdragslinjer(oppdragsId)
+    }
+
+    fun hentFagomraader(): List<Fagomraade> {
+        return attestasjonRepository.hentFagomraader()
     }
 
     fun hentListeMedOppdragslinjerForAttestering(oppdragsIder: List<Int>): List<Attestasjonsdetaljer> {

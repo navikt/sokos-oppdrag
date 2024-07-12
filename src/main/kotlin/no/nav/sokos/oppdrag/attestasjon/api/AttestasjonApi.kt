@@ -47,6 +47,12 @@ fun Route.attestasjonApi(service: AttestasjonService = AttestasjonService()) {
                 ),
             )
         }
+
+        get("fagomraader") {
+            call.respond(
+                service.hentFagomraader(),
+            )
+        }
         post("oppdragslinjer") {
             val sokAttestasjonRequestBody = call.receive<AttestasjondetaljerRequestBody>()
             call.respond(

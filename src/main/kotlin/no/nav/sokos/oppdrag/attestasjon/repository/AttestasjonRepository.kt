@@ -7,6 +7,7 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.sokos.oppdrag.attestasjon.domain.AttestasjonTreff
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjonsdetaljer
+import no.nav.sokos.oppdrag.attestasjon.domain.Fagomraade
 import no.nav.sokos.oppdrag.config.DatabaseConfig
 
 class AttestasjonRepository(
@@ -171,6 +172,19 @@ class AttestasjonRepository(
         }
     }
 
+    fun hentFagomraader(): List<Fagomraade> {
+        return using(sessionOf(dataSource)) { session ->
+            session.list(
+                queryOf(
+                    """
+                    select NAVN_FAGOMRAADE, KODE_FAGOMRAADE from T_FAGOMRAADE
+                    """.trimIndent(),
+                ),
+                mapToFagomraade,
+            )
+        }
+    }
+
     fun hentOppdragslinjerForFlereOppdragsId(oppdragsIder: List<Int>): List<Attestasjonsdetaljer> {
         if (oppdragsIder.isEmpty()) return emptyList()
 
@@ -288,6 +302,13 @@ class AttestasjonRepository(
             attestant = row.string("attestant_id").trim(),
             fagsystemId = row.string("fagsystem_id").trim(),
             navnFagomraade = row.string("navn_fagomraade").trim(),
+        )
+    }
+
+    private val mapToFagomraade: (Row) -> Fagomraade = { row ->
+        Fagomraade(
+            navn = row.string("NAVN_FAGOMRAADE").trimIndent(),
+            kode = row.string("KODE_FAGOMRAADE").trimIndent(),
         )
     }
 }

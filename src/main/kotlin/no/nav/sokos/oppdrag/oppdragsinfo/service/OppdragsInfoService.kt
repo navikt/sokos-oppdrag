@@ -97,8 +97,8 @@ class OppdragsInfoService(
 
         return Oppdrag(
             oppdragsegenskaper,
-            enhet,
-            behandlendeEnhet,
+            kostnadssted = enhet,
+            ansvarssted = behandlendeEnhet,
             harOmposteringer,
             oppdragsLinjer,
         )
