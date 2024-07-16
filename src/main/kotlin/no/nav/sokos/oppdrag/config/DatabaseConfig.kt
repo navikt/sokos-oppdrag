@@ -11,7 +11,6 @@ object DatabaseConfig {
         return HikariConfig().apply {
             minimumIdle = 1
             maximumPoolSize = 10
-            poolName = "HikariPool-SOKOS-OPPDRAG"
             connectionTestQuery = "select 1 from sysibm.sysdummy1"
             dataSource =
                 DB2SimpleDataSource().apply {
