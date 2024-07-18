@@ -9,9 +9,9 @@ spec:
   image: "{{{ image }}}"
   port: 8080
   replicas:
-    min: 1
+    min: 2
     max: 2
-    cpuThresholdPercentage: 90
+    cpuThresholdPercentage: 75
   liveness:
     path: /internal/isAlive
     initialDelay: 5
