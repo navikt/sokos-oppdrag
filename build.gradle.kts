@@ -12,7 +12,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.expediagroup.graphql") version "7.1.4"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
-    id("org.jetbrains.kotlinx.kover") version "0.8.2"
+    id("org.jetbrains.kotlinx.kover") version "0.8.3"
 }
 
 group = "no.nav.sokos"
@@ -34,7 +34,7 @@ val hikariVersion = "5.1.0"
 val db2JccVersion = "11.5.9.0"
 val graphqlClientVersion = "7.1.4"
 val kotestVersion = "5.9.1"
-val mockkVersion = "1.13.11"
+val mockkVersion = "1.13.12"
 val mockOAuth2ServerVersion = "2.1.8"
 val swaggerRequestValidatorVersion = "2.41.0"
 val papertrailappVersion = "1.0.0"
