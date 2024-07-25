@@ -18,7 +18,7 @@ import io.restassured.RestAssured
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.OPPDRAGSINFO_BASE_API_PATH
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
-import no.nav.sokos.oppdrag.common.model.GjelderIdRequestBody
+import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
@@ -31,16 +31,16 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Maksdato
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ompostering
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdrag
+import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragDTO
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinjeDetaljer
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdragsegenskaper
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsinfoTreffliste
+import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsLinjeDetaljerDTO
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEgenskaper
+import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsinfoDTO
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ovrig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.SokOppdragRequestBody
+import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsEgenskaperRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
@@ -69,7 +69,7 @@ internal class OppdragsInfoApiTest : FunSpec({
 
     test("sok oppdragsinfo med gyldig gjelderId skal returnere 200 OK") {
         val oppdragsegenskaper =
-            Oppdragsegenskaper(
+            OppdragsEgenskaper(
                 fagsystemId = "12345678901",
                 oppdragsId = 1234556,
                 navnFagGruppe = "faggruppeNavn",
@@ -80,26 +80,26 @@ internal class OppdragsInfoApiTest : FunSpec({
             )
 
         val oppdragsinfoTreffliste =
-            OppdragsinfoTreffliste(
+            OppdragsinfoDTO(
                 gjelderId = "12345678901",
                 oppdragsListe = listOf(oppdragsegenskaper),
             )
 
-        every { oppdragsInfoService.sokOppdragsInfo(any(), any(), any()) } returns listOf(oppdragsinfoTreffliste)
+        every { oppdragsInfoService.hentOppdragsEgenskaperList(any(), any(), any()) } returns listOf(oppdragsinfoTreffliste)
 
         val response =
             RestAssured.given().filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(SokOppdragRequestBody(gjelderId = "12345678901", fagGruppeKode = "ABC"))
+                .body(OppdragsEgenskaperRequest(gjelderId = "12345678901", fagGruppeKode = "ABC"))
                 .port(PORT)
                 .post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsinfo")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
-        response.body.jsonPath().getList<OppdragsinfoTreffliste>("gjelderId").first().shouldBe("12345678901")
-        response.body.jsonPath().getList<Oppdragsegenskaper>("oppdragsListe").shouldHaveSize(1)
+        response.body.jsonPath().getList<OppdragsinfoDTO>("gjelderId").first().shouldBe("12345678901")
+        response.body.jsonPath().getList<OppdragsEgenskaper>("oppdragsListe").shouldHaveSize(1)
     }
 
     test("sok oppdragsinfo med ugyldig gjelderId skal returnere 400 Bad Request") {
@@ -107,7 +107,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         RestAssured.given().filter(validationFilter)
             .header(HttpHeaders.ContentType, APPLICATION_JSON)
             .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-            .body(SokOppdragRequestBody(gjelderId = "123", fagGruppeKode = ""))
+            .body(OppdragsEgenskaperRequest(gjelderId = "123", fagGruppeKode = ""))
             .port(PORT)
             .post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsinfo")
             .then().assertThat()
@@ -117,10 +117,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
     test("hent oppdrag med gyldig gjelderId skal returnere 200 OK") {
 
-        val oppdrag =
-            Oppdrag(
+        val oppdragDTO =
+            OppdragDTO(
                 oppdragsegenskaper =
-                    Oppdragsegenskaper(
+                    OppdragsEgenskaper(
                         fagsystemId = "12345678901",
                         oppdragsId = 1234556,
                         navnFagGruppe = "faggruppeNavn",
@@ -136,7 +136,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                         enhet = "0502",
                     ),
                 ansvarssted = null,
-                harOmposteringer = TRUE,
+                omposteringer = TRUE,
                 oppdragsLinjer =
                     listOf(
                         OppdragsLinje(
@@ -159,13 +159,13 @@ internal class OppdragsInfoApiTest : FunSpec({
                     ),
             )
 
-        every { oppdragsInfoService.hentOppdrag(any(), any()) } returns oppdrag
+        every { oppdragsInfoService.hentOppdragslinjer(any(), any()) } returns oppdragDTO
 
         val response =
             RestAssured.given().filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(GjelderIdRequestBody(gjelderId = "12345678901"))
+                .body(GjelderIdRequest(gjelderId = "12345678901"))
                 .port(PORT)
                 .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID")
                 .then().assertThat()
@@ -180,7 +180,7 @@ internal class OppdragsInfoApiTest : FunSpec({
     test("hent oppdrag med som ikke tilhører gjelderId skal kaste RequestValidationException med 400 Bad Request") {
 
         every {
-            oppdragsInfoService.hentOppdrag(
+            oppdragsInfoService.hentOppdragslinjer(
                 any(), any(),
             )
         } throws
@@ -191,7 +191,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         RestAssured.given().filter(validationFilter)
             .header(HttpHeaders.ContentType, APPLICATION_JSON)
             .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-            .body(GjelderIdRequestBody(gjelderId = "123456789"))
+            .body(GjelderIdRequest(gjelderId = "123456789"))
             .port(PORT)
             .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID")
             .then().assertThat()
@@ -245,7 +245,7 @@ internal class OppdragsInfoApiTest : FunSpec({
             RestAssured.given().filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(GjelderIdRequestBody(gjelderId = "12345678901")).port(PORT)
+                .body(GjelderIdRequest(gjelderId = "12345678901")).port(PORT)
                 .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/omposteringer")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -357,8 +357,8 @@ internal class OppdragsInfoApiTest : FunSpec({
 
     test("hent detaljer i kombinasjon med oppdragsId og linjeId skal returnere 200 OK") {
 
-        val oppdragsLinjeDetaljer =
-            OppdragsLinjeDetaljer(
+        val oppdragsLinjeDetaljerDTO =
+            OppdragsLinjeDetaljerDTO(
                 korrigerteLinjeIder =
                     listOf(
                         OppdragsLinje(
@@ -389,7 +389,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 harMaksdatoer = FALSE,
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeDetaljer(any(), any()) } returns oppdragsLinjeDetaljer
+        every { oppdragsInfoService.hentOppdragsLinjeDetaljer(any(), any()) } returns oppdragsLinjeDetaljerDTO
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -422,7 +422,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeValuta(any(), any()) } returns listOf(valuta)
+        every { oppdragsInfoService.hentOppdragsLinjeValutaer(any(), any()) } returns listOf(valuta)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -449,7 +449,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeSkyldner(any(), any()) } returns listOf(skyldner)
+        every { oppdragsInfoService.hentOppdragsLinjeSkyldnere(any(), any()) } returns listOf(skyldner)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -476,7 +476,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeKravhaver(any(), any()) } returns listOf(kravhaver)
+        every { oppdragsInfoService.hentOppdragsLinjeKravhavere(any(), any()) } returns listOf(kravhaver)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -532,7 +532,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeGrad(any(), any()) } returns listOf(grad)
+        every { oppdragsInfoService.hentOppdragsLinjeGrader(any(), any()) } returns listOf(grad)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -556,7 +556,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 tekst = "asd",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeTekst(any(), any()) } returns listOf(tekst)
+        every { oppdragsInfoService.hentOppdragsLinjeTekster(any(), any()) } returns listOf(tekst)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -610,7 +610,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeMaksdato(any(), any()) } returns listOf(maksdato)
+        every { oppdragsInfoService.hentOppdragsLinjeMaksdatoer(any(), any()) } returns listOf(maksdato)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -636,7 +636,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 soknadsType = "NN",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeOvrig(any(), any()) } returns listOf(ovrig)
+        every { oppdragsInfoService.hentOppdragsLinjeOvriger(any(), any()) } returns listOf(ovrig)
 
         val response =
             RestAssured.given().filter(validationFilter)

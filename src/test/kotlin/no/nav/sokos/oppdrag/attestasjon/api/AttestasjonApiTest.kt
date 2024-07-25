@@ -20,7 +20,7 @@ import no.nav.sokos.oppdrag.attestasjon.domain.AttestasjonTreff
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjonsdetaljer
 import no.nav.sokos.oppdrag.attestasjon.model.AttestasjondetaljerRequestBody
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
-import no.nav.sokos.oppdrag.common.model.GjelderIdRequestBody
+import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
@@ -59,7 +59,7 @@ internal class AttestasjonApiTest : FunSpec({
         val response =
             RestAssured.given().filter(validationFilter).header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(GjelderIdRequestBody("123456789")).port(PORT)
+                .body(GjelderIdRequest("123456789")).port(PORT)
                 .post("$ATTESTASJON_BASE_API_PATH/gjeldersok").then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()

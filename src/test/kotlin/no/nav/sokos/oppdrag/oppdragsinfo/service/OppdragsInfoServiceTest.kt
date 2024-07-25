@@ -9,8 +9,8 @@ import io.mockk.mockk
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdragsegenskaper
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsinfoTreffliste
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEgenskaper
+import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsinfoDTO
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsInfoRepository
 
 private val applicationCall = mockk<ApplicationCall>()
@@ -21,7 +21,7 @@ internal class OppdragsInfoServiceTest : FunSpec({
 
     test("test sokOppdrag") {
         val oppdragsegenskaper =
-            Oppdragsegenskaper(
+            OppdragsEgenskaper(
                 fagsystemId = "12345678901",
                 oppdragsId = 1234567890,
                 navnFagGruppe = "NAV Arbeid og ytelser",
@@ -32,15 +32,15 @@ internal class OppdragsInfoServiceTest : FunSpec({
             )
 
         val oppdragsinfoTreffliste =
-            OppdragsinfoTreffliste(
+            OppdragsinfoDTO(
                 gjelderId = "12345678901",
             )
 
         every { applicationCall.request.headers["Authorization"] } returns tokenWithNavIdent
         every { oppdragsInfoRepository.hentOppdragsInfo("12345678901") } returns oppdragsinfoTreffliste
-        every { oppdragsInfoRepository.hentOppdragsListe("12345678901", "") } returns listOf(oppdragsegenskaper)
+        every { oppdragsInfoRepository.hentOppdragsegenskaperList("12345678901", "") } returns listOf(oppdragsegenskaper)
 
-        val result = oppdragsInfoService.sokOppdragsInfo("12345678901", "", applicationCall)
+        val result = oppdragsInfoService.hentOppdragsEgenskaperList("12345678901", "", applicationCall)
 
         result.first().gjelderId shouldBe "12345678901"
         result.first().oppdragsListe?.shouldHaveSize(1)
@@ -52,7 +52,7 @@ internal class OppdragsInfoServiceTest : FunSpec({
         val gjelderId = "12345678901"
 
         val oppdragsegenskaper =
-            Oppdragsegenskaper(
+            OppdragsEgenskaper(
                 fagsystemId = "123456789",
                 oppdragsId = oppdragsId,
                 navnFagGruppe = "faggruppeNavn",
@@ -104,11 +104,11 @@ internal class OppdragsInfoServiceTest : FunSpec({
         every { oppdragsInfoRepository.hentOppdragsLinjer(oppdragsId) } returns listOf(oppdragsLinje)
         every { oppdragsInfoRepository.hentOppdragsegenskaper(oppdragsId) } returns listOf(oppdragsegenskaper)
 
-        val result = oppdragsInfoService.hentOppdrag(gjelderId, oppdragsId)
+        val result = oppdragsInfoService.hentOppdragslinjer(gjelderId, oppdragsId)
 
         result.kostnadssted.enhet shouldBe "0502"
         result.ansvarssted?.enhet shouldBe "0101"
-        result.harOmposteringer shouldBe true
+        result.omposteringer shouldBe true
         result.oppdragsLinjer.shouldHaveSize(1)
         result.oppdragsLinjer.first().kodeKlasse shouldBe "ABC"
     }

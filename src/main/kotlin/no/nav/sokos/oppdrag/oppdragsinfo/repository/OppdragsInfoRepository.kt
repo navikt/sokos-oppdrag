@@ -19,8 +19,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ompostering
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdragsegenskaper
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsinfoTreffliste
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEgenskaper
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ovrig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
@@ -29,7 +28,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 class OppdragsInfoRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource(),
 ) {
-    fun hentOppdragsInfo(gjelderId: String): OppdragsinfoTreffliste? {
+    fun hentOppdragId(gjelderId: String): String? {
         return using(sessionOf(dataSource)) { session ->
             session.single(
                 queryOf(
@@ -40,8 +39,7 @@ class OppdragsInfoRepository(
                         "gjelderId" to gjelderId,
                     ),
                 ),
-                mapToOppdragsinfoTreffliste,
-            )
+            ) { row -> row.string("OPPDRAG_GJELDER_ID") }
         }
     }
 
@@ -58,10 +56,10 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOppdragsListe(
+    fun hentOppdragsegenskaperList(
         gjelderId: String,
         fagGruppeKode: String?,
-    ): List<Oppdragsegenskaper> {
+    ): List<OppdragsEgenskaper> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -95,44 +93,7 @@ class OppdragsInfoRepository(
                         "fagGruppeKode" to fagGruppeKode,
                     ),
                 ),
-                mapToOppdragsegenskaper,
-            )
-        }
-    }
-
-    fun hentOppdragsegenskaper(oppdragsId: Int): List<Oppdragsegenskaper> {
-        return using(sessionOf(dataSource)) { session ->
-            session.list(
-                queryOf(
-                    """
-                    SELECT OP.OPPDRAGS_ID,
-                        OP.FAGSYSTEM_ID,
-                        FO.NAVN_FAGOMRAADE,
-                        OP.OPPDRAG_GJELDER_ID,
-                        OP.KJOR_IDAG,
-                        OP.TYPE_BILAG,
-                        FG.NAVN_FAGGRUPPE,
-                        OS.KODE_STATUS,
-                        OS.TIDSPKT_REG
-                    FROM T_OPPDRAG OP,
-                        T_FAGOMRAADE FO, 
-                        T_FAGGRUPPE FG,
-                        T_OPPDRAG_STATUS OS
-                    WHERE OP.OPPDRAGS_ID = :oppdragsId 
-                    AND FO.KODE_FAGOMRAADE = OP.KODE_FAGOMRAADE
-                    AND FG.KODE_FAGGRUPPE = FO.KODE_FAGGRUPPE
-                    AND OS.OPPDRAGS_ID = :oppdragsId
-                    AND OS.TIDSPKT_REG = (
-                        SELECT MAX(OS2.TIDSPKT_REG)
-                        FROM T_OPPDRAG_STATUS OS2
-                        WHERE OS2.OPPDRAGS_ID = OS.OPPDRAGS_ID
-                    )
-                    """.trimIndent(),
-                    mapOf(
-                        "oppdragsId" to oppdragsId,
-                    ),
-                ),
-                mapToOppdragsegenskaper,
+                mapToOppdragsEgenskaper,
             )
         }
     }
@@ -183,34 +144,6 @@ class OppdragsInfoRepository(
                 ),
                 mapToOppdragsEnhet,
             )
-        }
-    }
-
-    fun eksistererOmposteringer(
-        gjelderId: String,
-        oppdragsId: Int,
-    ): Boolean {
-        return using(sessionOf(dataSource)) { session ->
-            session.single(
-                queryOf(
-                    """
-                    SELECT COUNT(*)
-                    FROM T_OMPOSTERING OM,
-                        T_OPPDRAG OP,
-                        T_FAGOMRAADE FO, 
-                        T_FAGGRUPPE FG
-                    WHERE OM.GJELDER_ID = :gjelderId
-                    AND OP.OPPDRAGS_ID = :oppdragsId
-                    AND FO.KODE_FAGOMRAADE = OP.KODE_FAGOMRAADE
-                    AND FG.KODE_FAGGRUPPE = FO.KODE_FAGGRUPPE
-                    AND FG.KODE_FAGGRUPPE = OM.KODE_FAGGRUPPE
-                    """.trimIndent(),
-                    mapOf(
-                        "gjelderId" to gjelderId,
-                        "oppdragsId" to oppdragsId,
-                    ),
-                ),
-            ) { row -> row.int(1) > 0 } ?: false
         }
     }
 
@@ -670,14 +603,8 @@ class OppdragsInfoRepository(
         }
     }
 
-    private val mapToOppdragsinfoTreffliste: (Row) -> OppdragsinfoTreffliste = { row ->
-        OppdragsinfoTreffliste(
-            gjelderId = row.string("OPPDRAG_GJELDER_ID"),
-        )
-    }
-
-    private val mapToOppdragsegenskaper: (Row) -> Oppdragsegenskaper = { row ->
-        Oppdragsegenskaper(
+    private val mapToOppdragsEgenskaper: (Row) -> OppdragsEgenskaper = { row ->
+        OppdragsEgenskaper(
             fagsystemId = row.string("FAGSYSTEM_ID"),
             oppdragsId = row.int("OPPDRAGS_ID"),
             navnFagGruppe = row.string("NAVN_FAGGRUPPE"),

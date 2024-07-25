@@ -10,17 +10,17 @@ import io.ktor.server.routing.route
 import no.nav.sokos.oppdrag.attestasjon.domain.SokAttestasjonRequestBody
 import no.nav.sokos.oppdrag.attestasjon.model.AttestasjondetaljerRequestBody
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
-import no.nav.sokos.oppdrag.common.model.GjelderIdRequestBody
+import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
 
 private const val BASE_PATH = "/api/v1/attestasjon"
 
 fun Route.attestasjonApi(service: AttestasjonService = AttestasjonService()) {
     route(BASE_PATH) {
         post("gjeldersok") {
-            val gjelderIdRequestBody = call.receive<GjelderIdRequestBody>()
+            val gjelderIdRequest = call.receive<GjelderIdRequest>()
             call.respond(
                 service.hentOppdragForAttestering(
-                    gjelderId = gjelderIdRequestBody.gjelderId,
+                    gjelderId = gjelderIdRequest.gjelderId,
                     applicationCall = call,
                 ),
             )
@@ -53,6 +53,7 @@ fun Route.attestasjonApi(service: AttestasjonService = AttestasjonService()) {
                 service.hentFagomraader(),
             )
         }
+
         post("oppdragslinjer") {
             val sokAttestasjonRequestBody = call.receive<AttestasjondetaljerRequestBody>()
             call.respond(

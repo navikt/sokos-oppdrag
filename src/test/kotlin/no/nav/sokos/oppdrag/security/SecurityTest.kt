@@ -20,7 +20,7 @@ import no.nav.security.mock.oauth2.withMockOAuth2Server
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.OPPDRAGSINFO_BASE_API_PATH
 import no.nav.sokos.oppdrag.TestUtil.mockAuthConfig
-import no.nav.sokos.oppdrag.common.model.GjelderIdRequestBody
+import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
@@ -69,7 +69,7 @@ internal class SecurityTest : FunSpec({
                     }
                 }
 
-                every { oppdragsInfoService.sokOppdragsInfo(any(), any(), any()) } returns emptyList()
+                every { oppdragsInfoService.hentOppdragsEgenskaperList(any(), any(), any()) } returns emptyList()
 
                 val client =
                     createClient {
@@ -89,7 +89,7 @@ internal class SecurityTest : FunSpec({
                     client.post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsinfo") {
                         header(HttpHeaders.Authorization, "Bearer ${token()}")
                         header(HttpHeaders.ContentType, APPLICATION_JSON)
-                        setBody(GjelderIdRequestBody(gjelderId = "12345678901"))
+                        setBody(GjelderIdRequest(gjelderId = "12345678901"))
                     }
 
                 response.status shouldBe HttpStatusCode.OK
