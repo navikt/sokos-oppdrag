@@ -22,6 +22,7 @@ import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
+import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsEgenskaperRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
@@ -31,18 +32,16 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Maksdato
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ompostering
-import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragDTO
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragStatus
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEgenskaper
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
-import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsLinjeDetaljerDTO
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEgenskaper
-import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsinfoDTO
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ovrig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
-import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsEgenskaperRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
+import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsEnhetDTO
+import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsLinjeDetaljerDTO
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
 import org.hamcrest.Matchers.equalTo
 import java.lang.Boolean.FALSE
@@ -67,25 +66,21 @@ internal class OppdragsInfoApiTest : FunSpec({
         server.stop(5, 5)
     }
 
-    test("sok oppdragsinfo med gyldig gjelderId skal returnere 200 OK") {
-        val oppdragsegenskaper =
-            OppdragsEgenskaper(
-                fagsystemId = "12345678901",
-                oppdragsId = 1234556,
-                navnFagGruppe = "faggruppeNavn",
-                navnFagOmraade = "fagomraadeNavn",
-                kjorIdag = "kjorIdag",
-                typeBilag = "bilagsType",
-                kodeStatus = "PASS",
+    test("hent oppdragsegenskaper med gyldig gjelderId skal returnere 200 OK") {
+        val oppdragsegenskaperList =
+            listOf(
+                OppdragsEgenskaper(
+                    fagsystemId = "12345678901",
+                    oppdragsId = 1234556,
+                    navnFagGruppe = "faggruppeNavn",
+                    navnFagOmraade = "fagomraadeNavn",
+                    kjorIdag = "kjorIdag",
+                    typeBilag = "bilagsType",
+                    kodeStatus = "PASS",
+                ),
             )
 
-        val oppdragsinfoTreffliste =
-            OppdragsinfoDTO(
-                gjelderId = "12345678901",
-                oppdragsListe = listOf(oppdragsegenskaper),
-            )
-
-        every { oppdragsInfoService.hentOppdragsEgenskaperList(any(), any(), any()) } returns listOf(oppdragsinfoTreffliste)
+        every { oppdragsInfoService.hentOppdragsEgenskaper(any(), any(), any()) } returns oppdragsegenskaperList
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -93,73 +88,52 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .body(OppdragsEgenskaperRequest(gjelderId = "12345678901", fagGruppeKode = "ABC"))
                 .port(PORT)
-                .post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsinfo")
+                .post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsegenskaper")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
-                .extract().response()
+                .extract()
+                .response()
 
-        response.body.jsonPath().getList<OppdragsinfoDTO>("gjelderId").first().shouldBe("12345678901")
-        response.body.jsonPath().getList<OppdragsEgenskaper>("oppdragsListe").shouldHaveSize(1)
+        response.body.jsonPath().getList<OppdragsEgenskaper>("").shouldHaveSize(1)
     }
 
-    test("sok oppdragsinfo med ugyldig gjelderId skal returnere 400 Bad Request") {
+    test("hent oppdragsegenskaper med ugyldig gjelderId skal returnere 400 Bad Request") {
 
         RestAssured.given().filter(validationFilter)
             .header(HttpHeaders.ContentType, APPLICATION_JSON)
             .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
             .body(OppdragsEgenskaperRequest(gjelderId = "123", fagGruppeKode = ""))
             .port(PORT)
-            .post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsinfo")
+            .post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsegenskaper")
             .then().assertThat()
             .statusCode(HttpStatusCode.BadRequest.value)
             .body("message", equalTo("gjelderId er ugyldig. Tillatt format er 9 eller 11 siffer"))
     }
 
-    test("hent oppdrag med gyldig gjelderId skal returnere 200 OK") {
+    test("hent oppdragslinjer med gyldig gjelderId skal returnere 200 OK") {
 
-        val oppdragDTO =
-            OppdragDTO(
-                oppdragsegenskaper =
-                    OppdragsEgenskaper(
-                        fagsystemId = "12345678901",
-                        oppdragsId = 1234556,
-                        navnFagGruppe = "faggruppeNavn",
-                        navnFagOmraade = "fagomraadeNavn",
-                        kjorIdag = "kjorIdag",
-                        typeBilag = "bilagsType",
-                        kodeStatus = "PASS",
-                    ),
-                kostnadssted =
-                    OppdragsEnhet(
-                        type = "BOS",
-                        datoFom = "2024-01-01",
-                        enhet = "0502",
-                    ),
-                ansvarssted = null,
-                omposteringer = TRUE,
-                oppdragsLinjer =
-                    listOf(
-                        OppdragsLinje(
-                            linjeId = 11,
-                            kodeKlasse = "ABC",
-                            datoVedtakFom = "2024-01-01",
-                            datoVedtakTom = null,
-                            sats = 99.9,
-                            typeSats = "DAG",
-                            kodeStatus = "X",
-                            datoFom = "2024-01-01",
-                            linjeIdKorr = 22,
-                            attestert = "J",
-                            delytelseId = "D3",
-                            utbetalesTilId = "A1B2",
-                            refunderesOrgnr = "123456789",
-                            brukerId = "abc123",
-                            tidspktReg = "2024-01-01",
-                        ),
-                    ),
+        val oppdragsLinjeList =
+            listOf(
+                OppdragsLinje(
+                    linjeId = 11,
+                    kodeKlasse = "ABC",
+                    datoVedtakFom = "2024-01-01",
+                    datoVedtakTom = null,
+                    sats = 99.9,
+                    typeSats = "DAG",
+                    kodeStatus = "X",
+                    datoFom = "2024-01-01",
+                    linjeIdKorr = 22,
+                    attestert = "J",
+                    delytelseId = "D3",
+                    utbetalesTilId = "A1B2",
+                    refunderesOrgnr = "123456789",
+                    brukerId = "abc123",
+                    tidspktReg = "2024-01-01",
+                ),
             )
 
-        every { oppdragsInfoService.hentOppdragslinjer(any(), any()) } returns oppdragDTO
+        every { oppdragsInfoService.hentOppdragsLinjer(any(), any()) } returns oppdragsLinjeList
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -167,22 +141,18 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .body(GjelderIdRequest(gjelderId = "12345678901"))
                 .port(PORT)
-                .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID")
+                .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/oppdragsLinjer")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
-        response.body.jsonPath().get<Boolean>("harOmposteringer").shouldBe(TRUE)
-        response.body.jsonPath().get<String>("kostnadssted.datoFom").shouldBe("2024-01-01")
-        response.body.jsonPath().getList<OppdragsLinje>("oppdragsLinjer").shouldHaveSize(1)
+        response.body.jsonPath().getList<OppdragsLinje>("").shouldHaveSize(1)
     }
 
     test("hent oppdrag med som ikke tilhører gjelderId skal kaste RequestValidationException med 400 Bad Request") {
 
         every {
-            oppdragsInfoService.hentOppdragslinjer(
-                any(), any(),
-            )
+            oppdragsInfoService.hentOppdragsLinjer(any(), any())
         } throws
             RequestValidationException(
                 HttpStatusCode.BadRequest.value, listOf("Oppdraget tilhører ikke gjelderId"),
@@ -193,7 +163,7 @@ internal class OppdragsInfoApiTest : FunSpec({
             .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
             .body(GjelderIdRequest(gjelderId = "123456789"))
             .port(PORT)
-            .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID")
+            .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/oppdragsLinjer")
             .then().assertThat()
             .statusCode(HttpStatusCode.BadRequest.value)
             .body("message", equalTo("Oppdraget tilhører ikke gjelderId"))
@@ -207,7 +177,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 type = "DEF",
             )
 
-        every { oppdragsInfoService.hentFaggrupper() } returns listOf(fagGruppe)
+        every { oppdragsInfoService.hentFagGrupper() } returns listOf(fagGruppe)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -223,29 +193,66 @@ internal class OppdragsInfoApiTest : FunSpec({
         response.body.jsonPath().getList<FagGruppe>("type").first().shouldBe("DEF")
     }
 
-    test("hent omposteringer for en oppdragsId skal returnere 200 OK") {
+    test("hent behandlende enheter for en oppdragsId skal returnere 200 OK") {
 
-        val ompostering =
-            Ompostering(
-                id = "a1",
-                kodeFaggruppe = "fag1",
-                lopenr = 1,
-                ompostering = "z",
-                omposteringFom = "2024-01-01",
-                feilReg = "",
-                beregningsId = 22,
-                utfort = "j",
-                brukerid = "abc123",
-                tidspktReg = "2024-01-01",
+        val behandlendeEnhet =
+            OppdragsEnhetDTO(
+                enhet =
+                    OppdragsEnhet(
+                        type = "BOS",
+                        datoFom = "2024-01-01",
+                        enhet = "0502",
+                    ),
+                behandlendeEnhet =
+                    OppdragsEnhet(
+                        type = "BEH",
+                        datoFom = "2024-01-01",
+                        enhet = "0502",
+                    ),
             )
 
-        every { oppdragsInfoService.hentOppdragsOmposteringer(any(), any()) } returns listOf(ompostering)
+        every { oppdragsInfoService.hentBehandlendeEnhetForOppdrag(any()) } returns behandlendeEnhet
 
         val response =
             RestAssured.given().filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(GjelderIdRequest(gjelderId = "12345678901")).port(PORT)
+                .port(PORT)
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/enheter")
+                .then().assertThat()
+                .statusCode(HttpStatusCode.OK.value)
+                .extract().response()
+
+        response.body.jsonPath().getJsonObject<OppdragsEnhetDTO>("enhet.type").shouldBe("BOS")
+        response.body.jsonPath().getJsonObject<OppdragsEnhet>("behandlendeEnhet.type").shouldBe("BEH")
+    }
+
+    test("hent omposteringer for en oppdragsId skal returnere 200 OK") {
+
+        val omposteringerList =
+            listOf(
+                Ompostering(
+                    id = "a1",
+                    kodeFaggruppe = "fag1",
+                    lopenr = 1,
+                    ompostering = "z",
+                    omposteringFom = "2024-01-01",
+                    feilReg = "",
+                    beregningsId = 22,
+                    utfort = "j",
+                    brukerid = "abc123",
+                    tidspktReg = "2024-01-01",
+                ),
+            )
+
+        every { oppdragsInfoService.hentOppdragsOmposteringer(any(), any()) } returns omposteringerList
+
+        val response =
+            RestAssured.given().filter(validationFilter)
+                .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                .body(GjelderIdRequest(gjelderId = "12345678901"))
+                .port(PORT)
                 .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/omposteringer")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
@@ -282,14 +289,14 @@ internal class OppdragsInfoApiTest : FunSpec({
 
     test("hent statushistorikk for oppdragsId skal returnere 200 OK") {
 
-        val oppdragStatus =
-            OppdragStatus(
+        val oppdragsStatus =
+            OppdragsStatus(
                 kodeStatus = "AKTIV",
                 tidspktReg = "2024-01-01",
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsStatusHistorikk(any()) } returns listOf(oppdragStatus)
+        every { oppdragsInfoService.hentOppdragsStatusHistorikk(any()) } returns listOf(oppdragsStatus)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -301,8 +308,8 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
-        response.body.jsonPath().getList<OppdragStatus>("kodeStatus").first().shouldBe("AKTIV")
-        response.body.jsonPath().getList<OppdragStatus>("tidspktReg").first().shouldBe("2024-01-01")
+        response.body.jsonPath().getList<OppdragsStatus>("kodeStatus").first().shouldBe("AKTIV")
+        response.body.jsonPath().getList<OppdragsStatus>("tidspktReg").first().shouldBe("2024-01-01")
     }
 
     test("hent linjestatus i kombinasjon med oppdragsId og linjeId skal returnere 200 OK") {
@@ -322,7 +329,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/status")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/statuser")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
@@ -346,7 +353,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/attestant")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/attestanter")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
@@ -409,7 +416,6 @@ internal class OppdragsInfoApiTest : FunSpec({
     }
 
     test("hent valuta i kombinasjon med oppdragsId og linjeId skal returnere 200 OK") {
-
         val valuta =
             Valuta(
                 linjeId = 1,
@@ -429,7 +435,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/valuta")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/valutaer")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
@@ -456,7 +462,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/skyldner")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/skyldnere")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
@@ -483,7 +489,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/kravhaver")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/kravhavere")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
@@ -512,7 +518,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/enhet")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/enheter")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
@@ -539,7 +545,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/grad")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/grader")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
@@ -563,7 +569,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/tekst")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/tekster")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
@@ -583,14 +589,14 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeKidListe(any(), any()) } returns listOf(kid)
+        every { oppdragsInfoService.hentOppdragsLinjeKid(any(), any()) } returns listOf(kid)
 
         val response =
             RestAssured.given().filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/kidliste")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/kid")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
@@ -617,7 +623,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/maksdato")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/maksdatoer")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()

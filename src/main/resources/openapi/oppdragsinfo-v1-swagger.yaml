@@ -16,29 +16,29 @@ servers:
   - url: /api/v1/oppdragsinfo
 
 paths:
-  /oppdragsinfo:
+  /oppdragsegenskaper:
     post:
       tags:
         - oppdragsinfo
-      summary: Søk etter oppdragsinfo
-      description: Returnerer oppdragsopplysninger tilknyttet person eller foretak.
-      operationId: sokOppdragsInfo
+      summary: Søk etter oppdragsegenskaper
+      description: Returnerer oppdragsegenskaper tilknyttet person eller foretak.
+      operationId: hentOppdragsEgenskaper
       requestBody:
         description: gjelderId er et krav, men fagGruppeKode er alternativ hvis filtrering er ønskelig
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OppdragsInfoRequest'
+              $ref: '#/components/schemas/OppdragsEgenskaperRequest'
         required: true
       responses:
         200:
-          description: OK - Hvis oppdrag ikke finnes, returneres tom liste
+          description: OK - Hvis oppdragsegenskaper ikke finnes, returneres tom liste
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/OppdragsinfoTreffliste'
+                  $ref: '#/components/schemas/OppdragsEgenskaper'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
@@ -62,7 +62,7 @@ paths:
       tags:
         - oppdragsinfo
       summary: Hent tilgjengelige faggrupper
-      description: Returnerer en liste av tilgjengelige faggrupper. Faggruppe kan brukes til å filtrere søket i endepunktet -> /oppdrag
+      description: Returnerer en liste av tilgjengelige faggrupper. Faggruppe kan brukes til å filtrere søket i endepunktet -> /oppdragsegenskaper
       operationId: hentFagGrupper
       responses:
         200:
@@ -76,13 +76,13 @@ paths:
       security:
         - Bearer: [ ]
 
-  /{oppdragsId}:
+  /{oppdragsId}/oppdragsLinjer:
     post:
       tags:
         - oppdragsinfo
-      summary: Hent oppdrag
-      description: Returnerer oppdrag med tilhørende oppdragslinjer spesifisert av oppdragsId.
-      operationId: hentOppdrag
+      summary: Hent oppdragslinjer
+      description: Returnerer oppdragslinjer knyttet til oppdragsId.
+      operationId: hentOppdragsLinjer
       parameters:
         - name: oppdragsId
           in: path
@@ -103,13 +103,49 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Oppdrag'
+                type: array
+                items:
+                  $ref: '#/components/schemas/OppdragsLinje'
         400:
           description: Ugyldig request - Oppdragsid har ingen tilknytning til gjelderId
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
+        401:
+          description: Ingen tilgang
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /{oppdragsId}/enheter:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent behandlende enheter
+      description: Returnerer behandlende enheter tilknyttet oppdragsId
+      operationId: hentBehandlendeEnhetForOppdrag
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/OppdragsEnhetDTO'
+        400:
+          description: Ugyldig request
         401:
           description: Ingen tilgang
         500:
@@ -226,7 +262,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/OppdragStatus'
+                  $ref: '#/components/schemas/OppdragsStatus'
         400:
           description: Ugyldig request
         401:
@@ -240,7 +276,7 @@ paths:
       security:
         - Bearer: [ ]
 
-  /{oppdragsId}/{linjeId}/status:
+  /{oppdragsId}/{linjeId}/statuser:
     get:
       tags:
         - oppdragsinfo
@@ -282,7 +318,7 @@ paths:
       security:
         - Bearer: [ ]
 
-  /{oppdragsId}/{linjeId}/attestant:
+  /{oppdragsId}/{linjeId}/attestanter:
     get:
       tags:
         - oppdragsinfo
@@ -350,7 +386,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OppdragsLinjeDetaljer'
+                $ref: '#/components/schemas/OppdragsLinjeDetaljerDTO'
         400:
           description: Ugyldig request
         401:
@@ -364,7 +400,7 @@ paths:
       security:
         - Bearer: [ ]
 
-  /{oppdragsId}/{linjeId}/valuta:
+  /{oppdragsId}/{linjeId}/valutaer:
     get:
       tags:
         - oppdragsinfo
@@ -406,7 +442,7 @@ paths:
       security:
         - Bearer: [ ]
 
-  /{oppdragsId}/{linjeId}/skyldner:
+  /{oppdragsId}/{linjeId}/skyldnere:
     get:
       tags:
         - oppdragsinfo
@@ -448,7 +484,7 @@ paths:
       security:
         - Bearer: [ ]
 
-  /{oppdragsId}/{linjeId}/kravhaver:
+  /{oppdragsId}/{linjeId}/kravhavere:
     get:
       tags:
         - oppdragsinfo
@@ -490,7 +526,7 @@ paths:
       security:
         - Bearer: [ ]
 
-  /{oppdragsId}/{linjeId}/enhet:
+  /{oppdragsId}/{linjeId}/enheter:
     get:
       tags:
         - oppdragsinfo
@@ -532,7 +568,7 @@ paths:
       security:
         - Bearer: [ ]
 
-  /{oppdragsId}/{linjeId}/grad:
+  /{oppdragsId}/{linjeId}/grader:
     get:
       tags:
         - oppdragsinfo
@@ -574,7 +610,7 @@ paths:
       security:
         - Bearer: [ ]
 
-  /{oppdragsId}/{linjeId}/tekst:
+  /{oppdragsId}/{linjeId}/tekster:
     get:
       tags:
         - oppdragsinfo
@@ -616,7 +652,7 @@ paths:
       security:
         - Bearer: [ ]
 
-  /{oppdragsId}/{linjeId}/kidliste:
+  /{oppdragsId}/{linjeId}/kid:
     get:
       tags:
         - oppdragsinfo
@@ -658,7 +694,7 @@ paths:
       security:
         - Bearer: [ ]
 
-  /{oppdragsId}/{linjeId}/maksdato:
+  /{oppdragsId}/{linjeId}/maksdatoer:
     get:
       tags:
         - oppdragsinfo
@@ -744,7 +780,7 @@ paths:
 
 components:
   schemas:
-    OppdragsInfoRequest:
+    OppdragsEgenskaperRequest:
       type: object
       required:
         - gjelderId
@@ -767,40 +803,6 @@ components:
           example: "9 eller 11 siffer"
           description: 9 eller 11 siffer
 
-    OppdragsinfoTreffliste:
-      type: object
-      properties:
-        gjelderId:
-          type: string
-        gjelderNavn:
-          type: string
-        oppdragsListe:
-          type: array
-          items:
-            $ref: '#/components/schemas/Oppdragsegenskaper'
-
-    Oppdrag:
-      type: object
-      required:
-        - oppdragsegenskaper
-        - kostnadssted
-        - harOmposteringer
-        - oppdragsLinjer
-      properties:
-        oppdragsegenskaper:
-          $ref: '#/components/schemas/Oppdragsegenskaper'
-        kostnadssted:
-          $ref: '#/components/schemas/OppdragsEnhet'
-        ansvarssted:
-          $ref: '#/components/schemas/OppdragsEnhet'
-        harOmposteringer:
-          type: boolean
-          description: Spesifiserer om oppdraget har omposteringer i samme faggruppe som oppdraget
-        oppdragsLinjer:
-          type: array
-          items:
-            $ref: '#/components/schemas/OppdragsLinje'
-
     FagGruppe:
       type: object
       required:
@@ -811,6 +813,16 @@ components:
           type: string
         type:
           type: string
+
+    OppdragsEnhetDTO:
+      type: object
+      required:
+        - enhet
+      properties:
+        enhet:
+          $ref: '#/components/schemas/OppdragsEnhet'
+        behandlendeEnhet:
+            $ref: '#/components/schemas/OppdragsEnhet'
 
     Ompostering:
       type: object
@@ -859,7 +871,7 @@ components:
         enhet:
           type: string
 
-    OppdragStatus:
+    OppdragsStatus:
       type: object
       required:
         - kodeStatus
@@ -873,7 +885,7 @@ components:
         brukerid:
           type: string
 
-    Oppdragsegenskaper:
+    OppdragsEgenskaper:
       type: object
       properties:
         fagsystemId:
@@ -937,7 +949,7 @@ components:
         tidspktReg:
           type: string
 
-    OppdragsLinjeDetaljer:
+    OppdragsLinjeDetaljerDTO:
       type: object
       required:
         - harValutaer

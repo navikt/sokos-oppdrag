@@ -18,7 +18,7 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
         post("oppdragsegenskaper") {
             val request = call.receive<OppdragsEgenskaperRequest>()
             call.respond(
-                oppdragsInfoService.hentOppdragsEgenskaperList(
+                oppdragsInfoService.hentOppdragsEgenskaper(
                     request.gjelderId,
                     request.fagGruppeKode,
                     call,
@@ -28,14 +28,14 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
 
         get("faggrupper") {
             call.respond(
-                oppdragsInfoService.hentFaggrupper(),
+                oppdragsInfoService.hentFagGrupper(),
             )
         }
 
-        post("{oppdragsId}") {
+        post("{oppdragsId}/oppdragsLinjer") {
             val gjelderIdRequest = call.receive<GjelderIdRequest>()
             call.respond(
-                oppdragsInfoService.hentOppdragslinjer(
+                oppdragsInfoService.hentOppdragsLinjer(
                     gjelderIdRequest.gjelderId,
                     call.parameters["oppdragsId"].orEmpty().toInt(),
                 ),
@@ -50,7 +50,7 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
             )
         }
 
-        get("{oppdragsId}/omposteringer") {
+        post("{oppdragsId}/omposteringer") {
             val gjelderIdRequest = call.receive<GjelderIdRequest>()
             call.respond(
                 oppdragsInfoService.hentOppdragsOmposteringer(
@@ -175,7 +175,7 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
             )
         }
 
-        get("{oppdragsId}/{linjeId}/ovriger") {
+        get("{oppdragsId}/{linjeId}/ovrig") {
             call.respond(
                 oppdragsInfoService.hentOppdragsLinjeOvriger(
                     call.parameters["oppdragsId"].orEmpty(),

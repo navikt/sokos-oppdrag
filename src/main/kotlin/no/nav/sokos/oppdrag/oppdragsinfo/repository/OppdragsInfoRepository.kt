@@ -16,10 +16,10 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Maksdato
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ompostering
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragStatus
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEgenskaper
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEgenskaper
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ovrig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
@@ -56,7 +56,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOppdragsegenskaperList(
+    fun hentOppdragsEgenskaperList(
         gjelderId: String,
         fagGruppeKode: String?,
     ): List<OppdragsEgenskaper> {
@@ -65,14 +65,13 @@ class OppdragsInfoRepository(
                 queryOf(
                     """
                     SELECT OP.OPPDRAGS_ID,
-                        OP.FAGSYSTEM_ID,
-                        FO.NAVN_FAGOMRAADE,
+                        TRIM(OP.FAGSYSTEM_ID) AS FAGSYSTEM_ID,
+                        TRIM(FO.NAVN_FAGOMRAADE) AS NAVN_FAGOMRAADE,
                         OP.OPPDRAG_GJELDER_ID,
                         OP.KJOR_IDAG,
-                        OP.TYPE_BILAG,
-                        FG.NAVN_FAGGRUPPE,
-                        OS.KODE_STATUS,
-                        OS.TIDSPKT_REG
+                        TRIM(OP.TYPE_BILAG) AS TYPE_BILAG,
+                        TRIM(FG.NAVN_FAGGRUPPE) AS NAVN_FAGGRUPPE,
+                        OS.KODE_STATUS
                     FROM T_OPPDRAG OP,
                         T_FAGOMRAADE FO, 
                         T_FAGGRUPPE FG,
@@ -261,7 +260,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOppdragsStatusHistorikk(oppdragsId: Int): List<OppdragStatus> {
+    fun hentOppdragsStatusHistorikk(oppdragsId: Int): List<OppdragsStatus> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -665,8 +664,8 @@ class OppdragsInfoRepository(
         )
     }
 
-    private val mapToOppdragsStatusHistorikk: (Row) -> OppdragStatus = { row ->
-        OppdragStatus(
+    private val mapToOppdragsStatusHistorikk: (Row) -> OppdragsStatus = { row ->
+        OppdragsStatus(
             kodeStatus = row.string("KODE_STATUS"),
             tidspktReg = row.string("TIDSPKT_REG"),
             brukerid = row.string("BRUKERID"),

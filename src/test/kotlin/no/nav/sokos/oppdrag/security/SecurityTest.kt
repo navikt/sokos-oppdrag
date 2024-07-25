@@ -50,7 +50,7 @@ internal class SecurityTest : FunSpec({
                         }
                     }
                 }
-                val response = client.post("$OPPDRAGSINFO_BASE_API_PATH/oppdrag")
+                val response = client.post("$OPPDRAGSINFO_BASE_API_PATH/oppdrag/oppdragsLinjer")
                 response.status shouldBe HttpStatusCode.Unauthorized
             }
         }
@@ -69,7 +69,7 @@ internal class SecurityTest : FunSpec({
                     }
                 }
 
-                every { oppdragsInfoService.hentOppdragsEgenskaperList(any(), any(), any()) } returns emptyList()
+                every { oppdragsInfoService.hentOppdragsEgenskaper(any(), any(), any()) } returns emptyList()
 
                 val client =
                     createClient {
@@ -86,7 +86,7 @@ internal class SecurityTest : FunSpec({
                     }
 
                 val response =
-                    client.post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsinfo") {
+                    client.post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsegenskaper") {
                         header(HttpHeaders.Authorization, "Bearer ${token()}")
                         header(HttpHeaders.ContentType, APPLICATION_JSON)
                         setBody(GjelderIdRequest(gjelderId = "12345678901"))
