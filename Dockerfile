@@ -1,4 +1,4 @@
-FROM bellsoft/liberica-openjdk-alpine:21@sha256:b4f3b3f5c31e2935f5e941664e45156284ec14fc5745486291a7c45fbccd253d
+FROM bellsoft/liberica-openjdk-alpine:21@sha256:ee40d83d93023b804847568d847e6540799091bd1b61322f8272de2ef369aa8b
 
 RUN apk add --no-cache curl
 RUN apk add --no-cache dumb-init
