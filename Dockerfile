@@ -1,7 +1,9 @@
 FROM bellsoft/liberica-openjdk-alpine:21@sha256:ee40d83d93023b804847568d847e6540799091bd1b61322f8272de2ef369aa8b
 
-RUN apk add --no-cache curl
-RUN apk add --no-cache dumb-init
+RUN apk update && apk add --no-cache \
+  curl \
+  dumb-init \
+  && rm -rf /var/lib/apt/lists/*
 
 COPY build/libs/*.jar app.jar
 COPY java-opts.sh /
