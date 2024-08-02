@@ -376,7 +376,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentValutaerList(
+    fun hentValutaer(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Valuta> {
@@ -398,7 +398,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentSkyldnereList(
+    fun hentSkyldnere(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Skyldner> {
@@ -420,7 +420,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentKravhavereList(
+    fun hentKravhavere(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Kravhaver> {
@@ -442,7 +442,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentEnheterList(
+    fun hentEnheter(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<LinjeEnhet> {
@@ -464,7 +464,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentGraderList(
+    fun hentGrader(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Grad> {
@@ -486,7 +486,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentTeksterList(
+    fun hentTekster(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Tekst> {
@@ -508,7 +508,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentKidListe(
+    fun hentKid(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Kid> {
@@ -530,7 +530,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentMaksdatoerListe(
+    fun hentMaksDatoer(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Maksdato> {
@@ -552,7 +552,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOvrigListe(
+    fun hentOvriger(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Ovrig> {

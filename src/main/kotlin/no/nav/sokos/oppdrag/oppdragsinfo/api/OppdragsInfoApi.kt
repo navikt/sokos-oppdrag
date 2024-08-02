@@ -163,7 +163,7 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
 
         get("{oppdragsId}/{linjeId}/maksdatoer") {
             call.respond(
-                oppdragsInfoService.hentOppdragsLinjeMaksdatoer(
+                oppdragsInfoService.hentOppdragsLinjeMaksDatoer(
                     call.parameters["oppdragsId"].orEmpty(),
                     call.parameters["linjeId"].orEmpty(),
                 ),

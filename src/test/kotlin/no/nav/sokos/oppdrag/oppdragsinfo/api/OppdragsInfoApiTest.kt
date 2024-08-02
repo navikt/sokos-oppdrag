@@ -594,7 +594,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeMaksdatoer(any(), any()) } returns listOf(maksdato)
+        every { oppdragsInfoService.hentOppdragsLinjeMaksDatoer(any(), any()) } returns listOf(maksdato)
 
         val response =
             RestAssured.given().filter(validationFilter)
