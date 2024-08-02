@@ -56,7 +56,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOppdragsEgenskaperList(
+    fun hentOppdragsEgenskaper(
         gjelderId: String,
         fagGruppeKode: String?,
     ): List<OppdragsEgenskaper> {
@@ -94,28 +94,6 @@ class OppdragsInfoRepository(
                 ),
                 mapToOppdragsEgenskaper,
             )
-        }
-    }
-
-    fun erOppdragTilknyttetBruker(
-        gjelderId: String,
-        oppdragsId: Int,
-    ): Boolean {
-        return using(sessionOf(dataSource)) { session ->
-            session.single(
-                queryOf(
-                    """
-                    SELECT COUNT(*)
-                    FROM T_OPPDRAG
-                    WHERE OPPDRAG_GJELDER_ID = :gjelderId
-                    AND OPPDRAGS_ID = :oppdragsId
-                    """.trimIndent(),
-                    mapOf(
-                        "gjelderId" to gjelderId,
-                        "oppdragsId" to oppdragsId,
-                    ),
-                ),
-            ) { row -> row.boolean(1) } ?: false
         }
     }
 

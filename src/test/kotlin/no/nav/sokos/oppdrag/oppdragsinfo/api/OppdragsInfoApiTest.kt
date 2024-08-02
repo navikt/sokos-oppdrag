@@ -10,7 +10,6 @@ import io.ktor.server.application.Application
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
-import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import io.ktor.server.routing.routing
 import io.mockk.every
 import io.mockk.mockk
@@ -133,7 +132,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 ),
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjer(any(), any()) } returns oppdragsLinjeList
+        every { oppdragsInfoService.hentOppdragsLinjer(any()) } returns oppdragsLinjeList
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -147,26 +146,6 @@ internal class OppdragsInfoApiTest : FunSpec({
                 .extract().response()
 
         response.body.jsonPath().getList<OppdragsLinje>("").shouldHaveSize(1)
-    }
-
-    test("hent oppdrag med som ikke tilhører gjelderId skal kaste RequestValidationException med 400 Bad Request") {
-
-        every {
-            oppdragsInfoService.hentOppdragsLinjer(any(), any())
-        } throws
-            RequestValidationException(
-                HttpStatusCode.BadRequest.value, listOf("Oppdraget tilhører ikke gjelderId"),
-            )
-
-        RestAssured.given().filter(validationFilter)
-            .header(HttpHeaders.ContentType, APPLICATION_JSON)
-            .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-            .body(GjelderIdRequest(gjelderId = "123456789"))
-            .port(PORT)
-            .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/oppdragsLinjer")
-            .then().assertThat()
-            .statusCode(HttpStatusCode.BadRequest.value)
-            .body("message", equalTo("Oppdraget tilhører ikke gjelderId"))
     }
 
     test("hent alle faggrupper skal returnere 200 OK") {
@@ -245,15 +224,14 @@ internal class OppdragsInfoApiTest : FunSpec({
                 ),
             )
 
-        every { oppdragsInfoService.hentOppdragsOmposteringer(any(), any()) } returns omposteringerList
+        every { oppdragsInfoService.hentOppdragsOmposteringer(any()) } returns omposteringerList
 
         val response =
             RestAssured.given().filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(GjelderIdRequest(gjelderId = "12345678901"))
                 .port(PORT)
-                .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/omposteringer")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/omposteringer")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()

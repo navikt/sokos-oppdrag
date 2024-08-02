@@ -1,8 +1,6 @@
 package no.nav.sokos.oppdrag.oppdragsinfo.service
 
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
-import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
@@ -55,7 +53,7 @@ class OppdragsInfoService(
         val oppdragId = oppdragsInfoRepository.hentOppdragId(gjelderId)
 
         return oppdragId?.let {
-            return oppdragsInfoRepository.hentOppdragsEgenskaperList(gjelderId, faggruppeKode)
+            return oppdragsInfoRepository.hentOppdragsEgenskaper(gjelderId, faggruppeKode)
         } ?: run {
             secureLogger.info { "Fant ingen oppdrag for gjelderId: $gjelderId" }
             return emptyList()
@@ -67,21 +65,8 @@ class OppdragsInfoService(
         return oppdragsInfoRepository.hentFagGrupper()
     }
 
-    fun hentOppdragsLinjer(
-        gjelderId: String,
-        oppdragsId: Int,
-    ): List<OppdragsLinje> {
+    fun hentOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> {
         logger.info { "Henter oppdragslinjer med oppdragsId: $oppdragsId" }
-
-        val oppdragTilknyttetBruker = oppdragsInfoRepository.erOppdragTilknyttetBruker(gjelderId, oppdragsId)
-
-        if (!oppdragTilknyttetBruker) {
-            logger.error { "Oppdraget med id: $oppdragsId er ikke knyttet til bruker" }
-            throw RequestValidationException(
-                HttpStatusCode.BadRequest.value,
-                listOf("Oppdraget er ikke knyttet til bruker"),
-            )
-        }
 
         return oppdragsInfoRepository.hentOppdragsLinjer(oppdragsId)
     }

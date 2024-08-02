@@ -32,7 +32,7 @@ internal class OppdragsInfoServiceTest : FunSpec({
 
         every { applicationCall.request.headers["Authorization"] } returns tokenWithNavIdent
         every { oppdragsInfoRepository.hentOppdragId(any()) } returns "1234567890"
-        every { oppdragsInfoRepository.hentOppdragsEgenskaperList(any(), "") } returns oppdragsEgenskaperList
+        every { oppdragsInfoRepository.hentOppdragsEgenskaper(any(), "") } returns oppdragsEgenskaperList
 
         val result = oppdragsInfoService.hentOppdragsEgenskaper("12345678901", "", applicationCall)
 
@@ -65,10 +65,9 @@ internal class OppdragsInfoServiceTest : FunSpec({
                 ),
             )
 
-        every { oppdragsInfoRepository.erOppdragTilknyttetBruker(gjelderId, oppdragsId) } returns true
         every { oppdragsInfoRepository.hentOppdragsLinjer(any()) } returns oppdragsLinjeList
 
-        val result = oppdragsInfoService.hentOppdragsLinjer(gjelderId, oppdragsId)
+        val result = oppdragsInfoService.hentOppdragsLinjer(oppdragsId)
 
         result.size shouldBe 1
     }

@@ -7,7 +7,6 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsEgenskaperRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
 
@@ -33,10 +32,8 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
         }
 
         post("{oppdragsId}/oppdragsLinjer") {
-            val gjelderIdRequest = call.receive<GjelderIdRequest>()
             call.respond(
                 oppdragsInfoService.hentOppdragsLinjer(
-                    gjelderIdRequest.gjelderId,
                     call.parameters["oppdragsId"].orEmpty().toInt(),
                 ),
             )

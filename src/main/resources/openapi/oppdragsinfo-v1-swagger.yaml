@@ -158,7 +158,7 @@ paths:
         - Bearer: [ ]
 
   /{oppdragsId}/omposteringer:
-    post:
+    get:
       tags:
         - oppdragsinfo
       summary: Hent omposteringer
@@ -171,13 +171,6 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        description: gjelderId er et krav
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/GjelderIdRequest'
-        required: true
       responses:
         200:
           description: OK
