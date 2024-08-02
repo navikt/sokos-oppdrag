@@ -202,10 +202,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOppdragsOmposteringer(
-        gjelderId: String,
-        oppdragsId: Int,
-    ): List<Ompostering> {
+    fun hentOppdragsOmposteringer(oppdragsId: Int): List<Ompostering> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -224,17 +221,14 @@ class OppdragsInfoRepository(
                         T_OPPDRAG OP,
                         T_FAGOMRAADE FO, 
                         T_FAGGRUPPE FG
-                    WHERE OM.GJELDER_ID = :gjelderId
-                    AND OP.OPPDRAGS_ID = :oppdragsId
+                    WHERE OP.OPPDRAGS_ID = :oppdragsId
+                    AND OM.GJELDER_ID = OP.OPPDRAG_GJELDER_ID
                     AND FO.KODE_FAGOMRAADE = OP.KODE_FAGOMRAADE
                     AND FG.KODE_FAGGRUPPE = FO.KODE_FAGGRUPPE
                     AND FG.KODE_FAGGRUPPE = OM.KODE_FAGGRUPPE
                     ORDER BY OM.DATO_OMPOSTER_FOM
                     """.trimIndent(),
-                    mapOf(
-                        "gjelderId" to gjelderId,
-                        "oppdragsId" to oppdragsId,
-                    ),
+                    mapOf("oppdragsId" to oppdragsId),
                 ),
                 mapToOppdragsOmpostering,
             )

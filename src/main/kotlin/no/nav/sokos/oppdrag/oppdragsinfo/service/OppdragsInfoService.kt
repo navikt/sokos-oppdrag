@@ -94,13 +94,10 @@ class OppdragsInfoService(
         return OppdragsEnhetDTO(enhet, behandlendeEnhet)
     }
 
-    fun hentOppdragsOmposteringer(
-        gjelderId: String,
-        oppdragsId: Int,
-    ): List<Ompostering> {
+    fun hentOppdragsOmposteringer(oppdragsId: Int): List<Ompostering> {
         logger.info { "Henter omposteringer med oppdragsId: $oppdragsId" }
 
-        return oppdragsInfoRepository.hentOppdragsOmposteringer(gjelderId, oppdragsId)
+        return oppdragsInfoRepository.hentOppdragsOmposteringer(oppdragsId)
     }
 
     fun hentOppdragsEnhetsHistorikk(oppdragsId: String): List<OppdragsEnhet> {

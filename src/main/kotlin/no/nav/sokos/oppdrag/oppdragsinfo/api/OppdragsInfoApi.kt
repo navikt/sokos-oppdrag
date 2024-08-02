@@ -50,11 +50,9 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
             )
         }
 
-        post("{oppdragsId}/omposteringer") {
-            val gjelderIdRequest = call.receive<GjelderIdRequest>()
+        get("{oppdragsId}/omposteringer") {
             call.respond(
                 oppdragsInfoService.hentOppdragsOmposteringer(
-                    gjelderIdRequest.gjelderId,
                     call.parameters["oppdragsId"].orEmpty().toInt(),
                 ),
             )
