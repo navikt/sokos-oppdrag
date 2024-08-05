@@ -76,8 +76,8 @@ paths:
       security:
         - Bearer: [ ]
 
-  /{oppdragsId}/oppdragsLinjer:
-    post:
+  /{oppdragsId}/oppdragslinjer:
+    get:
       tags:
         - oppdragsinfo
       summary: Hent oppdragslinjer
@@ -90,13 +90,6 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        description: gjelderId er et krav
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/GjelderIdRequest'
-        required: true
       responses:
         200:
           description: OK

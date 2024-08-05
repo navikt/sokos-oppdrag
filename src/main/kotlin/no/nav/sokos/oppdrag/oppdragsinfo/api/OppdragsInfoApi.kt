@@ -31,7 +31,7 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
             )
         }
 
-        post("{oppdragsId}/oppdragsLinjer") {
+        get("{oppdragsId}/oppdragslinjer") {
             call.respond(
                 oppdragsInfoService.hentOppdragsLinjer(
                     call.parameters["oppdragsId"].orEmpty().toInt(),

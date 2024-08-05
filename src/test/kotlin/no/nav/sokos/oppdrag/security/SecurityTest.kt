@@ -3,6 +3,7 @@ package no.nav.sokos.oppdrag.security
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -50,7 +51,7 @@ internal class SecurityTest : FunSpec({
                         }
                     }
                 }
-                val response = client.post("$OPPDRAGSINFO_BASE_API_PATH/oppdrag/oppdragsLinjer")
+                val response = client.get("$OPPDRAGSINFO_BASE_API_PATH/faggrupper")
                 response.status shouldBe HttpStatusCode.Unauthorized
             }
         }

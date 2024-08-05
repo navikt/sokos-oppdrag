@@ -17,7 +17,6 @@ import io.restassured.RestAssured
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.OPPDRAGSINFO_BASE_API_PATH
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
-import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
@@ -138,9 +137,8 @@ internal class OppdragsInfoApiTest : FunSpec({
             RestAssured.given().filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(GjelderIdRequest(gjelderId = "12345678901"))
                 .port(PORT)
-                .post("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/oppdragsLinjer")
+                .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/oppdragslinjer")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
