@@ -4,9 +4,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import mu.KotlinLogging
-import no.nav.sokos.oppdrag.attestasjon.domain.AttestasjonTreff
-import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjonsdetaljer
-import no.nav.sokos.oppdrag.attestasjon.domain.Fagomraade
+import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
+import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
+import no.nav.sokos.oppdrag.attestasjon.domain.OppdragsDetaljer
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
@@ -19,14 +19,14 @@ class AttestasjonService(
     private val attestasjonRepository: AttestasjonRepository = AttestasjonRepository(),
     private val auditLogger: AuditLogger = AuditLogger(),
 ) {
-    fun hentOppdragForAttestering(
+    fun getOppdrag(
         gjelderId: String? = null,
         fagsystemId: String? = null,
-        kodeFaggruppe: String? = null,
-        kodeFagomraade: String? = null,
+        kodeFagGruppe: String? = null,
+        kodeFagOmraade: String? = null,
         attestert: Boolean? = null,
         applicationCall: ApplicationCall,
-    ): List<AttestasjonTreff> {
+    ): List<Oppdrag> {
         if (!gjelderId.isNullOrBlank()) {
             val saksbehandler = getSaksbehandler(applicationCall)
             secureLogger.info { "Henter attestasjonsdata for gjelderId: $gjelderId" }
@@ -39,10 +39,10 @@ class AttestasjonService(
             )
         }
 
-        if (!validerSok(
+        if (!validateSearchParams(
                 gjelderId = gjelderId,
-                kodeFaggruppe = kodeFaggruppe,
-                kodeFagomraade = kodeFagomraade,
+                kodeFaggruppe = kodeFagGruppe,
+                kodeFagomraade = kodeFagOmraade,
                 fagsystemId = fagsystemId,
                 attestert = attestert,
             )
@@ -53,25 +53,21 @@ class AttestasjonService(
             )
         }
 
-        return attestasjonRepository.sok(
+        return attestasjonRepository.getOppdrag(
             gjelderId = gjelderId ?: "",
             fagsystemId = fagsystemId ?: "",
-            kodeFaggruppe = kodeFaggruppe ?: "",
-            kodeFagomraade = kodeFagomraade ?: "",
+            kodeFaggruppe = kodeFagGruppe ?: "",
+            kodeFagomraade = kodeFagOmraade ?: "",
             attestert = attestert,
         )
     }
 
-    fun hentOppdragslinjerForAttestering(oppdragsId: Int): List<Attestasjonsdetaljer> {
-        return attestasjonRepository.hentOppdragslinjer(oppdragsId)
+    fun getFagOmraade(): List<FagOmraade> {
+        return attestasjonRepository.getFagOmraader()
     }
 
-    fun hentFagomraader(): List<Fagomraade> {
-        return attestasjonRepository.hentFagomraader()
-    }
-
-    fun hentListeMedOppdragslinjerForAttestering(oppdragsIder: List<Int>): List<Attestasjonsdetaljer> {
-        return attestasjonRepository.hentOppdragslinjerForFlereOppdragsId(oppdragsIder)
+    fun getOppdragsDetaljer(oppdragsIder: List<Int>): List<OppdragsDetaljer> {
+        return attestasjonRepository.getOppdragsDetaljer(oppdragsIder)
     }
 }
 
@@ -82,7 +78,7 @@ class AttestasjonService(
  * Gjelder ID
  * Fagsystem ID og fagområde
  */
-fun validerSok(
+fun validateSearchParams(
     kodeFaggruppe: String?,
     kodeFagomraade: String?,
     gjelderId: String?,

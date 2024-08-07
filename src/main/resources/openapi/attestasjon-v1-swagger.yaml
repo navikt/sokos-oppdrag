@@ -16,45 +16,6 @@ servers:
   - url: /api/v1/attestasjon
 
 paths:
-  /gjeldersok:
-    post:
-      tags:
-        - attestasjon
-      summary: Søk med gjelderId
-      description: Returnerer oppdrag tilknyttet person eller foretak basert på 9 eller 11 siffer gjelderId.
-      operationId: hentOppdragForAttesteringGjelderId
-      requestBody:
-        description: gjelderId er et krav
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/GjelderIdRequest'
-        required: true
-      responses:
-        200:
-          description: OK - Hvis oppdrag ikke finnes, returneres tom liste
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AttestasjonTreff'
-        400:
-          description: Ugyldig request, oppfyller ikke swagger-kontrakt
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiError'
-        401:
-          description: Ingen tilgang
-        500:
-          description: Annen feil
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiError'
-      security:
-        - Bearer: [ ]
 
   /sok:
     post:
@@ -68,7 +29,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SokAttestasjonRequestBody'
+              $ref: '#/components/schemas/OppdragsRequest'
         required: true
       responses:
         200:
@@ -78,7 +39,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/AttestasjonTreff'
+                  $ref: '#/components/schemas/Oppdrag'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
@@ -95,47 +56,6 @@ paths:
                 $ref: '#/components/schemas/ApiError'
       security:
         - Bearer: [ ]
-
-  /oppdragslinjer/{oppdragsId}:
-    get:
-      tags:
-        - attestasjon
-      summary: Søk med oppdragsid
-      description: Returnerer oppdragslinjene til valgte oppdrag.
-      operationId: hentOppdragslinjerForAttestering
-      parameters:
-        - name: oppdragsId
-          in: path
-          description: Oppdragets id
-          required: true
-          schema:
-            type: integer
-      responses:
-        200:
-          description: OK - Hvis oppdraget ikke finnes, returneres tom liste
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Attestasjonsdetaljer'
-        400:
-          description: Ugyldig request, oppfyller ikke swagger-kontrakt
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiError'
-        401:
-          description: Ingen tilgang
-        500:
-          description: Annen feil
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiError'
-      security:
-        - Bearer: [ ]
-
 
   /fagomraader:
     get:
@@ -152,12 +72,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Fagomraade'
+                  $ref: '#/components/schemas/FagOmraade'
       security:
         - Bearer: [ ]
 
 
-  /oppdragslinjer:
+  /oppdragsdetaljer:
     post:
       tags:
         - attestasjon
@@ -169,7 +89,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AttestasjondetaljerRequestBody'
+              $ref: '#/components/schemas/OppdragsIdRequest'
       responses:
         200:
           description: OK - Hvis oppdragene ikke finnes, returneres tom liste
@@ -178,7 +98,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Attestasjonsdetaljer'
+                  $ref: '#/components/schemas/OppdragsDetaljer'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
@@ -198,27 +118,8 @@ paths:
 
 components:
   schemas:
-    GjelderIdRequest:
-      type: object
-      required:
-        - gjelderId
-      properties:
-        gjelderId:
-          type: string
-          example: "9 eller 11 siffer"
-          description: 9 eller 11 siffer
-    Fagomraade:
-      type: object
-      required:
-        - navn
-        - kode
-      properties:
-        navn:
-          type: string
-        kode:
-          type: string
 
-    AttestasjondetaljerRequestBody:
+    OppdragsIdRequest:
         type: object
         required:
           - oppdragsIder
@@ -230,8 +131,7 @@ components:
                 example: [123, 456]
                 description: Liste med oppdragsIder
 
-
-    SokAttestasjonRequestBody:
+    OppdragsRequest:
       type: object
       properties:
         gjelderId:
@@ -243,11 +143,11 @@ components:
           type: string
           example: "TU000123456789012"
           nullable: true
-        kodeFaggruppe:
+        kodeFagGruppe:
           type: string
           example: "PEN"
           nullable: true
-        kodeFagomraade:
+        kodeFagOmraade:
           type: string
           example: "MBA"
           nullable: true
@@ -256,21 +156,32 @@ components:
           example: true
           nullable: true
 
-    AttestasjonTreff:
+    Oppdrag:
       type: object
       properties:
         gjelderId:
           type: string
-        navnFaggruppe:
+        navnFagGruppe:
           type: string
-        navnFagomraade:
+        navnFagOmraade:
           type: string
         oppdragsId:
           type: integer
         fagsystemId:
           type: string
 
-    Attestasjonsdetaljer:
+    FagOmraade:
+      type: object
+      required:
+        - navn
+        - kode
+      properties:
+        navn:
+          type: string
+        kode:
+          type: string
+
+    OppdragsDetaljer:
       type: object
       required:
         - klasse
@@ -278,7 +189,7 @@ components:
         - sats
         - satstype
         - datoVedtakFom
-        - navnFagomraade
+        - navnFagOmraade
         - fagsystemId
       properties:
         klasse:
@@ -295,7 +206,7 @@ components:
           type: string
         attestant:
           type: string
-        navnFagomraade:
+        navnFagOmraade:
           type: string
         fagsystemId:
           type: string

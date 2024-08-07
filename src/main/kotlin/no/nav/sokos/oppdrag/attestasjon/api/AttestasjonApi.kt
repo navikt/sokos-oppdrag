@@ -7,57 +7,39 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import no.nav.sokos.oppdrag.attestasjon.domain.SokAttestasjonRequestBody
-import no.nav.sokos.oppdrag.attestasjon.model.AttestasjondetaljerRequestBody
+import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsIdRequest
+import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
-import no.nav.sokos.oppdrag.common.model.GjelderIdRequestBody
 
 private const val BASE_PATH = "/api/v1/attestasjon"
 
 fun Route.attestasjonApi(service: AttestasjonService = AttestasjonService()) {
     route(BASE_PATH) {
-        post("gjeldersok") {
-            val gjelderIdRequestBody = call.receive<GjelderIdRequestBody>()
-            call.respond(
-                service.hentOppdragForAttestering(
-                    gjelderId = gjelderIdRequestBody.gjelderId,
-                    applicationCall = call,
-                ),
-            )
-        }
-
         post("sok") {
-            val sokAttestasjonRequestBody = call.receive<SokAttestasjonRequestBody>()
+            val oppdragsRequest = call.receive<OppdragsRequest>()
             call.respond(
-                service.hentOppdragForAttestering(
-                    gjelderId = sokAttestasjonRequestBody.gjelderId,
-                    fagsystemId = sokAttestasjonRequestBody.fagsystemId,
-                    kodeFaggruppe = sokAttestasjonRequestBody.kodeFaggruppe,
-                    kodeFagomraade = sokAttestasjonRequestBody.kodeFagomraade,
-                    attestert = sokAttestasjonRequestBody.attestert,
+                service.getOppdrag(
+                    gjelderId = oppdragsRequest.gjelderId,
+                    fagsystemId = oppdragsRequest.fagsystemId,
+                    kodeFagGruppe = oppdragsRequest.kodeFagGruppe,
+                    kodeFagOmraade = oppdragsRequest.kodeFagOmraade,
+                    attestert = oppdragsRequest.attestert,
                     applicationCall = call,
-                ),
-            )
-        }
-
-        get("oppdragslinjer/{oppdragsId}") {
-            call.respond(
-                service.hentOppdragslinjerForAttestering(
-                    call.parameters["oppdragsId"].orEmpty().toInt(),
                 ),
             )
         }
 
         get("fagomraader") {
             call.respond(
-                service.hentFagomraader(),
+                service.getFagOmraade(),
             )
         }
-        post("oppdragslinjer") {
-            val sokAttestasjonRequestBody = call.receive<AttestasjondetaljerRequestBody>()
+
+        post("oppdragsdetaljer") {
+            val oppdragsIdRequest = call.receive<OppdragsIdRequest>()
             call.respond(
-                service.hentListeMedOppdragslinjerForAttestering(
-                    sokAttestasjonRequestBody.oppdragsIder,
+                service.getOppdragsDetaljer(
+                    oppdragsIdRequest.oppdragsIder,
                 ),
             )
         }

@@ -3,6 +3,6 @@ package no.nav.sokos.oppdrag.common.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GjelderIdRequestBody(
+data class GjelderIdRequest(
     val gjelderId: String,
 )

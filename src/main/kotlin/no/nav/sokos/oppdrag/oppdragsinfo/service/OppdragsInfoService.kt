@@ -1,8 +1,6 @@
 package no.nav.sokos.oppdrag.oppdragsinfo.service
 
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
-import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
@@ -17,14 +15,15 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Maksdato
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ompostering
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdrag
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinjeDetaljer
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsinfoTreffliste
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ovrig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
+import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsEnhetDTO
+import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsLinjeDetaljerDTO
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsInfoRepository
 import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler
 
@@ -35,11 +34,11 @@ class OppdragsInfoService(
     private val oppdragsInfoRepository: OppdragsInfoRepository = OppdragsInfoRepository(),
     private val auditLogger: AuditLogger = AuditLogger(),
 ) {
-    fun sokOppdragsInfo(
+    fun hentOppdragsEgenskaper(
         gjelderId: String,
         faggruppeKode: String?,
         applicationCall: ApplicationCall,
-    ): List<OppdragsinfoTreffliste> {
+    ): List<Oppdrag> {
         val navIdent = getSaksbehandler(applicationCall)
 
         secureLogger.info { "Søker etter oppdrag med gjelderId: $gjelderId" }
@@ -51,65 +50,39 @@ class OppdragsInfoService(
             ),
         )
 
-        val oppdragsInfo = oppdragsInfoRepository.hentOppdragsInfo(gjelderId)
+        val oppdragId = oppdragsInfoRepository.hentOppdragId(gjelderId)
 
-        if (oppdragsInfo == null) {
+        return oppdragId?.let {
+            return oppdragsInfoRepository.hentOppdragsEgenskaper(gjelderId, faggruppeKode)
+        } ?: run {
             secureLogger.info { "Fant ingen oppdrag for gjelderId: $gjelderId" }
             return emptyList()
-        } else {
-            val oppdragsListe =
-                oppdragsInfoRepository.hentOppdragsListe(oppdragsInfo.gjelderId!!, faggruppeKode)
-            return listOf(
-                OppdragsinfoTreffliste(
-                    gjelderId = oppdragsInfo.gjelderId,
-                    oppdragsListe = oppdragsListe,
-                ),
-            )
         }
     }
 
-    fun hentFaggrupper(): List<FagGruppe> {
+    fun hentFagGrupper(): List<FagGruppe> {
         logger.info { "Henter faggrupper" }
         return oppdragsInfoRepository.hentFagGrupper()
     }
 
-    fun hentOppdrag(
-        gjelderId: String,
-        oppdragsId: Int,
-    ): Oppdrag {
+    fun hentOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> {
         logger.info { "Henter oppdragslinjer med oppdragsId: $oppdragsId" }
 
-        val oppdragTilknyttetBruker = oppdragsInfoRepository.erOppdragTilknyttetBruker(gjelderId, oppdragsId)
-
-        if (!oppdragTilknyttetBruker) {
-            logger.error { "Oppdraget med id: $oppdragsId er ikke knyttet til bruker" }
-            throw RequestValidationException(
-                HttpStatusCode.BadRequest.value,
-                listOf("Oppdraget er ikke knyttet til bruker"),
-            )
-        }
-
-        val oppdragsegenskaper = oppdragsInfoRepository.hentOppdragsegenskaper(oppdragsId).first()
-        val enhet = oppdragsInfoRepository.hentOppdragsEnhet(oppdragsId = oppdragsId).first()
-        val behandlendeEnhet = oppdragsInfoRepository.hentOppdragsEnhet("BEH", oppdragsId).firstOrNull()
-        val harOmposteringer = oppdragsInfoRepository.eksistererOmposteringer(gjelderId, oppdragsId)
-        val oppdragsLinjer = oppdragsInfoRepository.hentOppdragsLinjer(oppdragsId)
-
-        return Oppdrag(
-            oppdragsegenskaper,
-            kostnadssted = enhet,
-            ansvarssted = behandlendeEnhet,
-            harOmposteringer,
-            oppdragsLinjer,
-        )
+        return oppdragsInfoRepository.hentOppdragsLinjer(oppdragsId)
     }
 
-    fun hentOppdragsOmposteringer(
-        gjelderId: String,
-        oppdragsId: String,
-    ): List<Ompostering> {
-        logger.info { "Henter omposteringer for oppdragsId: $oppdragsId" }
-        return oppdragsInfoRepository.hentOppdragsOmposteringer(gjelderId, oppdragsId.toInt())
+    fun hentBehandlendeEnhetForOppdrag(oppdragsId: Int): OppdragsEnhetDTO {
+        logger.info { "Henter behandlende enhet for oppdrag med oppdragsId: $oppdragsId" }
+        val enhet = oppdragsInfoRepository.hentOppdragsEnhet(oppdragsId = oppdragsId).first()
+        val behandlendeEnhet = oppdragsInfoRepository.hentOppdragsEnhet("BEH", oppdragsId).firstOrNull()
+
+        return OppdragsEnhetDTO(enhet, behandlendeEnhet)
+    }
+
+    fun hentOppdragsOmposteringer(oppdragsId: Int): List<Ompostering> {
+        logger.info { "Henter omposteringer med oppdragsId: $oppdragsId" }
+
+        return oppdragsInfoRepository.hentOppdragsOmposteringer(oppdragsId)
     }
 
     fun hentOppdragsEnhetsHistorikk(oppdragsId: String): List<OppdragsEnhet> {
@@ -117,7 +90,7 @@ class OppdragsInfoService(
         return oppdragsInfoRepository.hentOppdragsEnhetsHistorikk(oppdragsId.toInt())
     }
 
-    fun hentOppdragsStatusHistorikk(oppdragsId: String): List<OppdragStatus> {
+    fun hentOppdragsStatusHistorikk(oppdragsId: String): List<OppdragsStatus> {
         logger.info { "Henter statushistorikk for oppdragId: $oppdragsId" }
         return oppdragsInfoRepository.hentOppdragsStatusHistorikk(oppdragsId.toInt())
     }
@@ -141,12 +114,12 @@ class OppdragsInfoService(
     fun hentOppdragsLinjeDetaljer(
         oppdragsId: String,
         linjeId: String,
-    ): OppdragsLinjeDetaljer {
+    ): OppdragsLinjeDetaljerDTO {
         logger.info { "Henter detaljer for oppdrag: $oppdragsId, linje : $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
         val oppdragslinjer = oppdragsInfoRepository.hentOppdragsLinjer(oppdragsId.toInt())
         val eksisterer = oppdragsInfoRepository.eksistererValutaSkyldnerKravhaverLinjeenhetGradTekstKidMaksDato(oppdragsId.toInt(), linjeId.toInt())
-        return OppdragsLinjeDetaljer(
+        return OppdragsLinjeDetaljerDTO(
             korrigerteLinjeIder = oppdragslinjer.filter { it.linjeId in korrigerteLinjeIder },
             harValutaer = eksisterer["T_VALUTA"] ?: false,
             harSkyldnere = eksisterer["T_SKYLDNER"] ?: false,
@@ -159,31 +132,31 @@ class OppdragsInfoService(
         )
     }
 
-    fun hentOppdragsLinjeValuta(
+    fun hentOppdragsLinjeValutaer(
         oppdragsId: String,
         linjeId: String,
     ): List<Valuta> {
         logger.info { "Henter valuta for oppdrag: $oppdragsId, linje : $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentValutaerList(oppdragsId.toInt(), korrigerteLinjeIder)
+        return oppdragsInfoRepository.hentValutaer(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    fun hentOppdragsLinjeSkyldner(
+    fun hentOppdragsLinjeSkyldnere(
         oppdragsId: String,
         linjeId: String,
     ): List<Skyldner> {
         logger.info { "Henter skyldner for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentSkyldnereList(oppdragsId.toInt(), korrigerteLinjeIder)
+        return oppdragsInfoRepository.hentSkyldnere(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    fun hentOppdragsLinjeKravhaver(
+    fun hentOppdragsLinjeKravhavere(
         oppdragsId: String,
         linjeId: String,
     ): List<Kravhaver> {
         logger.info { "Henter kravhaver for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentKravhavereList(oppdragsId.toInt(), korrigerteLinjeIder)
+        return oppdragsInfoRepository.hentKravhavere(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
     fun hentOppdragsLinjeEnheter(
@@ -192,52 +165,52 @@ class OppdragsInfoService(
     ): List<LinjeEnhet> {
         logger.info { "Henter enheter liste for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentEnheterList(oppdragsId.toInt(), korrigerteLinjeIder)
+        return oppdragsInfoRepository.hentEnheter(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    fun hentOppdragsLinjeGrad(
+    fun hentOppdragsLinjeGrader(
         oppdragsId: String,
         linjeId: String,
     ): List<Grad> {
         logger.info { "Henter grad for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentGraderList(oppdragsId.toInt(), korrigerteLinjeIder)
+        return oppdragsInfoRepository.hentGrader(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    fun hentOppdragsLinjeTekst(
+    fun hentOppdragsLinjeTekster(
         oppdragsId: String,
         linjeId: String,
     ): List<Tekst> {
         logger.info { "Henter tekst liste for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentTeksterList(oppdragsId.toInt(), korrigerteLinjeIder)
+        return oppdragsInfoRepository.hentTekster(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    fun hentOppdragsLinjeKidListe(
+    fun hentOppdragsLinjeKid(
         oppdragsId: String,
         linjeId: String,
     ): List<Kid> {
         logger.info { "Henter kid for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentKidListe(oppdragsId.toInt(), korrigerteLinjeIder)
+        return oppdragsInfoRepository.hentKid(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    fun hentOppdragsLinjeMaksdato(
+    fun hentOppdragsLinjeMaksDatoer(
         oppdragsId: String,
         linjeId: String,
     ): List<Maksdato> {
         logger.info { "Henter maksdato for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentMaksdatoerListe(oppdragsId.toInt(), korrigerteLinjeIder)
+        return oppdragsInfoRepository.hentMaksDatoer(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    fun hentOppdragsLinjeOvrig(
+    fun hentOppdragsLinjeOvriger(
         oppdragsId: String,
         linjeId: String,
     ): List<Ovrig> {
         logger.info { "Henter øvrig for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentOvrigListe(oppdragsId.toInt(), korrigerteLinjeIder)
+        return oppdragsInfoRepository.hentOvriger(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
     private fun finnKorrigerteLinjeIder(

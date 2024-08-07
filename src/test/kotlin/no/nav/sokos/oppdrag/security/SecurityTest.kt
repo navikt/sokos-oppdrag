@@ -3,6 +3,7 @@ package no.nav.sokos.oppdrag.security
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -20,7 +21,7 @@ import no.nav.security.mock.oauth2.withMockOAuth2Server
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.OPPDRAGSINFO_BASE_API_PATH
 import no.nav.sokos.oppdrag.TestUtil.mockAuthConfig
-import no.nav.sokos.oppdrag.common.model.GjelderIdRequestBody
+import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
@@ -50,7 +51,7 @@ internal class SecurityTest : FunSpec({
                         }
                     }
                 }
-                val response = client.post("$OPPDRAGSINFO_BASE_API_PATH/oppdrag")
+                val response = client.get("$OPPDRAGSINFO_BASE_API_PATH/faggrupper")
                 response.status shouldBe HttpStatusCode.Unauthorized
             }
         }
@@ -69,7 +70,7 @@ internal class SecurityTest : FunSpec({
                     }
                 }
 
-                every { oppdragsInfoService.sokOppdragsInfo(any(), any(), any()) } returns emptyList()
+                every { oppdragsInfoService.hentOppdragsEgenskaper(any(), any(), any()) } returns emptyList()
 
                 val client =
                     createClient {
@@ -86,10 +87,10 @@ internal class SecurityTest : FunSpec({
                     }
 
                 val response =
-                    client.post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsinfo") {
+                    client.post("$OPPDRAGSINFO_BASE_API_PATH/sok") {
                         header(HttpHeaders.Authorization, "Bearer ${token()}")
                         header(HttpHeaders.ContentType, APPLICATION_JSON)
-                        setBody(GjelderIdRequestBody(gjelderId = "12345678901"))
+                        setBody(GjelderIdRequest(gjelderId = "12345678901"))
                     }
 
                 response.status shouldBe HttpStatusCode.OK

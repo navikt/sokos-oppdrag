@@ -7,18 +7,17 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import no.nav.sokos.oppdrag.common.model.GjelderIdRequestBody
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.SokOppdragRequestBody
+import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
 
 private const val BASE_PATH = "/api/v1/oppdragsinfo"
 
 fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInfoService()) {
     route(BASE_PATH) {
-        post("oppdragsinfo") {
-            val request = call.receive<SokOppdragRequestBody>()
+        post("sok") {
+            val request = call.receive<OppdragsRequest>()
             call.respond(
-                oppdragsInfoService.sokOppdragsInfo(
+                oppdragsInfoService.hentOppdragsEgenskaper(
                     request.gjelderId,
                     request.fagGruppeKode,
                     call,
@@ -28,26 +27,30 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
 
         get("faggrupper") {
             call.respond(
-                oppdragsInfoService.hentFaggrupper(),
+                oppdragsInfoService.hentFagGrupper(),
             )
         }
 
-        post("{oppdragsId}") {
-            val gjelderIdRequestBody = call.receive<GjelderIdRequestBody>()
+        get("{oppdragsId}/oppdragslinjer") {
             call.respond(
-                oppdragsInfoService.hentOppdrag(
-                    gjelderIdRequestBody.gjelderId,
+                oppdragsInfoService.hentOppdragsLinjer(
                     call.parameters["oppdragsId"].orEmpty().toInt(),
                 ),
             )
         }
 
-        post("{oppdragsId}/omposteringer") {
-            val gjelderIdRequestBody = call.receive<GjelderIdRequestBody>()
+        get("{oppdragsId}/enheter") {
+            call.respond(
+                oppdragsInfoService.hentBehandlendeEnhetForOppdrag(
+                    call.parameters["oppdragsId"].orEmpty().toInt(),
+                ),
+            )
+        }
+
+        get("{oppdragsId}/omposteringer") {
             call.respond(
                 oppdragsInfoService.hentOppdragsOmposteringer(
-                    gjelderIdRequestBody.gjelderId,
-                    call.parameters["oppdragsId"].orEmpty(),
+                    call.parameters["oppdragsId"].orEmpty().toInt(),
                 ),
             )
         }
@@ -68,7 +71,7 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
             )
         }
 
-        get("{oppdragsId}/{linjeId}/status") {
+        get("{oppdragsId}/{linjeId}/statuser") {
             call.respond(
                 oppdragsInfoService.hentOppdragsLinjeStatuser(
                     call.parameters["oppdragsId"].orEmpty(),
@@ -77,7 +80,7 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
             )
         }
 
-        get("{oppdragsId}/{linjeId}/attestant") {
+        get("{oppdragsId}/{linjeId}/attestanter") {
             call.respond(
                 oppdragsInfoService.hentOppdragsLinjeAttestanter(
                     call.parameters["oppdragsId"].orEmpty(),
@@ -95,34 +98,34 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
             )
         }
 
-        get("{oppdragsId}/{linjeId}/valuta") {
+        get("{oppdragsId}/{linjeId}/valutaer") {
             call.respond(
-                oppdragsInfoService.hentOppdragsLinjeValuta(
+                oppdragsInfoService.hentOppdragsLinjeValutaer(
                     call.parameters["oppdragsId"].orEmpty(),
                     call.parameters["linjeId"].orEmpty(),
                 ),
             )
         }
 
-        get("{oppdragsId}/{linjeId}/skyldner") {
+        get("{oppdragsId}/{linjeId}/skyldnere") {
             call.respond(
-                oppdragsInfoService.hentOppdragsLinjeSkyldner(
+                oppdragsInfoService.hentOppdragsLinjeSkyldnere(
                     call.parameters["oppdragsId"].orEmpty(),
                     call.parameters["linjeId"].orEmpty(),
                 ),
             )
         }
 
-        get("{oppdragsId}/{linjeId}/kravhaver") {
+        get("{oppdragsId}/{linjeId}/kravhavere") {
             call.respond(
-                oppdragsInfoService.hentOppdragsLinjeKravhaver(
+                oppdragsInfoService.hentOppdragsLinjeKravhavere(
                     call.parameters["oppdragsId"].orEmpty(),
                     call.parameters["linjeId"].orEmpty(),
                 ),
             )
         }
 
-        get("{oppdragsId}/{linjeId}/enhet") {
+        get("{oppdragsId}/{linjeId}/enheter") {
             call.respond(
                 oppdragsInfoService.hentOppdragsLinjeEnheter(
                     call.parameters["oppdragsId"].orEmpty(),
@@ -131,36 +134,36 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
             )
         }
 
-        get("{oppdragsId}/{linjeId}/grad") {
+        get("{oppdragsId}/{linjeId}/grader") {
             call.respond(
-                oppdragsInfoService.hentOppdragsLinjeGrad(
+                oppdragsInfoService.hentOppdragsLinjeGrader(
                     call.parameters["oppdragsId"].orEmpty(),
                     call.parameters["linjeId"].orEmpty(),
                 ),
             )
         }
 
-        get("{oppdragsId}/{linjeId}/tekst") {
+        get("{oppdragsId}/{linjeId}/tekster") {
             call.respond(
-                oppdragsInfoService.hentOppdragsLinjeTekst(
+                oppdragsInfoService.hentOppdragsLinjeTekster(
                     call.parameters["oppdragsId"].orEmpty(),
                     call.parameters["linjeId"].orEmpty(),
                 ),
             )
         }
 
-        get("{oppdragsId}/{linjeId}/kidliste") {
+        get("{oppdragsId}/{linjeId}/kid") {
             call.respond(
-                oppdragsInfoService.hentOppdragsLinjeKidListe(
+                oppdragsInfoService.hentOppdragsLinjeKid(
                     call.parameters["oppdragsId"].orEmpty(),
                     call.parameters["linjeId"].orEmpty(),
                 ),
             )
         }
 
-        get("{oppdragsId}/{linjeId}/maksdato") {
+        get("{oppdragsId}/{linjeId}/maksdatoer") {
             call.respond(
-                oppdragsInfoService.hentOppdragsLinjeMaksdato(
+                oppdragsInfoService.hentOppdragsLinjeMaksDatoer(
                     call.parameters["oppdragsId"].orEmpty(),
                     call.parameters["linjeId"].orEmpty(),
                 ),
@@ -169,7 +172,7 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
 
         get("{oppdragsId}/{linjeId}/ovrig") {
             call.respond(
-                oppdragsInfoService.hentOppdragsLinjeOvrig(
+                oppdragsInfoService.hentOppdragsLinjeOvriger(
                     call.parameters["oppdragsId"].orEmpty(),
                     call.parameters["linjeId"].orEmpty(),
                 ),

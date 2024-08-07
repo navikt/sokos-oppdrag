@@ -1,9 +1,10 @@
-package no.nav.sokos.oppdrag.oppdragsinfo.domain
+package no.nav.sokos.oppdrag.oppdragsinfo.dto
 
 import kotlinx.serialization.Serializable
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
 
 @Serializable
-data class OppdragsLinjeDetaljer(
+data class OppdragsLinjeDetaljerDTO(
     val korrigerteLinjeIder: List<OppdragsLinje>? = null,
     val harValutaer: Boolean,
     val harSkyldnere: Boolean,

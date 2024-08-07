@@ -16,11 +16,10 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Maksdato
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ompostering
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragStatus
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdrag
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdragsegenskaper
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsinfoTreffliste
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ovrig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
@@ -29,7 +28,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 class OppdragsInfoRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource(),
 ) {
-    fun hentOppdragsInfo(gjelderId: String): OppdragsinfoTreffliste? {
+    fun hentOppdragId(gjelderId: String): String? {
         return using(sessionOf(dataSource)) { session ->
             session.single(
                 queryOf(
@@ -40,8 +39,7 @@ class OppdragsInfoRepository(
                         "gjelderId" to gjelderId,
                     ),
                 ),
-                mapToOppdragsinfoTreffliste,
-            )
+            ) { row -> row.string("OPPDRAG_GJELDER_ID") }
         }
     }
 
@@ -58,23 +56,22 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOppdragsListe(
+    fun hentOppdragsEgenskaper(
         gjelderId: String,
         fagGruppeKode: String?,
-    ): List<Oppdragsegenskaper> {
+    ): List<Oppdrag> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
                     """
                     SELECT OP.OPPDRAGS_ID,
-                        OP.FAGSYSTEM_ID,
-                        FO.NAVN_FAGOMRAADE,
+                        TRIM(OP.FAGSYSTEM_ID) AS FAGSYSTEM_ID,
+                        TRIM(FO.NAVN_FAGOMRAADE) AS NAVN_FAGOMRAADE,
                         OP.OPPDRAG_GJELDER_ID,
                         OP.KJOR_IDAG,
-                        OP.TYPE_BILAG,
-                        FG.NAVN_FAGGRUPPE,
-                        OS.KODE_STATUS,
-                        OS.TIDSPKT_REG
+                        TRIM(OP.TYPE_BILAG) AS TYPE_BILAG,
+                        TRIM(FG.NAVN_FAGGRUPPE) AS NAVN_FAGGRUPPE,
+                        OS.KODE_STATUS
                     FROM T_OPPDRAG OP,
                         T_FAGOMRAADE FO, 
                         T_FAGGRUPPE FG,
@@ -95,67 +92,8 @@ class OppdragsInfoRepository(
                         "fagGruppeKode" to fagGruppeKode,
                     ),
                 ),
-                mapToOppdragsegenskaper,
+                mapToOppdrag,
             )
-        }
-    }
-
-    fun hentOppdragsegenskaper(oppdragsId: Int): List<Oppdragsegenskaper> {
-        return using(sessionOf(dataSource)) { session ->
-            session.list(
-                queryOf(
-                    """
-                    SELECT OP.OPPDRAGS_ID,
-                        OP.FAGSYSTEM_ID,
-                        FO.NAVN_FAGOMRAADE,
-                        OP.OPPDRAG_GJELDER_ID,
-                        OP.KJOR_IDAG,
-                        OP.TYPE_BILAG,
-                        FG.NAVN_FAGGRUPPE,
-                        OS.KODE_STATUS,
-                        OS.TIDSPKT_REG
-                    FROM T_OPPDRAG OP,
-                        T_FAGOMRAADE FO, 
-                        T_FAGGRUPPE FG,
-                        T_OPPDRAG_STATUS OS
-                    WHERE OP.OPPDRAGS_ID = :oppdragsId 
-                    AND FO.KODE_FAGOMRAADE = OP.KODE_FAGOMRAADE
-                    AND FG.KODE_FAGGRUPPE = FO.KODE_FAGGRUPPE
-                    AND OS.OPPDRAGS_ID = :oppdragsId
-                    AND OS.TIDSPKT_REG = (
-                        SELECT MAX(OS2.TIDSPKT_REG)
-                        FROM T_OPPDRAG_STATUS OS2
-                        WHERE OS2.OPPDRAGS_ID = OS.OPPDRAGS_ID
-                    )
-                    """.trimIndent(),
-                    mapOf(
-                        "oppdragsId" to oppdragsId,
-                    ),
-                ),
-                mapToOppdragsegenskaper,
-            )
-        }
-    }
-
-    fun erOppdragTilknyttetBruker(
-        gjelderId: String,
-        oppdragsId: Int,
-    ): Boolean {
-        return using(sessionOf(dataSource)) { session ->
-            session.single(
-                queryOf(
-                    """
-                    SELECT COUNT(*)
-                    FROM T_OPPDRAG
-                    WHERE OPPDRAG_GJELDER_ID = :gjelderId
-                    AND OPPDRAGS_ID = :oppdragsId
-                    """.trimIndent(),
-                    mapOf(
-                        "gjelderId" to gjelderId,
-                        "oppdragsId" to oppdragsId,
-                    ),
-                ),
-            ) { row -> row.boolean(1) } ?: false
         }
     }
 
@@ -167,7 +105,7 @@ class OppdragsInfoRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT TYPE_ENHET, DATO_FOM, ENHET 
+                    SELECT TRIM(TYPE_ENHET) AS TYPE_ENHET, DATO_FOM, TRIM(ENHET) AS ENHET 
                     FROM T_OPPDRAGSENHET 
                     WHERE OPPDRAGS_ID = :oppdragsId
                         ${if (typeEnhet != null) " AND TYPE_ENHET = :typeEnhet" else " AND TYPE_ENHET IN (SELECT TYPE_ENHET FROM T_ENHETSTYPE WHERE TYPE_ENHET != 'BEH')"}
@@ -186,53 +124,25 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun eksistererOmposteringer(
-        gjelderId: String,
-        oppdragsId: Int,
-    ): Boolean {
-        return using(sessionOf(dataSource)) { session ->
-            session.single(
-                queryOf(
-                    """
-                    SELECT COUNT(*)
-                    FROM T_OMPOSTERING OM,
-                        T_OPPDRAG OP,
-                        T_FAGOMRAADE FO, 
-                        T_FAGGRUPPE FG
-                    WHERE OM.GJELDER_ID = :gjelderId
-                    AND OP.OPPDRAGS_ID = :oppdragsId
-                    AND FO.KODE_FAGOMRAADE = OP.KODE_FAGOMRAADE
-                    AND FG.KODE_FAGGRUPPE = FO.KODE_FAGGRUPPE
-                    AND FG.KODE_FAGGRUPPE = OM.KODE_FAGGRUPPE
-                    """.trimIndent(),
-                    mapOf(
-                        "gjelderId" to gjelderId,
-                        "oppdragsId" to oppdragsId,
-                    ),
-                ),
-            ) { row -> row.int(1) > 0 } ?: false
-        }
-    }
-
     fun hentOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
                     """
                     SELECT OPLI.LINJE_ID,
-                        OPLI.KODE_KLASSE,
+                        TRIM(OPLI.KODE_KLASSE) AS KODE_KLASSE,
                         OPLI.DATO_VEDTAK_FOM,
                         OPLI.DATO_VEDTAK_TOM,
                         OPLI.SATS,
-                        OPLI.TYPE_SATS,
+                        TRIM(OPLI.TYPE_SATS) AS TYPE_SATS,
                         LIST.KODE_STATUS,
                         LIST.DATO_FOM,
                         OPLI.ATTESTERT,
                         KORR.LINJE_ID_KORR,
-                        OPLI.DELYTELSE_ID,
+                        TRIM(OPLI.DELYTELSE_ID) AS DELYTELSE_ID,
                         OPLI.UTBETALES_TIL_ID,
                         OPLI.REFUNDERES_ID,
-                        OPLI.BRUKERID,
+                        TRIM(OPLI.BRUKERID) AS BRUKERID,
                         OPLI.TIDSPKT_REG
                     FROM T_KJOREDATO KJDA, T_OPPDRAGSLINJE OPLI, T_LINJE_STATUS LIST
                     LEFT OUTER JOIN T_KORREKSJON KORR
@@ -270,10 +180,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOppdragsOmposteringer(
-        gjelderId: String,
-        oppdragsId: Int,
-    ): List<Ompostering> {
+    fun hentOppdragsOmposteringer(oppdragsId: Int): List<Ompostering> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -292,17 +199,14 @@ class OppdragsInfoRepository(
                         T_OPPDRAG OP,
                         T_FAGOMRAADE FO, 
                         T_FAGGRUPPE FG
-                    WHERE OM.GJELDER_ID = :gjelderId
-                    AND OP.OPPDRAGS_ID = :oppdragsId
+                    WHERE OP.OPPDRAGS_ID = :oppdragsId
+                    AND OM.GJELDER_ID = OP.OPPDRAG_GJELDER_ID
                     AND FO.KODE_FAGOMRAADE = OP.KODE_FAGOMRAADE
                     AND FG.KODE_FAGGRUPPE = FO.KODE_FAGGRUPPE
                     AND FG.KODE_FAGGRUPPE = OM.KODE_FAGGRUPPE
                     ORDER BY OM.DATO_OMPOSTER_FOM
                     """.trimIndent(),
-                    mapOf(
-                        "gjelderId" to gjelderId,
-                        "oppdragsId" to oppdragsId,
-                    ),
+                    mapOf("oppdragsId" to oppdragsId),
                 ),
                 mapToOppdragsOmpostering,
             )
@@ -314,7 +218,7 @@ class OppdragsInfoRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT TYPE_ENHET, DATO_FOM, ENHET 
+                    SELECT TRIM(TYPE_ENHET) AS TYPE_ENHET, DATO_FOM, TRIM(ENHET) AS ENHET 
                     FROM T_OPPDRAGSENHET 
                     WHERE OPPDRAGS_ID = :oppdragsId
                     ORDER BY DATO_FOM
@@ -328,12 +232,12 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOppdragsStatusHistorikk(oppdragsId: Int): List<OppdragStatus> {
+    fun hentOppdragsStatusHistorikk(oppdragsId: Int): List<OppdragsStatus> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
                     """
-                    SELECT KODE_STATUS, TIDSPKT_REG, BRUKERID
+                    SELECT KODE_STATUS, TIDSPKT_REG, TRIM(BRUKERID) AS BRUKERID
                     FROM T_OPPDRAG_STATUS 
                     WHERE OPPDRAGS_ID = :oppdragsId
                     ORDER BY TIDSPKT_REG
@@ -355,7 +259,7 @@ class OppdragsInfoRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT KODE_STATUS, DATO_FOM, TIDSPKT_REG, BRUKERID
+                    SELECT TRIM(KODE_STATUS) AS KODE_STATUS, DATO_FOM, TIDSPKT_REG, TRIM(BRUKERID) AS BRUKERID
                     FROM T_LINJE_STATUS 
                     WHERE OPPDRAGS_ID = :oppdragsId
                     AND LINJE_ID = :linjeId
@@ -379,7 +283,7 @@ class OppdragsInfoRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT ATTESTANT_ID, DATO_UGYLDIG_FOM
+                    SELECT TRIM(ATTESTANT_ID) AS ATTESTANT_ID, DATO_UGYLDIG_FOM
                     FROM T_ATTESTASJON 
                     WHERE OPPDRAGS_ID = :oppdragsId
                     AND LINJE_ID = :linjeId
@@ -472,7 +376,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentValutaerList(
+    fun hentValutaer(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Valuta> {
@@ -480,7 +384,7 @@ class OppdragsInfoRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT LINJE_ID, TYPE_VALUTA, DATO_FOM, NOKKEL_ID, VALUTA, FEILREG, TIDSPKT_REG, BRUKERID
+                    SELECT LINJE_ID, TRIM(TYPE_VALUTA) AS TYPE_VALUTA, DATO_FOM, NOKKEL_ID, VALUTA, FEILREG, TIDSPKT_REG, TRIM(BRUKERID) AS BRUKERID
                     FROM T_VALUTA 
                     WHERE OPPDRAGS_ID = :oppdragsId
                     AND LINJE_ID IN (${linjeIder.joinToString()})
@@ -494,7 +398,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentSkyldnereList(
+    fun hentSkyldnere(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Skyldner> {
@@ -502,7 +406,7 @@ class OppdragsInfoRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT LINJE_ID, SKYLDNER_ID, DATO_FOM, TIDSPKT_REG, BRUKERID
+                    SELECT LINJE_ID, TRIM(SKYLDNER_ID) AS SKYLDNER_ID, DATO_FOM, TIDSPKT_REG, TRIM(BRUKERID) AS BRUKERID
                     FROM T_SKYLDNER 
                     WHERE OPPDRAGS_ID = :oppdragsId
                     AND LINJE_ID IN (${linjeIder.joinToString()})
@@ -516,7 +420,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentKravhavereList(
+    fun hentKravhavere(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Kravhaver> {
@@ -524,7 +428,7 @@ class OppdragsInfoRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT LINJE_ID, KRAVHAVER_ID, DATO_FOM, TIDSPKT_REG, BRUKERID
+                    SELECT LINJE_ID, TRIM(KRAVHAVER_ID) AS KRAVHAVER_ID, DATO_FOM, TIDSPKT_REG, TRIM(BRUKERID) AS BRUKERID
                     FROM T_KRAVHAVER 
                     WHERE OPPDRAGS_ID = :oppdragsId
                     AND LINJE_ID IN (${linjeIder.joinToString()})
@@ -538,7 +442,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentEnheterList(
+    fun hentEnheter(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<LinjeEnhet> {
@@ -546,7 +450,7 @@ class OppdragsInfoRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT LINJE_ID, TYPE_ENHET, ENHET, DATO_FOM, NOKKEL_ID, TIDSPKT_REG, BRUKERID
+                    SELECT LINJE_ID, TRIM(TYPE_ENHET) AS TYPE_ENHET, TRIM(ENHET) ENHET, DATO_FOM, NOKKEL_ID, TIDSPKT_REG, TRIM(BRUKERID) AS BRUKERID
                     FROM T_LINJEENHET
                     WHERE OPPDRAGS_ID = :oppdragsId
                     AND LINJE_ID IN (${linjeIder.joinToString()})
@@ -560,7 +464,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentGraderList(
+    fun hentGrader(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Grad> {
@@ -568,7 +472,7 @@ class OppdragsInfoRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT LINJE_ID, TYPE_GRAD, GRAD, TIDSPKT_REG, BRUKERID
+                    SELECT LINJE_ID, TRIM(TYPE_GRAD) AS TYPE_GRAD, GRAD, TIDSPKT_REG, TRIM(BRUKERID) AS BRUKERID
                     FROM T_GRAD
                     WHERE OPPDRAGS_ID = :oppdragsId
                     AND LINJE_ID IN (${linjeIder.joinToString()})
@@ -582,7 +486,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentTeksterList(
+    fun hentTekster(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Tekst> {
@@ -604,7 +508,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentKidListe(
+    fun hentKid(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Kid> {
@@ -612,7 +516,7 @@ class OppdragsInfoRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT LINJE_ID, KID, DATO_FOM, TIDSPKT_REG, BRUKERID
+                    SELECT LINJE_ID, KID, DATO_FOM, TIDSPKT_REG, TRIM(BRUKERID) AS BRUKERID
                     FROM T_KID
                     WHERE OPPDRAGS_ID = :oppdragsId
                     AND LINJE_ID IN (${linjeIder.joinToString()})
@@ -626,7 +530,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentMaksdatoerListe(
+    fun hentMaksDatoer(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Maksdato> {
@@ -634,7 +538,7 @@ class OppdragsInfoRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT LINJE_ID, MAKS_DATO, DATO_FOM, TIDSPKT_REG, BRUKERID
+                    SELECT LINJE_ID, MAKS_DATO, DATO_FOM, TIDSPKT_REG, TRIM(BRUKERID) AS BRUKERID
                     FROM T_MAKS_DATO
                     WHERE OPPDRAGS_ID = :oppdragsId
                     AND LINJE_ID IN (${linjeIder.joinToString()})
@@ -648,7 +552,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOvrigListe(
+    fun hentOvriger(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Ovrig> {
@@ -656,7 +560,7 @@ class OppdragsInfoRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT LINJE_ID, VEDTAK_ID, HENVISNING, TYPE_SOKNAD
+                    SELECT LINJE_ID, TRIM(VEDTAK_ID) AS VEDTAK_ID, TRIM(HENVISNING) AS HENVISNING, TRIM(TYPE_SOKNAD) AS TYPE_SOKNAD
                     FROM T_OPPDRAGSLINJE
                     WHERE OPPDRAGS_ID = :oppdragsId
                     AND LINJE_ID IN (${linjeIder.joinToString()})
@@ -670,14 +574,8 @@ class OppdragsInfoRepository(
         }
     }
 
-    private val mapToOppdragsinfoTreffliste: (Row) -> OppdragsinfoTreffliste = { row ->
-        OppdragsinfoTreffliste(
-            gjelderId = row.string("OPPDRAG_GJELDER_ID"),
-        )
-    }
-
-    private val mapToOppdragsegenskaper: (Row) -> Oppdragsegenskaper = { row ->
-        Oppdragsegenskaper(
+    private val mapToOppdrag: (Row) -> Oppdrag = { row ->
+        Oppdrag(
             fagsystemId = row.string("FAGSYSTEM_ID"),
             oppdragsId = row.int("OPPDRAGS_ID"),
             navnFagGruppe = row.string("NAVN_FAGGRUPPE"),
@@ -738,8 +636,8 @@ class OppdragsInfoRepository(
         )
     }
 
-    private val mapToOppdragsStatusHistorikk: (Row) -> OppdragStatus = { row ->
-        OppdragStatus(
+    private val mapToOppdragsStatusHistorikk: (Row) -> OppdragsStatus = { row ->
+        OppdragsStatus(
             kodeStatus = row.string("KODE_STATUS"),
             tidspktReg = row.string("TIDSPKT_REG"),
             brukerid = row.string("BRUKERID"),
