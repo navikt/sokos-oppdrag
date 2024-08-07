@@ -16,9 +16,9 @@ import io.restassured.RestAssured
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.ATTESTASJON_BASE_API_PATH
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
-import no.nav.sokos.oppdrag.attestasjon.domain.AttestasjonTreff
-import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjonsdetaljer
-import no.nav.sokos.oppdrag.attestasjon.model.AttestasjondetaljerRequestBody
+import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsIdRequest
+import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
+import no.nav.sokos.oppdrag.attestasjon.domain.OppdragsDetaljer
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
 import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
@@ -43,54 +43,59 @@ internal class AttestasjonApiTest : FunSpec({
     }
 
     test("søk etter gjelderId på gjeldersok endepunktet skal returnere 200 OK") {
-        val attestasjontreff =
-            AttestasjonTreff(
-                gjelderId = "12345678901",
-                navnFaggruppe = "navnFaggruppe",
-                navnFagomraade = "navnFagomraade",
-                oppdragsId = 987654,
-                fagsystemId = "123456789",
+        val oppdragsListe =
+            listOf(
+                Oppdrag(
+                    gjelderId = "12345678901",
+                    navnFagGruppe = "navnFaggruppe",
+                    navnFagOmraade = "navnFagomraade",
+                    oppdragsId = 987654,
+                    fagsystemId = "123456789",
+                ),
             )
 
-        val attestasjonTreffliste = listOf(attestasjontreff)
-
-        every { attestasjonService.hentOppdragForAttestering(any(), any(), any(), any(), any(), any()) } returns attestasjonTreffliste
+        every { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any()) } returns oppdragsListe
 
         val response =
-            RestAssured.given().filter(validationFilter).header(HttpHeaders.ContentType, APPLICATION_JSON)
+            RestAssured.given().filter(validationFilter)
+                .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(GjelderIdRequest("123456789")).port(PORT)
-                .post("$ATTESTASJON_BASE_API_PATH/gjeldersok").then().assertThat()
+                .body(GjelderIdRequest("123456789"))
+                .port(PORT)
+                .post("$ATTESTASJON_BASE_API_PATH/sok")
+                .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
-        response.body.jsonPath().getList<AttestasjonTreff>("oppdragsId").first().shouldBe(987654)
+        response.body.jsonPath().getList<Oppdrag>("oppdragsId").first().shouldBe(987654)
     }
 
     test("søk etter oppdragsId på oppdragslinjer endepunktet skal returnere 200 OK") {
-        val attestasjonsdetaljer =
-            Attestasjonsdetaljer(
-                klasse = "klasse",
-                delytelsesId = "delytelsesId",
-                sats = 123.45,
-                satstype = "satstype",
-                datoVedtakFom = "2021-01-01",
-                datoVedtakTom = "2021-12-31",
-                attestant = "attestant",
-                navnFagomraade = "navnFagomraade",
-                fagsystemId = "123456789",
+        val oppdragsDetaljerListe =
+            listOf(
+                OppdragsDetaljer(
+                    klasse = "klasse",
+                    delytelsesId = "delytelsesId",
+                    sats = 123.45,
+                    satstype = "satstype",
+                    datoVedtakFom = "2021-01-01",
+                    datoVedtakTom = "2021-12-31",
+                    attestant = "attestant",
+                    navnFagOmraade = "navnFagOmraade",
+                    fagsystemId = "123456789",
+                ),
             )
 
-        val attestasjonsdetaljerliste = listOf(attestasjonsdetaljer)
-
-        every { attestasjonService.hentListeMedOppdragslinjerForAttestering(any()) } returns attestasjonsdetaljerliste
+        every { attestasjonService.getOppdragsDetaljer(any()) } returns oppdragsDetaljerListe
 
         val response =
-            RestAssured.given().filter(validationFilter).header(HttpHeaders.ContentType, APPLICATION_JSON)
+            RestAssured.given().filter(validationFilter)
+                .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(AttestasjondetaljerRequestBody(listOf(987654)))
+                .body(OppdragsIdRequest(listOf(987654)))
                 .port(PORT)
-                .post("$ATTESTASJON_BASE_API_PATH/oppdragslinjer").then().assertThat()
+                .post("$ATTESTASJON_BASE_API_PATH/oppdragsdetaljer")
+                .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 

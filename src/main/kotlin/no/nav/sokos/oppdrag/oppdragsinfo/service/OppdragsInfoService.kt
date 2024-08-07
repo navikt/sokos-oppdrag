@@ -14,7 +14,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Maksdato
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ompostering
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEgenskaper
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdrag
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsStatus
@@ -38,7 +38,7 @@ class OppdragsInfoService(
         gjelderId: String,
         faggruppeKode: String?,
         applicationCall: ApplicationCall,
-    ): List<OppdragsEgenskaper> {
+    ): List<Oppdrag> {
         val navIdent = getSaksbehandler(applicationCall)
 
         secureLogger.info { "Søker etter oppdrag med gjelderId: $gjelderId" }

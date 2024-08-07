@@ -6,7 +6,7 @@ import io.ktor.server.application.ApplicationCall
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEgenskaper
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdrag
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsInfoRepository
 
@@ -17,9 +17,9 @@ private val oppdragsInfoService = OppdragsInfoService(oppdragsInfoRepository)
 internal class OppdragsInfoServiceTest : FunSpec({
 
     test("hent liste av oppdragsegenskaper") {
-        val oppdragsEgenskaperList =
+        val oppdragList =
             listOf(
-                OppdragsEgenskaper(
+                Oppdrag(
                     fagsystemId = "12345678901",
                     oppdragsId = 1234567890,
                     navnFagGruppe = "NAV Arbeid og ytelser",
@@ -32,7 +32,7 @@ internal class OppdragsInfoServiceTest : FunSpec({
 
         every { applicationCall.request.headers["Authorization"] } returns tokenWithNavIdent
         every { oppdragsInfoRepository.hentOppdragId(any()) } returns "1234567890"
-        every { oppdragsInfoRepository.hentOppdragsEgenskaper(any(), "") } returns oppdragsEgenskaperList
+        every { oppdragsInfoRepository.hentOppdragsEgenskaper(any(), "") } returns oppdragList
 
         val result = oppdragsInfoService.hentOppdragsEgenskaper("12345678901", "", applicationCall)
 

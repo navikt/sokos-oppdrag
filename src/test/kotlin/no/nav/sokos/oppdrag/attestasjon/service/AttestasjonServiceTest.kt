@@ -18,13 +18,13 @@ internal class AttestasjonServiceTest : FunSpec({
 
     beforeTest {
         every { applicationCall.request.headers["Authorization"] } returns tokenWithNavIdent
-        every { attestasjonRepository.sok(any(), any(), any(), any(), any()) } returns emptyList()
+        every { attestasjonRepository.getOppdrag(any(), any(), any(), any(), any()) } returns emptyList()
     }
 
     context("skal ikke gi valideringsfeil") {
         test("gjelderId") {
             shouldNotThrow<RequestValidationException> {
-                attestasjonService.hentOppdragForAttestering(
+                attestasjonService.getOppdrag(
                     gjelderId = "12345678901",
                     applicationCall = applicationCall,
                 )
@@ -32,8 +32,8 @@ internal class AttestasjonServiceTest : FunSpec({
         }
         test("faggruppe, ikke attesterte") {
             shouldNotThrow<RequestValidationException> {
-                attestasjonService.hentOppdragForAttestering(
-                    kodeFaggruppe = "FAGGRUPPE",
+                attestasjonService.getOppdrag(
+                    kodeFagGruppe = "FAGGRUPPE",
                     attestert = false,
                     applicationCall = applicationCall,
                 )
@@ -41,8 +41,8 @@ internal class AttestasjonServiceTest : FunSpec({
         }
         test("fagområde, ikke attesterte") {
             shouldNotThrow<RequestValidationException> {
-                attestasjonService.hentOppdragForAttestering(
-                    kodeFagomraade = "FAGOMRAADE",
+                attestasjonService.getOppdrag(
+                    kodeFagOmraade = "FAGOMRAADE",
                     attestert = false,
                     applicationCall = applicationCall,
                 )
@@ -50,19 +50,19 @@ internal class AttestasjonServiceTest : FunSpec({
         }
         test("fagområde, fagsystemId") {
             shouldNotThrow<RequestValidationException> {
-                attestasjonService.hentOppdragForAttestering(
+                attestasjonService.getOppdrag(
                     fagsystemId = "fagsystemId",
-                    kodeFagomraade = "FAGOMRAADE",
+                    kodeFagOmraade = "FAGOMRAADE",
                     applicationCall = applicationCall,
                 )
             }
         }
         test("alle parametre") {
             shouldNotThrow<RequestValidationException> {
-                attestasjonService.hentOppdragForAttestering(
+                attestasjonService.getOppdrag(
                     gjelderId = "123456789",
-                    kodeFaggruppe = "faggruppe",
-                    kodeFagomraade = "kodeFagomraade",
+                    kodeFagGruppe = "faggruppe",
+                    kodeFagOmraade = "kodeFagomraade",
                     fagsystemId = "fagsystemId",
                     attestert = true,
                     applicationCall = applicationCall,
@@ -71,7 +71,7 @@ internal class AttestasjonServiceTest : FunSpec({
         }
         test("fagsystemId, uten fagområde, men med gjelderId") {
             shouldNotThrow<RequestValidationException> {
-                attestasjonService.hentOppdragForAttestering(
+                attestasjonService.getOppdrag(
                     gjelderId = "123456789",
                     fagsystemId = "fagsystemId",
                     applicationCall = applicationCall,
@@ -83,13 +83,13 @@ internal class AttestasjonServiceTest : FunSpec({
     context("Skal gi valideringsfeil") {
         test("Ingen søkeparametre") {
             shouldThrow<RequestValidationException> {
-                attestasjonService.hentOppdragForAttestering(applicationCall = applicationCall)
+                attestasjonService.getOppdrag(applicationCall = applicationCall)
             }
         }
         test("fagområde, attesterte") {
             shouldThrow<RequestValidationException> {
-                attestasjonService.hentOppdragForAttestering(
-                    kodeFagomraade = "FAGOMRAADE",
+                attestasjonService.getOppdrag(
+                    kodeFagOmraade = "FAGOMRAADE",
                     attestert = true,
                     applicationCall = applicationCall,
                 )
@@ -97,16 +97,16 @@ internal class AttestasjonServiceTest : FunSpec({
         }
         test("fagområde, både attesterte og ikke attesterte") {
             shouldThrow<RequestValidationException> {
-                attestasjonService.hentOppdragForAttestering(
-                    kodeFagomraade = "FAGOMRAADE",
+                attestasjonService.getOppdrag(
+                    kodeFagOmraade = "FAGOMRAADE",
                     applicationCall = applicationCall,
                 )
             }
         }
         test("faggruppe, attesterte") {
             shouldThrow<RequestValidationException> {
-                attestasjonService.hentOppdragForAttestering(
-                    kodeFaggruppe = "FAGGRUPPE",
+                attestasjonService.getOppdrag(
+                    kodeFagGruppe = "FAGGRUPPE",
                     attestert = true,
                     applicationCall = applicationCall,
                 )
@@ -114,8 +114,8 @@ internal class AttestasjonServiceTest : FunSpec({
         }
         test("faggruppe, både attesterte og ikke attesterte") {
             shouldThrow<RequestValidationException> {
-                attestasjonService.hentOppdragForAttestering(
-                    kodeFaggruppe = "FAGGRUPPE",
+                attestasjonService.getOppdrag(
+                    kodeFagGruppe = "FAGGRUPPE",
                     attestert = null,
                     applicationCall = applicationCall,
                 )
@@ -123,9 +123,9 @@ internal class AttestasjonServiceTest : FunSpec({
         }
         test("fagsystemId uten fagområde") {
             shouldThrow<RequestValidationException> {
-                attestasjonService.hentOppdragForAttestering(
+                attestasjonService.getOppdrag(
                     fagsystemId = "fagsystemId",
-                    kodeFaggruppe = "FAGGRUPPE",
+                    kodeFagGruppe = "FAGGRUPPE",
                     attestert = null,
                     applicationCall = applicationCall,
                 )

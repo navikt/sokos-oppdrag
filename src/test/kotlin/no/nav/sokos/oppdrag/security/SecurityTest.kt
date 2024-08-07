@@ -87,7 +87,7 @@ internal class SecurityTest : FunSpec({
                     }
 
                 val response =
-                    client.post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsegenskaper") {
+                    client.post("$OPPDRAGSINFO_BASE_API_PATH/sok") {
                         header(HttpHeaders.Authorization, "Bearer ${token()}")
                         header(HttpHeaders.ContentType, APPLICATION_JSON)
                         setBody(GjelderIdRequest(gjelderId = "12345678901"))

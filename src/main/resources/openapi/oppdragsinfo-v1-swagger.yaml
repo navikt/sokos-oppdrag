@@ -16,7 +16,7 @@ servers:
   - url: /api/v1/oppdragsinfo
 
 paths:
-  /oppdragsegenskaper:
+  /sok:
     post:
       tags:
         - oppdragsinfo
@@ -28,7 +28,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OppdragsEgenskaperRequest'
+              $ref: '#/components/schemas/OppdragsRequest'
         required: true
       responses:
         200:
@@ -38,7 +38,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/OppdragsEgenskaper'
+                  $ref: '#/components/schemas/Oppdrag'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
@@ -766,7 +766,7 @@ paths:
 
 components:
   schemas:
-    OppdragsEgenskaperRequest:
+    OppdragsRequest:
       type: object
       required:
         - gjelderId
@@ -871,7 +871,7 @@ components:
         brukerid:
           type: string
 
-    OppdragsEgenskaper:
+    Oppdrag:
       type: object
       properties:
         fagsystemId:

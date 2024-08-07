@@ -3,7 +3,7 @@ package no.nav.sokos.oppdrag.oppdragsinfo.domain
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class OppdragsEgenskaper(
+data class Oppdrag(
     val fagsystemId: String,
     val oppdragsId: Int,
     val navnFagGruppe: String,

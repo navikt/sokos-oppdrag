@@ -16,7 +16,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Maksdato
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ompostering
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEgenskaper
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdrag
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsStatus
@@ -59,7 +59,7 @@ class OppdragsInfoRepository(
     fun hentOppdragsEgenskaper(
         gjelderId: String,
         fagGruppeKode: String?,
-    ): List<OppdragsEgenskaper> {
+    ): List<Oppdrag> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -92,7 +92,7 @@ class OppdragsInfoRepository(
                         "fagGruppeKode" to fagGruppeKode,
                     ),
                 ),
-                mapToOppdragsEgenskaper,
+                mapToOppdrag,
             )
         }
     }
@@ -574,8 +574,8 @@ class OppdragsInfoRepository(
         }
     }
 
-    private val mapToOppdragsEgenskaper: (Row) -> OppdragsEgenskaper = { row ->
-        OppdragsEgenskaper(
+    private val mapToOppdrag: (Row) -> Oppdrag = { row ->
+        Oppdrag(
             fagsystemId = row.string("FAGSYSTEM_ID"),
             oppdragsId = row.int("OPPDRAGS_ID"),
             navnFagGruppe = row.string("NAVN_FAGGRUPPE"),

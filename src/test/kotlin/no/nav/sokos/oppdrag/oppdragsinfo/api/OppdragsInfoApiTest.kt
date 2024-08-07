@@ -20,7 +20,7 @@ import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
-import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsEgenskaperRequest
+import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
@@ -30,7 +30,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeStatus
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Maksdato
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ompostering
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEgenskaper
+import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdrag
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsStatus
@@ -67,7 +67,7 @@ internal class OppdragsInfoApiTest : FunSpec({
     test("hent oppdragsegenskaper med gyldig gjelderId skal returnere 200 OK") {
         val oppdragsegenskaperList =
             listOf(
-                OppdragsEgenskaper(
+                Oppdrag(
                     fagsystemId = "12345678901",
                     oppdragsId = 1234556,
                     navnFagGruppe = "faggruppeNavn",
@@ -84,15 +84,15 @@ internal class OppdragsInfoApiTest : FunSpec({
             RestAssured.given().filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(OppdragsEgenskaperRequest(gjelderId = "12345678901", fagGruppeKode = "ABC"))
+                .body(OppdragsRequest(gjelderId = "12345678901", fagGruppeKode = "ABC"))
                 .port(PORT)
-                .post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsegenskaper")
+                .post("$OPPDRAGSINFO_BASE_API_PATH/sok")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract()
                 .response()
 
-        response.body.jsonPath().getList<OppdragsEgenskaper>("").shouldHaveSize(1)
+        response.body.jsonPath().getList<Oppdrag>("").shouldHaveSize(1)
     }
 
     test("hent oppdragsegenskaper med ugyldig gjelderId skal returnere 400 Bad Request") {
@@ -100,9 +100,9 @@ internal class OppdragsInfoApiTest : FunSpec({
         RestAssured.given().filter(validationFilter)
             .header(HttpHeaders.ContentType, APPLICATION_JSON)
             .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-            .body(OppdragsEgenskaperRequest(gjelderId = "123", fagGruppeKode = ""))
+            .body(OppdragsRequest(gjelderId = "123", fagGruppeKode = ""))
             .port(PORT)
-            .post("$OPPDRAGSINFO_BASE_API_PATH/oppdragsegenskaper")
+            .post("$OPPDRAGSINFO_BASE_API_PATH/sok")
             .then().assertThat()
             .statusCode(HttpStatusCode.BadRequest.value)
             .body("message", equalTo("gjelderId er ugyldig. Tillatt format er 9 eller 11 siffer"))

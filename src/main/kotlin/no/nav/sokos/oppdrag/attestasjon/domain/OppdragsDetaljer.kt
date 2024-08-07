@@ -3,7 +3,7 @@ package no.nav.sokos.oppdrag.attestasjon.domain
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Attestasjonsdetaljer(
+data class OppdragsDetaljer(
     val klasse: String,
     val delytelsesId: String,
     val sats: Double,
@@ -11,6 +11,6 @@ data class Attestasjonsdetaljer(
     val datoVedtakFom: String,
     val datoVedtakTom: String?,
     val attestant: String? = null,
-    val navnFagomraade: String,
+    val navnFagOmraade: String,
     val fagsystemId: String,
 )
