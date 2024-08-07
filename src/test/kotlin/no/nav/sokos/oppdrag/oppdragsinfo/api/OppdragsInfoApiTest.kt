@@ -78,7 +78,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 ),
             )
 
-        every { oppdragsInfoService.hentOppdragsEgenskaper(any(), any(), any()) } returns oppdragsegenskaperList
+        every { oppdragsInfoService.getOppdrag(any(), any(), any()) } returns oppdragsegenskaperList
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -131,7 +131,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 ),
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjer(any()) } returns oppdragsLinjeList
+        every { oppdragsInfoService.getOppdragsLinjer(any()) } returns oppdragsLinjeList
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -154,7 +154,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 type = "DEF",
             )
 
-        every { oppdragsInfoService.hentFagGrupper() } returns listOf(fagGruppe)
+        every { oppdragsInfoService.getFagGrupper() } returns listOf(fagGruppe)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -188,7 +188,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                     ),
             )
 
-        every { oppdragsInfoService.hentBehandlendeEnhetForOppdrag(any()) } returns behandlendeEnhet
+        every { oppdragsInfoService.getBehandlendeEnhetForOppdrag(any()) } returns behandlendeEnhet
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -222,7 +222,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 ),
             )
 
-        every { oppdragsInfoService.hentOppdragsOmposteringer(any()) } returns omposteringerList
+        every { oppdragsInfoService.getOppdragsOmposteringer(any()) } returns omposteringerList
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -247,7 +247,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 enhet = "0502",
             )
 
-        every { oppdragsInfoService.hentOppdragsEnhetsHistorikk(any()) } returns listOf(oppdragsEnhet)
+        every { oppdragsInfoService.getOppdragsEnhetsHistorikk(any()) } returns listOf(oppdragsEnhet)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -272,7 +272,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsStatusHistorikk(any()) } returns listOf(oppdragsStatus)
+        every { oppdragsInfoService.getOppdragsStatusHistorikk(any()) } returns listOf(oppdragsStatus)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -298,7 +298,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeStatuser(any(), any()) } returns listOf(linjeStatus)
+        every { oppdragsInfoService.getOppdragsLinjeStatuser(any(), any()) } returns listOf(linjeStatus)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -322,7 +322,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 ugyldigFom = "2024-01-01",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeAttestanter(any(), any()) } returns listOf(attestant)
+        every { oppdragsInfoService.getOppdragsLinjeAttestanter(any(), any()) } returns listOf(attestant)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -372,7 +372,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 harMaksdatoer = FALSE,
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeDetaljer(any(), any()) } returns oppdragsLinjeDetaljerDTO
+        every { oppdragsInfoService.getOppdragsLinjeDetaljer(any(), any()) } returns oppdragsLinjeDetaljerDTO
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -404,7 +404,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeValutaer(any(), any()) } returns listOf(valuta)
+        every { oppdragsInfoService.getOppdragsLinjeValutaer(any(), any()) } returns listOf(valuta)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -431,7 +431,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeSkyldnere(any(), any()) } returns listOf(skyldner)
+        every { oppdragsInfoService.getOppdragsLinjeSkyldnere(any(), any()) } returns listOf(skyldner)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -458,7 +458,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeKravhavere(any(), any()) } returns listOf(kravhaver)
+        every { oppdragsInfoService.getOppdragsLinjeKravhavere(any(), any()) } returns listOf(kravhaver)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -487,7 +487,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeEnheter(any(), any()) } returns listOf(linjeEnhet)
+        every { oppdragsInfoService.getOppdragsLinjeEnheter(any(), any()) } returns listOf(linjeEnhet)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -514,7 +514,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeGrader(any(), any()) } returns listOf(grad)
+        every { oppdragsInfoService.getOppdragsLinjeGrader(any(), any()) } returns listOf(grad)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -538,7 +538,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 tekst = "asd",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeTekster(any(), any()) } returns listOf(tekst)
+        every { oppdragsInfoService.getOppdragsLinjeTekster(any(), any()) } returns listOf(tekst)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -565,7 +565,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeKid(any(), any()) } returns listOf(kid)
+        every { oppdragsInfoService.getOppdragsLinjeKid(any(), any()) } returns listOf(kid)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -592,7 +592,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 brukerid = "A12345",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeMaksDatoer(any(), any()) } returns listOf(maksdato)
+        every { oppdragsInfoService.getOppdragsLinjeMaksDatoer(any(), any()) } returns listOf(maksdato)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -618,7 +618,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 soknadsType = "NN",
             )
 
-        every { oppdragsInfoService.hentOppdragsLinjeOvriger(any(), any()) } returns listOf(ovrig)
+        every { oppdragsInfoService.getOppdragsLinjeOvriger(any(), any()) } returns listOf(ovrig)
 
         val response =
             RestAssured.given().filter(validationFilter)

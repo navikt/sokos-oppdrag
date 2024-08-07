@@ -36,7 +36,7 @@ internal class IntegrationServiceTest : FunSpec({
 
         coEvery { tpService.getLeverandorNavn(any()) } returns TpResponse(navn)
 
-        val result = integrationService.hentNavnForGjelderId("80000000001", applicationCall)
+        val result = integrationService.getNavnForGjelderId("80000000001", applicationCall)
 
         result shouldBe GjelderIdName(navn)
     }
@@ -47,7 +47,7 @@ internal class IntegrationServiceTest : FunSpec({
 
         coEvery { eregService.getOrganisasjonsNavn(any()) } returns Organisasjon(Navn(navn))
 
-        val result = integrationService.hentNavnForGjelderId("100000000", applicationCall)
+        val result = integrationService.getNavnForGjelderId("100000000", applicationCall)
 
         result shouldBe GjelderIdName(navn)
     }
@@ -56,7 +56,7 @@ internal class IntegrationServiceTest : FunSpec({
 
         coEvery { pdlService.getPersonNavn(any()) } returns Person(listOf(PdlNavn("Ola", "Heter", "Nordmann")))
 
-        val result = integrationService.hentNavnForGjelderId("10000000001", applicationCall)
+        val result = integrationService.getNavnForGjelderId("10000000001", applicationCall)
 
         result shouldBe GjelderIdName("Ola Heter Nordmann")
     }

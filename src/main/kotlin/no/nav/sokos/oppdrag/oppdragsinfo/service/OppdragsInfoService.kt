@@ -34,7 +34,7 @@ class OppdragsInfoService(
     private val oppdragsInfoRepository: OppdragsInfoRepository = OppdragsInfoRepository(),
     private val auditLogger: AuditLogger = AuditLogger(),
 ) {
-    fun hentOppdragsEgenskaper(
+    fun getOppdrag(
         gjelderId: String,
         faggruppeKode: String?,
         applicationCall: ApplicationCall,
@@ -50,75 +50,75 @@ class OppdragsInfoService(
             ),
         )
 
-        val oppdragId = oppdragsInfoRepository.hentOppdragId(gjelderId)
+        val oppdragId = oppdragsInfoRepository.getOppdragId(gjelderId)
 
         return oppdragId?.let {
-            return oppdragsInfoRepository.hentOppdragsEgenskaper(gjelderId, faggruppeKode)
+            return oppdragsInfoRepository.getOppdrag(gjelderId, faggruppeKode)
         } ?: run {
             secureLogger.info { "Fant ingen oppdrag for gjelderId: $gjelderId" }
             return emptyList()
         }
     }
 
-    fun hentFagGrupper(): List<FagGruppe> {
+    fun getFagGrupper(): List<FagGruppe> {
         logger.info { "Henter faggrupper" }
-        return oppdragsInfoRepository.hentFagGrupper()
+        return oppdragsInfoRepository.getFagGrupper()
     }
 
-    fun hentOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> {
+    fun getOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> {
         logger.info { "Henter oppdragslinjer med oppdragsId: $oppdragsId" }
 
-        return oppdragsInfoRepository.hentOppdragsLinjer(oppdragsId)
+        return oppdragsInfoRepository.getOppdragsLinjer(oppdragsId)
     }
 
-    fun hentBehandlendeEnhetForOppdrag(oppdragsId: Int): OppdragsEnhetDTO {
+    fun getBehandlendeEnhetForOppdrag(oppdragsId: Int): OppdragsEnhetDTO {
         logger.info { "Henter behandlende enhet for oppdrag med oppdragsId: $oppdragsId" }
-        val enhet = oppdragsInfoRepository.hentOppdragsEnhet(oppdragsId = oppdragsId).first()
-        val behandlendeEnhet = oppdragsInfoRepository.hentOppdragsEnhet("BEH", oppdragsId).firstOrNull()
+        val enhet = oppdragsInfoRepository.getOppdragsEnhet(oppdragsId = oppdragsId).first()
+        val behandlendeEnhet = oppdragsInfoRepository.getOppdragsEnhet("BEH", oppdragsId).firstOrNull()
 
         return OppdragsEnhetDTO(enhet, behandlendeEnhet)
     }
 
-    fun hentOppdragsOmposteringer(oppdragsId: Int): List<Ompostering> {
+    fun getOppdragsOmposteringer(oppdragsId: Int): List<Ompostering> {
         logger.info { "Henter omposteringer med oppdragsId: $oppdragsId" }
 
-        return oppdragsInfoRepository.hentOppdragsOmposteringer(oppdragsId)
+        return oppdragsInfoRepository.getOppdragsOmposteringer(oppdragsId)
     }
 
-    fun hentOppdragsEnhetsHistorikk(oppdragsId: String): List<OppdragsEnhet> {
+    fun getOppdragsEnhetsHistorikk(oppdragsId: String): List<OppdragsEnhet> {
         logger.info { "Henter enhetshistorikk for oppdragId: $oppdragsId" }
-        return oppdragsInfoRepository.hentOppdragsEnhetsHistorikk(oppdragsId.toInt())
+        return oppdragsInfoRepository.getOppdragsEnhetsHistorikk(oppdragsId.toInt())
     }
 
-    fun hentOppdragsStatusHistorikk(oppdragsId: String): List<OppdragsStatus> {
+    fun getOppdragsStatusHistorikk(oppdragsId: String): List<OppdragsStatus> {
         logger.info { "Henter statushistorikk for oppdragId: $oppdragsId" }
-        return oppdragsInfoRepository.hentOppdragsStatusHistorikk(oppdragsId.toInt())
+        return oppdragsInfoRepository.getOppdragsStatusHistorikk(oppdragsId.toInt())
     }
 
-    fun hentOppdragsLinjeStatuser(
+    fun getOppdragsLinjeStatuser(
         oppdragsId: String,
         linjeId: String,
     ): List<LinjeStatus> {
         logger.info { "Henter linjstatus for oppdrag: $oppdragsId, linje: $linjeId" }
-        return oppdragsInfoRepository.hentOppdragsLinjeStatuser(oppdragsId.toInt(), linjeId.toInt())
+        return oppdragsInfoRepository.getOppdragsLinjeStatuser(oppdragsId.toInt(), linjeId.toInt())
     }
 
-    fun hentOppdragsLinjeAttestanter(
+    fun getOppdragsLinjeAttestanter(
         oppdragsId: String,
         linjeId: String,
     ): List<Attestant> {
         logger.info { "Henter attestant for oppdrag: $oppdragsId, linje : $linjeId" }
-        return oppdragsInfoRepository.hentOppdragsLinjeAttestanter(oppdragsId.toInt(), linjeId.toInt())
+        return oppdragsInfoRepository.getOppdragsLinjeAttestanter(oppdragsId.toInt(), linjeId.toInt())
     }
 
-    fun hentOppdragsLinjeDetaljer(
+    fun getOppdragsLinjeDetaljer(
         oppdragsId: String,
         linjeId: String,
     ): OppdragsLinjeDetaljerDTO {
         logger.info { "Henter detaljer for oppdrag: $oppdragsId, linje : $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        val oppdragslinjer = oppdragsInfoRepository.hentOppdragsLinjer(oppdragsId.toInt())
-        val eksisterer = oppdragsInfoRepository.eksistererValutaSkyldnerKravhaverLinjeenhetGradTekstKidMaksDato(oppdragsId.toInt(), linjeId.toInt())
+        val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
+        val oppdragslinjer = oppdragsInfoRepository.getOppdragsLinjer(oppdragsId.toInt())
+        val eksisterer = oppdragsInfoRepository.existsValutaSkyldnerKravhaverLinjeenhetGradTekstKidMaksDato(oppdragsId.toInt(), linjeId.toInt())
         return OppdragsLinjeDetaljerDTO(
             korrigerteLinjeIder = oppdragslinjer.filter { it.linjeId in korrigerteLinjeIder },
             harValutaer = eksisterer["T_VALUTA"] ?: false,
@@ -132,92 +132,92 @@ class OppdragsInfoService(
         )
     }
 
-    fun hentOppdragsLinjeValutaer(
+    fun getOppdragsLinjeValutaer(
         oppdragsId: String,
         linjeId: String,
     ): List<Valuta> {
         logger.info { "Henter valuta for oppdrag: $oppdragsId, linje : $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentValutaer(oppdragsId.toInt(), korrigerteLinjeIder)
+        val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
+        return oppdragsInfoRepository.getValutaer(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    fun hentOppdragsLinjeSkyldnere(
+    fun getOppdragsLinjeSkyldnere(
         oppdragsId: String,
         linjeId: String,
     ): List<Skyldner> {
         logger.info { "Henter skyldner for oppdrag: $oppdragsId, linje: $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentSkyldnere(oppdragsId.toInt(), korrigerteLinjeIder)
+        val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
+        return oppdragsInfoRepository.getSkyldnere(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    fun hentOppdragsLinjeKravhavere(
+    fun getOppdragsLinjeKravhavere(
         oppdragsId: String,
         linjeId: String,
     ): List<Kravhaver> {
         logger.info { "Henter kravhaver for oppdrag: $oppdragsId, linje: $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentKravhavere(oppdragsId.toInt(), korrigerteLinjeIder)
+        val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
+        return oppdragsInfoRepository.getKravhavere(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    fun hentOppdragsLinjeEnheter(
+    fun getOppdragsLinjeEnheter(
         oppdragsId: String,
         linjeId: String,
     ): List<LinjeEnhet> {
         logger.info { "Henter enheter liste for oppdrag: $oppdragsId, linje: $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentEnheter(oppdragsId.toInt(), korrigerteLinjeIder)
+        val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
+        return oppdragsInfoRepository.getEnheter(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    fun hentOppdragsLinjeGrader(
+    fun getOppdragsLinjeGrader(
         oppdragsId: String,
         linjeId: String,
     ): List<Grad> {
         logger.info { "Henter grad for oppdrag: $oppdragsId, linje: $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentGrader(oppdragsId.toInt(), korrigerteLinjeIder)
+        val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
+        return oppdragsInfoRepository.getGrader(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    fun hentOppdragsLinjeTekster(
+    fun getOppdragsLinjeTekster(
         oppdragsId: String,
         linjeId: String,
     ): List<Tekst> {
         logger.info { "Henter tekst liste for oppdrag: $oppdragsId, linje: $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentTekster(oppdragsId.toInt(), korrigerteLinjeIder)
+        val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
+        return oppdragsInfoRepository.getTekster(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    fun hentOppdragsLinjeKid(
+    fun getOppdragsLinjeKid(
         oppdragsId: String,
         linjeId: String,
     ): List<Kid> {
         logger.info { "Henter kid for oppdrag: $oppdragsId, linje: $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentKid(oppdragsId.toInt(), korrigerteLinjeIder)
+        val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
+        return oppdragsInfoRepository.getKid(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    fun hentOppdragsLinjeMaksDatoer(
+    fun getOppdragsLinjeMaksDatoer(
         oppdragsId: String,
         linjeId: String,
     ): List<Maksdato> {
         logger.info { "Henter maksdato for oppdrag: $oppdragsId, linje: $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentMaksDatoer(oppdragsId.toInt(), korrigerteLinjeIder)
+        val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
+        return oppdragsInfoRepository.getMaksDatoer(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    fun hentOppdragsLinjeOvriger(
+    fun getOppdragsLinjeOvriger(
         oppdragsId: String,
         linjeId: String,
     ): List<Ovrig> {
         logger.info { "Henter øvrig for oppdrag: $oppdragsId, linje: $linjeId" }
-        val korrigerteLinjeIder: List<Int> = finnKorrigerteLinjeIder(oppdragsId, linjeId)
-        return oppdragsInfoRepository.hentOvriger(oppdragsId.toInt(), korrigerteLinjeIder)
+        val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
+        return oppdragsInfoRepository.getOvriger(oppdragsId.toInt(), korrigerteLinjeIder)
     }
 
-    private fun finnKorrigerteLinjeIder(
+    private fun findKorrigerteLinjeIder(
         oppdragsId: String,
         linjeId: String,
     ): List<Int> {
-        val korrigerteLinjer = oppdragsInfoRepository.hentKorreksjoner(oppdragsId)
+        val korrigerteLinjer = oppdragsInfoRepository.getKorreksjoner(oppdragsId)
         val korrigerteLinjeIder: MutableList<Int> = ArrayList()
         if (korrigerteLinjer.isNotEmpty()) {
             var linje = linjeId.toInt()

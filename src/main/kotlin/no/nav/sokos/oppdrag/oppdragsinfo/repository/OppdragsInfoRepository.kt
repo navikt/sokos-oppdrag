@@ -28,7 +28,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 class OppdragsInfoRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource(),
 ) {
-    fun hentOppdragId(gjelderId: String): String? {
+    fun getOppdragId(gjelderId: String): String? {
         return using(sessionOf(dataSource)) { session ->
             session.single(
                 queryOf(
@@ -43,7 +43,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentFagGrupper(): List<FagGruppe> {
+    fun getFagGrupper(): List<FagGruppe> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -56,7 +56,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOppdragsEgenskaper(
+    fun getOppdrag(
         gjelderId: String,
         fagGruppeKode: String?,
     ): List<Oppdrag> {
@@ -97,7 +97,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOppdragsEnhet(
+    fun getOppdragsEnhet(
         typeEnhet: String? = null,
         oppdragsId: Int,
     ): List<OppdragsEnhet> {
@@ -124,7 +124,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> {
+    fun getOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -180,7 +180,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOppdragsOmposteringer(oppdragsId: Int): List<Ompostering> {
+    fun getOppdragsOmposteringer(oppdragsId: Int): List<Ompostering> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -213,7 +213,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOppdragsEnhetsHistorikk(oppdragsId: Int): List<OppdragsEnhet> {
+    fun getOppdragsEnhetsHistorikk(oppdragsId: Int): List<OppdragsEnhet> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -232,7 +232,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOppdragsStatusHistorikk(oppdragsId: Int): List<OppdragsStatus> {
+    fun getOppdragsStatusHistorikk(oppdragsId: Int): List<OppdragsStatus> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -251,7 +251,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOppdragsLinjeStatuser(
+    fun getOppdragsLinjeStatuser(
         oppdragsId: Int,
         linjeId: Int,
     ): List<LinjeStatus> {
@@ -275,7 +275,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOppdragsLinjeAttestanter(
+    fun getOppdragsLinjeAttestanter(
         oppdragsId: Int,
         linjeId: Int,
     ): List<Attestant> {
@@ -299,7 +299,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentKorreksjoner(oppdragsId: String): List<Korreksjon> {
+    fun getKorreksjoner(oppdragsId: String): List<Korreksjon> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -317,7 +317,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun eksistererValutaSkyldnerKravhaverLinjeenhetGradTekstKidMaksDato(
+    fun existsValutaSkyldnerKravhaverLinjeenhetGradTekstKidMaksDato(
         oppdragsId: Int,
         linjeId: Int,
     ): Map<String, Boolean> {
@@ -376,7 +376,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentValutaer(
+    fun getValutaer(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Valuta> {
@@ -398,7 +398,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentSkyldnere(
+    fun getSkyldnere(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Skyldner> {
@@ -420,7 +420,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentKravhavere(
+    fun getKravhavere(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Kravhaver> {
@@ -442,7 +442,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentEnheter(
+    fun getEnheter(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<LinjeEnhet> {
@@ -464,7 +464,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentGrader(
+    fun getGrader(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Grad> {
@@ -486,7 +486,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentTekster(
+    fun getTekster(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Tekst> {
@@ -508,7 +508,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentKid(
+    fun getKid(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Kid> {
@@ -530,7 +530,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentMaksDatoer(
+    fun getMaksDatoer(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Maksdato> {
@@ -552,7 +552,7 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun hentOvriger(
+    fun getOvriger(
         oppdragsId: Int,
         linjeIder: List<Int>,
     ): List<Ovrig> {

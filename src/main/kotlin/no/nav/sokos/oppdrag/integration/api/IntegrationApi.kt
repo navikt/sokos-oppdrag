@@ -13,10 +13,10 @@ private const val BASE_PATH = "/api/v1/integration"
 
 fun Route.integrationApi(integrationService: IntegrationService = IntegrationService()) {
     route(BASE_PATH) {
-        post("hent-navn") {
+        post("hentnavn") {
             val gjelderIdRequest = call.receive<GjelderIdRequest>()
             call.respond(
-                integrationService.hentNavnForGjelderId(
+                integrationService.getNavnForGjelderId(
                     gjelderIdRequest.gjelderId,
                     call,
                 ),

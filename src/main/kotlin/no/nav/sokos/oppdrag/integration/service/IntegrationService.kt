@@ -19,7 +19,7 @@ class IntegrationService(
     private val eregService: EregService = EregService(),
     private val auditLogger: AuditLogger = AuditLogger(),
 ) {
-    suspend fun hentNavnForGjelderId(
+    suspend fun getNavnForGjelderId(
         gjelderId: String,
         applicationCall: ApplicationCall,
     ): GjelderIdName {

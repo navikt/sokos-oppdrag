@@ -43,7 +43,7 @@ internal class IntegrationApiTest : FunSpec({
 
     test("søk navn for gjelderId skal returnere 200 OK") {
 
-        coEvery { integrationService.hentNavnForGjelderId(any(), any()) } returns GjelderIdName("Test Testesen")
+        coEvery { integrationService.getNavnForGjelderId(any(), any()) } returns GjelderIdName("Test Testesen")
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -51,7 +51,7 @@ internal class IntegrationApiTest : FunSpec({
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .body(GjelderIdRequest(gjelderId = "12345678901"))
                 .port(PORT)
-                .post("$INTEGRATION_BASE_API_PATH/hent-navn")
+                .post("$INTEGRATION_BASE_API_PATH/hentnavn")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
@@ -66,7 +66,7 @@ internal class IntegrationApiTest : FunSpec({
             .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
             .body(GjelderIdRequest(gjelderId = "1234567890"))
             .port(PORT)
-            .post("$INTEGRATION_BASE_API_PATH/hent-navn")
+            .post("$INTEGRATION_BASE_API_PATH/hentnavn")
             .then().assertThat()
             .statusCode(HttpStatusCode.BadRequest.value)
             .body("message", equalTo("gjelderId er ugyldig. Tillatt format er 9 eller 11 siffer"))

@@ -70,7 +70,7 @@ internal class SecurityTest : FunSpec({
                     }
                 }
 
-                every { oppdragsInfoService.hentOppdragsEgenskaper(any(), any(), any()) } returns emptyList()
+                every { oppdragsInfoService.getOppdrag(any(), any(), any()) } returns emptyList()
 
                 val client =
                     createClient {
