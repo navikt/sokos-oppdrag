@@ -105,17 +105,17 @@ class AttestasjonRepository(
                          , l.linje_id
                          , o.oppdrag_gjelder_id
                          , g.navn_faggruppe
-                         , f.navn_fagomraade
+                         , TRIM(f.navn_fagomraade) AS navn_fagomraade
                          , o.kode_fagomraade
-                         , o.fagsystem_id
-                         , l.kode_klasse
-                         , l.delytelse_id
+                         , TRIM(o.fagsystem_id) AS fagsystem_id
+                         , TRIM(l.kode_klasse) AS kode_klasse
+                         , TRIM(l.delytelse_id) AS delytelse_id
                          , l.sats
-                         , l.type_sats
+                         , TRIM(l.type_sats) AS type_sats
                          , l.dato_vedtak_fom
                          , l.dato_vedtak_tom
                          , ls.kode_status
-                         , a.attestant_id
+                         , TRIM(a.attestant_id) AS attestant_id
                          , a.dato_ugyldig_fom
                       from t_faggruppe g join t_fagomraade f on g.kode_faggruppe = f.kode_faggruppe
                       join t_oppdrag o on f.kode_fagomraade = o.kode_fagomraade
@@ -143,18 +143,18 @@ class AttestasjonRepository(
                     select o.oppdrags_id
                         , l.linje_id
                         , o.oppdrag_gjelder_id
-                        , g.navn_faggruppe
-                        , f.navn_fagomraade
+                        , TRIM(g.navn_faggruppe) AS navn_faggruppe
+                        , TRIM(f.navn_fagomraade) AS navn_fagomraade
                         , o.kode_fagomraade
-                        , o.fagsystem_id
-                        , l.kode_klasse
-                        , l.delytelse_id
+                        , TRIM(o.fagsystem_id) AS fagsystem_id
+                        , TRIM(l.kode_klasse) AS kode_klasse
+                        , TRIM(l.delytelse_id) AS delytelse_id
                         , l.sats
-                        , l.type_sats
+                        , TRIM(l.type_sats) AS type_sats
                         , l.dato_vedtak_fom
                         , l2.dato_vedtak_fom - 1 day as dato_vedtak_tom
                         , ls.kode_status
-                        , a.attestant_id
+                        , TRIM(a.attestant_id) AS attestant_id
                         , a.dato_ugyldig_fom
                      from t_faggruppe g join t_fagomraade f on g.kode_faggruppe = f.kode_faggruppe
                      join t_oppdrag o on f.kode_fagomraade = o.kode_fagomraade
