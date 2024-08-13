@@ -102,6 +102,7 @@ class AttestasjonRepository(
                 queryOf(
                     """
                          select o.oppdrags_id
+                         , f.ANT_ATTESTANTER
                          , l.linje_id
                          , o.oppdrag_gjelder_id
                          , TRIM(f.kode_faggruppe) AS kode_faggruppe
@@ -114,7 +115,7 @@ class AttestasjonRepository(
                          , TRIM(l.type_sats) AS type_sats
                          , l.dato_vedtak_fom
                          , coalesce(l2.dato_vedtak_fom - 1 day, l.dato_vedtak_tom) as dato_vedtak_tom
-                         , TRIM(a.attestant_id) AS attestand_id
+                         , TRIM(a.attestant_id) AS attestant_id
                          , a.dato_ugyldig_fom
                          , TRIM(oe.enhet) AS kostnadssted
                          , case when le.enhet is not null then TRIM(le.enhet)
@@ -184,16 +185,23 @@ class AttestasjonRepository(
 
     private val mapToOppdragslinjerTilAttestasjon: (Row) -> OppdragsDetaljer = { row ->
         OppdragsDetaljer(
-            klasse = row.string("kode_klasse"),
-            delytelsesId = row.string("delytelse_id"),
-            sats = row.double("sats"),
-            satstype = row.string("type_sats"),
-            datoVedtakFom = row.string("dato_vedtak_fom"),
-            datoVedtakTom = row.stringOrNull("dato_vedtak_tom"),
+            ansvarsSted = row.string("ansvarssted"),
+            antallAttestanter = row.int("ANT_ATTESTANTER"),
             attestant = row.string("attestant_id"),
-            fagsystemId = row.string("fagsystem_id"),
-            navnFagOmraade = row.string("navn_fagomraade"),
-        )
+            datoUgyldigFom = row.string("dato_ugyldig_fom"),
+            datoVedtakFom = row.string("dato_vedtak_fom"),
+            datoVedtakTom = row.string("dato_vedtak_tom"),
+            delytelsesId = row.string("delytelse_id"),
+            fagGruppeKode = row.string("kode_faggruppe"),
+            fagOmraadeKode = row.string("kode_fagomraade"),
+            fagSystemId = row.string("fagsystem_id"),
+            klasse = row.string("kode_klasse"),
+            kostnadsSted = row.string("kostnadssted"),
+            linjeId = row.string("linje_id"),
+            oppdragGjelderId = row.string("oppdrag_gjelder_id"),
+            sats = row.double("sats"),
+            satstype = row.string("type_sats")
+            )
     }
 
     private val mapToFagOmraade: (Row) -> FagOmraade = { row ->
