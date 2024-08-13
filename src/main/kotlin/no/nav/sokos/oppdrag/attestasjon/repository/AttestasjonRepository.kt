@@ -166,7 +166,7 @@ class AttestasjonRepository(
                                                                            and oeb2.dato_fom   <= current date))
                       and o.oppdrags_id  IN (${oppdragsIder.joinToString()})
                     order by oppdrags_id, LINJE_ID
-                    """.trimIndent()
+                    """.trimIndent(),
                 ),
                 mapToOppdragslinjerTilAttestasjon,
             )
@@ -187,10 +187,10 @@ class AttestasjonRepository(
         OppdragsDetaljer(
             ansvarsSted = row.string("ansvarssted"),
             antallAttestanter = row.int("ANT_ATTESTANTER"),
-            attestant = row.string("attestant_id"),
-            datoUgyldigFom = row.string("dato_ugyldig_fom"),
+            attestant = row.stringOrNull("attestant_id"),
+            datoUgyldigFom = row.stringOrNull("dato_ugyldig_fom"),
             datoVedtakFom = row.string("dato_vedtak_fom"),
-            datoVedtakTom = row.string("dato_vedtak_tom"),
+            datoVedtakTom = row.stringOrNull("dato_vedtak_tom"),
             delytelsesId = row.string("delytelse_id"),
             fagGruppeKode = row.string("kode_faggruppe"),
             fagOmraadeKode = row.string("kode_fagomraade"),
@@ -200,8 +200,8 @@ class AttestasjonRepository(
             linjeId = row.string("linje_id"),
             oppdragGjelderId = row.string("oppdrag_gjelder_id"),
             sats = row.double("sats"),
-            satstype = row.string("type_sats")
-            )
+            satstype = row.string("type_sats"),
+        )
     }
 
     private val mapToFagOmraade: (Row) -> FagOmraade = { row ->
