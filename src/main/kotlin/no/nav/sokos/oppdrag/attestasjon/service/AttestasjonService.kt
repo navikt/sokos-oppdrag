@@ -20,12 +20,12 @@ class AttestasjonService(
     private val auditLogger: AuditLogger = AuditLogger(),
 ) {
     fun getOppdrag(
-        gjelderId: String? = null,
+        applicationCall: ApplicationCall,
+        attestert: Boolean? = null,
         fagsystemId: String? = null,
+        gjelderId: String? = null,
         kodeFagGruppe: String? = null,
         kodeFagOmraade: String? = null,
-        attestert: Boolean? = null,
-        applicationCall: ApplicationCall,
     ): List<Oppdrag> {
         if (!gjelderId.isNullOrBlank()) {
             val saksbehandler = getSaksbehandler(applicationCall)
@@ -40,11 +40,11 @@ class AttestasjonService(
         }
 
         if (!validateSearchParams(
+                attestert = attestert,
+                fagsystemId = fagsystemId,
                 gjelderId = gjelderId,
                 kodeFaggruppe = kodeFagGruppe,
                 kodeFagomraade = kodeFagOmraade,
-                fagsystemId = fagsystemId,
-                attestert = attestert,
             )
         ) {
             throw RequestValidationException(
@@ -79,11 +79,11 @@ class AttestasjonService(
  * Fagsystem ID og fagområde
  */
 fun validateSearchParams(
+    attestert: Boolean?,
+    fagsystemId: String?,
+    gjelderId: String?,
     kodeFaggruppe: String?,
     kodeFagomraade: String?,
-    gjelderId: String?,
-    fagsystemId: String?,
-    attestert: Boolean?,
 ): Boolean {
     var gyldig = false
 

@@ -118,18 +118,17 @@ paths:
 
 components:
   schemas:
-
     OppdragsIdRequest:
-        type: object
-        required:
-          - oppdragsIder
-        properties:
-            oppdragsIder:
-                type: array
-                items:
-                  type: integer
-                example: [123, 456]
-                description: Liste med oppdragsIder
+      type: object
+      required:
+        - oppdragsIder
+      properties:
+        oppdragsIder:
+          type: array
+          items:
+            type: integer
+          example: [ 123, 456 ]
+          description: Liste med oppdragsIder
 
     OppdragsRequest:
       type: object
@@ -158,8 +157,20 @@ components:
 
     Oppdrag:
       type: object
+      required:
+        - ansvarsSted
+        - fagsystemId
+        - gjelderId
+        - kostnadsSted
+        - navnFagGruppe
+        - navnFagOmraade
+        - oppdragsId
       properties:
+        ansvarsSted:
+          type: string
         gjelderId:
+          type: string
+        kostnadsSted:
           type: string
         navnFagGruppe:
           type: string
@@ -188,8 +199,8 @@ components:
         - antallAttestanter
         - datoVedtakFom
         - delytelsesId
-        - fagGruppeKode
-        - fagOmraadeKode
+        - navnFagGruppe
+        - navnFagOmraade
         - fagSystemId
         - klasse
         - kostnadsSted
@@ -212,10 +223,6 @@ components:
           type: string
         delytelsesId:
           type: string
-        fagGruppeKode:
-          type: string
-        fagOmraadeKode:
-          type: string
         fagSystemId:
           type: string
         klasse:
@@ -223,6 +230,10 @@ components:
         kostnadsSted:
           type: string
         linjeId:
+          type: string
+        navnFagGruppe:
+          type: string
+        navnFagOmraade:
           type: string
         oppdragGjelderId:
           type: string
