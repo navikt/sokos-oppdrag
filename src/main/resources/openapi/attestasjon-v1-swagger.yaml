@@ -184,32 +184,53 @@ components:
     OppdragsDetaljer:
       type: object
       required:
-        - klasse
+        - ansvarsSted
+        - antallAttestanter
+        - datoVedtakFom
         - delytelsesId
+        - fagGruppeKode
+        - fagOmraadeKode
+        - fagSystemId
+        - klasse
+        - kostnadsSted
+        - linjeId
+        - oppdragGjelderId
         - sats
         - satstype
-        - datoVedtakFom
-        - navnFagOmraade
-        - fagsystemId
       properties:
-        klasse:
+        ansvarsSted:
           type: string
-        delytelsesId:
+        antallAttestanter:
+          type: integer
+        attestant:
           type: string
-        sats:
-          type: number
-        satstype:
+        datoUgyldigFom:
           type: string
         datoVedtakFom:
           type: string
         datoVedtakTom:
           type: string
-        attestant:
+        delytelsesId:
           type: string
-        navnFagOmraade:
+        fagGruppeKode:
           type: string
-        fagsystemId:
+        fagOmraadeKode:
           type: string
+        fagSystemId:
+          type: string
+        klasse:
+          type: string
+        kostnadsSted:
+          type: string
+        linjeId:
+          type: string
+        oppdragGjelderId:
+          type: string
+        sats:
+          type: number
+        satstype:
+          type: string
+
     ApiError:
       type: object
       required:
