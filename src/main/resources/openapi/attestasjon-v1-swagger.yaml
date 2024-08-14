@@ -118,18 +118,17 @@ paths:
 
 components:
   schemas:
-
     OppdragsIdRequest:
-        type: object
-        required:
-          - oppdragsIder
-        properties:
-            oppdragsIder:
-                type: array
-                items:
-                  type: integer
-                example: [123, 456]
-                description: Liste med oppdragsIder
+      type: object
+      required:
+        - oppdragsIder
+      properties:
+        oppdragsIder:
+          type: array
+          items:
+            type: integer
+          example: [ 123, 456 ]
+          description: Liste med oppdragsIder
 
     OppdragsRequest:
       type: object
@@ -158,8 +157,20 @@ components:
 
     Oppdrag:
       type: object
+      required:
+        - ansvarsSted
+        - fagsystemId
+        - gjelderId
+        - kostnadsSted
+        - navnFagGruppe
+        - navnFagOmraade
+        - oppdragsId
       properties:
+        ansvarsSted:
+          type: string
         gjelderId:
+          type: string
+        kostnadsSted:
           type: string
         navnFagGruppe:
           type: string
@@ -184,32 +195,53 @@ components:
     OppdragsDetaljer:
       type: object
       required:
-        - klasse
+        - ansvarsSted
+        - antallAttestanter
+        - datoVedtakFom
         - delytelsesId
+        - navnFagGruppe
+        - navnFagOmraade
+        - fagSystemId
+        - klasse
+        - kostnadsSted
+        - linjeId
+        - oppdragGjelderId
         - sats
         - satstype
-        - datoVedtakFom
-        - navnFagOmraade
-        - fagsystemId
       properties:
-        klasse:
+        ansvarsSted:
           type: string
-        delytelsesId:
+        antallAttestanter:
+          type: integer
+        attestant:
           type: string
-        sats:
-          type: number
-        satstype:
+        datoUgyldigFom:
           type: string
         datoVedtakFom:
           type: string
         datoVedtakTom:
           type: string
-        attestant:
+        delytelsesId:
+          type: string
+        fagSystemId:
+          type: string
+        klasse:
+          type: string
+        kostnadsSted:
+          type: string
+        linjeId:
+          type: string
+        navnFagGruppe:
           type: string
         navnFagOmraade:
           type: string
-        fagsystemId:
+        oppdragGjelderId:
           type: string
+        sats:
+          type: number
+        satstype:
+          type: string
+
     ApiError:
       type: object
       required:

@@ -46,11 +46,13 @@ internal class AttestasjonApiTest : FunSpec({
         val oppdragsListe =
             listOf(
                 Oppdrag(
+                    ansvarsSted = "1337",
+                    fagsystemId = "123456789",
                     gjelderId = "12345678901",
+                    kostnadsSted = "8128",
                     navnFagGruppe = "navnFaggruppe",
                     navnFagOmraade = "navnFagomraade",
                     oppdragsId = 987654,
-                    fagsystemId = "123456789",
                 ),
             )
 
@@ -74,15 +76,21 @@ internal class AttestasjonApiTest : FunSpec({
         val oppdragsDetaljerListe =
             listOf(
                 OppdragsDetaljer(
-                    klasse = "klasse",
-                    delytelsesId = "delytelsesId",
-                    sats = 123.45,
-                    satstype = "satstype",
+                    ansvarsSted = "1337",
+                    antallAttestanter = 1,
+                    attestant = "attestant",
                     datoVedtakFom = "2021-01-01",
                     datoVedtakTom = "2021-12-31",
-                    attestant = "attestant",
-                    navnFagOmraade = "navnFagOmraade",
-                    fagsystemId = "123456789",
+                    delytelsesId = "delytelsesId",
+                    fagSystemId = "123456789",
+                    klasse = "klasse",
+                    kostnadsSted = "8128",
+                    linjeId = "1",
+                    navnFagGruppe = "Aliens",
+                    navnFagOmraade = "Area 51",
+                    oppdragGjelderId = "123456789",
+                    sats = 123.45,
+                    satstype = "satstype",
                 ),
             )
 
@@ -99,7 +107,7 @@ internal class AttestasjonApiTest : FunSpec({
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
-        response.body.jsonPath().getList<Int>("fagsystemId").first().shouldBe("123456789")
+        response.body.jsonPath().getList<Int>("fagSystemId").first().shouldBe("123456789")
     }
 })
 

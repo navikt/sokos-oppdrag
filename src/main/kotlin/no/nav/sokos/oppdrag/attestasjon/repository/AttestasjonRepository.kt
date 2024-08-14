@@ -24,56 +24,62 @@ class AttestasjonRepository(
             val statementParts =
                 mutableListOf(
                     """
-                    select TRIM(g.navn_faggruppe) AS navn_faggruppe
-                         , TRIM(f.navn_fagomraade) AS navn_fagomraade
-                         , o.oppdrag_gjelder_id
-                         , o.oppdrags_id
-                         , TRIM(o.fagsystem_id) AS fagsystem_id
-                         , ls.kode_status
-                    from t_faggruppe g join t_fagomraade f on g.kode_faggruppe = f.kode_faggruppe
-                      join t_oppdrag o on f.kode_fagomraade = o.kode_fagomraade
-                      join t_oppdragslinje l on o.oppdrags_id = l.oppdrags_id
-                      join t_oppdrag_status s on s.oppdrags_id = l.oppdrags_id
-                      join t_linje_status ls on ls.oppdrags_id = l.oppdrags_id and ls.linje_id = l.linje_id
-                      left outer join t_korreksjon k on l.oppdrags_id = k.oppdrags_id and l.linje_id = k.linje_id
-                    where k.oppdrags_id IS NULL
-                      and s.kode_status = 'AKTI'
-                      and s.tidspkt_reg = (select max(s2.tidspkt_reg)
-                                             from t_oppdrag_status s2
-                                            where s.oppdrags_id = s2.oppdrags_id)
-                      and ls.tidspkt_reg = (select max(tidspkt_reg)
-                                              from t_linje_status ls2
-                                             where ls2.oppdrags_id = ls.oppdrags_id
-                                               and ls2.linje_id = ls.linje_id)
+                    SELECT TRIM(G.NAVN_FAGGRUPPE)                             AS NAVN_FAGGRUPPE
+                         , TRIM(F.NAVN_FAGOMRAADE)                            AS NAVN_FAGOMRAADE
+                         , O.OPPDRAG_GJELDER_ID                               AS OPPDRAG_GJELDER_ID
+                         , O.OPPDRAGS_ID                                      AS OPPDRAGS_ID
+                         , TRIM(O.FAGSYSTEM_ID)                               AS FAGSYSTEM_ID
+                         , LS.KODE_STATUS                                     AS KODE_STATUS
+                         , OE.ENHET                                           AS KOSTNADSSTED
+                         , CASE WHEN LE.ENHET IS NOT NULL THEN TRIM(LE.ENHET)
+                          WHEN OEB.ENHET IS NOT NULL THEN TRIM(OEB.ENHET)
+                          ELSE TRIM(OE.ENHET) END                             AS ANSVARSSTED
+                    FROM T_FAGGRUPPE G
+                             JOIN T_FAGOMRAADE F ON G.KODE_FAGGRUPPE = F.KODE_FAGGRUPPE
+                             JOIN T_OPPDRAG O ON F.KODE_FAGOMRAADE = O.KODE_FAGOMRAADE
+                             JOIN T_OPPDRAGSLINJE L ON O.OPPDRAGS_ID = L.OPPDRAGS_ID
+                             JOIN T_OPPDRAGSENHET OE ON OE.OPPDRAGS_ID = O.OPPDRAGS_ID AND OE.TYPE_ENHET = 'BOS'
+                             JOIN T_OPPDRAG_STATUS S ON S.OPPDRAGS_ID = L.OPPDRAGS_ID
+                             JOIN T_LINJE_STATUS LS ON LS.OPPDRAGS_ID = L.OPPDRAGS_ID AND LS.LINJE_ID = L.LINJE_ID
+                             LEFT OUTER JOIN T_KORREKSJON K ON L.OPPDRAGS_ID = K.OPPDRAGS_ID AND L.LINJE_ID = K.LINJE_ID
+                             LEFT OUTER JOIN T_LINJEENHET LE ON LE.OPPDRAGS_ID = L.OPPDRAGS_ID AND LE.TYPE_ENHET = 'BEH' AND LE.LINJE_ID = L.LINJE_ID
+                             LEFT OUTER JOIN T_OPPDRAGSENHET OEB ON OEB.OPPDRAGS_ID = O.OPPDRAGS_ID AND OEB.TYPE_ENHET = 'BEH'
+                    WHERE K.OPPDRAGS_ID IS NULL
+                      AND S.KODE_STATUS = 'AKTI'
+                      AND S.TIDSPKT_REG = (SELECT MAX(S2.TIDSPKT_REG)
+                                           FROM T_OPPDRAG_STATUS S2
+                                           WHERE S.OPPDRAGS_ID = S2.OPPDRAGS_ID)
+                      AND LS.TIDSPKT_REG = (SELECT MAX(TIDSPKT_REG)
+                                            FROM T_LINJE_STATUS LS2
+                                            WHERE LS2.OPPDRAGS_ID = LS.OPPDRAGS_ID
+                                              AND LS2.LINJE_ID = LS.LINJE_ID)
                     """.trimIndent(),
                 )
-
-            if (gjelderId.isNotBlank()) statementParts.add("and o.oppdrag_gjelder_id = :gjelderId")
-            if (fagsystemId.isNotBlank()) statementParts.add("and o.fagsystem_id = :fagsystemId")
-            if (kodeFagomraade.isNotBlank()) statementParts.add("and f.kode_fagomraade = :kodeFagomraade")
-            if (kodeFaggruppe.isNotBlank()) statementParts.add("and g.kode_faggruppe = :kodeFaggruppe")
+            if (gjelderId.isNotBlank()) statementParts.add("AND O.OPPDRAG_GJELDER_ID = :GJELDERID")
+            if (fagsystemId.isNotBlank()) statementParts.add("AND O.FAGSYSTEM_ID = :FAGSYSTEMID")
+            if (kodeFagomraade.isNotBlank()) statementParts.add("AND F.KODE_FAGOMRAADE = :KODEFAGOMRAADE")
+            if (kodeFaggruppe.isNotBlank()) statementParts.add("AND G.KODE_FAGGRUPPE = :KODEFAGGRUPPE")
 
             if (attestert == false) {
-                statementParts.add("and l.attestert = 'N'")
+                statementParts.add("AND L.ATTESTERT = 'N'")
             } else if (attestert == true) {
-                statementParts.add("and l.attestert = 'J'")
+                statementParts.add("AND L.ATTESTERT = 'J'")
             } else if (attestert == null) {
-                statementParts.add("and l.attestert like '%'")
+                statementParts.add("AND L.ATTESTERT LIKE '%'")
             }
 
-            statementParts.add("fetch first 200 rows only")
-
-            if (gjelderId.isNotBlank() || fagsystemId.isNotBlank()) statementParts.add("optimize for 1 row")
-
+            statementParts.add("GROUP BY NAVN_FAGGRUPPE, NAVN_FAGOMRAADE, OPPDRAG_GJELDER_ID, O.OPPDRAGS_ID, FAGSYSTEM_ID, LS.KODE_STATUS, OE.ENHET, LE.ENHET, OEB.ENHET")
+            statementParts.add("FETCH FIRST 200 ROWS ONLY")
+            if (gjelderId.isNotBlank() || fagsystemId.isNotBlank()) statementParts.add("OPTIMIZE FOR 1 ROW")
             session.list(
                 queryOf(
-                    statementParts.joinToString("\n"),
+                    statementParts.joinToString("\n", "", ";"),
                     mapOf(
-                        "gjelderId" to gjelderId,
-                        "fagsystemId" to fagsystemId,
-                        "kodeFagomraade" to kodeFagomraade,
-                        "kodeFaggruppe" to kodeFaggruppe,
-                        "attestert" to attestert,
+                        "GJELDERID" to gjelderId,
+                        "FAGSYSTEMID" to fagsystemId,
+                        "KODEFAGOMRAADE" to kodeFagomraade,
+                        "KODEFAGGRUPPE" to kodeFaggruppe,
+                        "ATTESTERT" to attestert,
                     ),
                 ),
                 mapToOppdrag,
@@ -101,84 +107,73 @@ class AttestasjonRepository(
             session.list(
                 queryOf(
                     """
-                    select o.oppdrags_id
-                         , l.linje_id
-                         , o.oppdrag_gjelder_id
-                         , g.navn_faggruppe
-                         , TRIM(f.navn_fagomraade) AS navn_fagomraade
-                         , o.kode_fagomraade
-                         , TRIM(o.fagsystem_id) AS fagsystem_id
-                         , TRIM(l.kode_klasse) AS kode_klasse
-                         , TRIM(l.delytelse_id) AS delytelse_id
-                         , l.sats
-                         , TRIM(l.type_sats) AS type_sats
-                         , l.dato_vedtak_fom
-                         , l.dato_vedtak_tom
-                         , ls.kode_status
-                         , TRIM(a.attestant_id) AS attestant_id
-                         , a.dato_ugyldig_fom
-                      from t_faggruppe g join t_fagomraade f on g.kode_faggruppe = f.kode_faggruppe
-                      join t_oppdrag o on f.kode_fagomraade = o.kode_fagomraade
-                      join t_oppdragslinje l on o.oppdrags_id = l.oppdrags_id
-                      join t_oppdrag_status s on s.oppdrags_id = l.oppdrags_id
-                      join t_linje_status ls on ls.oppdrags_id = l.oppdrags_id and ls.linje_id = l.linje_id
-                      left join t_korreksjon k on l.oppdrags_id = k.oppdrags_id and l.linje_id = k.linje_id
-                      left join t_attestasjon a on a.oppdrags_id = l.oppdrags_id and a.linje_id = l.linje_id
-                    where k.oppdrags_id is null
-                      and s.kode_status = 'AKTI'
-                      and s.tidspkt_reg = (select max(s2.tidspkt_reg)
-                                             from t_oppdrag_status s2
-                                            where s.oppdrags_id = s2.oppdrags_id)
-                      and ls.tidspkt_reg = (select max(tidspkt_reg)
-                                             from t_linje_status ls2
-                                            where ls2.oppdrags_id = ls.oppdrags_id
-                                              and ls2.linje_id = ls.linje_id)
-                      and (a.oppdrags_id is null or a.lopenr = (select max(a2.lopenr)
-                                                                  from t_attestasjon a2
-                                                                 where a2.oppdrags_id = l.oppdrags_id
-                                                                   and a2.linje_id = l.linje_id
-                                                                   and a2.attestant_id = a.attestant_id))
-                      and o.oppdrags_id  IN (${oppdragsIder.joinToString()})
-                    union
-                    select o.oppdrags_id
-                        , l.linje_id
-                        , o.oppdrag_gjelder_id
-                        , TRIM(g.navn_faggruppe) AS navn_faggruppe
-                        , TRIM(f.navn_fagomraade) AS navn_fagomraade
-                        , o.kode_fagomraade
-                        , TRIM(o.fagsystem_id) AS fagsystem_id
-                        , TRIM(l.kode_klasse) AS kode_klasse
-                        , TRIM(l.delytelse_id) AS delytelse_id
-                        , l.sats
-                        , TRIM(l.type_sats) AS type_sats
-                        , l.dato_vedtak_fom
-                        , l2.dato_vedtak_fom - 1 day as dato_vedtak_tom
-                        , ls.kode_status
-                        , TRIM(a.attestant_id) AS attestant_id
-                        , a.dato_ugyldig_fom
-                     from t_faggruppe g join t_fagomraade f on g.kode_faggruppe = f.kode_faggruppe
-                     join t_oppdrag o on f.kode_fagomraade = o.kode_fagomraade
-                     join t_oppdragslinje l on o.oppdrags_id = l.oppdrags_id
-                     join t_oppdrag_status s on s.oppdrags_id = l.oppdrags_id
-                     join t_linje_status ls on ls.oppdrags_id = l.oppdrags_id and ls.linje_id = l.linje_id
-                     join t_korreksjon k on l.oppdrags_id = k.oppdrags_id and l.linje_id = k.linje_id
-                     join t_oppdragslinje l2 on l2.oppdrags_id = k.oppdrags_id_korr and l2.linje_id = k.linje_id_korr and l.dato_vedtak_fom < l2.dato_vedtak_fom
-                     left join t_attestasjon a on a.oppdrags_id = l.oppdrags_id and a.linje_id = l.linje_id
-                    where s.kode_status = 'AKTI'
-                      and s.tidspkt_reg = (select max(s2.tidspkt_reg)
-                                             from t_oppdrag_status s2
-                                            where s.oppdrags_id = s2.oppdrags_id)
-                      and ls.tidspkt_reg = (select max(tidspkt_reg)
-                                             from t_linje_status ls2
-                                            where ls2.oppdrags_id = ls.oppdrags_id
-                                              and ls2.linje_id = ls.linje_id)
-                      and (a.oppdrags_id is null or a.lopenr = (select max(a2.lopenr)
-                                                                  from t_attestasjon a2
-                                                                 where a2.oppdrags_id = l.oppdrags_id
-                                                                   and a2.linje_id = l.linje_id
-                                                                   and a2.attestant_id = a.attestant_id))
-                      and o.oppdrags_id  IN (${oppdragsIder.joinToString()})
-                    order by oppdrags_id, LINJE_ID
+                         SELECT O.OPPDRAGS_ID                                       AS OPPDRAGS_ID
+                         , F.ANT_ATTESTANTER                                        AS ANT_ATTESTANTER
+                         , L.LINJE_ID                                               AS LINJE_ID
+                         , O.OPPDRAG_GJELDER_ID                                     AS OPPDRAG_GJELDER_ID
+                         , TRIM(G.NAVN_FAGGRUPPE)                                   AS NAVN_FAGGRUPPE
+                         , TRIM(F.NAVN_FAGOMRAADE)                                  AS NAVN_FAGOMRAADE
+                         , O.KODE_FAGOMRAADE                                        AS KODE_FAGOMRAADE
+                         , TRIM(O.FAGSYSTEM_ID)                                     AS FAGSYSTEM_ID
+                         , TRIM(L.KODE_KLASSE)                                      AS KODE_KLASSE
+                         , TRIM(L.DELYTELSE_ID)                                     AS DELYTELSE_ID
+                         , L.SATS                                                   AS SATS
+                         , TRIM(L.TYPE_SATS)                                        AS TYPE_SATS
+                         , L.DATO_VEDTAK_FOM                                        AS DATO_VEDTAK_FOM
+                         , COALESCE(L2.DATO_VEDTAK_FOM - 1 DAY, L.DATO_VEDTAK_TOM)  AS DATO_VEDTAK_TOM
+                         , TRIM(A.ATTESTANT_ID)                                     AS ATTESTANT_ID
+                         , A.DATO_UGYLDIG_FOM                                       AS DATO_UGYLDIG_FOM
+                         , TRIM(OE.ENHET)                                           AS KOSTNADSSTED
+                         , CASE WHEN LE.ENHET IS NOT NULL THEN TRIM(LE.ENHET)
+                                WHEN OEB.ENHET IS NOT NULL THEN TRIM(OEB.ENHET)
+                                ELSE TRIM(OE.ENHET)
+                        END                                                         AS ANSVARSSTED
+                    FROM T_FAGGRUPPE G
+                             JOIN T_FAGOMRAADE F ON G.KODE_FAGGRUPPE = F.KODE_FAGGRUPPE
+                             JOIN T_OPPDRAG O ON F.KODE_FAGOMRAADE = O.KODE_FAGOMRAADE
+                             JOIN T_OPPDRAGSLINJE L ON O.OPPDRAGS_ID = L.OPPDRAGS_ID
+                             JOIN T_OPPDRAG_STATUS S ON S.OPPDRAGS_ID = L.OPPDRAGS_ID
+                             JOIN T_LINJE_STATUS LS ON LS.OPPDRAGS_ID = L.OPPDRAGS_ID AND LS.LINJE_ID = L.LINJE_ID
+                             JOIN T_OPPDRAGSENHET OE ON OE.OPPDRAGS_ID = O.OPPDRAGS_ID AND OE.TYPE_ENHET = 'BOS'
+                             JOIN T_STATUSKODE SK ON SK.KODE_STATUS = LS.KODE_STATUS
+                             LEFT JOIN T_KORREKSJON K ON L.OPPDRAGS_ID = K.OPPDRAGS_ID AND L.LINJE_ID = K.LINJE_ID
+                             LEFT JOIN T_OPPDRAG O2 ON K.OPPDRAGS_ID_KORR = O2.OPPDRAGS_ID AND F.KODE_FAGOMRAADE = O2.KODE_FAGOMRAADE
+                             LEFT JOIN T_OPPDRAGSLINJE L2 ON L2.OPPDRAGS_ID = O2.OPPDRAGS_ID AND K.LINJE_ID_KORR = L2.LINJE_ID AND L.DATO_VEDTAK_FOM < L2.DATO_VEDTAK_FOM
+                             LEFT JOIN T_ATTESTASJON A ON A.OPPDRAGS_ID = L.OPPDRAGS_ID AND A.LINJE_ID = L.LINJE_ID AND A.DATO_UGYLDIG_FOM > CURRENT DATE
+                             LEFT OUTER JOIN T_LINJEENHET LE ON LE.OPPDRAGS_ID = L.OPPDRAGS_ID AND LE.TYPE_ENHET = 'BEH' AND LE.LINJE_ID = L.LINJE_ID
+                             LEFT OUTER JOIN T_OPPDRAGSENHET OEB ON OEB.OPPDRAGS_ID = O.OPPDRAGS_ID AND OEB.TYPE_ENHET = 'BEH'
+                    WHERE S.KODE_STATUS = 'AKTI'
+                      AND NOT (L2.DATO_VEDTAK_FOM IS NULL AND SK.TYPE_STATUS != 'AKTI')
+                      AND S.TIDSPKT_REG = (SELECT MAX(S2.TIDSPKT_REG)
+                                           FROM T_OPPDRAG_STATUS S2
+                                           WHERE S.OPPDRAGS_ID = S2.OPPDRAGS_ID)
+                      AND LS.TIDSPKT_REG = (SELECT MAX(TIDSPKT_REG)
+                                            FROM T_LINJE_STATUS LS2
+                                            WHERE LS2.OPPDRAGS_ID = LS.OPPDRAGS_ID
+                                              AND LS2.LINJE_ID = LS.LINJE_ID)
+                      AND (A.OPPDRAGS_ID IS NULL OR A.LOPENR = (SELECT MAX(A2.LOPENR)
+                                                                FROM T_ATTESTASJON A2
+                                                                WHERE A2.OPPDRAGS_ID = L.OPPDRAGS_ID
+                                                                  AND A2.LINJE_ID = L.LINJE_ID
+                                                                  AND A2.ATTESTANT_ID = A.ATTESTANT_ID))
+                      AND OE.TIDSPKT_REG = (SELECT MAX(TIDSPKT_REG)
+                                            FROM T_OPPDRAGSENHET OE2
+                                            WHERE OE2.OPPDRAGS_ID = OE.OPPDRAGS_ID
+                                              AND OE2.TYPE_ENHET  = OE.TYPE_ENHET
+                                              AND OE2.DATO_FOM   <= CURRENT DATE)
+                      AND (LE.TIDSPKT_REG IS NULL OR LE.TIDSPKT_REG = (SELECT MAX(TIDSPKT_REG)
+                                                                       FROM T_LINJEENHET LE2
+                                                                       WHERE LE2.OPPDRAGS_ID = LE.OPPDRAGS_ID
+                                                                         AND LE2.LINJE_ID    = LE.LINJE_ID
+                                                                         AND LE2.TYPE_ENHET  = LE.TYPE_ENHET
+                                                                         AND LE2.DATO_FOM   <= CURRENT DATE))
+                      AND (OEB.TIDSPKT_REG IS NULL OR OEB.TIDSPKT_REG = (SELECT MAX(TIDSPKT_REG)
+                                                                         FROM T_OPPDRAGSENHET OEB2
+                                                                         WHERE OEB2.OPPDRAGS_ID = OEB.OPPDRAGS_ID
+                                                                           AND OEB2.TYPE_ENHET  = OEB.TYPE_ENHET
+                                                                           AND OEB2.DATO_FOM   <= CURRENT DATE))
+                      AND O.OPPDRAGS_ID  IN (${oppdragsIder.joinToString()})
+                    ORDER BY OPPDRAGS_ID, LINJE_ID
                     """.trimIndent(),
                 ),
                 mapToOppdragslinjerTilAttestasjon,
@@ -188,25 +183,34 @@ class AttestasjonRepository(
 
     private val mapToOppdrag: (Row) -> Oppdrag = { row ->
         Oppdrag(
-            gjelderId = row.string("oppdrag_gjelder_id"),
-            navnFagGruppe = row.string("navn_faggruppe"),
-            navnFagOmraade = row.string("navn_fagomraade"),
-            oppdragsId = row.int("oppdrags_id"),
-            fagsystemId = row.string("fagsystem_id"),
+            ansvarsSted = row.string("ANSVARSSTED"),
+            fagsystemId = row.string("FAGSYSTEM_ID"),
+            gjelderId = row.string("OPPDRAG_GJELDER_ID"),
+            kostnadsSted = row.string("KOSTNADSSTED"),
+            navnFagGruppe = row.string("NAVN_FAGGRUPPE"),
+            navnFagOmraade = row.string("NAVN_FAGOMRAADE"),
+            oppdragsId = row.int("OPPDRAGS_ID"),
         )
     }
 
     private val mapToOppdragslinjerTilAttestasjon: (Row) -> OppdragsDetaljer = { row ->
         OppdragsDetaljer(
-            klasse = row.string("kode_klasse"),
-            delytelsesId = row.string("delytelse_id"),
-            sats = row.double("sats"),
-            satstype = row.string("type_sats"),
-            datoVedtakFom = row.string("dato_vedtak_fom"),
-            datoVedtakTom = row.stringOrNull("dato_vedtak_tom"),
-            attestant = row.string("attestant_id"),
-            fagsystemId = row.string("fagsystem_id"),
-            navnFagOmraade = row.string("navn_fagomraade"),
+            ansvarsSted = row.string("ANSVARSSTED"),
+            antallAttestanter = row.int("ANT_ATTESTANTER"),
+            attestant = row.stringOrNull("ATTESTANT_ID"),
+            datoUgyldigFom = row.stringOrNull("DATO_UGYLDIG_FOM"),
+            datoVedtakFom = row.string("DATO_VEDTAK_FOM"),
+            datoVedtakTom = row.stringOrNull("DATO_VEDTAK_TOM"),
+            delytelsesId = row.string("DELYTELSE_ID"),
+            navnFagGruppe = row.string("NAVN_FAGGRUPPE"),
+            navnFagOmraade = row.string("NAVN_FAGOMRAADE"),
+            fagSystemId = row.string("FAGSYSTEM_ID"),
+            klasse = row.string("KODE_KLASSE"),
+            kostnadsSted = row.string("KOSTNADSSTED"),
+            linjeId = row.string("LINJE_ID"),
+            oppdragGjelderId = row.string("OPPDRAG_GJELDER_ID"),
+            sats = row.double("SATS"),
+            satstype = row.string("TYPE_SATS"),
         )
     }
 
