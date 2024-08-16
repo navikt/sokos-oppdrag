@@ -158,7 +158,6 @@ components:
     Oppdrag:
       type: object
       required:
-        - ansvarsSted
         - fagsystemId
         - gjelderId
         - kostnadsSted
@@ -195,21 +194,23 @@ components:
     OppdragsDetaljer:
       type: object
       required:
-        - ansvarsSted
         - antallAttestanter
         - datoVedtakFom
         - delytelsesId
+        - fagSystemId
+        - kodeKlasse
+        - kostnadsStedForOppdrag
+        - linjeId
         - navnFagGruppe
         - navnFagOmraade
-        - fagSystemId
-        - klasse
-        - kostnadsSted
-        - linjeId
         - oppdragGjelderId
+        - oppdragsId
         - sats
         - satstype
       properties:
-        ansvarsSted:
+        ansvarsStedForOppdrag:
+          type: string
+        ansvarsStedForOppdragsLinje:
           type: string
         antallAttestanter:
           type: integer
@@ -225,9 +226,11 @@ components:
           type: string
         fagSystemId:
           type: string
-        klasse:
+        kodeKlasse:
           type: string
-        kostnadsSted:
+        kostnadsStedForOppdrag:
+          type: string
+        kostnadsStedForOppdragsLinje:
           type: string
         linjeId:
           type: string
@@ -237,11 +240,12 @@ components:
           type: string
         oppdragGjelderId:
           type: string
+        oppdragsId:
+          type: string
         sats:
           type: number
         satstype:
           type: string
-
     ApiError:
       type: object
       required:

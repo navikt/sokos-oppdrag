@@ -76,19 +76,20 @@ internal class AttestasjonApiTest : FunSpec({
         val oppdragsDetaljerListe =
             listOf(
                 OppdragsDetaljer(
-                    ansvarsSted = "1337",
+                    ansvarsStedForOppdrag = "1337",
                     antallAttestanter = 1,
                     attestant = "attestant",
                     datoVedtakFom = "2021-01-01",
                     datoVedtakTom = "2021-12-31",
                     delytelsesId = "delytelsesId",
                     fagSystemId = "123456789",
-                    klasse = "klasse",
-                    kostnadsSted = "8128",
+                    kodeKlasse = "KLASSE",
+                    kostnadsStedForOppdrag = "8128",
                     linjeId = "1",
                     navnFagGruppe = "Aliens",
                     navnFagOmraade = "Area 51",
                     oppdragGjelderId = "123456789",
+                    oppdragsId = "12345678",
                     sats = 123.45,
                     satstype = "satstype",
                 ),
