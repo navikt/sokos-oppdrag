@@ -201,7 +201,7 @@ class AttestasjonRepository(
 
     private val mapToOppdragslinjerTilAttestasjon: (Row) -> OppdragsDetaljer = { row ->
         OppdragsDetaljer(
-            ansvarsStedForOppdrag = row.stringOrNull("ANSVARSSTEDFORLINJE"),
+            ansvarsStedForOppdrag = row.stringOrNull("ANSVARSSTEDFOROPPDRAG"),
             ansvarsStedForOppdragsLinje = row.stringOrNull("ANSVARSSTEDFORLINJE"),
             antallAttestanter = row.int("ANT_ATTESTANTER"),
             attestant = row.stringOrNull("ATTESTANT_ID"),
