@@ -35,11 +35,10 @@ fun Route.attestasjonApi(service: AttestasjonService = AttestasjonService()) {
             )
         }
 
-        post("oppdragsdetaljer") {
-            val oppdragsIdRequest = call.receive<OppdragsIdRequest>()
+        get("oppdragsdetaljer/{oppdragsId}") {
             call.respond(
                 service.getOppdragsDetaljer(
-                    oppdragsIdRequest.oppdragsIder,
+                    call.parameters["oppdragsId"].orEmpty().toInt(),
                 ),
             )
         }

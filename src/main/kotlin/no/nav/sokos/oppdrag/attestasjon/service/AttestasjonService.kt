@@ -66,8 +66,8 @@ class AttestasjonService(
         return attestasjonRepository.getFagOmraader()
     }
 
-    fun getOppdragsDetaljer(oppdragsIder: List<Int>): List<OppdragsDetaljer> {
-        return attestasjonRepository.getOppdragsDetaljer(oppdragsIder)
+    fun getOppdragsDetaljer(oppdragsId: Int): List<OppdragsDetaljer> {
+        return attestasjonRepository.getOppdragsDetaljer(oppdragsId)
     }
 }
 
