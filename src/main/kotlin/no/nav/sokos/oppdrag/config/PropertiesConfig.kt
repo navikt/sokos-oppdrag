@@ -49,6 +49,7 @@ object PropertiesConfig {
         val profile: Profile = Profile.valueOf(get("APPLICATION_PROFILE")),
         val useAuthentication: Boolean = get("USE_AUTHENTICATION").toBoolean(),
         val azureAdProperties: AzureAdProperties = AzureAdProperties(),
+        val brukZOSMock: Boolean = get("BRUK_ZOSMOCK").toBoolean(),
     )
 
     data class Db2Properties(
@@ -72,6 +73,7 @@ object PropertiesConfig {
         val pdlScope: String = getOrEmpty("PDL_SCOPE"),
         val eregUrl: String = getOrEmpty("EREG_URL"),
         val tpUrl: String = getOrEmpty("TP_URL"),
+        val zosUrl: String = getOrEmpty("ZOS_URL"),
     )
 
     enum class Profile {

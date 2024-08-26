@@ -41,5 +41,9 @@ fun Route.attestasjonApi(service: AttestasjonService = AttestasjonService()) {
                 ),
             )
         }
+
+        get("testzos") {
+            call.respond(service.testzos())
+        }
     }
 }
