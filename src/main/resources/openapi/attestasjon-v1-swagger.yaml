@@ -77,19 +77,20 @@ paths:
         - Bearer: [ ]
 
 
-  /oppdragsdetaljer:
-    post:
+  /oppdragsdetaljer/{oppdragsId}:
+    get:
       tags:
         - attestasjon
-      summary: Søk med oppdragsider
+      summary: Søk med oppdragsid
       description: Returnerer oppdragslinjene til valgte oppdrag.
       operationId: hentListeMedOppdragslinjerForAttestering
-      requestBody:
-        description: oppdragsIder
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/OppdragsIdRequest'
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdragets id
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: OK - Hvis oppdragene ikke finnes, returneres tom liste
@@ -118,18 +119,6 @@ paths:
 
 components:
   schemas:
-    OppdragsIdRequest:
-      type: object
-      required:
-        - oppdragsIder
-      properties:
-        oppdragsIder:
-          type: array
-          items:
-            type: integer
-          example: [ 123, 456 ]
-          description: Liste med oppdragsIder
-
     OppdragsRequest:
       type: object
       properties:
