@@ -16,7 +16,6 @@ import io.restassured.RestAssured
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.ATTESTASJON_BASE_API_PATH
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
-import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsIdRequest
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.OppdragsDetaljer
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
@@ -101,9 +100,8 @@ internal class AttestasjonApiTest : FunSpec({
             RestAssured.given().filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(OppdragsIdRequest(listOf(987654)))
                 .port(PORT)
-                .post("$ATTESTASJON_BASE_API_PATH/oppdragsdetaljer")
+                .get("$ATTESTASJON_BASE_API_PATH/oppdragsdetaljer/12341234")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()

@@ -102,7 +102,7 @@ class AttestasjonRepository(
         }
     }
 
-    fun getOppdragsDetaljer(oppdragsIder: List<Int>): List<OppdragsDetaljer> {
+    fun getOppdragsDetaljer(oppdragsId: Int): List<OppdragsDetaljer> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -178,9 +178,12 @@ class AttestasjonRepository(
                                                                          WHERE OAS2.OPPDRAGS_ID = OAS.OPPDRAGS_ID
                                                                            AND OAS2.TYPE_ENHET  = OAS.TYPE_ENHET
                                                                            AND OAS2.DATO_FOM   <= CURRENT DATE))
-                      AND O.OPPDRAGS_ID  IN (${oppdragsIder.joinToString()})
+                      AND O.OPPDRAGS_ID = :OPPDRAGSID
                     ORDER BY OPPDRAGS_ID, LINJE_ID
                     """.trimIndent(),
+                    mapOf(
+                        "OPPDRAGSID" to oppdragsId,
+                    ),
                 ),
                 mapToOppdragslinjerTilAttestasjon,
             )
