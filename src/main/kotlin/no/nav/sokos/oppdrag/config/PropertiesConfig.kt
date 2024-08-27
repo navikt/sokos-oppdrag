@@ -23,6 +23,7 @@ object PropertiesConfig {
             mapOf(
                 "APPLICATION_PROFILE" to Profile.LOCAL.toString(),
                 "USE_AUTHENTICATION" to "false",
+                "BRUK_ZOSMOCK" to "false",
             ),
         )
 

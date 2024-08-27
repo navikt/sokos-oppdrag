@@ -165,7 +165,7 @@ tasks {
 
     openApiGenerate {
         generatorName.set("kotlin")
-        inputSpec.set("$rootDir/src/main/resources/zos/zOsConnectAttestasjonDy.json")
+        inputSpec.set("$rootDir/src/main/resources/zos/zOsConnectAttestasjon.json")
         outputDir.set("${layout.buildDirectory.get()}/generated")
         apiPackage.set("no.nav.sokos.oppdrag.api")
         modelPackage.set("no.nav.sokos.oppdrag.model")
