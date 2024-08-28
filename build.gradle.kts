@@ -5,6 +5,7 @@ import kotlinx.kover.gradle.plugin.dsl.tasks.KoverReport
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
     kotlin("jvm") version "2.0.20"
@@ -127,6 +128,7 @@ tasks {
     withType<KotlinCompile>().configureEach {
         dependsOn("ktlintFormat")
         dependsOn("graphqlGenerateClient")
+        dependsOn("openApiGenerate")
     }
 
     ktlint {
@@ -163,16 +165,20 @@ tasks {
         }
     }
 
-    openApiGenerate {
+    withType<GenerateTask>().configureEach {
         generatorName.set("kotlin")
         inputSpec.set("$rootDir/src/main/resources/zos/zOsConnectAttestasjon.json")
         outputDir.set("${layout.buildDirectory.get()}/generated")
-        apiPackage.set("no.nav.sokos.oppdrag.api")
         modelPackage.set("no.nav.sokos.oppdrag.model")
         configOptions.set(
             mapOf(
                 "library" to "jvm-ktor",
                 "serializationLibrary" to "kotlinx_serialization",
+            ),
+        )
+        globalProperties.set(
+            mapOf(
+                "models" to "",
             ),
         )
     }

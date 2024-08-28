@@ -12,8 +12,8 @@ import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSKlientImpl
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
-import no.nav.sokos.oppdrag.model.PostOSAttestasjonDyRequest
-import no.nav.sokos.oppdrag.model.PostOSAttestasjonDyResponse200
+import no.nav.sokos.oppdrag.model.PostOSAttestasjonRequest
+import no.nav.sokos.oppdrag.model.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
@@ -73,8 +73,8 @@ class AttestasjonService(
         return attestasjonRepository.getOppdragsDetaljer(oppdragsId)
     }
 
-    suspend fun testzos(): PostOSAttestasjonDyResponse200 {
-        return ZOSKlientImpl().oppdaterAttestasjoner(PostOSAttestasjonDyRequest())
+    suspend fun testzos(): PostOSAttestasjonResponse200 {
+        return ZOSKlientImpl().oppdaterAttestasjoner(PostOSAttestasjonRequest())
     }
 }
 
