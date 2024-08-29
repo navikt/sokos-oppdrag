@@ -77,6 +77,6 @@ class EregService(
     }
 }
 
-suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject["melding"]?.jsonPrimitive?.content
+private suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject["melding"]?.jsonPrimitive?.content
 
 data class EregException(val apiError: ApiError, val response: HttpResponse) : Exception(apiError.error)

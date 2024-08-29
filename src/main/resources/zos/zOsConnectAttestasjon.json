@@ -1,0 +1,169 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API for oppdatering av attestanter på et oppdrag",
+    "version": "1.0.0",
+    "title": "osattestasjonapi"
+  },
+  "host": "155.55.1.82:9080",
+  "basePath": "/osattestasjonapi",
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/oppdaterAttestasjon": {
+      "post": {
+        "tags": [
+          "osattestasjonapi"
+        ],
+        "operationId": "postOSAttestasjon",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "postOSAttestasjon_request",
+            "description": "request body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/postOSAttestasjon_request"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/postOSAttestasjon_response_200"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "postOSAttestasjon_request": {
+      "type": "object",
+      "properties": {
+        "OSAttestasjonOperation": {
+          "type": "object",
+          "properties": {
+            "Attestasjonsdata": {
+              "type": "object",
+              "properties": {
+                "RequestAttestasjon": {
+                  "type": "object",
+                  "properties": {
+                    "GjelderId": {
+                      "type": "string",
+                      "maxLength": 11
+                    },
+                    "Fagomraade": {
+                      "type": "string",
+                      "maxLength": 8
+                    },
+                    "OppdragsId": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9999999999
+                    },
+                    "BrukerId": {
+                      "type": "string",
+                      "maxLength": 8
+                    },
+                    "KjorIdag": {
+                      "type": "boolean"
+                    },
+                    "LinjeTab": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "LinjeId": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 99999
+                          },
+                          "AttestantId": {
+                            "type": "string",
+                            "maxLength": 8
+                          },
+                          "DatoUgyldigFom": {
+                            "type": "string",
+                            "maxLength": 10
+                          }
+                        }
+                      },
+                      "maxItems": 2000,
+                      "minItems": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "Attestasjonsdata"
+          ]
+        }
+      }
+    },
+    "postOSAttestasjon_response_200": {
+      "type": "object",
+      "properties": {
+        "OSAttestasjonOperationResponse": {
+          "type": "object",
+          "properties": {
+            "Attestasjonskvittering": {
+              "type": "object",
+              "properties": {
+                "ResponsAttestasjon": {
+                  "type": "object",
+                  "properties": {
+                    "GjelderId": {
+                      "type": "string",
+                      "maxLength": 11
+                    },
+                    "OppdragsId": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9999999999
+                    },
+                    "AntLinjerMottatt": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 99999
+                    },
+                    "Statuskode": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 99
+                    },
+                    "Melding": {
+                      "type": "string",
+                      "maxLength": 100
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "Attestasjonskvittering"
+          ]
+        }
+      }
+    }
+  }
+}

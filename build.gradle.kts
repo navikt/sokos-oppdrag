@@ -5,6 +5,7 @@ import kotlinx.kover.gradle.plugin.dsl.tasks.KoverReport
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
     kotlin("jvm") version "2.0.20"
@@ -13,6 +14,7 @@ plugins {
     id("com.expediagroup.graphql") version "7.1.4"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
     id("org.jetbrains.kotlinx.kover") version "0.8.3"
+    id("org.openapi.generator") version "7.4.0"
 }
 
 group = "no.nav.sokos"
@@ -22,24 +24,24 @@ repositories {
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
 }
 
-val ktorVersion = "2.3.12"
-val kotlinxSerializationVersion = "1.7.1"
-val micrometerVersion = "1.13.3"
-val kotlinLoggingVersion = "3.0.5"
-val janionVersion = "3.1.12"
-val logbackVersion = "1.5.7"
-val logstashVersion = "8.0"
-val natpryceVersion = "1.6.10.0"
-val hikariVersion = "5.1.0"
 val db2JccVersion = "11.5.9.0"
 val graphqlClientVersion = "7.1.4"
+val hikariVersion = "5.1.0"
+val janionVersion = "3.1.12"
 val kotestVersion = "5.9.1"
-val mockkVersion = "1.13.12"
-val mockOAuth2ServerVersion = "2.1.9"
-val swaggerRequestValidatorVersion = "2.41.0"
-val papertrailappVersion = "1.0.0"
-val kotliqueryVersion = "1.9.0"
 val kotestWiremockVersion = "3.1.0"
+val kotlinLoggingVersion = "3.0.5"
+val kotlinxSerializationVersion = "1.7.1"
+val kotliqueryVersion = "1.9.0"
+val ktorVersion = "2.3.12"
+val logbackVersion = "1.5.7"
+val logstashVersion = "8.0"
+val micrometerVersion = "1.13.3"
+val mockOAuth2ServerVersion = "2.1.9"
+val mockkVersion = "1.13.12"
+val natpryceVersion = "1.6.10.0"
+val papertrailappVersion = "1.0.0"
+val swaggerRequestValidatorVersion = "2.41.0"
 
 dependencies {
 
@@ -113,18 +115,20 @@ kotlin {
 }
 
 tasks {
-
     named("runKtlintCheckOverMainSourceSet").configure {
         dependsOn("graphqlGenerateClient")
+        dependsOn("openApiGenerate")
     }
 
     named("runKtlintFormatOverMainSourceSet").configure {
         dependsOn("graphqlGenerateClient")
+        dependsOn("openApiGenerate")
     }
 
     withType<KotlinCompile>().configureEach {
         dependsOn("ktlintFormat")
         dependsOn("graphqlGenerateClient")
+        dependsOn("openApiGenerate")
     }
 
     ktlint {
@@ -159,6 +163,24 @@ tasks {
                 }
             }
         }
+    }
+
+    withType<GenerateTask>().configureEach {
+        generatorName.set("kotlin")
+        inputSpec.set("$rootDir/src/main/resources/zos/zOsConnectAttestasjon.json")
+        outputDir.set("${layout.buildDirectory.get()}/generated")
+        modelPackage.set("no.nav.sokos.oppdrag.attestasjon.service.zos")
+        configOptions.set(
+            mapOf(
+                "library" to "jvm-ktor",
+                "serializationLibrary" to "kotlinx_serialization",
+            ),
+        )
+        globalProperties.set(
+            mapOf(
+                "models" to "",
+            ),
+        )
     }
 
     withType<Test>().configureEach {

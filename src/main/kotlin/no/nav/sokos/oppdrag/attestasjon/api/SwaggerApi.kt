@@ -8,4 +8,8 @@ fun Routing.attestasjonSwaggerApi() {
         path = "api/v1/attestasjon/docs",
         swaggerFile = "openapi/attestasjon-v1-swagger.yaml",
     )
+    swaggerUI(
+        path = "/osattestasjonapi/docs",
+        swaggerFile = "zos/zOsConnectAttestasjon.json",
+    )
 }

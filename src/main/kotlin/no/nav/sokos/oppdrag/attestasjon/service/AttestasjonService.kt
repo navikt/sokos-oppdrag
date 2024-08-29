@@ -4,10 +4,13 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import mu.KotlinLogging
+import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.OppdragsDetaljer
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
+import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
+import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSKlient
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
@@ -18,6 +21,7 @@ private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 class AttestasjonService(
     private val attestasjonRepository: AttestasjonRepository = AttestasjonRepository(),
     private val auditLogger: AuditLogger = AuditLogger(),
+    private val zosKlient: ZOSKlient = ZOSKlient(),
 ) {
     fun getOppdrag(
         applicationCall: ApplicationCall,
@@ -68,6 +72,10 @@ class AttestasjonService(
 
     fun getOppdragsDetaljer(oppdragsId: Int): List<OppdragsDetaljer> {
         return attestasjonRepository.getOppdragsDetaljer(oppdragsId)
+    }
+
+    suspend fun attestereOppdrag(attestasjonRequest: AttestasjonRequest): PostOSAttestasjonResponse200 {
+        return zosKlient.attestereOppdrag(attestasjonRequest)
     }
 }
 

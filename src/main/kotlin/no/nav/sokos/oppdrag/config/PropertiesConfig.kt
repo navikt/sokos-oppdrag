@@ -72,6 +72,7 @@ object PropertiesConfig {
         val pdlScope: String = getOrEmpty("PDL_SCOPE"),
         val eregUrl: String = getOrEmpty("EREG_URL"),
         val tpUrl: String = getOrEmpty("TP_URL"),
+        val zosUrl: String = getOrEmpty("ZOS_URL"),
     )
 
     enum class Profile {
