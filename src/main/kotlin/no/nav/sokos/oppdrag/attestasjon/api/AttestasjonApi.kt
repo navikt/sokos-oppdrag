@@ -7,6 +7,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
+import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonsRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
 
@@ -42,8 +43,11 @@ fun Route.attestasjonApi(service: AttestasjonService = AttestasjonService()) {
             )
         }
 
-        get("testzos") {
-            call.respond(service.testzos())
+        post("oppdater") {
+            val request = call.receive<AttestasjonsRequest>()
+            call.respond(
+                service.testzos(request),
+            )
         }
     }
 }

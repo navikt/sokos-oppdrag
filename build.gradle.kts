@@ -169,7 +169,7 @@ tasks {
         generatorName.set("kotlin")
         inputSpec.set("$rootDir/src/main/resources/zos/zOsConnectAttestasjon.json")
         outputDir.set("${layout.buildDirectory.get()}/generated")
-        modelPackage.set("no.nav.sokos.oppdrag.model")
+        modelPackage.set("no.nav.sokos.oppdrag.attestasjon.service.zos")
         configOptions.set(
             mapOf(
                 "library" to "jvm-ktor",

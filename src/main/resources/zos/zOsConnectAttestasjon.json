@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "title": "osattestasjonapi"
   },
+  "host": "155.55.1.82:9080",
   "basePath": "/osattestasjonapi",
   "schemes": [
     "https",
@@ -24,6 +25,12 @@
         ],
         "operationId": "postOSAttestasjon",
         "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
           {
             "in": "body",
             "name": "postOSAttestasjon_request",
@@ -55,10 +62,10 @@
             "Attestasjonsdata": {
               "type": "object",
               "properties": {
-                "RequestAttestassjon": {
+                "RequestAttestasjon": {
                   "type": "object",
                   "properties": {
-                    "OppdragGjelderId": {
+                    "GjelderId": {
                       "type": "string",
                       "maxLength": 11
                     },
@@ -76,8 +83,7 @@
                       "maxLength": 8
                     },
                     "KjorIdag": {
-                      "type": "string",
-                      "maxLength": 1
+                      "type": "boolean"
                     },
                     "LinjeTab": {
                       "type": "array",
@@ -125,7 +131,7 @@
                 "ResponsAttestasjon": {
                   "type": "object",
                   "properties": {
-                    "OppdragGjelderId": {
+                    "GjelderId": {
                       "type": "string",
                       "maxLength": 11
                     },
