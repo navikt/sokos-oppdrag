@@ -10,8 +10,8 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
-import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonsLinje
-import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonsRequest
+import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
+import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponse
@@ -141,46 +141,47 @@ internal class AttestasjonServiceTest : FunSpec({
                 )
             }
         }
-        test("attestasjon av oppdrag") {
-            val oppdragsid = 999999999
+    }
 
-            val request =
-                AttestasjonsRequest(
-                    gjelderId = "string",
-                    fagOmraade = "string",
-                    oppdragsId = oppdragsid,
-                    brukerId = "string",
-                    kjorIdag = false,
-                    linjer =
-                        listOf(
-                            AttestasjonsLinje(
-                                linjeId = 99999,
-                                attestantId = "string",
-                                datoUgyldigFom = "string",
+    test("attestasjon av oppdrag") {
+        val oppdragsid = 999999999
+
+        val request =
+            AttestasjonRequest(
+                gjelderId = "string",
+                fagOmraade = "string",
+                oppdragsId = oppdragsid,
+                brukerId = "string",
+                kjorIdag = false,
+                linjer =
+                    listOf(
+                        AttestasjonLinje(
+                            linjeId = 99999,
+                            attestantId = "string",
+                            datoUgyldigFom = "string",
+                        ),
+                    ),
+            )
+
+        val response =
+            PostOSAttestasjonResponse200(
+                osAttestasjonOperationResponse =
+                    PostOSAttestasjonResponse200OSAttestasjonOperationResponse(
+                        attestasjonskvittering =
+                            PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvittering(
+                                responsAttestasjon =
+                                    PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvitteringResponsAttestasjon(
+                                        gjelderId = "string",
+                                        oppdragsId = 999999999,
+                                        antLinjerMottatt = 99999,
+                                        statuskode = 99,
+                                        melding = "string",
+                                    ),
                             ),
-                        ),
-                )
+                    ),
+            )
 
-            val response =
-                PostOSAttestasjonResponse200(
-                    osAttestasjonOperationResponse =
-                        PostOSAttestasjonResponse200OSAttestasjonOperationResponse(
-                            attestasjonskvittering =
-                                PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvittering(
-                                    responsAttestasjon =
-                                        PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvitteringResponsAttestasjon(
-                                            gjelderId = "string",
-                                            oppdragsId = 999999999,
-                                            antLinjerMottatt = 99999,
-                                            statuskode = 99,
-                                            melding = "string",
-                                        ),
-                                ),
-                        ),
-                )
-
-            coEvery { zosKlient.update(any()) } returns response
-            attestasjonService.update(request) shouldBe response
-        }
+        coEvery { zosKlient.updateAttestasjon(any()) } returns response
+        attestasjonService.updateAttestasjon(request) shouldBe response
     }
 })

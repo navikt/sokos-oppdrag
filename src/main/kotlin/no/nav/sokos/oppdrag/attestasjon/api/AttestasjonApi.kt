@@ -7,23 +7,23 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
-import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonsRequest
+import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
 
 private const val BASE_PATH = "/api/v1/attestasjon"
 
-fun Route.attestasjonApi(service: AttestasjonService = AttestasjonService()) {
+fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonService()) {
     route(BASE_PATH) {
         post("sok") {
-            val oppdragsRequest = call.receive<OppdragsRequest>()
+            val request = call.receive<OppdragsRequest>()
             call.respond(
-                service.getOppdrag(
-                    gjelderId = oppdragsRequest.gjelderId,
-                    fagsystemId = oppdragsRequest.fagsystemId,
-                    kodeFagGruppe = oppdragsRequest.kodeFagGruppe,
-                    kodeFagOmraade = oppdragsRequest.kodeFagOmraade,
-                    attestert = oppdragsRequest.attestert,
+                attestasjonService.getOppdrag(
+                    gjelderId = request.gjelderId,
+                    fagsystemId = request.fagsystemId,
+                    kodeFagGruppe = request.kodeFagGruppe,
+                    kodeFagOmraade = request.kodeFagOmraade,
+                    attestert = request.attestert,
                     applicationCall = call,
                 ),
             )
@@ -31,22 +31,22 @@ fun Route.attestasjonApi(service: AttestasjonService = AttestasjonService()) {
 
         get("fagomraader") {
             call.respond(
-                service.getFagOmraade(),
+                attestasjonService.getFagOmraade(),
             )
         }
 
         get("oppdragsdetaljer/{oppdragsId}") {
             call.respond(
-                service.getOppdragsDetaljer(
+                attestasjonService.getOppdragsDetaljer(
                     call.parameters["oppdragsId"].orEmpty().toInt(),
                 ),
             )
         }
 
         post("oppdater") {
-            val request = call.receive<AttestasjonsRequest>()
+            val request = call.receive<AttestasjonRequest>()
             call.respond(
-                service.update(request),
+                attestasjonService.updateAttestasjon(request),
             )
         }
     }

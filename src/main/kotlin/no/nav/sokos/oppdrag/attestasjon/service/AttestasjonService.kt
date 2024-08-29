@@ -4,7 +4,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import mu.KotlinLogging
-import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonsRequest
+import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.OppdragsDetaljer
@@ -74,8 +74,8 @@ class AttestasjonService(
         return attestasjonRepository.getOppdragsDetaljer(oppdragsId)
     }
 
-    suspend fun update(request: AttestasjonsRequest): PostOSAttestasjonResponse200 {
-        return zosKlient.update(request)
+    suspend fun updateAttestasjon(attestasjonRequest: AttestasjonRequest): PostOSAttestasjonResponse200 {
+        return zosKlient.updateAttestasjon(attestasjonRequest)
     }
 }
 

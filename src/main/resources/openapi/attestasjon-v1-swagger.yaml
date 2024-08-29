@@ -117,6 +117,35 @@ paths:
       security:
         - Bearer: [ ]
 
+  /oppdater:
+    post:
+      tags:
+        - attestasjon
+      summary: Oppdater attestasjon
+      description: Returnerer status på attestestert attestasjon
+      operationId: oppdaterAttestasjon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttestasjonRequest'
+        required: true
+      responses:
+        200:
+          description: OK - Kvittering på attestasjon
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostOSAttestasjonResponse200'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
 components:
   schemas:
     OppdragsRequest:
@@ -143,6 +172,82 @@ components:
           type: boolean
           example: true
           nullable: true
+
+    AttestasjonRequest:
+      type: object
+      properties:
+        gjelderId:
+          type: string
+          example: "9 eller 11 siffer"
+          description: 9 eller 11 siffer
+        fagOmraade:
+            type: string
+            example: "MBA"
+        oppdragsId:
+            type: number
+            example: 12345678
+            description: 8 siffer
+        brukerId:
+            type: string
+            example: "Z123456"
+            description: 7 tegn (bokstaver og tall)
+        kjorIdag:
+            type: boolean
+            example: true
+            description: true eller false
+        linjer:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttestasjonLinje'
+
+    PostOSAttestasjonResponse200:
+      type: object
+      properties:
+        OSAttestasjonOperationResponse:
+          type: object
+          properties:
+            Attestasjonskvittering:
+              type: object
+              properties:
+                ResponsAttestasjon:
+                  type: object
+                  properties:
+                    GjelderId:
+                      type: string
+                      maxLength: 11
+                    OppdragsId:
+                      type: integer
+                      minimum: 0
+                      maximum: 9999999999
+                    AntLinjerMottatt:
+                      type: integer
+                      minimum: 0
+                      maximum: 99999
+                    Statuskode:
+                      type: integer
+                      minimum: 0
+                      maximum: 99
+                    Melding:
+                      type: string
+                      maxLength: 100
+          required:
+            - Attestasjonskvittering
+
+    AttestasjonLinje:
+      type: object
+      properties:
+        linjeId:
+          type: number
+          example: 1
+          description: Nummer på linjen om skal oppdateres
+        attestantId:
+          type: string
+          example: "Z123456"
+          description: 7 tegn (bokstaver og tall)
+        datoUgyldigFom:
+          type: string
+          example: "2021-01-01"
+          description: Dato for ugyldig fra
 
     Oppdrag:
       type: object
@@ -262,7 +367,7 @@ components:
           description: En lesbar forklaring som er spesifikk for denne forekomsten av problemet
         path:
           type: string
-          example: /api/v1/integration/sok
+          example: /api/v1/attestasjon/sok
           description: Endepunktet hvor feilen oppstå
 
   securitySchemes:

@@ -10,21 +10,20 @@ import io.ktor.http.isSuccess
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonsRequest
+import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.httpClient
 import java.time.ZonedDateTime
 
-class ZOSKlient {
-    suspend fun update(request: AttestasjonsRequest): PostOSAttestasjonResponse200 {
-        val zosRequest: PostOSAttestasjonRequest = mapToZosRequest(request)
-        val url = "${PropertiesConfig.EksterneHostProperties().zosUrl}/oppdaterAttestasjon"
-
+class ZOSKlient(
+    private val zOsUrl: String = PropertiesConfig.EksterneHostProperties().zosUrl,
+) {
+    suspend fun updateAttestasjon(attestasjonRequest: AttestasjonRequest): PostOSAttestasjonResponse200 {
         val response: HttpResponse =
-            httpClient.post(url) {
+            httpClient.post("$zOsUrl/oppdaterAttestasjon") {
                 contentType(ContentType.Application.Json)
-                setBody(zosRequest)
+                setBody(mapToZosRequest(attestasjonRequest))
             }
 
         return when {
@@ -36,14 +35,14 @@ class ZOSKlient {
                         response.status.value,
                         response.status.description,
                         "Message: ${response.errorMessage() }, Details: ${response.errorDetails()}",
-                        url,
+                        "$zOsUrl/oppdaterAttestasjon",
                     ),
                     response,
                 )
         }
     }
 
-    private fun mapToZosRequest(request: AttestasjonsRequest): PostOSAttestasjonRequest {
+    private fun mapToZosRequest(request: AttestasjonRequest): PostOSAttestasjonRequest {
         return PostOSAttestasjonRequest(
             osAttestasjonOperation =
                 PostOSAttestasjonRequestOSAttestasjonOperation(
@@ -71,8 +70,8 @@ class ZOSKlient {
     }
 }
 
-suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject["errorMessage"]?.jsonPrimitive?.content
+private suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject["errorMessage"]?.jsonPrimitive?.content
 
-suspend fun HttpResponse.errorDetails() = body<JsonElement>().jsonObject["errorDetails"]?.jsonPrimitive?.content
+private suspend fun HttpResponse.errorDetails() = body<JsonElement>().jsonObject["errorDetails"]?.jsonPrimitive?.content
 
 data class ZOSException(val apiError: ApiError, val response: HttpResponse) : Exception(apiError.error)

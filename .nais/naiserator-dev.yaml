@@ -107,4 +107,4 @@ spec:
 
     # ZOS-Connect
     - name: ZOS_URL
-    - value: "https://155.55.1.82:9080/osattestasjonapi"
+    - value: "http://155.55.1.82:9080/osattestasjonapi"
