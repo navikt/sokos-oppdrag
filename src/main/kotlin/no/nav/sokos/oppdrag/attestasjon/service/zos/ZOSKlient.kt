@@ -18,7 +18,7 @@ import no.nav.sokos.oppdrag.integration.ereg.errorMessage
 import java.time.ZonedDateTime
 
 class ZOSKlient {
-    suspend fun oppdaterAttestasjoner(request: AttestasjonsRequest): PostOSAttestasjonResponse200 {
+    suspend fun update(request: AttestasjonsRequest): PostOSAttestasjonResponse200 {
         val zosRequest: PostOSAttestasjonRequest = map(request)
         val url = "${PropertiesConfig.EksterneHostProperties().zosUrl}/oppdaterAttestasjon"
 

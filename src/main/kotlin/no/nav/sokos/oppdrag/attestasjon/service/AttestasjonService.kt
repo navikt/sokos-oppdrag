@@ -74,8 +74,8 @@ class AttestasjonService(
         return attestasjonRepository.getOppdragsDetaljer(oppdragsId)
     }
 
-    suspend fun testzos(request: AttestasjonsRequest): PostOSAttestasjonResponse200 {
-        return zosKlient.oppdaterAttestasjoner(request)
+    suspend fun update(request: AttestasjonsRequest): PostOSAttestasjonResponse200 {
+        return zosKlient.update(request)
     }
 }
 

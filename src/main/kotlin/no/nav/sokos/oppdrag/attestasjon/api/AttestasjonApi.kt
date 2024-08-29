@@ -46,7 +46,7 @@ fun Route.attestasjonApi(service: AttestasjonService = AttestasjonService()) {
         post("oppdater") {
             val request = call.receive<AttestasjonsRequest>()
             call.respond(
-                service.testzos(request),
+                service.update(request),
             )
         }
     }
