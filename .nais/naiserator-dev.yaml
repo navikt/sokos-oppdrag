@@ -54,11 +54,6 @@ spec:
         - application: sokos-utbetalingsportalen
           namespace: okonomi
           cluster: dev-gcp
-    outbound:
-      external:
-        - ipv4: 155.55.1.82  # UR via zos-connect
-          ports:
-            - port: 9080
   webproxy: true
   filesFrom:
     - secret: db2license
