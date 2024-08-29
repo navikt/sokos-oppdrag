@@ -14,12 +14,11 @@ import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonsRequest
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.httpClient
-import no.nav.sokos.oppdrag.integration.ereg.errorMessage
 import java.time.ZonedDateTime
 
 class ZOSKlient {
     suspend fun update(request: AttestasjonsRequest): PostOSAttestasjonResponse200 {
-        val zosRequest: PostOSAttestasjonRequest = map(request)
+        val zosRequest: PostOSAttestasjonRequest = mapToZosRequest(request)
         val url = "${PropertiesConfig.EksterneHostProperties().zosUrl}/oppdaterAttestasjon"
 
         val response: HttpResponse =
@@ -44,7 +43,7 @@ class ZOSKlient {
         }
     }
 
-    private fun map(request: AttestasjonsRequest): PostOSAttestasjonRequest {
+    private fun mapToZosRequest(request: AttestasjonsRequest): PostOSAttestasjonRequest {
         return PostOSAttestasjonRequest(
             osAttestasjonOperation =
                 PostOSAttestasjonRequestOSAttestasjonOperation(
