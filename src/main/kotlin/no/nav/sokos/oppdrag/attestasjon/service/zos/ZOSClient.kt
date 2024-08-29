@@ -19,7 +19,7 @@ import java.time.ZonedDateTime
 class ZOSKlient(
     private val zOsUrl: String = PropertiesConfig.EksterneHostProperties().zosUrl,
 ) {
-    suspend fun updateAttestasjon(attestasjonRequest: AttestasjonRequest): PostOSAttestasjonResponse200 {
+    suspend fun attestereOppdrag(attestasjonRequest: AttestasjonRequest): PostOSAttestasjonResponse200 {
         val response: HttpResponse =
             httpClient.post("$zOsUrl/oppdaterAttestasjon") {
                 contentType(ContentType.Application.Json)

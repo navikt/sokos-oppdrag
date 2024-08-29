@@ -43,10 +43,10 @@ fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonSer
             )
         }
 
-        post("oppdater") {
+        post("attestere") {
             val request = call.receive<AttestasjonRequest>()
             call.respond(
-                attestasjonService.updateAttestasjon(request),
+                attestasjonService.attestereOppdrag(request),
             )
         }
     }

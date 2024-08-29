@@ -23,7 +23,7 @@ paths:
         - attestasjon
       summary: Søk etter oppdrag
       description: Returnerer oppdrag som er aktuelle for attestasjon
-      operationId: hentOppdragForAttestering
+      operationId: getOppdrag
       requestBody:
         description: gjelderId, faggruppe, fagområde, fagsystem-id,
         content:
@@ -63,7 +63,7 @@ paths:
         - attestasjon
       summary: Hent tilgjengelige fagområder
       description: Returnerer en liste av tilgjengelige fagområder. Fagområde kan brukes til å filtrere søket i endepunktet -> /sok
-      operationId: hentFagomraader
+      operationId: getFagOmraade
       responses:
         200:
           description: OK - Hvis fagområder ikke finnes så returneres tom liste
@@ -83,7 +83,7 @@ paths:
         - attestasjon
       summary: Søk med oppdragsid
       description: Returnerer oppdragslinjene til valgte oppdrag.
-      operationId: hentListeMedOppdragslinjerForAttestering
+      operationId: getOppdragsDetaljer
       parameters:
         - name: oppdragsId
           in: path
@@ -117,13 +117,13 @@ paths:
       security:
         - Bearer: [ ]
 
-  /oppdater:
+  /attestere:
     post:
       tags:
         - attestasjon
-      summary: Oppdater attestasjon
-      description: Returnerer status på attestestert attestasjon
-      operationId: oppdaterAttestasjon
+      summary: Attestere eller avattestere oppdrag
+      description: Returnerer status på attestert oppdrag
+      operationId: attestereOppdrag
       requestBody:
         content:
           application/json:
@@ -132,7 +132,7 @@ paths:
         required: true
       responses:
         200:
-          description: OK - Kvittering på attestasjon
+          description: OK - Kvittering på attestert oppdrag
           content:
             application/json:
               schema:
