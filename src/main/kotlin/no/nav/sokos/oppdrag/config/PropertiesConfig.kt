@@ -23,7 +23,6 @@ object PropertiesConfig {
             mapOf(
                 "APPLICATION_PROFILE" to Profile.LOCAL.toString(),
                 "USE_AUTHENTICATION" to "false",
-                "BRUK_ZOSMOCK" to "false",
             ),
         )
 
@@ -50,7 +49,6 @@ object PropertiesConfig {
         val profile: Profile = Profile.valueOf(get("APPLICATION_PROFILE")),
         val useAuthentication: Boolean = get("USE_AUTHENTICATION").toBoolean(),
         val azureAdProperties: AzureAdProperties = AzureAdProperties(),
-        val brukZOSMock: Boolean = get("BRUK_ZOSMOCK").toBoolean(),
     )
 
     data class Db2Properties(
