@@ -12,6 +12,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonsRequest
 import no.nav.sokos.oppdrag.config.ApiError
+import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.httpClient
 import no.nav.sokos.oppdrag.integration.ereg.errorMessage
 import java.time.ZonedDateTime
@@ -19,8 +20,8 @@ import java.time.ZonedDateTime
 class ZOSKlient {
     suspend fun oppdaterAttestasjoner(request: AttestasjonsRequest): PostOSAttestasjonResponse200 {
         val zosRequest: PostOSAttestasjonRequest = map(request)
+        val url = "${PropertiesConfig.EksterneHostProperties().zosUrl}/oppdaterAttestasjon"
 
-        val url = "http://155.55.1.82:9080/osattestasjonapi/oppdaterAttestasjon"
         val response: HttpResponse =
             httpClient.post(url) {
                 contentType(ContentType.Application.Json)
