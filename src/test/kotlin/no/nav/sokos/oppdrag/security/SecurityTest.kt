@@ -21,11 +21,11 @@ import no.nav.security.mock.oauth2.withMockOAuth2Server
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.OPPDRAGSINFO_BASE_API_PATH
 import no.nav.sokos.oppdrag.TestUtil.mockAuthConfig
-import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.config.securityConfig
+import no.nav.sokos.oppdrag.integration.api.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoApi
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
 

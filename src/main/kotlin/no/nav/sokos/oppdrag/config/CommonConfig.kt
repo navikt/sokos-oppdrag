@@ -24,6 +24,8 @@ import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.core.instrument.binder.system.UptimeMetrics
 import kotlinx.serialization.json.Json
+import no.nav.sokos.oppdrag.attestasjon.config.requestValidationAttestasjonConfig
+import no.nav.sokos.oppdrag.integration.config.requestValidationIntegrationConfig
 import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import no.nav.sokos.oppdrag.oppdragsinfo.config.requestValidationOppdragsInfoConfig
 import org.slf4j.event.Level
@@ -60,8 +62,9 @@ fun Application.commonConfig() {
         statusPageConfig()
     }
     install(RequestValidation) {
-        requestValidationCommonConfig()
+        requestValidationIntegrationConfig()
         requestValidationOppdragsInfoConfig()
+        requestValidationAttestasjonConfig()
     }
     install(MicrometerMetrics) {
         registry = Metrics.prometheusMeterRegistry

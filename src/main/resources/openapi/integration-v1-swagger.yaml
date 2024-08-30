@@ -21,14 +21,14 @@ paths:
       tags:
         - integration
       summary: Søk etter navn
-      description: Returnerer navn tilknyttet person eller foretak basert på 9 eller 11 siffer gjelderId.
-      operationId: hentNavnForGjelderId
+      description: Returnerer navn tilknyttet person eller foretak basert på 9 eller 11 siffer.
+      operationId: getNavnForGjelderId
       requestBody:
         description: gjelderId er et krav
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GjelderIdRequestBody'
+              $ref: '#/components/schemas/GjelderIdRequest'
         required: true
       responses:
         200:
@@ -36,7 +36,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GjelderIdName'
+                $ref: '#/components/schemas/GjelderIdResponse'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
@@ -56,7 +56,7 @@ paths:
 
 components:
   schemas:
-    GjelderIdRequestBody:
+    GjelderIdRequest:
       type: object
       required:
         - gjelderId
@@ -66,7 +66,7 @@ components:
           example: "9 eller 11 siffer"
           description: 9 eller 11 siffer
 
-    GjelderIdName:
+    GjelderIdResponse:
       type: object
       properties:
         navn:

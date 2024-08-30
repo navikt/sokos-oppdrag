@@ -8,10 +8,10 @@ import io.mockk.every
 import io.mockk.mockk
 import no.nav.pdl.hentperson.Person
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
+import no.nav.sokos.oppdrag.integration.api.model.GjelderIdResponse
 import no.nav.sokos.oppdrag.integration.ereg.EregService
 import no.nav.sokos.oppdrag.integration.ereg.Navn
 import no.nav.sokos.oppdrag.integration.ereg.Organisasjon
-import no.nav.sokos.oppdrag.integration.model.GjelderIdName
 import no.nav.sokos.oppdrag.integration.pdl.PdlService
 import no.nav.sokos.oppdrag.integration.tp.TpResponse
 import no.nav.sokos.oppdrag.integration.tp.TpService
@@ -38,7 +38,7 @@ internal class IntegrationServiceTest : FunSpec({
 
         val result = integrationService.getNavnForGjelderId("80000000001", applicationCall)
 
-        result shouldBe GjelderIdName(navn)
+        result shouldBe GjelderIdResponse(navn)
     }
 
     test("søk navn henter fra Ereg") {
@@ -49,7 +49,7 @@ internal class IntegrationServiceTest : FunSpec({
 
         val result = integrationService.getNavnForGjelderId("100000000", applicationCall)
 
-        result shouldBe GjelderIdName(navn)
+        result shouldBe GjelderIdResponse(navn)
     }
 
     test("søk navn henter fra Pdl") {
@@ -58,6 +58,6 @@ internal class IntegrationServiceTest : FunSpec({
 
         val result = integrationService.getNavnForGjelderId("10000000001", applicationCall)
 
-        result shouldBe GjelderIdName("Ola Heter Nordmann")
+        result shouldBe GjelderIdResponse("Ola Heter Nordmann")
     }
 })

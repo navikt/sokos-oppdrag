@@ -64,7 +64,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         server.stop(5, 5)
     }
 
-    test("hent oppdragsegenskaper med gyldig gjelderId skal returnere 200 OK") {
+    test("søk etter oppdragsegenskaper med gyldig gjelderId skal returnere 200 OK") {
         val oppdragsegenskaperList =
             listOf(
                 Oppdrag(
@@ -95,7 +95,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         response.body.jsonPath().getList<Oppdrag>("").shouldHaveSize(1)
     }
 
-    test("hent oppdragsegenskaper med ugyldig gjelderId skal returnere 400 Bad Request") {
+    test("sok etter oppdragsegenskaper med ugyldig gjelderId skal returnere 400 Bad Request") {
 
         RestAssured.given().filter(validationFilter)
             .header(HttpHeaders.ContentType, APPLICATION_JSON)

@@ -16,11 +16,11 @@ import io.restassured.RestAssured
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.INTEGRATION_BASE_API_PATH
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
-import no.nav.sokos.oppdrag.common.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
-import no.nav.sokos.oppdrag.integration.model.GjelderIdName
+import no.nav.sokos.oppdrag.integration.api.model.GjelderIdRequest
+import no.nav.sokos.oppdrag.integration.api.model.GjelderIdResponse
 import no.nav.sokos.oppdrag.integration.service.IntegrationService
 import org.hamcrest.Matchers.equalTo
 
@@ -43,7 +43,7 @@ internal class IntegrationApiTest : FunSpec({
 
     test("søk navn for gjelderId skal returnere 200 OK") {
 
-        coEvery { integrationService.getNavnForGjelderId(any(), any()) } returns GjelderIdName("Test Testesen")
+        coEvery { integrationService.getNavnForGjelderId(any(), any()) } returns GjelderIdResponse("Test Testesen")
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -56,7 +56,7 @@ internal class IntegrationApiTest : FunSpec({
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
-        response.body.jsonPath().getJsonObject<GjelderIdName>("navn").shouldBe("Test Testesen")
+        response.body.jsonPath().getJsonObject<GjelderIdResponse>("navn").shouldBe("Test Testesen")
     }
 
     test("sok navn med ugyldig gjelderId skal returnere 400 Bad Request") {

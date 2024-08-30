@@ -8,7 +8,6 @@
   "host": "155.55.1.82:9080",
   "basePath": "/osattestasjonapi",
   "schemes": [
-    "https",
     "http"
   ],
   "consumes": [

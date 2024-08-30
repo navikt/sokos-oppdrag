@@ -779,16 +779,6 @@ components:
           type: string
           description: filtrering på faggruppeKode
 
-    GjelderIdRequest:
-      type: object
-      required:
-        - gjelderId
-      properties:
-        gjelderId:
-          type: string
-          example: "9 eller 11 siffer"
-          description: 9 eller 11 siffer
-
     FagGruppe:
       type: object
       required:

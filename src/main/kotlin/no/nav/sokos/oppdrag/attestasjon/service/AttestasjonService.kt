@@ -1,8 +1,6 @@
 package no.nav.sokos.oppdrag.attestasjon.service
 
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
-import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
@@ -43,20 +41,6 @@ class AttestasjonService(
             )
         }
 
-        if (!validateSearchParams(
-                attestert = attestert,
-                fagsystemId = fagsystemId,
-                gjelderId = gjelderId,
-                kodeFaggruppe = kodeFagGruppe,
-                kodeFagomraade = kodeFagOmraade,
-            )
-        ) {
-            throw RequestValidationException(
-                HttpStatusCode.BadRequest.value,
-                listOf("Ugyldig kombinasjon av søkeparametre"),
-            )
-        }
-
         return attestasjonRepository.getOppdrag(
             gjelderId = gjelderId ?: "",
             fagsystemId = fagsystemId ?: "",
@@ -77,28 +61,4 @@ class AttestasjonService(
     suspend fun attestereOppdrag(attestasjonRequest: AttestasjonRequest): PostOSAttestasjonResponse200 {
         return zosKlient.attestereOppdrag(attestasjonRequest)
     }
-}
-
-/**
- * Minimum ett av kriteriene må være utfylt
- * Faggruppe og Ikke attesterte.
- * Fagområde og Ikke attesterte.
- * Gjelder ID
- * Fagsystem ID og fagområde
- */
-fun validateSearchParams(
-    attestert: Boolean?,
-    fagsystemId: String?,
-    gjelderId: String?,
-    kodeFaggruppe: String?,
-    kodeFagomraade: String?,
-): Boolean {
-    var gyldig = false
-
-    kodeFaggruppe?.takeIf { attestert == false }?.let { gyldig = true }
-    kodeFagomraade?.takeIf { attestert == false }?.let { gyldig = true }
-    gjelderId?.let { gyldig = true }
-    fagsystemId?.let { kodeFagomraade?.let { gyldig = true } }
-
-    return gyldig
 }

@@ -92,9 +92,9 @@ class AttestasjonRepository(
             session.list(
                 queryOf(
                     """
-                    select TRIM(NAVN_FAGOMRAADE) AS NAVN_FAGOMRAADE, 
+                    SELECT TRIM(NAVN_FAGOMRAADE) AS NAVN_FAGOMRAADE, 
                            TRIM(KODE_FAGOMRAADE) AS KODE_FAGOMRAADE 
-                    from T_FAGOMRAADE
+                    FROM T_FAGOMRAADE
                     """.trimIndent(),
                 ),
                 mapToFagOmraade,
@@ -185,7 +185,7 @@ class AttestasjonRepository(
                         "OPPDRAGSID" to oppdragsId,
                     ),
                 ),
-                mapToOppdragslinjerTilAttestasjon,
+                mapToOppdragsDetaljer,
             )
         }
     }
@@ -202,7 +202,7 @@ class AttestasjonRepository(
         )
     }
 
-    private val mapToOppdragslinjerTilAttestasjon: (Row) -> OppdragsDetaljer = { row ->
+    private val mapToOppdragsDetaljer: (Row) -> OppdragsDetaljer = { row ->
         OppdragsDetaljer(
             ansvarsStedForOppdrag = row.stringOrNull("ANSVARSSTEDFOROPPDRAG"),
             ansvarsStedForOppdragsLinje = row.stringOrNull("ANSVARSSTEDFORLINJE"),

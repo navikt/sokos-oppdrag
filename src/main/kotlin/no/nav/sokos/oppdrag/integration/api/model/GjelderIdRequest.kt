@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.common.model
+package no.nav.sokos.oppdrag.integration.api.model
 
 import kotlinx.serialization.Serializable
 

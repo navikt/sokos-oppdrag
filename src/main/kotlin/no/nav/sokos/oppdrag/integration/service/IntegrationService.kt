@@ -5,8 +5,8 @@ import mu.KotlinLogging
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
+import no.nav.sokos.oppdrag.integration.api.model.GjelderIdResponse
 import no.nav.sokos.oppdrag.integration.ereg.EregService
-import no.nav.sokos.oppdrag.integration.model.GjelderIdName
 import no.nav.sokos.oppdrag.integration.pdl.PdlService
 import no.nav.sokos.oppdrag.integration.tp.TpService
 import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler
@@ -22,7 +22,7 @@ class IntegrationService(
     suspend fun getNavnForGjelderId(
         gjelderId: String,
         applicationCall: ApplicationCall,
-    ): GjelderIdName {
+    ): GjelderIdResponse {
         val saksbehandler = getSaksbehandler(applicationCall)
 
         secureLogger.info { "Henter navn for gjelderId: $gjelderId" }
@@ -41,19 +41,19 @@ class IntegrationService(
         }
     }
 
-    private suspend fun getLeverandorName(gjelderId: String): GjelderIdName {
+    private suspend fun getLeverandorName(gjelderId: String): GjelderIdResponse {
         val leverandorName = tpService.getLeverandorNavn(gjelderId).navn
-        return GjelderIdName(leverandorName)
+        return GjelderIdResponse(leverandorName)
     }
 
-    private suspend fun getPersonName(gjelderId: String): GjelderIdName {
+    private suspend fun getPersonName(gjelderId: String): GjelderIdResponse {
         val person = pdlService.getPersonNavn(gjelderId)?.navn?.first()
         val personName = person?.mellomnavn?.let { "${person.fornavn} ${person.mellomnavn} ${person.etternavn}" } ?: "${person?.fornavn} ${person?.etternavn}"
-        return GjelderIdName(personName)
+        return GjelderIdResponse(personName)
     }
 
-    private suspend fun getOrganisasjonsName(gjelderId: String): GjelderIdName {
+    private suspend fun getOrganisasjonsName(gjelderId: String): GjelderIdResponse {
         val organisasjonName = eregService.getOrganisasjonsNavn(gjelderId).navn.sammensattnavn
-        return GjelderIdName(organisasjonName)
+        return GjelderIdResponse(organisasjonName)
     }
 }
