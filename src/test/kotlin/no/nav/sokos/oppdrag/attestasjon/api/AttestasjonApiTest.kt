@@ -188,11 +188,7 @@ internal class AttestasjonApiTest : FunSpec({
 
         val request =
             AttestasjonRequest(
-                "123456789",
-                "BP",
-                999999999,
-                "Z1234567",
-                false,
+                123456789,
                 listOf(
                     AttestasjonLinje(
                         99999,

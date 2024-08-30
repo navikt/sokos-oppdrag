@@ -48,7 +48,7 @@ fun StatusPagesConfig.statusPageConfig() {
 
                 is ZOSException -> {
                     Pair(
-                        cause.response.status,
+                        HttpStatusCode.allStatusCodes.find { it.value == cause.apiError.status }!!,
                         cause.apiError,
                     )
                 }

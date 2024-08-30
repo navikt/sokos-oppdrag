@@ -5,6 +5,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import kotlinx.serialization.json.JsonElement
@@ -27,17 +28,32 @@ class ZOSKlient(
             }
 
         return when {
-            response.status.isSuccess() -> response.body<PostOSAttestasjonResponse200>()
+            response.status.isSuccess() -> {
+                val result = response.body<PostOSAttestasjonResponse200>()
+                val attestasjonskvittering = result.osAttestasjonOperationResponse?.attestasjonskvittering?.responsAttestasjon
+                if (attestasjonskvittering?.statuskode != 0) {
+                    throw ZOSException(
+                        ApiError(
+                            ZonedDateTime.now(),
+                            HttpStatusCode.BadRequest.value,
+                            HttpStatusCode.BadRequest.description,
+                            attestasjonskvittering?.melding ?: "Ukjent feil",
+                            "$zOsUrl/oppdaterAttestasjon",
+                        ),
+                    )
+                }
+                result
+            }
+
             else ->
                 throw ZOSException(
                     ApiError(
                         ZonedDateTime.now(),
                         response.status.value,
                         response.status.description,
-                        "Message: ${response.errorMessage() }, Details: ${response.errorDetails()}",
+                        "Message: ${response.errorMessage()}, Details: ${response.errorDetails()}",
                         "$zOsUrl/oppdaterAttestasjon",
                     ),
-                    response,
                 )
         }
     }
@@ -50,11 +66,11 @@ class ZOSKlient(
                         PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdata(
                             requestAttestasjon =
                                 PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjon(
-                                    gjelderId = request.gjelderId,
-                                    fagomraade = request.fagOmraade,
+                                    gjelderId = "x",
+                                    fagomraade = "x",
                                     oppdragsId = request.oppdragsId,
-                                    brukerId = request.brukerId,
-                                    kjorIdag = request.kjorIdag,
+                                    brukerId = "x",
+                                    kjorIdag = true,
                                     linjeTab =
                                         request.linjer.map {
                                             PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjonLinjeTabInner(
@@ -74,4 +90,4 @@ private suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject
 
 private suspend fun HttpResponse.errorDetails() = body<JsonElement>().jsonObject["errorDetails"]?.jsonPrimitive?.content
 
-data class ZOSException(val apiError: ApiError, val response: HttpResponse) : Exception(apiError.error)
+data class ZOSException(val apiError: ApiError) : Exception(apiError.error)

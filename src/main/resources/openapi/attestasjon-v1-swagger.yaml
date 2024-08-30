@@ -176,25 +176,10 @@ components:
     AttestasjonRequest:
       type: object
       properties:
-        gjelderId:
-          type: string
-          example: "9 eller 11 siffer"
-          description: 9 eller 11 siffer
-        fagOmraade:
-            type: string
-            example: "MBA"
         oppdragsId:
             type: number
             example: 12345678
             description: 8 siffer
-        brukerId:
-            type: string
-            example: "Z123456"
-            description: 7 tegn (bokstaver og tall)
-        kjorIdag:
-            type: boolean
-            example: true
-            description: true eller false
         linjer:
             type: array
             items:

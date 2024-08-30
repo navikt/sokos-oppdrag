@@ -33,11 +33,7 @@ internal class AttestasjonServiceTest : FunSpec({
 
         val request =
             AttestasjonRequest(
-                gjelderId = "string",
-                fagOmraade = "string",
                 oppdragsId = oppdragsid,
-                brukerId = "string",
-                kjorIdag = false,
                 linjer =
                     listOf(
                         AttestasjonLinje(
