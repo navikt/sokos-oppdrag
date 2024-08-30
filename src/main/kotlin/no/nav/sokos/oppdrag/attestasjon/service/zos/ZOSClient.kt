@@ -1,12 +1,12 @@
 package no.nav.sokos.oppdrag.attestasjon.service.zos
 
+import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
@@ -16,14 +16,16 @@ import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.httpClient
 import java.time.ZonedDateTime
+import org.slf4j.MDC
 
 class ZOSKlient(
     private val zOsUrl: String = PropertiesConfig.EksterneHostProperties().zosUrl,
+    private val client: HttpClient = httpClient,
 ) {
     suspend fun attestereOppdrag(attestasjonRequest: AttestasjonRequest): PostOSAttestasjonResponse200 {
         val response: HttpResponse =
-            httpClient.post("$zOsUrl/oppdaterAttestasjon") {
-                contentType(ContentType.Application.Json)
+            client.post("$zOsUrl/oppdaterAttestasjon") {
+                header("Nav-Call-Id", MDC.get("x-correlation-id"))
                 setBody(mapToZosRequest(attestasjonRequest))
             }
 
