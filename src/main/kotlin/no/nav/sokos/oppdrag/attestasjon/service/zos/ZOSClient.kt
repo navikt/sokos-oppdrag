@@ -2,6 +2,7 @@ package no.nav.sokos.oppdrag.attestasjon.service.zos
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.accept
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -28,6 +29,7 @@ class ZOSKlient(
         val response: HttpResponse =
             client.post("$zOsUrl/oppdaterAttestasjon") {
                 header("Nav-Call-Id", MDC.get("x-correlation-id"))
+                accept(ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
                 setBody(mapToZosRequest(attestasjonRequest))
             }
