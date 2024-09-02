@@ -11,10 +11,10 @@ plugins {
     kotlin("jvm") version "2.0.20"
     kotlin("plugin.serialization") version "2.0.20"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("com.expediagroup.graphql") version "7.1.4"
+    id("com.expediagroup.graphql") version "8.0.0"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
     id("org.jetbrains.kotlinx.kover") version "0.8.3"
-    id("org.openapi.generator") version "7.4.0"
+    id("org.openapi.generator") version "7.8.0"
 }
 
 group = "no.nav.sokos"
@@ -25,13 +25,13 @@ repositories {
 }
 
 val db2JccVersion = "11.5.9.0"
-val graphqlClientVersion = "7.1.4"
+val graphqlClientVersion = "8.0.0"
 val hikariVersion = "5.1.0"
 val janionVersion = "3.1.12"
 val kotestVersion = "5.9.1"
 val kotestWiremockVersion = "3.1.0"
 val kotlinLoggingVersion = "3.0.5"
-val kotlinxSerializationVersion = "1.7.1"
+val kotlinxSerializationVersion = "1.7.2"
 val kotliqueryVersion = "1.9.0"
 val ktorVersion = "2.3.12"
 val logbackVersion = "1.5.7"
