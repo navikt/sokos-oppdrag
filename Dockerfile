@@ -1,6 +1,6 @@
 FROM bellsoft/liberica-openjdk-debian:21@sha256:54ccdb978ff768679ce757ee34a92bb7a6505d8c0e14912d2b53755674f184ef
 
-RUN apk update && apk add --no-cache \
+RUN apt update && apt install -y --no-install-recommends \
   curl \
   dumb-init \
   && rm -rf /var/lib/apt/lists/*
