@@ -225,10 +225,6 @@ components:
           type: number
           example: 1
           description: Nummer på linjen om skal oppdateres
-        attestantId:
-          type: string
-          example: "Z123456"
-          description: 7 tegn (bokstaver og tall)
         datoUgyldigFom:
           type: string
           example: "2021-01-01"
