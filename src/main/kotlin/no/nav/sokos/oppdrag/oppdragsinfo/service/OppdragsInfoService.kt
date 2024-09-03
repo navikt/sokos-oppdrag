@@ -39,12 +39,12 @@ class OppdragsInfoService(
         faggruppeKode: String?,
         applicationCall: ApplicationCall,
     ): List<Oppdrag> {
-        val navIdent = getSaksbehandler(applicationCall)
+        val saksbehandlerNavIdent = getSaksbehandler(applicationCall)
 
         secureLogger.info { "Søker etter oppdrag med gjelderId: $gjelderId" }
         auditLogger.auditLog(
             AuditLogg(
-                navIdent = navIdent.ident,
+                navIdent = saksbehandlerNavIdent.ident,
                 gjelderId = gjelderId,
                 brukerBehandlingTekst = "NAV-ansatt har gjort et søk på OppdragsInfo",
             ),

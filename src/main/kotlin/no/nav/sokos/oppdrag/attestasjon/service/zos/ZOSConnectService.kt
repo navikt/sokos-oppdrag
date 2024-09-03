@@ -24,12 +24,15 @@ class ZOSKlient(
     private val zOsUrl: String = PropertiesConfig.EksterneHostProperties().zosUrl,
     private val client: HttpClient = createHttpClient(false),
 ) {
-    suspend fun attestereOppdrag(attestasjonRequest: AttestasjonRequest): PostOSAttestasjonResponse200 {
+    suspend fun attestereOppdrag(
+        attestasjonRequest: AttestasjonRequest,
+        navIdent: String,
+    ): PostOSAttestasjonResponse200 {
         val response: HttpResponse =
             client.post("$zOsUrl/oppdaterAttestasjon") {
                 header("Nav-Call-Id", MDC.get("x-correlation-id"))
                 contentType(ContentType.Application.Json)
-                setBody(mapToZosRequest(attestasjonRequest))
+                setBody(mapToZosRequest(attestasjonRequest, navIdent))
             }
 
         return when {
@@ -62,7 +65,10 @@ class ZOSKlient(
         }
     }
 
-    private fun mapToZosRequest(request: AttestasjonRequest): PostOSAttestasjonRequest {
+    private fun mapToZosRequest(
+        request: AttestasjonRequest,
+        navIdent: String,
+    ): PostOSAttestasjonRequest {
         return PostOSAttestasjonRequest(
             osAttestasjonOperation =
                 PostOSAttestasjonRequestOSAttestasjonOperation(
@@ -79,7 +85,7 @@ class ZOSKlient(
                                         request.linjer.map {
                                             PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjonLinjeTabInner(
                                                 linjeId = it.linjeId,
-                                                attestantId = it.attestantId,
+                                                attestantId = navIdent,
                                                 datoUgyldigFom = it.datoUgyldigFom,
                                             )
                                         },

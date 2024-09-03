@@ -216,7 +216,7 @@ internal class AttestasjonApiTest : FunSpec({
                     ),
             )
 
-        coEvery { attestasjonService.attestereOppdrag(any()) } returns zOsResponse
+        coEvery { attestasjonService.attestereOppdrag(any(), any()) } returns zOsResponse
 
         val response =
             RestAssured.given().filter(validationFilter)

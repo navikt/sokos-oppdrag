@@ -58,7 +58,11 @@ class AttestasjonService(
         return attestasjonRepository.getOppdragsDetaljer(oppdragsId)
     }
 
-    suspend fun attestereOppdrag(attestasjonRequest: AttestasjonRequest): PostOSAttestasjonResponse200 {
-        return zosKlient.attestereOppdrag(attestasjonRequest)
+    suspend fun attestereOppdrag(
+        applicationCall: ApplicationCall,
+        attestasjonRequest: AttestasjonRequest,
+    ): PostOSAttestasjonResponse200 {
+        val saksbehandler = getSaksbehandler(applicationCall)
+        return zosKlient.attestereOppdrag(attestasjonRequest, saksbehandler.ident)
     }
 }

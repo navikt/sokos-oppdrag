@@ -62,7 +62,7 @@ internal class AttestasjonServiceTest : FunSpec({
                     ),
             )
 
-        coEvery { zosKlient.attestereOppdrag(any()) } returns response
-        attestasjonService.attestereOppdrag(request) shouldBe response
+        coEvery { zosKlient.attestereOppdrag(any(), any()) } returns response
+        attestasjonService.attestereOppdrag(applicationCall, request) shouldBe response
     }
 })
