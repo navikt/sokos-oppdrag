@@ -18,21 +18,19 @@ import kotlinx.serialization.json.jsonPrimitive
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.PropertiesConfig
-import no.nav.sokos.oppdrag.config.httpClient
+import no.nav.sokos.oppdrag.config.createHttpClient
 import org.slf4j.MDC
 import java.time.ZonedDateTime
 
 class ZOSKlient(
     private val zOsUrl: String = PropertiesConfig.EksterneHostProperties().zosUrl,
-    private val client: HttpClient = httpClient,
+    private val client: HttpClient = createHttpClient(false),
 ) {
     suspend fun attestereOppdrag(attestasjonRequest: AttestasjonRequest): PostOSAttestasjonResponse200 {
         val response: HttpResponse =
             client.post("$zOsUrl/oppdaterAttestasjon") {
                 header("Nav-Call-Id", MDC.get("x-correlation-id"))
-                accept(ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
-                method = HttpMethod.Post
                 setBody(mapToZosRequest(attestasjonRequest))
             }
 

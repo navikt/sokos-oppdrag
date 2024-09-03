@@ -10,7 +10,7 @@ import io.ktor.http.isSuccess
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.PropertiesConfig
-import no.nav.sokos.oppdrag.config.httpClient
+import no.nav.sokos.oppdrag.config.createHttpClient
 import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import org.slf4j.MDC
 import java.time.ZonedDateTime
@@ -19,7 +19,7 @@ private val logger = KotlinLogging.logger {}
 
 class TpService(
     private val tpUrl: String = PropertiesConfig.EksterneHostProperties().tpUrl,
-    private val client: HttpClient = httpClient,
+    private val client: HttpClient = createHttpClient(),
 ) {
     suspend fun getLeverandorNavn(tssId: String): TpResponse {
         logger.info { "Henter leverandørnavn for $tssId fra TP." }

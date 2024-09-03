@@ -21,7 +21,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.config.PropertiesConfig
-import no.nav.sokos.oppdrag.config.httpClient
+import no.nav.sokos.oppdrag.config.createHttpClient
 import java.time.Instant
 
 private val logger = KotlinLogging.logger {}
@@ -29,7 +29,7 @@ private val logger = KotlinLogging.logger {}
 class AccessTokenClient(
     private val azureAdProperties: PropertiesConfig.AzureAdProperties = PropertiesConfig.AzureAdProperties(),
     private val azureAdScope: String,
-    private val client: HttpClient = httpClient,
+    private val client: HttpClient = createHttpClient(),
     private val azureAdAccessTokenUrl: String = "https://login.microsoftonline.com/${azureAdProperties.tenantId}/oauth2/v2.0/token",
 ) {
     private val mutex = Mutex()

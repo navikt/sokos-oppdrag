@@ -12,8 +12,8 @@ import java.net.ProxySelector
 
 private val logger = KotlinLogging.logger {}
 
-val httpClient =
-    HttpClient(Apache) {
+fun createHttpClient(customizeEngine: Boolean = true): HttpClient {
+    return HttpClient(Apache) {
         expectSuccess = false
 
         install(ContentNegotiation) {
@@ -34,9 +34,12 @@ val httpClient =
             exponentialDelay()
         }
 
-        engine {
-            customizeClient {
-                setRoutePlanner(SystemDefaultRoutePlanner(ProxySelector.getDefault()))
+        if (customizeEngine) {
+            engine {
+                customizeClient {
+                    setRoutePlanner(SystemDefaultRoutePlanner(ProxySelector.getDefault()))
+                }
             }
         }
     }
+}

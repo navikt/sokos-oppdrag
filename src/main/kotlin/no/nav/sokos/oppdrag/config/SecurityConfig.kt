@@ -75,7 +75,7 @@ data class OpenIdMetadata(
 
 private fun wellKnowConfig(wellKnownUrl: String): OpenIdMetadata {
     val openIdMetadata: OpenIdMetadata by lazy {
-        runBlocking { httpClient.get(wellKnownUrl).body() }
+        runBlocking { createHttpClient().get(wellKnownUrl).body() }
     }
     return openIdMetadata
 }

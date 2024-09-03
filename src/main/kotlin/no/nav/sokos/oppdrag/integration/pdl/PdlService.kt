@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.integration.pdl
 
 import com.expediagroup.graphql.client.types.GraphQLClientError
+import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.request.header
@@ -15,7 +16,7 @@ import no.nav.pdl.HentPerson
 import no.nav.pdl.hentperson.Person
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
-import no.nav.sokos.oppdrag.config.httpClient
+import no.nav.sokos.oppdrag.config.createHttpClient
 import no.nav.sokos.oppdrag.security.AccessTokenClient
 import org.slf4j.MDC
 
@@ -25,6 +26,7 @@ private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 class PdlService(
     private val pdlUrl: String = PropertiesConfig.EksterneHostProperties().pdlUrl,
     private val pdlScope: String = PropertiesConfig.EksterneHostProperties().pdlScope,
+    private val client: HttpClient = createHttpClient(),
     private val accessTokenClient: AccessTokenClient = AccessTokenClient(azureAdScope = pdlScope),
 ) {
     suspend fun getPersonNavn(ident: String): Person? {
@@ -35,7 +37,7 @@ class PdlService(
 
         logger.info { "Henter Person fra PDL" }
         val response =
-            httpClient.post("$pdlUrl/graphql") {
+            client.post("$pdlUrl/graphql") {
                 header(HttpHeaders.Authorization, "Bearer $accessToken")
                 header("behandlingsnummer", "B154")
                 header("Nav-Call-Id", MDC.get("x-correlation-id"))

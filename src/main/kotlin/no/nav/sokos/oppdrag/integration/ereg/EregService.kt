@@ -13,7 +13,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.PropertiesConfig
-import no.nav.sokos.oppdrag.config.httpClient
+import no.nav.sokos.oppdrag.config.createHttpClient
 import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import org.slf4j.MDC
 import java.time.ZonedDateTime
@@ -22,7 +22,7 @@ private val logger = KotlinLogging.logger {}
 
 class EregService(
     private val eregUrl: String = PropertiesConfig.EksterneHostProperties().eregUrl,
-    private val client: HttpClient = httpClient,
+    private val client: HttpClient = createHttpClient(),
 ) {
     suspend fun getOrganisasjonsNavn(organisasjonsNummer: String): Organisasjon {
         logger.info { "Henter organisasjonsnavn for $organisasjonsNummer fra Ereg." }
