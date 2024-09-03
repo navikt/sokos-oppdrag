@@ -192,7 +192,6 @@ internal class AttestasjonApiTest : FunSpec({
                 listOf(
                     AttestasjonLinje(
                         99999,
-                        "Z1234567",
                         "2021-01-01",
                     ),
                 ),

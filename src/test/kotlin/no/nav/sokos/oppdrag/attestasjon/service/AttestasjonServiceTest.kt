@@ -38,7 +38,6 @@ internal class AttestasjonServiceTest : FunSpec({
                     listOf(
                         AttestasjonLinje(
                             linjeId = 99999,
-                            attestantId = "string",
                             datoUgyldigFom = "string",
                         ),
                     ),
