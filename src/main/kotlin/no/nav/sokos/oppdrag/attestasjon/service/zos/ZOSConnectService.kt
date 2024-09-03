@@ -76,10 +76,10 @@ class ZOSKlient(
                         PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdata(
                             requestAttestasjon =
                                 PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjon(
-                                    gjelderId = "x",
-                                    fagomraade = "x",
+                                    gjelderId = request.gjelderId,
+                                    fagomraade = request.kodeFagOmraade,
                                     oppdragsId = request.oppdragsId,
-                                    brukerId = "x",
+                                    brukerId = navIdent,
                                     kjorIdag = true,
                                     linjeTab =
                                         request.linjer.map {

@@ -156,11 +156,12 @@ internal class AttestasjonApiTest : FunSpec({
                     delytelsesId = "delytelsesId",
                     fagSystemId = "123456789",
                     kodeKlasse = "KLASSE",
+                    kodeFagOmraade = "BEH",
                     kostnadsStedForOppdrag = "8128",
                     linjeId = "1",
-                    navnFagGruppe = "Aliens",
-                    navnFagOmraade = "Area 51",
-                    oppdragGjelderId = "123456789",
+                    fagGruppe = "Aliens",
+                    fagOmraade = "Area 51",
+                    gjelderId = "123456789",
                     oppdragsId = "12345678",
                     sats = 123.45,
                     satstype = "satstype",
@@ -188,6 +189,9 @@ internal class AttestasjonApiTest : FunSpec({
 
         val request =
             AttestasjonRequest(
+                "123456789",
+                "98765432100",
+                "BEH",
                 123456789,
                 listOf(
                     AttestasjonLinje(

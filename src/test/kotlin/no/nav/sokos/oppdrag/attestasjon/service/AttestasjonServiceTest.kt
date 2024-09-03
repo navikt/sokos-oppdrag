@@ -33,6 +33,9 @@ internal class AttestasjonServiceTest : FunSpec({
 
         val request =
             AttestasjonRequest(
+                gjelderId = "12345678900",
+                fagSystemId = "98765432100",
+                kodeFagOmraade = "BEH",
                 oppdragsId = oppdragsid,
                 linjer =
                     listOf(

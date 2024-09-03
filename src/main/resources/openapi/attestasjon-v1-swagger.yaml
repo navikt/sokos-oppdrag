@@ -176,6 +176,16 @@ components:
     AttestasjonRequest:
       type: object
       properties:
+        gjelderId:
+          type: string
+          example: "9 eller 11 siffer"
+          description: 9 eller 11 siffer
+        fagSystemId:
+          type: string
+          example: "TU000123456789012"
+        kodeFagOmraade:
+          type: string
+          example: "MBA"
         oppdragsId:
             type: number
             example: 12345678
@@ -273,12 +283,13 @@ components:
         - datoVedtakFom
         - delytelsesId
         - fagSystemId
+        - gjelderId
         - kodeKlasse
+        - kodeFagOmraade
         - kostnadsStedForOppdrag
         - linjeId
-        - navnFagGruppe
-        - navnFagOmraade
-        - oppdragGjelderId
+        - fagGruppe
+        - fagOmraade
         - oppdragsId
         - sats
         - satstype
@@ -299,21 +310,23 @@ components:
           type: string
         delytelsesId:
           type: string
+        gjelderId:
+          type: string
         fagSystemId:
           type: string
         kodeKlasse:
           type: string
+        kodeFagOmraade:
+            type: string
         kostnadsStedForOppdrag:
           type: string
         kostnadsStedForOppdragsLinje:
           type: string
         linjeId:
           type: string
-        navnFagGruppe:
+        fagGruppe:
           type: string
-        navnFagOmraade:
-          type: string
-        oppdragGjelderId:
+        fagOmraade:
           type: string
         oppdragsId:
           type: string
