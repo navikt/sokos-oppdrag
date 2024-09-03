@@ -103,3 +103,5 @@ spec:
     # ZOS-Connect
     - name: ZOS_URL
       value: "http://155.55.1.82:9080/osattestasjonapi"
+    - name: no_proxy
+      value: "155.55.1.82"
