@@ -246,8 +246,8 @@ components:
         - fagsystemId
         - gjelderId
         - kostnadsSted
-        - navnFagGruppe
-        - navnFagOmraade
+        - fagGruppe
+        - fagOmraade
         - oppdragsId
       properties:
         ansvarsSted:
@@ -256,9 +256,9 @@ components:
           type: string
         kostnadsSted:
           type: string
-        navnFagGruppe:
+        fagGruppe:
           type: string
-        navnFagOmraade:
+        fagOmraade:
           type: string
         oppdragsId:
           type: integer

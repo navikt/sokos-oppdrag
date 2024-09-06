@@ -113,7 +113,7 @@ class AttestasjonRepository(
                          , O.OPPDRAG_GJELDER_ID                                     AS OPPDRAG_GJELDER_ID
                          , TRIM(G.NAVN_FAGGRUPPE)                                   AS NAVN_FAGGRUPPE
                          , TRIM(F.NAVN_FAGOMRAADE)                                  AS NAVN_FAGOMRAADE
-                         , O.KODE_FAGOMRAADE                                        AS KODE_FAGOMRAADE
+                         , TRIM(O.KODE_FAGOMRAADE)                                  AS KODE_FAGOMRAADE
                          , TRIM(O.FAGSYSTEM_ID)                                     AS FAGSYSTEM_ID
                          , TRIM(L.KODE_KLASSE)                                      AS KODE_KLASSE
                          , TRIM(L.DELYTELSE_ID)                                     AS DELYTELSE_ID
