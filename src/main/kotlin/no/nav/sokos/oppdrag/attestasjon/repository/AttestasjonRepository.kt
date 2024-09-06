@@ -196,8 +196,8 @@ class AttestasjonRepository(
             fagsystemId = row.string("FAGSYSTEM_ID"),
             gjelderId = row.string("OPPDRAG_GJELDER_ID"),
             kostnadsSted = row.string("KOSTNADSSTED"),
-            navnFagGruppe = row.string("NAVN_FAGGRUPPE"),
-            navnFagOmraade = row.string("NAVN_FAGOMRAADE"),
+            fagGruppe = row.string("NAVN_FAGGRUPPE"),
+            fagOmraade = row.string("NAVN_FAGOMRAADE"),
             oppdragsId = row.int("OPPDRAGS_ID"),
         )
     }

@@ -58,8 +58,8 @@ internal class AttestasjonApiTest : FunSpec({
                     fagsystemId = "123456789",
                     gjelderId = "12345678901",
                     kostnadsSted = "8128",
-                    navnFagGruppe = "navnFaggruppe",
-                    navnFagOmraade = "navnFagomraade",
+                    fagGruppe = "navnFaggruppe",
+                    fagOmraade = "navnFagomraade",
                     oppdragsId = 987654,
                 ),
             )

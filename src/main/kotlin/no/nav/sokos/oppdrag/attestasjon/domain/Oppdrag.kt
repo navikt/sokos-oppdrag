@@ -8,7 +8,7 @@ data class Oppdrag(
     val fagsystemId: String,
     val gjelderId: String,
     val kostnadsSted: String,
-    val navnFagGruppe: String,
-    val navnFagOmraade: String,
+    val fagGruppe: String,
+    val fagOmraade: String,
     val oppdragsId: Int,
 )
