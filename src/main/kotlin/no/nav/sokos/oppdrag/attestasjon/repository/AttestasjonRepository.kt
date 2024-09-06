@@ -152,10 +152,11 @@ class AttestasjonRepository(
                                             WHERE LS2.OPPDRAGS_ID = LS.OPPDRAGS_ID
                                               AND LS2.LINJE_ID = LS.LINJE_ID)
                       AND (A.OPPDRAGS_ID IS NULL OR A.LOPENR =          (SELECT MAX(A2.LOPENR)
-                                                                         FROM T_ATTESTASJON A2
-                                                                         WHERE A2.OPPDRAGS_ID = L.OPPDRAGS_ID
-                                                                           AND A2.LINJE_ID = L.LINJE_ID
-                                                                           AND A2.ATTESTANT_ID = A.ATTESTANT_ID))
+                                                                          FROM T_ATTESTASJON A2
+                                                                          WHERE A2.OPPDRAGS_ID = L.OPPDRAGS_ID
+                                                                          AND A2.LINJE_ID = L.LINJE_ID
+                                                                          AND L.ATTESTERT = 'J'
+                                                                          AND A2.ATTESTANT_ID = A.ATTESTANT_ID))
                       AND OKS.TIDSPKT_REG =                             (SELECT MAX(TIDSPKT_REG)
                                                                          FROM T_OPPDRAGSENHET OKS2
                                                                          WHERE OKS2.OPPDRAGS_ID = OKS.OPPDRAGS_ID

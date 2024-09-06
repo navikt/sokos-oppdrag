@@ -14,5 +14,6 @@ data class AttestasjonRequest(
 @Serializable
 data class AttestasjonLinje(
     val linjeId: Int,
+    val attestantIdent: String,
     val datoUgyldigFom: String? = "",
 )

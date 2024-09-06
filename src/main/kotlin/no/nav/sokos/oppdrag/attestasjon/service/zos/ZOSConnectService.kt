@@ -85,7 +85,7 @@ class ZOSKlient(
                                         request.linjer.map {
                                             PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjonLinjeTabInner(
                                                 linjeId = it.linjeId,
-                                                attestantId = navIdent,
+                                                attestantId = it.attestantIdent,
                                                 datoUgyldigFom = it.datoUgyldigFom,
                                             )
                                         },
