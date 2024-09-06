@@ -1,5 +1,6 @@
 package no.nav.sokos.oppdrag.attestasjon.service.zos
 
+import ZOSException
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.header
@@ -10,13 +11,12 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.createHttpClient
+import no.nav.sokos.oppdrag.config.errorDetails
+import no.nav.sokos.oppdrag.config.errorMessage
 import org.slf4j.MDC
 import java.time.ZonedDateTime
 
@@ -32,7 +32,7 @@ class ZOSKlient(
             client.post("$zOsUrl/oppdaterAttestasjon") {
                 header("Nav-Call-Id", MDC.get("x-correlation-id"))
                 contentType(ContentType.Application.Json)
-                setBody(mapToZosRequest(attestasjonRequest, navIdent))
+                setBody(attestasjonRequest.mapToZosRequest(navIdent))
             }
 
         return when {
@@ -63,41 +63,35 @@ class ZOSKlient(
                 ),
             )
         }
+
     }
 
-    private fun mapToZosRequest(
-        request: AttestasjonRequest,
-        navIdent: String,
-    ): PostOSAttestasjonRequest {
+    fun AttestasjonRequest.mapToZosRequest(navIdent: String): PostOSAttestasjonRequest {
         return PostOSAttestasjonRequest(
             osAttestasjonOperation =
-                PostOSAttestasjonRequestOSAttestasjonOperation(
-                    attestasjonsdata =
-                        PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdata(
-                            requestAttestasjon =
-                                PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjon(
-                                    gjelderId = request.gjelderId,
-                                    fagomraade = request.kodeFagOmraade,
-                                    oppdragsId = request.oppdragsId,
-                                    brukerId = navIdent,
-                                    kjorIdag = true,
-                                    linjeTab =
-                                        request.linjer.map {
-                                            PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjonLinjeTabInner(
-                                                linjeId = it.linjeId,
-                                                attestantId = it.attestantIdent,
-                                                datoUgyldigFom = it.datoUgyldigFom,
-                                            )
-                                        },
-                                ),
-                        ),
+            PostOSAttestasjonRequestOSAttestasjonOperation(
+                attestasjonsdata =
+                PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdata(
+                    requestAttestasjon =
+                    PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjon(
+                        gjelderId = gjelderId,
+                        fagomraade = kodeFagOmraade,
+                        oppdragsId = oppdragsId,
+                        brukerId = navIdent,
+                        kjorIdag = true,
+                        linjeTab =
+                        linjer.map {
+                            PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjonLinjeTabInner(
+                                linjeId = it.linjeId,
+                                attestantId = it.attestantIdent ?: navIdent,
+                                datoUgyldigFom = it.datoUgyldigFom,
+                            )
+                        },
+                    ),
                 ),
+            ),
         )
     }
+
+
 }
-
-private suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject["errorMessage"]?.jsonPrimitive?.content
-
-private suspend fun HttpResponse.errorDetails() = body<JsonElement>().jsonObject["errorDetails"]?.jsonPrimitive?.content
-
-data class ZOSException(val apiError: ApiError) : Exception(apiError.error)
