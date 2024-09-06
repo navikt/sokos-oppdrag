@@ -9,7 +9,6 @@ import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
 import io.ktor.server.response.respond
 import kotlinx.serialization.Serializable
-import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSException
 import no.nav.sokos.oppdrag.common.util.ZonedDateTimeSerializer
 import no.nav.sokos.oppdrag.integration.ereg.EregException
 import no.nav.sokos.oppdrag.integration.tp.TpException

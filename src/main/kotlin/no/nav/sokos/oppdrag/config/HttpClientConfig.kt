@@ -49,7 +49,6 @@ fun createHttpClient(setProxy: Boolean = true): HttpClient {
     }
 }
 
-
 suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject["errorMessage"]?.jsonPrimitive?.content
 
 suspend fun HttpResponse.errorDetails() = body<JsonElement>().jsonObject["errorDetails"]?.jsonPrimitive?.content

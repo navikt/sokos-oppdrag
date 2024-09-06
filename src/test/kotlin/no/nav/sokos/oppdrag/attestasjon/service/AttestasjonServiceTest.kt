@@ -14,12 +14,12 @@ import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponse
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvittering
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvitteringResponsAttestasjon
-import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSKlient
+import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 
 private val applicationCall = mockk<ApplicationCall>()
 private val attestasjonRepository = mockk<AttestasjonRepository>()
-private val zosKlient: ZOSKlient = mockk<ZOSKlient>()
-private val attestasjonService = AttestasjonService(attestasjonRepository, zosKlient = zosKlient)
+private val zosConnectService: ZOSConnectService = mockk<ZOSConnectService>()
+private val attestasjonService = AttestasjonService(attestasjonRepository, zosConnectService = zosConnectService)
 
 internal class AttestasjonServiceTest : FunSpec({
 
@@ -65,7 +65,7 @@ internal class AttestasjonServiceTest : FunSpec({
                     ),
             )
 
-        coEvery { zosKlient.attestereOppdrag(any(), any()) } returns response
+        coEvery { zosConnectService.attestereOppdrag(any(), any()) } returns response
         attestasjonService.attestereOppdrag(applicationCall, request) shouldBe response
     }
 })

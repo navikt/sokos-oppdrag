@@ -20,7 +20,7 @@ import no.nav.sokos.oppdrag.config.errorMessage
 import org.slf4j.MDC
 import java.time.ZonedDateTime
 
-class ZOSKlient(
+class ZOSConnectService(
     private val zOsUrl: String = PropertiesConfig.EksterneHostProperties().zosUrl,
     private val client: HttpClient = createHttpClient(false),
 ) {
@@ -63,35 +63,32 @@ class ZOSKlient(
                 ),
             )
         }
-
     }
 
     fun AttestasjonRequest.mapToZosRequest(navIdent: String): PostOSAttestasjonRequest {
         return PostOSAttestasjonRequest(
             osAttestasjonOperation =
-            PostOSAttestasjonRequestOSAttestasjonOperation(
-                attestasjonsdata =
-                PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdata(
-                    requestAttestasjon =
-                    PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjon(
-                        gjelderId = gjelderId,
-                        fagomraade = kodeFagOmraade,
-                        oppdragsId = oppdragsId,
-                        brukerId = navIdent,
-                        kjorIdag = true,
-                        linjeTab =
-                        linjer.map {
-                            PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjonLinjeTabInner(
-                                linjeId = it.linjeId,
-                                attestantId = it.attestantIdent ?: navIdent,
-                                datoUgyldigFom = it.datoUgyldigFom,
-                            )
-                        },
-                    ),
+                PostOSAttestasjonRequestOSAttestasjonOperation(
+                    attestasjonsdata =
+                        PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdata(
+                            requestAttestasjon =
+                                PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjon(
+                                    gjelderId = gjelderId,
+                                    fagomraade = kodeFagOmraade,
+                                    oppdragsId = oppdragsId,
+                                    brukerId = navIdent,
+                                    kjorIdag = true,
+                                    linjeTab =
+                                        linjer.map {
+                                            PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjonLinjeTabInner(
+                                                linjeId = it.linjeId,
+                                                attestantId = it.attestantIdent ?: navIdent,
+                                                datoUgyldigFom = it.datoUgyldigFom,
+                                            )
+                                        },
+                                ),
+                        ),
                 ),
-            ),
         )
     }
-
-
 }
