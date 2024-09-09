@@ -34,14 +34,14 @@ val kotlinLoggingVersion = "3.0.5"
 val kotlinxSerializationVersion = "1.7.2"
 val kotliqueryVersion = "1.9.0"
 val ktorVersion = "2.3.12"
-val logbackVersion = "1.5.7"
+val logbackVersion = "1.5.8"
 val logstashVersion = "8.0"
 val micrometerVersion = "1.13.3"
 val mockOAuth2ServerVersion = "2.1.9"
 val mockkVersion = "1.13.12"
 val natpryceVersion = "1.6.10.0"
 val papertrailappVersion = "1.0.0"
-val swaggerRequestValidatorVersion = "2.41.0"
+val swaggerRequestValidatorVersion = "2.42.0"
 
 dependencies {
 
