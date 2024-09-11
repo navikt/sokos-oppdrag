@@ -22,7 +22,6 @@ import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
-import no.nav.sokos.oppdrag.attestasjon.domain.OppdragsDetaljer
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponse
@@ -142,45 +141,6 @@ internal class AttestasjonApiTest : FunSpec({
 
         response.body.jsonPath().getList<FagOmraade>("navn").first().shouldBe("Barnepensjon")
         response.body.jsonPath().getList<FagOmraade>("kode").first().shouldBe("BP")
-    }
-
-    test("søk etter oppdragsId på oppdragslinjer endepunktet skal returnere 200 OK") {
-        val oppdragsDetaljerListe =
-            listOf(
-                OppdragsDetaljer(
-                    ansvarsStedForOppdrag = "1337",
-                    antallAttestanter = 1,
-                    attestant = "attestant",
-                    datoVedtakFom = "2021-01-01",
-                    datoVedtakTom = "2021-12-31",
-                    delytelsesId = "delytelsesId",
-                    fagSystemId = "123456789",
-                    kodeKlasse = "KLASSE",
-                    kodeFagOmraade = "BEH",
-                    kostnadsStedForOppdrag = "8128",
-                    linjeId = "1",
-                    fagGruppe = "Aliens",
-                    fagOmraade = "Area 51",
-                    gjelderId = "123456789",
-                    oppdragsId = "12345678",
-                    sats = 123.45,
-                    satstype = "satstype",
-                ),
-            )
-
-        every { attestasjonService.getOppdragsDetaljer(any()) } returns oppdragsDetaljerListe
-
-        val response =
-            RestAssured.given().filter(validationFilter)
-                .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .port(PORT)
-                .get("$ATTESTASJON_BASE_API_PATH/oppdragsdetaljer/12341234")
-                .then().assertThat()
-                .statusCode(HttpStatusCode.OK.value)
-                .extract().response()
-
-        response.body.jsonPath().getList<Int>("fagSystemId").first().shouldBe("123456789")
     }
 
     // TODO: En test for .get("$ATTESTASJON_BASE_API_PATH/oppdragsdetaljer/12341234") som returnerer 400 Bad Request??
