@@ -65,7 +65,7 @@ class ZOSConnectService(
         }
     }
 
-    fun AttestasjonRequest.mapToZosRequest(navIdent: String): PostOSAttestasjonRequest {
+    private fun AttestasjonRequest.mapToZosRequest(navIdent: String): PostOSAttestasjonRequest {
         return PostOSAttestasjonRequest(
             osAttestasjonOperation =
                 PostOSAttestasjonRequestOSAttestasjonOperation(

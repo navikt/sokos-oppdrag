@@ -7,7 +7,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
-import no.nav.sokos.oppdrag.config.WireMockTestConfig.wiremock
+import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows
 
 const val TSS_ID = "12345678912"

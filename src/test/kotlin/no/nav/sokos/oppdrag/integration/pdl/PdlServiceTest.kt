@@ -10,7 +10,7 @@ import io.ktor.http.HttpStatusCode
 import io.mockk.coEvery
 import io.mockk.mockk
 import no.nav.sokos.oppdrag.APPLICATION_JSON
-import no.nav.sokos.oppdrag.config.WireMockTestConfig.wiremock
+import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import no.nav.sokos.oppdrag.security.AccessTokenClient
 import org.junit.jupiter.api.assertThrows
 
