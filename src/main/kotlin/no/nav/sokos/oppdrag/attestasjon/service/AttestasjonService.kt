@@ -55,7 +55,46 @@ class AttestasjonService(
     }
 
     fun getOppdragsDetaljer(oppdragsId: Int): List<OppdragsDetaljer> {
-        return attestasjonRepository.getOppdragsDetaljer(oppdragsId)
+        val oppdragslinjerUtenFluff = attestasjonRepository.getOppdragslinjerWithoutFluff(oppdragsId)
+
+        val linjerMedDatoVedtakTomSattDerDeManglerUnntattDenSisteAvHverKlassekode =
+            oppdragslinjerUtenFluff
+                .groupBy { l -> l.kodeKlasse }
+                .values.flatMap { l ->
+                    l.zipWithNext()
+                        .map { (curr, next) -> curr.copy(datoVedtakTom = curr.datoVedtakTom ?: next.datoVedtakFom.minusDays(1)) }
+                        .toList() + l.last()
+                }
+
+        val oppdragsdetaljer =
+            linjerMedDatoVedtakTomSattDerDeManglerUnntattDenSisteAvHverKlassekode.map {
+                    l ->
+                OppdragsDetaljer(
+                    ansvarsStedForOppdrag = "kek",
+                    ansvarsStedForOppdragsLinje = "kek",
+                    antallAttestanter = 1,
+                    attestant = "kek",
+                    datoUgyldigFom = "kek",
+                    datoVedtakFom = l.datoVedtakFom.toString(),
+                    datoVedtakTom = l.datoVedtakTom.toString(),
+                    delytelsesId = l.delytelseId.toString(),
+                    fagGruppe = "kek",
+                    fagOmraade = "kek",
+                    fagSystemId = "kek",
+                    gjelderId = "kek",
+                    kodeFagOmraade = "kek",
+                    kodeKlasse = l.kodeKlasse,
+                    kostnadsStedForOppdrag = "kek",
+                    kostnadsStedForOppdragsLinje = "kek",
+                    linjeId = l.linjeId.toString(),
+                    oppdragsId = l.oppdragsId.toString(),
+                    sats = l.sats,
+                    satstype = l.typeSats,
+                )
+            }
+
+        return emptyList()
+//        return attestasjonRepository.getOppdragsDetaljer(oppdragsId)
     }
 
     suspend fun attestereOppdrag(
