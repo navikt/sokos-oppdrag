@@ -55,7 +55,7 @@ class AttestasjonService(
     }
 
     fun getOppdragsDetaljer(oppdragsId: Int): List<OppdragsDetaljer> {
-        val oppdragslinjerUtenFluff = attestasjonRepository.getOppdragslinjerWithoutFluff(oppdragsId)
+        val oppdragslinjerUtenFluff = attestasjonRepository.getOppdragslinjerPlain(oppdragsId)
 
         val linjerMedDatoVedtakTomSattDerDeManglerUnntattDenSisteAvHverKlassekode =
             oppdragslinjerUtenFluff
@@ -66,26 +66,33 @@ class AttestasjonService(
                         .toList() + l.last()
                 }
 
+        val linjeIder = oppdragslinjerUtenFluff.map { l -> l.linjeId }.toList()
+
+        val kostnadssteder = attestasjonRepository.getEnhetForLinjer(oppdragsId, linjeIder, "BOS")
+        val ansvarssteder = attestasjonRepository.getEnhetForLinjer(oppdragsId, linjeIder, "BEH")
+        val attestasjoner = attestasjonRepository.getAttestasjonerForLinjer(oppdragsId, linjeIder)
+        val oppdragsInfo = attestasjonRepository.getEnkeltOppdrag(oppdragsId)
+
         val oppdragsdetaljer =
             linjerMedDatoVedtakTomSattDerDeManglerUnntattDenSisteAvHverKlassekode.map {
                     l ->
                 OppdragsDetaljer(
-                    ansvarsStedForOppdrag = "kek",
-                    ansvarsStedForOppdragsLinje = "kek",
+                    ansvarsStedForOppdrag = oppdragsInfo.ansvarsSted,
+                    ansvarsStedForOppdragsLinje = ansvarssteder.get(l.linjeId),
                     antallAttestanter = 1,
-                    attestant = "kek",
-                    datoUgyldigFom = "kek",
+                    attestant = attestasjoner.get(l.linjeId)?.attestant,
+                    datoUgyldigFom = attestasjoner.get(l.linjeId)?.datoUgyldigFom.toString(),
                     datoVedtakFom = l.datoVedtakFom.toString(),
                     datoVedtakTom = l.datoVedtakTom.toString(),
                     delytelsesId = l.delytelseId.toString(),
-                    fagGruppe = "kek",
-                    fagOmraade = "kek",
-                    fagSystemId = "kek",
-                    gjelderId = "kek",
-                    kodeFagOmraade = "kek",
+                    fagGruppe = oppdragsInfo.fagGruppe,
+                    fagOmraade = oppdragsInfo.fagOmraade,
+                    fagSystemId = oppdragsInfo.fagsystemId,
+                    gjelderId = oppdragsInfo.gjelderId,
+                    kodeFagOmraade = oppdragsInfo.kodeFagOmraade,
                     kodeKlasse = l.kodeKlasse,
-                    kostnadsStedForOppdrag = "kek",
-                    kostnadsStedForOppdragsLinje = "kek",
+                    kostnadsStedForOppdrag = oppdragsInfo.kostnadsSted,
+                    kostnadsStedForOppdragsLinje = kostnadssteder.get(l.linjeId),
                     linjeId = l.linjeId.toString(),
                     oppdragsId = l.oppdragsId.toString(),
                     sats = l.sats,
@@ -93,8 +100,7 @@ class AttestasjonService(
                 )
             }
 
-        return emptyList()
-//        return attestasjonRepository.getOppdragsDetaljer(oppdragsId)
+        return oppdragsdetaljer
     }
 
     suspend fun attestereOppdrag(
