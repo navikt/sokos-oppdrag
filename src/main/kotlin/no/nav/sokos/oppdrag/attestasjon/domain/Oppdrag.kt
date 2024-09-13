@@ -9,6 +9,8 @@ data class Oppdrag(
     val gjelderId: String,
     val kostnadsSted: String,
     val fagGruppe: String,
+    val kodeFagGruppe: String,
     val fagOmraade: String,
+    val kodeFagOmraade: String,
     val oppdragsId: Int,
 )

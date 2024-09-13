@@ -2,7 +2,7 @@ package no.nav.sokos.oppdrag.attestasjon.domain
 
 import java.time.LocalDate
 
-data class OppdragslinjeWithoutFluff(
+data class OppdragslinjePlain(
     val oppdragsId: Int,
     val linjeId: Int,
     val kodeKlasse: String,

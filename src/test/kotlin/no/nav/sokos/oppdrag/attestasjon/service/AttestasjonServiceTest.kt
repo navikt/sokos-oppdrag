@@ -9,7 +9,9 @@ import io.mockk.mockk
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
-import no.nav.sokos.oppdrag.attestasjon.domain.OppdragslinjeWithoutFluff
+import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
+import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
+import no.nav.sokos.oppdrag.attestasjon.domain.OppdragslinjePlain
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponse
@@ -72,65 +74,156 @@ internal class AttestasjonServiceTest : FunSpec({
     }
 
     test("tilrettelegging av oppdragslinjer for attestering 1") {
-        every { attestasjonRepository.getOppdragslinjerWithoutFluff(any()) } returns
-            withoutFluff(
+        every { attestasjonRepository.getOppdragslinjerPlain(any()) } returns
+            plainOppdragslinjer(
                 """
-                +-----------+--------+--------------------------------------------------+---------------+---------------+---------+--------+---------+------------------------------+
-                |OPPDRAGS_ID|LINJE_ID|KODE_KLASSE                                       |DATO_VEDTAK_FOM|DATO_VEDTAK_TOM|ATTESTERT|SATS    |TYPE_SATS|DELYTELSE_ID                  |
-                +-----------+--------+--------------------------------------------------+---------------+---------------+---------+--------+---------+------------------------------+
-                |58308587   |6       |UFOREUT                                           |2021-12-01     |2021-12-31     |N        |23867.00|MND      |759868829                     |
-                |58308587   |7       |UFOREUT                                           |2022-01-01     |2022-01-31     |J        |23867.00|MND      |759868830                     |
-                |58308587   |8       |UFOREUT                                           |2022-02-01     |2022-04-30     |J        |21816.00|MND      |759868831                     |
-                |58308587   |9       |UFOREUT                                           |2022-05-01     |null           |J        |22857.00|MND      |759868832                     |
-                |58308587   |10      |UFOREUT                                           |2023-01-01     |null           |J        |22857.00|MND      |771253891                     |
-                |58308587   |11      |UFOREUT                                           |2023-05-01     |null           |N        |24322.00|MND      |801686775                     |
-                |58308587   |12      |UFOREUT                                           |2024-01-01     |null           |J        |24322.00|MND      |839410565                     |
-                |58308587   |13      |UFOREUT                                           |2024-05-01     |null           |N        |25431.00|MND      |861989539                     |
-                |58308587   |14      |UFOREUT                                           |2024-07-01     |null           |N        |25899.00|MND      |878336072                     |
-                +-----------+--------+--------------------------------------------------+---------------+---------------+---------+--------+---------+------------------------------+
+                +-----------+--------+------------+---------------+---------------+---------+--------+---------+-------------+
+                |OPPDRAGS_ID|LINJE_ID|KODE_KLASSE |DATO_VEDTAK_FOM|DATO_VEDTAK_TOM|ATTESTERT|SATS    |TYPE_SATS|DELYTELSE_ID |
+                +-----------+--------+------------+---------------+---------------+---------+--------+---------+-------------+
+                |12345678   |6       |UFOREUT     |2021-12-01     |2021-12-31     |N        |23867.00|MND      |759868829    |
+                |12345678   |7       |UFOREUT     |2022-01-01     |2022-01-31     |J        |23867.00|MND      |759868830    |
+                |12345678   |8       |UFOREUT     |2022-02-01     |2022-04-30     |J        |21816.00|MND      |759868831    |
+                |12345678   |9       |UFOREUT     |2022-05-01     |null           |J        |22857.00|MND      |759868832    |
+                |12345678   |10      |UFOREUT     |2023-01-01     |null           |J        |22857.00|MND      |771253891    |
+                |12345678   |11      |UFOREUT     |2023-05-01     |null           |N        |24322.00|MND      |801686775    |
+                |12345678   |12      |UFOREUT     |2024-01-01     |null           |J        |24322.00|MND      |839410565    |
+                |12345678   |13      |UFOREUT     |2024-05-01     |null           |N        |25431.00|MND      |861989539    |
+                |12345678   |14      |UFOREUT     |2024-07-01     |null           |N        |25899.00|MND      |878336072    |
+                +-----------+--------+------------+---------------+---------------+---------+--------+---------+-------------+
                 """.trimIndent(),
             )
+        every { attestasjonRepository.getEnhetForLinjer(any(), any(), any()) } returns emptyMap()
+        every { attestasjonRepository.getAttestasjonerForLinjer(any(), any()) } returns
+            attestasjoner(
+                """
+                +--------+------------+----------------+
+                |LINJE_ID|ATTESTANT_ID|DATO_UGYLDIG_FOM|
+                +--------+------------+----------------+
+                |1       |N168245     |9999-12-31      |
+                |2       |L170628     |9999-12-31      |
+                |3       |PPEN003     |9999-12-31      |
+                |7       |PPEN004     |9999-12-31      |
+                |8       |PPEN004     |9999-12-31      |
+                |9       |PPEN004     |9999-12-31      |
+                |10      |BPEN068     |9999-12-31      |
+                |11      |PPEN004     |9999-12-31      |
+                |12      |PPEN004     |9999-12-31      |
+                |13      |PPEN004     |9999-12-31      |
+                |14      |PPEN004     |9999-12-31      |
+                |15      |PPEN004     |9999-12-31      |
+                |16      |BPEN068     |9999-12-31      |
+                |17      |BPEN068     |9999-12-31      |
+                |18      |BPEN068     |9999-12-31      |
+                +--------+------------+----------------+
 
-        attestasjonService.getOppdragsDetaljer(12345678) shouldBe emptyList()
+                """.trimIndent(),
+            )
+        every { attestasjonRepository.getEnkeltOppdrag(any()) } returns
+            Oppdrag(
+                ansvarsSted = "8128",
+                fagsystemId = "fagsystemid",
+                gjelderId = "12345612345",
+                kostnadsSted = "1337",
+                fagGruppe = "faggruppenavn",
+                kodeFagGruppe = "faggruppekode",
+                fagOmraade = "fagområdenavn",
+                kodeFagOmraade = "fagområdekode",
+                oppdragsId = 1337,
+            )
+
+        attestasjonService.getOppdragsDetaljer(12345678).size shouldBe 9
     }
 
     test("tilrettelegging av oppdragslinjer for attestering") {
-        every { attestasjonRepository.getOppdragslinjerWithoutFluff(any()) } returns
-            withoutFluff(
+        every { attestasjonRepository.getOppdragslinjerPlain(any()) } returns
+            plainOppdragslinjer(
                 """
-                +-----------+--------+--------------------------------------------------+---------------+---------------+---------+--------+---------+------------------------------+
-                |OPPDRAGS_ID|LINJE_ID|KODE_KLASSE                                       |DATO_VEDTAK_FOM|DATO_VEDTAK_TOM|ATTESTERT|SATS    |TYPE_SATS|DELYTELSE_ID                  |
-                +-----------+--------+--------------------------------------------------+---------------+---------------+---------+--------+---------+------------------------------+
-                |63308761   |2       |PENAPGP                                           |2022-12-01     |null           |J        |2005.00 |MND      |756727211                     |
-                |63308761   |8       |PENAPGP                                           |2023-04-01     |null           |J        |2025.00 |MND      |786995290                     |
-                |63308761   |10      |PENAPGP                                           |2023-05-01     |null           |J        |2162.00 |MND      |795307286                     |
-                |63308761   |14      |PENAPGP                                           |2024-02-01     |null           |J        |2185.00 |MND      |839618861                     |
-                |63308761   |16      |PENAPGP                                           |2024-05-01     |null           |J        |2255.00 |MND      |863138304                     |
-                |63308761   |1       |PENAPIP                                           |2022-12-01     |null           |N        |16524.00|MND      |756727209                     |
-                |63308761   |7       |PENAPIP                                           |2023-04-01     |null           |J        |17125.00|MND      |786995288                     |
-                |63308761   |11      |PENAPIP                                           |2023-05-01     |null           |J        |18284.00|MND      |795307289                     |
-                |63308761   |13      |PENAPIP                                           |2024-02-01     |null           |J        |18945.00|MND      |839618859                     |
-                |63308761   |18      |PENAPIP                                           |2024-05-01     |null           |J        |19553.00|MND      |863138307                     |
-                |63308761   |3       |PENAPTP                                           |2022-12-01     |null           |J        |5731.00 |MND      |756727212                     |
-                |63308761   |9       |PENAPTP                                           |2023-04-01     |null           |J        |5799.00 |MND      |786995291                     |
-                |63308761   |12      |PENAPTP                                           |2023-05-01     |null           |J        |6191.00 |MND      |795307288                     |
-                |63308761   |15      |PENAPTP                                           |2024-02-01     |null           |J        |6256.00 |MND      |839618862                     |
-                |63308761   |17      |PENAPTP                                           |2024-05-01     |null           |J        |6457.00 |MND      |863138305                     |
-                +-----------+--------+--------------------------------------------------+---------------+---------------+---------+--------+---------+------------------------------+
+                +-----------+--------+------------+---------------+---------------+---------+--------+---------+-------------+
+                |OPPDRAGS_ID|LINJE_ID|KODE_KLASSE |DATO_VEDTAK_FOM|DATO_VEDTAK_TOM|ATTESTERT|SATS    |TYPE_SATS|DELYTELSE_ID |
+                +-----------+--------+------------+---------------+---------------+---------+--------+---------+-------------+
+                |12345678   |2       |PENAPGP     |2022-12-01     |null           |J        |2005.00 |MND      |756727211    |
+                |12345678   |8       |PENAPGP     |2023-04-01     |null           |J        |2025.00 |MND      |786995290    |
+                |12345678   |10      |PENAPGP     |2023-05-01     |null           |J        |2162.00 |MND      |795307286    |
+                |12345678   |14      |PENAPGP     |2024-02-01     |null           |J        |2185.00 |MND      |839618861    |
+                |12345678   |16      |PENAPGP     |2024-05-01     |null           |J        |2255.00 |MND      |863138304    |
+                |12345678   |1       |PENAPIP     |2022-12-01     |null           |N        |16524.00|MND      |756727209    |
+                |12345678   |7       |PENAPIP     |2023-04-01     |null           |J        |17125.00|MND      |786995288    |
+                |12345678   |11      |PENAPIP     |2023-05-01     |null           |J        |18284.00|MND      |795307289    |
+                |12345678   |13      |PENAPIP     |2024-02-01     |null           |J        |18945.00|MND      |839618859    |
+                |12345678   |18      |PENAPIP     |2024-05-01     |null           |J        |19553.00|MND      |863138307    |
+                |12345678   |3       |PENAPTP     |2022-12-01     |null           |J        |5731.00 |MND      |756727212    |
+                |12345678   |9       |PENAPTP     |2023-04-01     |null           |J        |5799.00 |MND      |786995291    |
+                |12345678   |12      |PENAPTP     |2023-05-01     |null           |J        |6191.00 |MND      |795307288    |
+                |12345678   |15      |PENAPTP     |2024-02-01     |null           |J        |6256.00 |MND      |839618862    |
+                |12345678   |17      |PENAPTP     |2024-05-01     |null           |J        |6457.00 |MND      |863138305    |
+                +-----------+--------+------------+---------------+---------------+---------+--------+---------+-------------+
                 """.trimIndent(),
             )
+        every { attestasjonRepository.getEnhetForLinjer(any(), any(), any()) } returns emptyMap()
+        every { attestasjonRepository.getAttestasjonerForLinjer(any(), any()) } returns
+            attestasjoner(
+                """
+                +--------+------------+----------------+
+                |LINJE_ID|ATTESTANT_ID|DATO_UGYLDIG_FOM|
+                +--------+------------+----------------+
+                |1       |N168245     |9999-12-31      |
+                |2       |L170628     |9999-12-31      |
+                |3       |PPEN003     |9999-12-31      |
+                |7       |PPEN004     |9999-12-31      |
+                |8       |PPEN004     |9999-12-31      |
+                |9       |PPEN004     |9999-12-31      |
+                |10      |BPEN068     |9999-12-31      |
+                |11      |PPEN004     |9999-12-31      |
+                |12      |PPEN004     |9999-12-31      |
+                |13      |PPEN004     |9999-12-31      |
+                |14      |PPEN004     |9999-12-31      |
+                |15      |PPEN004     |9999-12-31      |
+                |16      |BPEN068     |9999-12-31      |
+                |17      |BPEN068     |9999-12-31      |
+                |18      |BPEN068     |9999-12-31      |
+                +--------+------------+----------------+
 
-        attestasjonService.getOppdragsDetaljer(12345678) shouldBe emptyList()
+                """.trimIndent(),
+            )
+        every { attestasjonRepository.getEnkeltOppdrag(any()) } returns
+            Oppdrag(
+                ansvarsSted = "8128",
+                fagsystemId = "fagsystemid",
+                gjelderId = "12345612345",
+                kostnadsSted = "1337",
+                fagGruppe = "faggruppenavn",
+                kodeFagGruppe = "faggruppekode",
+                fagOmraade = "fagområdenavn",
+                kodeFagOmraade = "fagområdekode",
+                oppdragsId = 1337,
+            )
+
+        attestasjonService.getOppdragsDetaljer(12345678).size shouldBe 15
     }
 })
 
-private fun withoutFluff(pretty: String): List<OppdragslinjeWithoutFluff> {
+private fun plainOppdragslinjer(pretty: String): List<OppdragslinjePlain> {
     return pretty.split("\n").filter { s -> s.isNotBlank() && !s.contains("-----") && !s.contains("OPPDRAGS_ID") }
-        .map { s -> mapToOppdragslinjeWithoutFluff(s.split("|").map { s -> s.trim() }.toList()) }
+        .map { s -> s.split("|").map { it.trim() }.toList() }
+        .map { l -> mapToOppdragslinjePlain(l) }
 }
 
-private fun mapToOppdragslinjeWithoutFluff(params: List<String>): OppdragslinjeWithoutFluff {
-    return OppdragslinjeWithoutFluff(
+private fun attestasjoner(pretty: String): Map<Int, Attestasjon> {
+    return pretty.split("\n").filter { s -> s.isNotBlank() && !s.contains("-----") && !s.contains("LINJE_ID") }
+        .map { s -> s.split("|").map { it.trim() }.toList() }
+        .map { l -> l.get(1).toInt() to mapToAttestasjon(l) }
+        .toMap()
+}
+
+fun mapToAttestasjon(params: List<String>): Attestasjon {
+    return Attestasjon(
+        attestant = params.get(2),
+        datoUgyldigFom = LocalDate.parse(params.get(3)),
+    )
+}
+
+private fun mapToOppdragslinjePlain(params: List<String>): OppdragslinjePlain {
+    return OppdragslinjePlain(
         oppdragsId = params.get(1).toInt(),
         linjeId = params.get(2).toInt(),
         kodeKlasse = params.get(3),
