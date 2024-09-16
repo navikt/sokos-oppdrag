@@ -57,7 +57,7 @@ class AttestasjonRepository(
                     """.trimIndent(),
                 )
             if (gjelderId.isNotBlank()) statementParts.add("AND O.OPPDRAG_GJELDER_ID = :GJELDERID")
-            if (fagSystemId.isNotBlank()) statementParts.add("AND O.FAGSYSTEM_ID LIKE '$fagSystemId%'")
+            if (fagSystemId.isNotBlank()) statementParts.add("AND O.FAGSYSTEM_ID = :FAGSYSTEMID")
             if (kodeFagomraade.isNotBlank()) statementParts.add("AND F.KODE_FAGOMRAADE = :KODEFAGOMRAADE")
             if (kodeFaggruppe.isNotBlank()) statementParts.add("AND G.KODE_FAGGRUPPE = :KODEFAGGRUPPE")
 
@@ -77,6 +77,7 @@ class AttestasjonRepository(
                     statementParts.joinToString("\n", "", ";"),
                     mapOf(
                         "GJELDERID" to gjelderId,
+                        "FAGSYSTEMID" to fagSystemId,
                         "KODEFAGOMRAADE" to kodeFagomraade,
                         "KODEFAGGRUPPE" to kodeFaggruppe,
                         "ATTESTERT" to attestert,
