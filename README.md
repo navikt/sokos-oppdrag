@@ -12,7 +12,7 @@
 ---
 
 # 1. Funksjonelle Krav
-Hva er oppgaven til denne applikasjonen
+Applikasjon for å hente Oppdrag fra DB2 på stormaskin. Håndterer også Attestering av oppdrag.
 
 # 2. Utviklingsmiljø
 ### Forutsetninger
@@ -20,10 +20,11 @@ Hva er oppgaven til denne applikasjonen
 * Gradle 8
 
 ### Bygge prosjekt
-Hvordan bygger jeg prosjektet.
+`./gradlew build`
 
 ### Lokal utvikling
-Hvordan kan jeg kjøre lokalt og hva trenger jeg?
+Kjør `./setupLocalEnvironment.sh` for å sette opp prosjektet lokalt.
+Du trenger en db2 lisens fil for å koble til DB2 lokalt. Kontakt en utvikler fra Team MOBY for å få denne filen.
 
 # 3. Programvarearkitektur
 Legg ved skissediagram for hvordan arkitekturen er bygget
@@ -34,7 +35,7 @@ Distribusjon av tjenesten er gjort med bruk av Github Actions.
 
 Push/merge til main branche vil teste, bygge og deploye til produksjonsmiljø og testmiljø.
 
-# 7. Autentisering
+# 5. Autentisering
 Applikasjonen bruker [AzureAD](https://docs.nais.io/security/auth/azure-ad/) autentisering
 
 # 6. Drift og støtte
@@ -64,13 +65,13 @@ Vi bruker [nais-alerts](https://doc.nais.io/observability/alerts) for å sette o
 Disse finner man konfigurert i [.nais/alerts-dev.yaml](.nais/alerts-dev.yaml) filen og [.nais/alerts-prod.yaml](.nais/alerts-prod.yaml)
 
 ### Grafana
-- [appavn](url)
+- [sokos-oppdrag](https://grafana.nav.cloud.nais.io/dashboards/f/lnzUddLmk/tob) (ikke laget enda)
 ---
 
 # 7. Swagger
 Hva er url til Lokal, dev og prod?
 
-# 8. Henvendelser og tilgang
+# 8. Henvendelser
    Spørsmål knyttet til koden eller prosjektet kan stilles som issues her på Github.
    Interne henvendelser kan sendes via Slack i kanalen #po-utbetaling
 
