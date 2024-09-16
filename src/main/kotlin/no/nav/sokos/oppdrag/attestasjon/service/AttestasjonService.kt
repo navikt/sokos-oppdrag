@@ -87,7 +87,7 @@ class AttestasjonService(
                     delytelsesId = l.delytelseId.toString(),
                     fagGruppe = oppdragsInfo.fagGruppe,
                     fagOmraade = oppdragsInfo.fagOmraade,
-                    fagSystemId = oppdragsInfo.fagsystemId,
+                    fagSystemId = oppdragsInfo.fagSystemId,
                     gjelderId = oppdragsInfo.gjelderId,
                     kodeFagOmraade = oppdragsInfo.kodeFagOmraade,
                     kodeKlasse = l.kodeKlasse,
