@@ -35,8 +35,8 @@ class IntegrationService(
         )
 
         return when {
-            gjelderId.toLong() > 80000000000 -> getLeverandorName(gjelderId)
-            gjelderId.toLong() in 10000000001..79999999999 -> getPersonName(gjelderId)
+            gjelderId.toLong() > 80_000_000_000 -> getLeverandorName(gjelderId)
+            gjelderId.toLong() in 1_000_000_001..79_999_999_999 -> getPersonName(gjelderId)
             else -> getOrganisasjonsName(gjelderId)
         }
     }
