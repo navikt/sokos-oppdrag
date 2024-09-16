@@ -36,8 +36,8 @@ class RequestValidationAttestasjonConfigTest : FunSpec({
             fagomradeResult shouldBe ValidationResult.Valid
         }
 
-        test("fagområde, fagsystemId") {
-            val fagomradeFagsystemIdResult = runBlocking { validator.validate(OppdragsRequest(kodeFagOmraade = "FAGOMRAADE", fagsystemId = "FAGSYSTEMID")) }
+        test("fagområde, fagSystemId") {
+            val fagomradeFagsystemIdResult = runBlocking { validator.validate(OppdragsRequest(kodeFagOmraade = "FAGOMRAADE", fagSystemId = "FAGSYSTEMID")) }
             fagomradeFagsystemIdResult shouldBe ValidationResult.Valid
         }
 
@@ -49,7 +49,7 @@ class RequestValidationAttestasjonConfigTest : FunSpec({
                             gjelderId = "123456789",
                             kodeFagGruppe = "faggruppe",
                             kodeFagOmraade = "kodeFagomraade",
-                            fagsystemId = "fagsystemId",
+                            fagSystemId = "fagSystemId",
                             attestert = true,
                         ),
                     )
@@ -58,18 +58,18 @@ class RequestValidationAttestasjonConfigTest : FunSpec({
             alleParametreResult shouldBe ValidationResult.Valid
         }
 
-        test("fagsystemId, uten fagområde, men med gjelderId") {
-            val fagsystemIdUtenFagomradeMedGjelderIdResult =
+        test("fagSystemId, uten fagområde, men med gjelderId") {
+            val fagSystemIdUtenFagomradeMedGjelderIdResult =
                 runBlocking {
                     validator.validate(
                         OppdragsRequest(
                             gjelderId = "123456789",
-                            fagsystemId = "fagsystemId",
+                            fagSystemId = "fagSystemId",
                         ),
                     )
                 }
 
-            fagsystemIdUtenFagomradeMedGjelderIdResult shouldBe ValidationResult.Valid
+            fagSystemIdUtenFagomradeMedGjelderIdResult shouldBe ValidationResult.Valid
         }
     }
 
@@ -100,19 +100,19 @@ class RequestValidationAttestasjonConfigTest : FunSpec({
             (faggruppeBadeAttestertOgIkkeAttestertResult as ValidationResult.Invalid).reasons.first() shouldBe ("Ugyldig kombinasjon av søkeparametere")
         }
 
-        test("fagsystemId uten fagområde") {
-            val fagsystemIdUtenFagomradeResult =
+        test("fagSystemId uten fagområde") {
+            val fagSystemIdUtenFagomradeResult =
                 runBlocking {
                     validator.validate(
                         OppdragsRequest(
-                            fagsystemId = "fagsystemId",
+                            fagSystemId = "fagSystemId",
                             kodeFagGruppe = "FAGGRUPPE",
                             attestert = null,
                         ),
                     )
                 }
 
-            (fagsystemIdUtenFagomradeResult as ValidationResult.Invalid).reasons.first() shouldBe ("Ugyldig kombinasjon av søkeparametere")
+            (fagSystemIdUtenFagomradeResult as ValidationResult.Invalid).reasons.first() shouldBe ("Ugyldig kombinasjon av søkeparametere")
         }
     }
 })

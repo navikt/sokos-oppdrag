@@ -121,7 +121,7 @@ internal class AttestasjonServiceTest : FunSpec({
         every { attestasjonRepository.getEnkeltOppdrag(any()) } returns
             Oppdrag(
                 ansvarsSted = "8128",
-                fagsystemId = "fagsystemid",
+                fagSystemId = "fagsystemid",
                 gjelderId = "12345612345",
                 kostnadsSted = "1337",
                 fagGruppe = "faggruppenavn",
@@ -188,7 +188,7 @@ internal class AttestasjonServiceTest : FunSpec({
         every { attestasjonRepository.getEnkeltOppdrag(any()) } returns
             Oppdrag(
                 ansvarsSted = "8128",
-                fagsystemId = "fagsystemid",
+                fagSystemId = "fagsystemid",
                 gjelderId = "12345612345",
                 kostnadsSted = "1337",
                 fagGruppe = "faggruppenavn",

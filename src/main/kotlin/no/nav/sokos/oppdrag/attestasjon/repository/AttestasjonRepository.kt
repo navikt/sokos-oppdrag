@@ -16,7 +16,7 @@ class AttestasjonRepository(
 ) {
     fun getOppdrag(
         gjelderId: String,
-        fagsystemId: String,
+        fagSystemId: String,
         kodeFaggruppe: String,
         kodeFagomraade: String,
         attestert: Boolean?,
@@ -57,7 +57,7 @@ class AttestasjonRepository(
                     """.trimIndent(),
                 )
             if (gjelderId.isNotBlank()) statementParts.add("AND O.OPPDRAG_GJELDER_ID = :GJELDERID")
-            if (fagsystemId.isNotBlank()) statementParts.add("AND O.FAGSYSTEM_ID = :FAGSYSTEMID")
+            if (fagSystemId.isNotBlank()) statementParts.add("AND O.FAGSYSTEM_ID = :FAGSYSTEMID")
             if (kodeFagomraade.isNotBlank()) statementParts.add("AND F.KODE_FAGOMRAADE = :KODEFAGOMRAADE")
             if (kodeFaggruppe.isNotBlank()) statementParts.add("AND G.KODE_FAGGRUPPE = :KODEFAGGRUPPE")
 
@@ -71,13 +71,13 @@ class AttestasjonRepository(
 
             statementParts.add("GROUP BY NAVN_FAGGRUPPE, NAVN_FAGOMRAADE, OPPDRAG_GJELDER_ID, O.OPPDRAGS_ID, FAGSYSTEM_ID, LS.KODE_STATUS, OE.ENHET, LE.ENHET, OEB.ENHET")
             statementParts.add("FETCH FIRST 200 ROWS ONLY")
-            if (gjelderId.isNotBlank() || fagsystemId.isNotBlank()) statementParts.add("OPTIMIZE FOR 1 ROW")
+            if (gjelderId.isNotBlank() || fagSystemId.isNotBlank()) statementParts.add("OPTIMIZE FOR 1 ROW")
             session.list(
                 queryOf(
                     statementParts.joinToString("\n", "", ";"),
                     mapOf(
                         "GJELDERID" to gjelderId,
-                        "FAGSYSTEMID" to fagsystemId,
+                        "FAGSYSTEMID" to fagSystemId,
                         "KODEFAGOMRAADE" to kodeFagomraade,
                         "KODEFAGGRUPPE" to kodeFaggruppe,
                         "ATTESTERT" to attestert,
@@ -253,7 +253,7 @@ class AttestasjonRepository(
     private val mapToOppdrag: (Row) -> Oppdrag = { row ->
         Oppdrag(
             ansvarsSted = row.stringOrNull("ANSVARSSTED"),
-            fagsystemId = row.string("FAGSYSTEM_ID"),
+            fagSystemId = row.string("FAGSYSTEM_ID"),
             gjelderId = row.string("OPPDRAG_GJELDER_ID"),
             kostnadsSted = row.string("KOSTNADSSTED"),
             fagGruppe = row.string("NAVN_FAGGRUPPE"),

@@ -24,7 +24,7 @@ class AttestasjonService(
     fun getOppdrag(
         applicationCall: ApplicationCall,
         attestert: Boolean? = null,
-        fagsystemId: String? = null,
+        fagSystemId: String? = null,
         gjelderId: String? = null,
         kodeFagGruppe: String? = null,
         kodeFagOmraade: String? = null,
@@ -43,7 +43,7 @@ class AttestasjonService(
 
         return attestasjonRepository.getOppdrag(
             gjelderId = gjelderId ?: "",
-            fagsystemId = fagsystemId ?: "",
+            fagSystemId = fagSystemId ?: "",
             kodeFaggruppe = kodeFagGruppe ?: "",
             kodeFagomraade = kodeFagOmraade ?: "",
             attestert = attestert,
@@ -87,7 +87,7 @@ class AttestasjonService(
                     delytelsesId = l.delytelseId.toString(),
                     fagGruppe = oppdragsInfo.fagGruppe,
                     fagOmraade = oppdragsInfo.fagOmraade,
-                    fagSystemId = oppdragsInfo.fagsystemId,
+                    fagSystemId = oppdragsInfo.fagSystemId,
                     gjelderId = oppdragsInfo.gjelderId,
                     kodeFagOmraade = oppdragsInfo.kodeFagOmraade,
                     kodeKlasse = l.kodeKlasse,
