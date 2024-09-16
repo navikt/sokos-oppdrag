@@ -60,4 +60,12 @@ internal class IntegrationServiceTest : FunSpec({
 
         result shouldBe GjelderIdResponse("Ola Heter Nordmann")
     }
+    test("søk navn henter fra Pdl født før 10. i en måned") {
+
+        coEvery { pdlService.getPersonNavn(any()) } returns Person(listOf(PdlNavn("Ola", "Heter", "Nordmann")))
+
+        val result = integrationService.getNavnForGjelderId("01010212345", applicationCall)
+
+        result shouldBe GjelderIdResponse("Ola Heter Nordmann")
+    }
 })
