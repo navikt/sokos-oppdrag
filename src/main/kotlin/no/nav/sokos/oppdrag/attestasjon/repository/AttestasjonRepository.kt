@@ -105,25 +105,33 @@ class AttestasjonRepository(
     fun getOppdragslinjerPlain(oppdragsId: Int): List<OppdragslinjePlain> {
         val query =
             """
-            select l.OPPDRAGS_ID, l.LINJE_ID, l.KODE_KLASSE, DATO_VEDTAK_FOM, DATO_VEDTAK_TOM, ATTESTERT, l.SATS, l.TYPE_SATS, l.DELYTELSE_ID
-            from T_OPPDRAGSLINJE l
-                     join T_LINJE_STATUS statusNy on statusNy.LINJE_ID = l.LINJE_ID and statusNy.OPPDRAGS_ID = l.OPPDRAGS_ID
-            where statusNy.KODE_STATUS = 'NY'
-              and not exists(select korrannuopph.TIDSPKT_REG
-                             from T_LINJE_STATUS korrannuopph
-                             where korrannuopph.LINJE_ID = l.LINJE_ID
-                               and korrannuopph.OPPDRAGS_ID = l.OPPDRAGS_ID
-                               and korrannuopph.KODE_STATUS in ('KORR', 'ANNU', 'OPPH')
-                               and korrannuopph.DATO_FOM = statusNy.DATO_FOM
-                               and not exists(select 1
-                                              from T_LINJE_STATUS andreStatuser
-                                              where andreStatuser.LINJE_ID = l.LINJE_ID
-                                                and andreStatuser.OPPDRAGS_ID = l.OPPDRAGS_ID
-                                                and andreStatuser.KODE_STATUS in ('IKAT', 'ATTE', 'HVIL', 'REAK', 'FBER', 'LOPE')
-                                                and andreStatuser.DATO_FOM >= statusNy.DATO_FOM
-                                                and andreStatuser.TIDSPKT_REG > korrannuopph.TIDSPKT_REG))
-              and l.OPPDRAGS_ID = :OPPDRAGSID
-            order by KODE_KLASSE, LINJE_ID, DATO_VEDTAK_FOM;
+            SELECT  L.OPPDRAGS_ID          AS OPPDRAGS_ID,
+                    L.LINJE_ID             AS LINJE_ID,
+                    TRIM(L.KODE_KLASSE)    AS KODE_KLASSE,
+                    L.DATO_VEDTAK_FOM      AS DATO_VEDTAK_FOM,
+                    L.DATO_VEDTAK_TOM      AS DATO_VEDTAK_TOM,
+                    L.ATTESTERT            AS ATTESTERT,
+                    L.SATS                 AS SATS,
+                    TRIM(L.TYPE_SATS)      AS TYPE_SATS,
+                    L.DELYTELSE_ID         AS DELYTELSE_ID
+            FROM T_OPPDRAGSLINJE L
+                     JOIN T_LINJE_STATUS STATUSNY ON STATUSNY.LINJE_ID = L.LINJE_ID AND STATUSNY.OPPDRAGS_ID = L.OPPDRAGS_ID
+            WHERE STATUSNY.KODE_STATUS = 'NY'
+              AND NOT EXISTS(SELECT KORRANNUOPPH.TIDSPKT_REG
+                             FROM T_LINJE_STATUS KORRANNUOPPH
+                             WHERE KORRANNUOPPH.LINJE_ID = L.LINJE_ID
+                               AND KORRANNUOPPH.OPPDRAGS_ID = L.OPPDRAGS_ID
+                               AND KORRANNUOPPH.KODE_STATUS IN ('KORR', 'ANNU', 'OPPH')
+                               AND KORRANNUOPPH.DATO_FOM = STATUSNY.DATO_FOM
+                               AND NOT EXISTS(SELECT 1
+                                              FROM T_LINJE_STATUS ANDRESTATUSER
+                                              WHERE ANDRESTATUSER.LINJE_ID = L.LINJE_ID
+                                                AND ANDRESTATUSER.OPPDRAGS_ID = L.OPPDRAGS_ID
+                                                AND ANDRESTATUSER.KODE_STATUS IN ('IKAT', 'ATTE', 'HVIL', 'REAK', 'FBER', 'LOPE')
+                                                AND ANDRESTATUSER.DATO_FOM >= STATUSNY.DATO_FOM
+                                                AND ANDRESTATUSER.TIDSPKT_REG > KORRANNUOPPH.TIDSPKT_REG))
+              AND L.OPPDRAGS_ID = :OPPDRAGSID
+            ORDER BY KODE_KLASSE, LINJE_ID, DATO_VEDTAK_FOM;
             """.trimIndent()
 
         return using(sessionOf(dataSource)) { session ->
@@ -146,18 +154,18 @@ class AttestasjonRepository(
     ): Map<Int, String> {
         val query =
             """
-            select LINJE_ID, ENHET
-            from T_LINJEENHET e
-            where 1=1
-              and e.TYPE_ENHET=TYPEENHET
-              and enhet != ''
-              and e.LINJE_ID in (LINJEIDER)
-              and e.OPPDRAGS_ID = OPPDRAGSID
-              and not exists(select 1
-                             from T_LINJEENHET dup
-                             where e.OPPDRAGS_ID = dup.OPPDRAGS_ID
-                               and e.LINJE_ID = dup.LINJE_ID
-                               and e.TIDSPKT_REG < dup.TIDSPKT_REG);
+            SELECT LINJE_ID, ENHET
+            FROM T_LINJEENHET E
+            WHERE 1=1
+              AND E.TYPE_ENHET=:TYPEENHET
+              AND ENHET != ''
+              AND E.LINJE_ID IN (${linjeIder.joinToString(",")})
+              AND E.OPPDRAGS_ID = :OPPDRAGSID
+              AND NOT EXISTS(SELECT 1
+                             FROM T_LINJEENHET DUP
+                             WHERE E.OPPDRAGS_ID = DUP.OPPDRAGS_ID
+                               AND E.LINJE_ID = DUP.LINJE_ID
+                               AND E.TIDSPKT_REG < DUP.TIDSPKT_REG);
             """.trimIndent()
 
         return using(sessionOf(dataSource)) { session ->
@@ -166,7 +174,6 @@ class AttestasjonRepository(
                     query,
                     mapOf(
                         "OPPDRAGSID" to oppdragsId,
-                        "LINJEIDER" to linjeIder.joinToString(","),
                         "TYPEENHET" to typeEnhet,
                     ),
                 ),
@@ -180,16 +187,18 @@ class AttestasjonRepository(
     ): Map<Int, Attestasjon> {
         val query =
             """
-            select LINJE_ID, ATTESTANT_ID, DATO_UGYLDIG_FOM
-            from T_ATTESTASJON a
-            where 1 = 1
-              and a.LINJE_ID in (:LINJEIDER)
-              and a.OPPDRAGS_ID = :OPPDRAGSID
+            SELECT A.LINJE_ID           AS LINJE_ID, 
+                   TRIM(A.ATTESTANT_ID) AS ATTESTANT_ID, 
+                   A.DATO_UGYLDIG_FOM   AS DATO_UGYLDIG_FOM
+            FROM T_ATTESTASJON A
+            WHERE 1 = 1
+              AND A.LINJE_ID IN (${linjeIder.joinToString(",")})
+              AND A.OPPDRAGS_ID = :OPPDRAGSID
               AND (A.LOPENR =
                    (SELECT MAX(A2.LOPENR)
                     FROM T_ATTESTASJON A2
-                    WHERE A2.OPPDRAGS_ID = a.OPPDRAGS_ID
-                      AND A2.LINJE_ID = a.LINJE_ID
+                    WHERE A2.OPPDRAGS_ID = A.OPPDRAGS_ID
+                      AND A2.LINJE_ID = A.LINJE_ID
                       AND A2.ATTESTANT_ID = A.ATTESTANT_ID))
             ;
             """.trimIndent()
@@ -199,7 +208,6 @@ class AttestasjonRepository(
                     query,
                     mapOf(
                         "OPPDRAGSID" to oppdragsId,
-                        "LINJEIDER" to linjeIder.joinToString(","),
                     ),
                 ),
             ) { row -> row.int("LINJE_ID") to Attestasjon(row.string("ATTESTANT_ID"), row.localDate("DATO_UGYLDIG_FOM")) }.toMap()
@@ -208,15 +216,15 @@ class AttestasjonRepository(
 
     fun getEnkeltOppdrag(oppdragsId: Int): Oppdrag {
         val query = """
-                    select o.OPPDRAGS_ID
-                           o.FAGSYSTEM_ID,
-                           o.OPPDRAG_GJELDER_ID,
-                           o.KODE_FAGOMRAADE,
-                           fo.NAVN_FAGOMRAADE,
-                           fo.KODE_FAGGRUPPE,
-                           fg.NAVN_FAGGRUPPE,
-                           ok.ENHET as kostnadssted,
-                           oa.ENHET as ansvarssted
+                    select TRIM(o.OPPDRAGS_ID)         as OPPDRAGS_ID, 
+                           TRIM(o.FAGSYSTEM_ID)        as FAGSYSTEM_ID, 
+                           TRIM(o.OPPDRAG_GJELDER_ID)  as OPPDRAG_GJELDER_ID, 
+                           TRIM(o.KODE_FAGOMRAADE)     as KODE_FAGOMRAADE, 
+                           TRIM(fo.NAVN_FAGOMRAADE)    as NAVN_FAGOMRAADE, 
+                           TRIM(fo.KODE_FAGGRUPPE)     as KODE_FAGGRUPPE, 
+                           TRIM(fg.NAVN_FAGGRUPPE)     as NAVN_FAGGRUPPE, 
+                           TRIM(ok.ENHET)              as kostnadssted,
+                           TRIM(oa.ENHET)              as ansvarssted
                     from T_OPPDRAG o
                              join T_FAGOMRAADE fo on fo.KODE_FAGOMRAADE = o.KODE_FAGOMRAADE
                              join T_FAGGRUPPE fg on fg.KODE_FAGGRUPPE = fo.KODE_FAGGRUPPE
@@ -233,7 +241,7 @@ class AttestasjonRepository(
                                              FROM T_OPPDRAGSENHET OA2
                                              WHERE OA2.OPPDRAGS_ID = OA.OPPDRAGS_ID
                                                AND OA2.TYPE_ENHET = OA.TYPE_ENHET
-                                               AND OA2.DATO_FOM <= CURRENT DATE))
+                                               AND OA2.DATO_FOM  <= CURRENT DATE))
                       and o.OPPDRAGS_ID = :OPPDRAGSID
                 """
         return using(sessionOf(dataSource)) { session ->
@@ -269,7 +277,7 @@ class AttestasjonRepository(
             linjeId = row.int("LINJE_ID"),
             kodeKlasse = row.string("KODE_KLASSE"),
             datoVedtakFom = row.localDate("DATO_VEDTAK_FOM"),
-            datoVedtakTom = row.localDate("DATO_VEDTAK_TOM"),
+            datoVedtakTom = row.localDateOrNull("DATO_VEDTAK_TOM"),
             attestert = row.boolean("ATTESTERT"),
             sats = row.double("SATS"),
             typeSats = row.string("TYPE_SATS"),
