@@ -5,12 +5,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Oppdrag(
     val ansvarsSted: String? = null,
+    val antallAttestanter: Int,
+    val fagGruppe: String,
+    val fagOmraade: String,
     val fagSystemId: String,
     val gjelderId: String,
-    val kostnadsSted: String,
-    val fagGruppe: String,
     val kodeFagGruppe: String,
-    val fagOmraade: String,
     val kodeFagOmraade: String,
+    val kostnadsSted: String,
     val oppdragsId: Int,
 )

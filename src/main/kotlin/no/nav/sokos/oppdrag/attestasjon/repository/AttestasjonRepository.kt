@@ -152,6 +152,7 @@ class AttestasjonRepository(
         linjeIder: List<Int>,
         typeEnhet: String,
     ): Map<Int, String> {
+        if (linjeIder.isEmpty()) return emptyMap()
         val query =
             """
             SELECT LINJE_ID, ENHET
@@ -159,7 +160,7 @@ class AttestasjonRepository(
             WHERE 1=1
               AND E.TYPE_ENHET=:TYPEENHET
               AND ENHET != ''
-              AND E.LINJE_ID IN (${linjeIder.joinToString(",")})
+              AND LINJE_ID IN (${linjeIder.joinToString(",")})
               AND E.OPPDRAGS_ID = :OPPDRAGSID
               AND NOT EXISTS(SELECT 1
                              FROM T_LINJEENHET DUP
@@ -184,7 +185,8 @@ class AttestasjonRepository(
     fun getAttestasjonerForLinjer(
         oppdragsId: Int,
         linjeIder: List<Int>,
-    ): Map<Int, Attestasjon> {
+    ): Map<Int, List<Attestasjon>> {
+        if (linjeIder.isEmpty()) return emptyMap()
         val query =
             """
             SELECT A.LINJE_ID           AS LINJE_ID, 
@@ -210,7 +212,13 @@ class AttestasjonRepository(
                         "OPPDRAGSID" to oppdragsId,
                     ),
                 ),
-            ) { row -> row.int("LINJE_ID") to Attestasjon(row.string("ATTESTANT_ID"), row.localDate("DATO_UGYLDIG_FOM")) }.toMap()
+            ) { row ->
+                row.int("LINJE_ID") to
+                    Attestasjon(
+                        row.string("ATTESTANT_ID"),
+                        row.localDate("DATO_UGYLDIG_FOM"),
+                    )
+            }.groupBy({ it.first }, { it.second })
         }
     }
 
@@ -221,7 +229,8 @@ class AttestasjonRepository(
                            TRIM(o.OPPDRAG_GJELDER_ID)  as OPPDRAG_GJELDER_ID, 
                            TRIM(o.KODE_FAGOMRAADE)     as KODE_FAGOMRAADE, 
                            TRIM(fo.NAVN_FAGOMRAADE)    as NAVN_FAGOMRAADE, 
-                           TRIM(fo.KODE_FAGGRUPPE)     as KODE_FAGGRUPPE, 
+                           TRIM(fo.KODE_FAGGRUPPE)     as KODE_FAGGRUPPE,        
+                           fo.ANT_ATTESTANTER          as ANT_ATTESTANTER,
                            TRIM(fg.NAVN_FAGGRUPPE)     as NAVN_FAGGRUPPE, 
                            TRIM(ok.ENHET)              as kostnadssted,
                            TRIM(oa.ENHET)              as ansvarssted
@@ -260,6 +269,7 @@ class AttestasjonRepository(
     private val mapToOppdrag: (Row) -> Oppdrag = { row ->
         Oppdrag(
             ansvarsSted = row.stringOrNull("ANSVARSSTED"),
+            antallAttestanter = row.int("ANT_ATTESTANTER"),
             fagSystemId = row.string("FAGSYSTEM_ID"),
             gjelderId = row.string("OPPDRAG_GJELDER_ID"),
             kostnadsSted = row.string("KOSTNADSSTED"),

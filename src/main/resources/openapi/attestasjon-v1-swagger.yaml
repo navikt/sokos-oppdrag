@@ -173,6 +173,36 @@ components:
           example: true
           nullable: true
 
+    ApiError:
+      type: object
+      required:
+        - timestamp
+        - status
+        - error
+        - message
+        - path
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Tidspunkt feilen oppsto
+        status:
+          type: integer
+          example: 4xx
+          description: HTTP status kode
+        error:
+          type: string
+          example: Bad Request
+          description: En kort, lesbar oppsummering av problemet
+        message:
+          type: string
+          example: Det skjedde en feil
+          description: En lesbar forklaring som er spesifikk for denne forekomsten av problemet
+        path:
+          type: string
+          example: /api/v1/attestasjon/sok
+          description: Endepunktet hvor feilen oppstå
+
     AttestasjonRequest:
       type: object
       properties:
@@ -228,6 +258,14 @@ components:
           required:
             - Attestasjonskvittering
 
+    Attestasjon:
+      type: object
+      properties:
+        attestant:
+          type: string
+        datoUgyldigFom:
+          type: string
+
     AttestasjonLinje:
       type: object
       properties:
@@ -244,37 +282,6 @@ components:
           example: "2021-01-01"
           description: Dato for ugyldig fra
 
-    Oppdrag:
-      type: object
-      required:
-        - fagSystemId
-        - gjelderId
-        - kostnadsSted
-        - fagGruppe
-        - kodeFagGruppe
-        - fagOmraade
-        - kodeFagOmraade
-        - oppdragsId
-      properties:
-        ansvarsSted:
-          type: string
-        gjelderId:
-          type: string
-        kostnadsSted:
-          type: string
-        fagGruppe:
-          type: string
-        kodeFagGruppe:
-          type: string
-        fagOmraade:
-          type: string
-        kodeFagOmraade:
-          type: string
-        oppdragsId:
-          type: integer
-        fagSystemId:
-          type: string
-
     FagOmraade:
       type: object
       required:
@@ -286,93 +293,91 @@ components:
         kode:
           type: string
 
-    OppdragsDetaljer:
+    Oppdrag:
       type: object
-      required:
-        - antallAttestanter
-        - datoVedtakFom
-        - delytelsesId
-        - fagSystemId
-        - gjelderId
-        - kodeKlasse
-        - kodeFagOmraade
-        - kostnadsStedForOppdrag
-        - linjeId
-        - fagGruppe
-        - fagOmraade
-        - oppdragsId
-        - sats
-        - satstype
       properties:
-        ansvarsStedForOppdrag:
-          type: string
-        ansvarsStedForOppdragsLinje:
+        ansvarsSted:
           type: string
         antallAttestanter:
           type: integer
-        attestant:
-          type: string
-        datoUgyldigFom:
-          type: string
-        datoVedtakFom:
-          type: string
-        datoVedtakTom:
-          type: string
-        delytelsesId:
-          type: string
-        gjelderId:
-          type: string
-        fagSystemId:
-          type: string
-        kodeKlasse:
-          type: string
-        kodeFagOmraade:
-            type: string
-        kostnadsStedForOppdrag:
-          type: string
-        kostnadsStedForOppdragsLinje:
-          type: string
-        linjeId:
-          type: string
         fagGruppe:
           type: string
         fagOmraade:
           type: string
+        fagSystemId:
+          type: string
+        gjelderId:
+          type: string
+        kostnadsSted:
+          type: string
+        kodeFagGruppe:
+          type: string
+        kodeFagOmraade:
+          type: string
+        oppdragsId:
+          type: integer
+
+    OppdragsDetaljer:
+      type: object
+      properties:
+        ansvarsStedForOppdrag:
+          type: string
+        antallAttestanter:
+          type: integer
+        fagGruppe:
+          type: string
+        fagOmraade:
+          type: string
+        fagSystemId:
+          type: string
+        gjelderId:
+          type: string
+        kodeFagOmraade:
+          type: string
+        kostnadsStedForOppdrag:
+          type: string
         oppdragsId:
           type: string
+        linjer:
+          type: array
+          items:
+            $ref: '#/components/schemas/Oppdragslinje'
+
+    Oppdragslinje:
+      type: object
+      properties:
+        oppdragsLinje:
+          $ref: '#/components/schemas/OppdragslinjePlain'
+        ansvarsStedForOppdragsLinje:
+          type: string
+        kostnadsStedForOppdragsLinje:
+          type: string
+        attestasjoner:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attestasjon'
+
+    OppdragslinjePlain:
+      type: object
+      properties:
+        attestert:
+          type: boolean
+        datoVedtakFom:
+          type: string
+        datoVedtakTom:
+          type: string
+        delytelseId:
+          type: integer
+        kodeKlasse:
+          type: string
+        linjeId:
+          type: integer
+        oppdragsId:
+          type: integer
         sats:
           type: number
-        satstype:
+        typeSats:
           type: string
-    ApiError:
-      type: object
-      required:
-        - timestamp
-        - status
-        - error
-        - message
-        - path
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Tidspunkt feilen oppsto
-        status:
-          type: integer
-          example: 4xx
-          description: HTTP status kode
-        error:
-          type: string
-          example: Bad Request
-          description: En kort, lesbar oppsummering av problemet
-        message:
-          type: string
-          example: Det skjedde en feil
-          description: En lesbar forklaring som er spesifikk for denne forekomsten av problemet
-        path:
-          type: string
-          example: /api/v1/attestasjon/sok
-          description: Endepunktet hvor feilen oppstå
 
   securitySchemes:
     Bearer:

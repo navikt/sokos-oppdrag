@@ -3,9 +3,12 @@ package no.nav.sokos.oppdrag.attestasjon.service
 import io.ktor.server.application.ApplicationCall
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
+import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.OppdragsDetaljer
+import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
+import no.nav.sokos.oppdrag.attestasjon.domain.OppdragslinjePlain
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
@@ -54,52 +57,51 @@ class AttestasjonService(
         return attestasjonRepository.getFagOmraader()
     }
 
-    fun getOppdragsDetaljer(oppdragsId: Int): List<OppdragsDetaljer> {
-        val oppdragslinjerUtenFluff = attestasjonRepository.getOppdragslinjerPlain(oppdragsId)
+    fun getOppdragsDetaljer(oppdragsId: Int): OppdragsDetaljer {
+        val oppdragslinjerPlain: List<OppdragslinjePlain> = attestasjonRepository.getOppdragslinjerPlain(oppdragsId)
 
-        val linjerMedDatoVedtakTomSattDerDeManglerUnntattDenSisteAvHverKlassekode =
-            oppdragslinjerUtenFluff
+        val oppdragsInfo = attestasjonRepository.getEnkeltOppdrag(oppdragsId)
+
+        val linjerMedDatoVedtakTomSattDerDeManglerUnntattDenSisteAvHverKlassekode: List<OppdragslinjePlain> =
+            oppdragslinjerPlain
                 .groupBy { l -> l.kodeKlasse }
                 .values.flatMap { l ->
                     l.zipWithNext()
-                        .map { (curr, next) -> curr.copy(datoVedtakTom = curr.datoVedtakTom ?: next.datoVedtakFom.minusDays(1)) }
+                        .map { (curr, next) ->
+                            curr.copy(
+                                datoVedtakTom = curr.datoVedtakTom ?: next.datoVedtakFom.minusDays(1),
+                            )
+                        }
                         .toList() + l.last()
                 }
 
-        val linjeIder = oppdragslinjerUtenFluff.map { l -> l.linjeId }.toList()
+        val linjeIder = oppdragslinjerPlain.map { l -> l.linjeId }.toList()
 
         val kostnadssteder = attestasjonRepository.getEnhetForLinjer(oppdragsId, linjeIder, "BOS")
         val ansvarssteder = attestasjonRepository.getEnhetForLinjer(oppdragsId, linjeIder, "BEH")
-        val attestasjoner = attestasjonRepository.getAttestasjonerForLinjer(oppdragsId, linjeIder)
-        val oppdragsInfo = attestasjonRepository.getEnkeltOppdrag(oppdragsId)
+        val attestasjoner: Map<Int, List<Attestasjon>> = attestasjonRepository.getAttestasjonerForLinjer(oppdragsId, linjeIder)
 
         val oppdragsdetaljer =
-            linjerMedDatoVedtakTomSattDerDeManglerUnntattDenSisteAvHverKlassekode.map {
-                    l ->
-                OppdragsDetaljer(
-                    ansvarsStedForOppdrag = oppdragsInfo.ansvarsSted,
-                    ansvarsStedForOppdragsLinje = ansvarssteder.get(l.linjeId),
-                    antallAttestanter = 1,
-                    attestant = attestasjoner[l.linjeId]?.attestant,
-                    datoUgyldigFom = attestasjoner[l.linjeId]?.datoUgyldigFom.toString(),
-                    datoVedtakFom = l.datoVedtakFom.toString(),
-                    datoVedtakTom = l.datoVedtakTom.toString(),
-                    delytelsesId = l.delytelseId.toString(),
-                    fagGruppe = oppdragsInfo.fagGruppe,
-                    fagOmraade = oppdragsInfo.fagOmraade,
-                    fagSystemId = oppdragsInfo.fagSystemId,
-                    gjelderId = oppdragsInfo.gjelderId,
-                    kodeFagOmraade = oppdragsInfo.kodeFagOmraade,
-                    kodeKlasse = l.kodeKlasse,
-                    kostnadsStedForOppdrag = oppdragsInfo.kostnadsSted,
-                    kostnadsStedForOppdragsLinje = kostnadssteder[l.linjeId],
-                    linjeId = l.linjeId.toString(),
-                    oppdragsId = l.oppdragsId.toString(),
-                    sats = l.sats,
-                    satstype = l.typeSats,
-                )
-            }
-
+            OppdragsDetaljer(
+                ansvarsStedForOppdrag = oppdragsInfo.ansvarsSted,
+                oppdragsId = oppdragsInfo.oppdragsId.toString(),
+                antallAttestanter = oppdragsInfo.antallAttestanter,
+                fagGruppe = oppdragsInfo.fagGruppe,
+                fagOmraade = oppdragsInfo.fagOmraade,
+                fagSystemId = oppdragsInfo.fagSystemId,
+                gjelderId = oppdragsInfo.gjelderId,
+                kostnadsStedForOppdrag = oppdragsInfo.kostnadsSted,
+                kodeFagOmraade = oppdragsInfo.kodeFagOmraade,
+                linjer =
+                    linjerMedDatoVedtakTomSattDerDeManglerUnntattDenSisteAvHverKlassekode.map { l ->
+                        Oppdragslinje(
+                            oppdragsLinje = l,
+                            ansvarsStedForOppdragsLinje = ansvarssteder[l.linjeId],
+                            kostnadsStedForOppdragsLinje = kostnadssteder[l.linjeId],
+                            attestasjoner = attestasjoner[l.linjeId] ?: emptyList(),
+                        )
+                    },
+            )
         return oppdragsdetaljer
     }
 
