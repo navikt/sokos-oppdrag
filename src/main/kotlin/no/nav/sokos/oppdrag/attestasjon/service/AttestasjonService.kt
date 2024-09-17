@@ -57,7 +57,7 @@ class AttestasjonService(
         return attestasjonRepository.getFagOmraader()
     }
 
-    fun getOppdragsDetaljer(oppdragsId: Int): OppdragsDetaljer {
+    fun getOppdragsDetaljer(oppdragsId: Int): List<OppdragsDetaljer> {
         val oppdragslinjerPlain: List<OppdragslinjePlain> = attestasjonRepository.getOppdragslinjerPlain(oppdragsId)
 
         val oppdragsInfo = attestasjonRepository.getEnkeltOppdrag(oppdragsId)
@@ -102,7 +102,7 @@ class AttestasjonService(
                         )
                     },
             )
-        return oppdragsdetaljer
+        return listOf(oppdragsdetaljer)
     }
 
     suspend fun attestereOppdrag(
