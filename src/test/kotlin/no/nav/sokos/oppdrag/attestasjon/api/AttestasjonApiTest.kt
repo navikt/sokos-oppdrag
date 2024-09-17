@@ -20,8 +20,12 @@ import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
+import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
+import no.nav.sokos.oppdrag.attestasjon.domain.OppdragsDetaljer
+import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
+import no.nav.sokos.oppdrag.attestasjon.domain.OppdragslinjePlain
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponse
@@ -31,6 +35,7 @@ import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
 import org.hamcrest.Matchers.equalTo
+import java.time.LocalDate
 
 private const val PORT = 9090
 
@@ -146,6 +151,58 @@ internal class AttestasjonApiTest : FunSpec({
         response.body.jsonPath().getList<FagOmraade>("kode").first().shouldBe("BP")
     }
 
+    test("søk etter oppdragsId på oppdragslinjer endepunktet skal returnere 200 OK") {
+        every { attestasjonService.getOppdragsDetaljer(any()) } returns
+            listOf(
+                OppdragsDetaljer(
+                    ansvarsStedForOppdrag = "1337",
+                    antallAttestanter = 1,
+                    fagGruppe = "faggruppe",
+                    fagOmraade = "fagområde",
+                    fagSystemId = "123456789",
+                    gjelderId = "12345612345",
+                    kodeFagOmraade = "FUBAR",
+                    kostnadsStedForOppdrag = "8128",
+                    linjer =
+                        listOf(
+                            Oppdragslinje(
+                                oppdragsLinje =
+                                    OppdragslinjePlain(
+                                        attestert = false,
+                                        datoVedtakFom = LocalDate.parse("2000-01-01"),
+                                        datoVedtakTom = null,
+                                        delytelseId = 123,
+                                        kodeKlasse = "FUBAR",
+                                        linjeId = 1,
+                                        oppdragsId = 12345678,
+                                        sats = 1234.56,
+                                        typeSats = "MND",
+                                    ),
+                                attestasjoner =
+                                    listOf(
+                                        Attestasjon(attestant = "X999123", datoUgyldigFom = LocalDate.parse("2050-01-01")),
+                                    ),
+                                ansvarsStedForOppdragsLinje = null,
+                                kostnadsStedForOppdragsLinje = null,
+                            ),
+                        ),
+                    oppdragsId = "12345678",
+                ),
+            )
+
+        val response =
+            RestAssured.given().filter(validationFilter)
+                .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                .port(PORT)
+                .get("$ATTESTASJON_BASE_API_PATH/oppdragsdetaljer/12341234")
+                .then().assertThat()
+                .statusCode(HttpStatusCode.OK.value)
+                .extract().response()
+
+        response.body.jsonPath().getList<Int>("fagSystemId").first().shouldBe("123456789")
+    }
+
     // TODO: En test for .get("$ATTESTASJON_BASE_API_PATH/oppdragsdetaljer/12341234") som returnerer 400 Bad Request??
 
     test("attestering av oppdrag skal returnere 200 OK") {
@@ -195,15 +252,20 @@ internal class AttestasjonApiTest : FunSpec({
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
-        response.body.jsonPath().getString("OSAttestasjonOperationResponse.Attestasjonskvittering.ResponsAttestasjon.GjelderId")
+        response.body.jsonPath()
+            .getString("OSAttestasjonOperationResponse.Attestasjonskvittering.ResponsAttestasjon.GjelderId")
             .shouldBe("123456789")
-        response.body.jsonPath().getInt("OSAttestasjonOperationResponse.Attestasjonskvittering.ResponsAttestasjon.OppdragsId")
+        response.body.jsonPath()
+            .getInt("OSAttestasjonOperationResponse.Attestasjonskvittering.ResponsAttestasjon.OppdragsId")
             .shouldBe(999_999_999)
-        response.body.jsonPath().getInt("OSAttestasjonOperationResponse.Attestasjonskvittering.ResponsAttestasjon.AntLinjerMottatt")
+        response.body.jsonPath()
+            .getInt("OSAttestasjonOperationResponse.Attestasjonskvittering.ResponsAttestasjon.AntLinjerMottatt")
             .shouldBe(99_999)
-        response.body.jsonPath().getInt("OSAttestasjonOperationResponse.Attestasjonskvittering.ResponsAttestasjon.Statuskode")
+        response.body.jsonPath()
+            .getInt("OSAttestasjonOperationResponse.Attestasjonskvittering.ResponsAttestasjon.Statuskode")
             .shouldBe(99)
-        response.body.jsonPath().getString("OSAttestasjonOperationResponse.Attestasjonskvittering.ResponsAttestasjon.Melding")
+        response.body.jsonPath()
+            .getString("OSAttestasjonOperationResponse.Attestasjonskvittering.ResponsAttestasjon.Melding")
             .shouldBe("Test melding")
     }
 })
