@@ -35,4 +35,10 @@ internal class InputValidatorTest : FunSpec({
         val result = validGjelderId(invalidGjelderId)
         result shouldBe false
     }
+
+    test("gjelderId er blank") {
+        val invalidGjelderId = ""
+        val result = validGjelderId(invalidGjelderId)
+        result shouldBe false
+    }
 })
