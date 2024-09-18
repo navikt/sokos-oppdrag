@@ -20,7 +20,7 @@ fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonSer
             call.respond(
                 attestasjonService.getOppdrag(
                     gjelderId = request.gjelderId,
-                    fagsystemId = request.fagsystemId,
+                    fagSystemId = request.fagSystemId,
                     kodeFagGruppe = request.kodeFagGruppe,
                     kodeFagOmraade = request.kodeFagOmraade,
                     attestert = request.attestert,

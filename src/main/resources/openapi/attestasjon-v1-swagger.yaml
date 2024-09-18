@@ -156,7 +156,7 @@ components:
           example: "9 eller 11 siffer"
           description: 9 eller 11 siffer
           nullable: true
-        fagsystemId:
+        fagSystemId:
           type: string
           example: "TU000123456789012"
           nullable: true
@@ -247,7 +247,7 @@ components:
     Oppdrag:
       type: object
       required:
-        - fagsystemId
+        - fagSystemId
         - gjelderId
         - kostnadsSted
         - fagGruppe
@@ -266,7 +266,7 @@ components:
           type: string
         oppdragsId:
           type: integer
-        fagsystemId:
+        fagSystemId:
           type: string
 
     FagOmraade:

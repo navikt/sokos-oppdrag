@@ -24,7 +24,7 @@ class AttestasjonService(
     fun getOppdrag(
         applicationCall: ApplicationCall,
         attestert: Boolean? = null,
-        fagsystemId: String? = null,
+        fagSystemId: String? = null,
         gjelderId: String? = null,
         kodeFagGruppe: String? = null,
         kodeFagOmraade: String? = null,
@@ -43,7 +43,7 @@ class AttestasjonService(
 
         return attestasjonRepository.getOppdrag(
             gjelderId = gjelderId ?: "",
-            fagsystemId = fagsystemId ?: "",
+            fagSystemId = fagSystemId ?: "",
             kodeFaggruppe = kodeFagGruppe ?: "",
             kodeFagomraade = kodeFagOmraade ?: "",
             attestert = attestert,

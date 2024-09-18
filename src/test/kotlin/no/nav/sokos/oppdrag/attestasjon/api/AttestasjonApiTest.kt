@@ -55,7 +55,7 @@ internal class AttestasjonApiTest : FunSpec({
             listOf(
                 Oppdrag(
                     ansvarsSted = "1337",
-                    fagsystemId = "123456789",
+                    fagSystemId = "123456789",
                     gjelderId = "12345678901",
                     kostnadsSted = "8128",
                     fagGruppe = "navnFaggruppe",

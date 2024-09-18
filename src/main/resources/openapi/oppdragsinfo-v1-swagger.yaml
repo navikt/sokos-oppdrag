@@ -864,7 +864,7 @@ components:
     Oppdrag:
       type: object
       properties:
-        fagsystemId:
+        fagSystemId:
           type: string
         oppdragsId:
           type: integer
