@@ -68,7 +68,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         val oppdragsegenskaperList =
             listOf(
                 Oppdrag(
-                    fagsystemId = "12345678901",
+                    fagSystemId = "12345678901",
                     oppdragsId = 1234556,
                     navnFagGruppe = "faggruppeNavn",
                     navnFagOmraade = "fagomraadeNavn",

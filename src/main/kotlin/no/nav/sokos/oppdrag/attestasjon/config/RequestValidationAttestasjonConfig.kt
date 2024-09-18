@@ -8,7 +8,7 @@ import no.nav.sokos.oppdrag.common.util.Util.validGjelderId
 fun RequestValidationConfig.requestValidationAttestasjonConfig() {
     validate<OppdragsRequest> { request ->
         when {
-            request.gjelderId != null && !validGjelderId(request.gjelderId) -> ValidationResult.Invalid("gjelderId er ugyldig. Tillatt format er 9 eller 11 siffer")
+            !request.gjelderId.isNullOrEmpty() && !validGjelderId(request.gjelderId) -> ValidationResult.Invalid("gjelderId er ugyldig. Tillatt format er 9 eller 11 siffer")
             !validateSearchParams(request) -> ValidationResult.Invalid("Ugyldig kombinasjon av søkeparametere")
             else -> ValidationResult.Valid
         }
@@ -28,7 +28,7 @@ private fun validateSearchParams(oppdragsRequest: OppdragsRequest): Boolean {
     oppdragsRequest.kodeFagGruppe?.takeIf { oppdragsRequest.attestert == false }?.let { valid = true }
     oppdragsRequest.kodeFagOmraade?.takeIf { oppdragsRequest.attestert == false }?.let { valid = true }
     oppdragsRequest.gjelderId?.let { valid = true }
-    oppdragsRequest.fagsystemId?.let { oppdragsRequest.kodeFagOmraade?.let { valid = true } }
+    oppdragsRequest.fagSystemId?.let { oppdragsRequest.kodeFagOmraade?.let { valid = true } }
 
     return valid
 }

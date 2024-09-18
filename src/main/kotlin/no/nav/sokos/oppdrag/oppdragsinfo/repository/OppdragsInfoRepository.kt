@@ -576,7 +576,7 @@ class OppdragsInfoRepository(
 
     private val mapToOppdrag: (Row) -> Oppdrag = { row ->
         Oppdrag(
-            fagsystemId = row.string("FAGSYSTEM_ID"),
+            fagSystemId = row.string("FAGSYSTEM_ID"),
             oppdragsId = row.int("OPPDRAGS_ID"),
             navnFagGruppe = row.string("NAVN_FAGGRUPPE"),
             navnFagOmraade = row.string("NAVN_FAGOMRAADE"),

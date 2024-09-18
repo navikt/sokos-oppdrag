@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Oppdrag(
-    val fagsystemId: String,
+    val fagSystemId: String,
     val oppdragsId: Int,
     val navnFagGruppe: String,
     val navnFagOmraade: String,
