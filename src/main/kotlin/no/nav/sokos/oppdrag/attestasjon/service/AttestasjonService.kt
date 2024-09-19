@@ -48,7 +48,7 @@ class AttestasjonService(
         var fagomraader = kodeFagGruppe?.let { attestasjonRepository.getFagomraaderForFaggruppe(it) }
 
         // hvis fagområde er oppgitt er det bare det ene vi skal søke på
-        kodeFagOmraade?. let { fagomraader = listOf(it) }
+        kodeFagOmraade?. let { if (kodeFagOmraade.isNotBlank()) fagomraader = listOf(it) }
 
         return attestasjonRepository.getOppdrag(
             attestert = attestert,
