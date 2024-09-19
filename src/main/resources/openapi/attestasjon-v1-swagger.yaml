@@ -367,7 +367,7 @@ components:
         datoVedtakTom:
           type: string
         delytelseId:
-          type: integer
+          type: string
         kodeKlasse:
           type: string
         linjeId:
