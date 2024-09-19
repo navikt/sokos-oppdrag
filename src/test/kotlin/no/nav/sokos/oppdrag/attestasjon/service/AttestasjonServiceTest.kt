@@ -349,6 +349,6 @@ private fun mapToOppdragslinjePlain(params: List<String>): OppdragslinjePlain {
         attestert = (if (params.get(6).equals("J")) true else false),
         sats = params.get(7).toDouble(),
         typeSats = params.get(8),
-        delytelseId = params.get(9).toInt(),
+        delytelseId = params.get(9),
     )
 }

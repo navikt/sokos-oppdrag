@@ -171,7 +171,7 @@ internal class AttestasjonApiTest : FunSpec({
                                         attestert = false,
                                         datoVedtakFom = LocalDate.parse("2000-01-01"),
                                         datoVedtakTom = null,
-                                        delytelseId = 123,
+                                        delytelseId = "FYL20170501007247481 79947001",
                                         kodeKlasse = "FUBAR",
                                         linjeId = 1,
                                         oppdragsId = 12345678,

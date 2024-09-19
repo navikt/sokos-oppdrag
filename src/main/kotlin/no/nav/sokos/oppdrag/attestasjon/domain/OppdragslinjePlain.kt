@@ -17,7 +17,7 @@ data class OppdragslinjePlain(
     val datoVedtakFom: LocalDate,
     @Serializable(with = LocalDateSerializer::class)
     val datoVedtakTom: LocalDate?,
-    val delytelseId: Int,
+    val delytelseId: String,
     val kodeKlasse: String,
     val linjeId: Int,
     val oppdragsId: Int,

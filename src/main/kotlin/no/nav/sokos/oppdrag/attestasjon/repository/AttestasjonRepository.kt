@@ -147,7 +147,7 @@ class AttestasjonRepository(
                     L.ATTESTERT            AS ATTESTERT,
                     L.SATS                 AS SATS,
                     TRIM(L.TYPE_SATS)      AS TYPE_SATS,
-                    L.DELYTELSE_ID         AS DELYTELSE_ID
+                    TRIM(L.DELYTELSE_ID)   AS DELYTELSE_ID
             FROM T_OPPDRAGSLINJE L
                      JOIN T_LINJE_STATUS STATUSNY ON STATUSNY.LINJE_ID = L.LINJE_ID AND STATUSNY.OPPDRAGS_ID = L.OPPDRAGS_ID
             WHERE STATUSNY.KODE_STATUS = 'NY'
@@ -325,7 +325,7 @@ class AttestasjonRepository(
             attestert = row.boolean("ATTESTERT"),
             sats = row.double("SATS"),
             typeSats = row.string("TYPE_SATS"),
-            delytelseId = row.int("DELYTELSE_ID"),
+            delytelseId = row.string("DELYTELSE_ID"),
         )
     }
 
