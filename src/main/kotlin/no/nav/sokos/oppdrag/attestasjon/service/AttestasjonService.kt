@@ -44,12 +44,17 @@ class AttestasjonService(
             )
         }
 
+        // hvis faggruppe er oppgitt kan vi søke på alle de fagområdene som er innunder den faggruppen
+        var fagomraader = kodeFagGruppe?.let { attestasjonRepository.getFagomraaderForFaggruppe(it) }
+
+        // hvis fagområde er oppgitt er det bare det ene vi skal søke på
+        kodeFagOmraade?. let { fagomraader = listOf(it) }
+
         return attestasjonRepository.getOppdrag(
-            gjelderId = gjelderId ?: "",
-            fagSystemId = fagSystemId ?: "",
-            kodeFaggruppe = kodeFagGruppe ?: "",
-            kodeFagomraade = kodeFagOmraade ?: "",
             attestert = attestert,
+            fagSystemId = fagSystemId,
+            gjelderId = gjelderId,
+            kodeFagOmraader = fagomraader,
         )
     }
 
@@ -62,7 +67,7 @@ class AttestasjonService(
 
         val oppdragsInfo = attestasjonRepository.getEnkeltOppdrag(oppdragsId)
 
-        val linjerMedDatoVedtakTomSattDerDeManglerUnntattDenSisteAvHverKlassekode: List<OppdragslinjePlain> =
+        val linjerMedDatoVedtakTom: List<OppdragslinjePlain> =
             oppdragslinjerPlain
                 .groupBy { l -> l.kodeKlasse }
                 .values.flatMap { l ->
@@ -93,7 +98,7 @@ class AttestasjonService(
                 kostnadsStedForOppdrag = oppdragsInfo.kostnadsSted,
                 kodeFagOmraade = oppdragsInfo.kodeFagOmraade,
                 linjer =
-                    linjerMedDatoVedtakTomSattDerDeManglerUnntattDenSisteAvHverKlassekode.map { l ->
+                    linjerMedDatoVedtakTom.map { l ->
                         Oppdragslinje(
                             oppdragsLinje = l,
                             ansvarsStedForOppdragsLinje = ansvarssteder[l.linjeId],
