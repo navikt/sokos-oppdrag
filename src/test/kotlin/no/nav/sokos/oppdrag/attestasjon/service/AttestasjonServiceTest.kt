@@ -34,7 +34,7 @@ internal class AttestasjonServiceTest : FunSpec({
 
     beforeTest {
         every { applicationCall.request.headers["Authorization"] } returns tokenWithNavIdent
-        every { attestasjonRepository.getOppdrag(any(), any(), any(), any(), any()) } returns emptyList()
+        every { attestasjonRepository.getOppdrag(any(), any(), any(), any()) } returns emptyList()
     }
 
     test("attestasjon av oppdrag") {
