@@ -15,72 +15,86 @@ class AttestasjonRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource(),
 ) {
     fun getOppdrag(
-        gjelderId: String,
-        fagSystemId: String,
-        kodeFaggruppe: String,
-        kodeFagomraade: String,
         attestert: Boolean?,
+        fagSystemId: String?,
+        gjelderId: String?,
+        kodeFagOmraader: List<String>?,
     ): List<Oppdrag> {
+        val statementParts =
+            mutableListOf(
+                """
+                SELECT OS.KODE_STATUS,
+                       TRIM(O.OPPDRAGS_ID)         AS OPPDRAGS_ID,
+                       TRIM(O.FAGSYSTEM_ID)        AS FAGSYSTEM_ID,
+                       TRIM(O.OPPDRAG_GJELDER_ID)  AS OPPDRAG_GJELDER_ID,
+                       TRIM(O.KODE_FAGOMRAADE)     AS KODE_FAGOMRAADE,
+                       TRIM(FO.NAVN_FAGOMRAADE)    AS NAVN_FAGOMRAADE,
+                       TRIM(FO.KODE_FAGGRUPPE)     AS KODE_FAGGRUPPE,
+                       FO.ANT_ATTESTANTER          AS ANT_ATTESTANTER,
+                       TRIM(FG.NAVN_FAGGRUPPE)     AS NAVN_FAGGRUPPE,
+                       TRIM(OK.ENHET)              AS KOSTNADSSTED,
+                       TRIM(OA.ENHET)              AS ANSVARSSTED
+                FROM T_OPPDRAG O
+                         JOIN T_FAGOMRAADE FO ON FO.KODE_FAGOMRAADE = O.KODE_FAGOMRAADE
+                         JOIN T_FAGGRUPPE FG ON FG.KODE_FAGGRUPPE = FO.KODE_FAGGRUPPE
+                         JOIN T_OPPDRAGSENHET OK ON OK.OPPDRAGS_ID = O.OPPDRAGS_ID AND OK.TYPE_ENHET = 'BOS'
+                         LEFT JOIN T_OPPDRAGSENHET OA ON OA.OPPDRAGS_ID = O.OPPDRAGS_ID AND OA.TYPE_ENHET = 'BEH'
+                         JOIN T_OPPDRAG_STATUS OS ON OS.OPPDRAGS_ID = O.OPPDRAGS_ID
+                WHERE OS.KODE_STATUS IN ('AKTI', 'PASS')
+                  AND NOT EXISTS(SELECT 1 FROM T_OPPDRAG_STATUS OS2 where OS2.OPPDRAGS_ID = OS.OPPDRAGS_ID AND OS2.TIDSPKT_REG > OS.TIDSPKT_REG)
+                  AND OK.TIDSPKT_REG = (SELECT MAX(TIDSPKT_REG)
+                                        FROM T_OPPDRAGSENHET OK2
+                                        WHERE OK2.OPPDRAGS_ID = OK.OPPDRAGS_ID
+                                          AND OK2.TYPE_ENHET = OK.TYPE_ENHET
+                                          AND OK2.DATO_FOM <= CURRENT DATE)
+                  AND (OA.OPPDRAGS_ID IS NULL
+                    OR OA.TIDSPKT_REG = (SELECT MAX(TIDSPKT_REG)
+                                         FROM T_OPPDRAGSENHET OA2
+                                         WHERE OA2.OPPDRAGS_ID = OA.OPPDRAGS_ID
+                                           AND OA2.TYPE_ENHET = OA.TYPE_ENHET
+                                           AND OA2.DATO_FOM  <= CURRENT DATE))
+                  AND EXISTS( SELECT 1 FROM T_OPPDRAGSLINJE L
+                                JOIN T_LINJE_STATUS STATUSNY ON STATUSNY.LINJE_ID = L.LINJE_ID AND STATUSNY.OPPDRAGS_ID = L.OPPDRAGS_ID
+                              WHERE STATUSNY.KODE_STATUS = 'NY'
+                                AND NOT EXISTS(SELECT KORRANNUOPPH.TIDSPKT_REG
+                                               FROM T_LINJE_STATUS KORRANNUOPPH
+                                               WHERE KORRANNUOPPH.LINJE_ID = L.LINJE_ID
+                                                 AND KORRANNUOPPH.OPPDRAGS_ID = L.OPPDRAGS_ID
+                                                 AND KORRANNUOPPH.KODE_STATUS IN ('KORR', 'ANNU', 'OPPH')
+                                                 AND KORRANNUOPPH.DATO_FOM = STATUSNY.DATO_FOM
+                                                 AND NOT EXISTS(SELECT 1
+                                                                FROM T_LINJE_STATUS ANDRESTATUSER
+                                                                WHERE ANDRESTATUSER.LINJE_ID = L.LINJE_ID
+                                                                  AND ANDRESTATUSER.OPPDRAGS_ID = L.OPPDRAGS_ID
+                                                                  AND ANDRESTATUSER.KODE_STATUS IN ('IKAT', 'ATTE', 'HVIL', 'REAK', 'FBER', 'LOPE')
+                                                                  AND ANDRESTATUSER.DATO_FOM >= STATUSNY.DATO_FOM
+                                                                  AND ANDRESTATUSER.TIDSPKT_REG > KORRANNUOPPH.TIDSPKT_REG))
+                                AND L.OPPDRAGS_ID = O.OPPDRAGS_ID
+                                AND L.ATTESTERT ${if (attestert == null) {
+                    "LIKE '%'"
+                } else if (attestert) {
+                    "= 'J'"
+                } else {
+                    "= 'N'"
+                }}
+                                )
+                """.trimIndent(),
+            )
+
+        if (!gjelderId.isNullOrBlank()) statementParts.add("AND O.OPPDRAG_GJELDER_ID = '$gjelderId'")
+        if (!fagSystemId.isNullOrBlank()) statementParts.add("AND O.FAGSYSTEM_ID LIKE '$fagSystemId%'")
+        if (!kodeFagOmraader.isNullOrEmpty()) statementParts.add("AND F.KODE_FAGOMRAADE IN (${kodeFagOmraader.joinToString { "," }})")
+
+        statementParts.add(
+            "GROUP BY NAVN_FAGGRUPPE, NAVN_FAGOMRAADE, OPPDRAG_GJELDER_ID, O.OPPDRAGS_ID, FAGSYSTEM_ID, OS.KODE_STATUS,O.KODE_FAGOMRAADE,FO.KODE_FAGGRUPPE,FO.ANT_ATTESTANTER,OK.ENHET,OA.ENHET",
+        )
+        statementParts.add("FETCH FIRST 200 ROWS ONLY")
+        if (!gjelderId.isNullOrBlank() || !fagSystemId.isNullOrBlank()) statementParts.add("OPTIMIZE FOR 1 ROW")
+
         return using(sessionOf(dataSource)) { session ->
-            val statementParts =
-                mutableListOf(
-                    """
-                    SELECT TRIM(G.NAVN_FAGGRUPPE)                             AS NAVN_FAGGRUPPE
-                         , TRIM(F.NAVN_FAGOMRAADE)                            AS NAVN_FAGOMRAADE
-                         , O.OPPDRAG_GJELDER_ID                               AS OPPDRAG_GJELDER_ID
-                         , O.OPPDRAGS_ID                                      AS OPPDRAGS_ID
-                         , TRIM(O.FAGSYSTEM_ID)                               AS FAGSYSTEM_ID
-                         , LS.KODE_STATUS                                     AS KODE_STATUS
-                         , OE.ENHET                                           AS KOSTNADSSTED
-                         , CASE WHEN LE.ENHET IS NOT NULL THEN TRIM(LE.ENHET)
-                          WHEN OEB.ENHET IS NOT NULL THEN TRIM(OEB.ENHET)
-                          ELSE NULL END                                       AS ANSVARSSTED
-                    FROM T_FAGGRUPPE G
-                             JOIN T_FAGOMRAADE F ON G.KODE_FAGGRUPPE = F.KODE_FAGGRUPPE
-                             JOIN T_OPPDRAG O ON F.KODE_FAGOMRAADE = O.KODE_FAGOMRAADE
-                             JOIN T_OPPDRAGSLINJE L ON O.OPPDRAGS_ID = L.OPPDRAGS_ID
-                             JOIN T_OPPDRAGSENHET OE ON OE.OPPDRAGS_ID = O.OPPDRAGS_ID AND OE.TYPE_ENHET = 'BOS'
-                             JOIN T_OPPDRAG_STATUS S ON S.OPPDRAGS_ID = L.OPPDRAGS_ID
-                             JOIN T_LINJE_STATUS LS ON LS.OPPDRAGS_ID = L.OPPDRAGS_ID AND LS.LINJE_ID = L.LINJE_ID
-                             LEFT OUTER JOIN T_KORREKSJON K ON L.OPPDRAGS_ID = K.OPPDRAGS_ID AND L.LINJE_ID = K.LINJE_ID
-                             LEFT OUTER JOIN T_LINJEENHET LE ON LE.OPPDRAGS_ID = L.OPPDRAGS_ID AND LE.TYPE_ENHET = 'BEH' AND LE.LINJE_ID = L.LINJE_ID
-                             LEFT OUTER JOIN T_OPPDRAGSENHET OEB ON OEB.OPPDRAGS_ID = O.OPPDRAGS_ID AND OEB.TYPE_ENHET = 'BEH'
-                    WHERE K.OPPDRAGS_ID IS NULL
-                      AND S.KODE_STATUS = 'AKTI'
-                      AND S.TIDSPKT_REG = (SELECT MAX(S2.TIDSPKT_REG)
-                                           FROM T_OPPDRAG_STATUS S2
-                                           WHERE S.OPPDRAGS_ID = S2.OPPDRAGS_ID)
-                      AND LS.TIDSPKT_REG = (SELECT MAX(TIDSPKT_REG)
-                                            FROM T_LINJE_STATUS LS2
-                                            WHERE LS2.OPPDRAGS_ID = LS.OPPDRAGS_ID
-                                              AND LS2.LINJE_ID = LS.LINJE_ID)
-                    """.trimIndent(),
-                )
-            if (gjelderId.isNotBlank()) statementParts.add("AND O.OPPDRAG_GJELDER_ID = :GJELDERID")
-            if (fagSystemId.isNotBlank()) statementParts.add("AND O.FAGSYSTEM_ID LIKE '$fagSystemId%'")
-            if (kodeFagomraade.isNotBlank()) statementParts.add("AND F.KODE_FAGOMRAADE = :KODEFAGOMRAADE")
-            if (kodeFaggruppe.isNotBlank()) statementParts.add("AND G.KODE_FAGGRUPPE = :KODEFAGGRUPPE")
-
-            if (attestert == false) {
-                statementParts.add("AND L.ATTESTERT = 'N'")
-            } else if (attestert == true) {
-                statementParts.add("AND L.ATTESTERT = 'J'")
-            } else if (attestert == null) {
-                statementParts.add("AND L.ATTESTERT LIKE '%'")
-            }
-
-            statementParts.add("GROUP BY NAVN_FAGGRUPPE, NAVN_FAGOMRAADE, OPPDRAG_GJELDER_ID, O.OPPDRAGS_ID, FAGSYSTEM_ID, LS.KODE_STATUS, OE.ENHET, LE.ENHET, OEB.ENHET")
-            statementParts.add("FETCH FIRST 200 ROWS ONLY")
-            if (gjelderId.isNotBlank() || fagSystemId.isNotBlank()) statementParts.add("OPTIMIZE FOR 1 ROW")
             session.list(
                 queryOf(
                     statementParts.joinToString("\n", "", ";"),
-                    mapOf(
-                        "GJELDERID" to gjelderId,
-                        "KODEFAGOMRAADE" to kodeFagomraade,
-                        "KODEFAGGRUPPE" to kodeFaggruppe,
-                        "ATTESTERT" to attestert,
-                    ),
                 ),
                 mapToOppdrag,
             )
@@ -102,6 +116,26 @@ class AttestasjonRepository(
         }
     }
 
+    fun getFagomraaderForFaggruppe(kodeFaggruppe: String): List<String> {
+        val query =
+            """
+            SELECT TRIM(FO.KODE_FAGOMRAADE) AS KODE_FAGOMRAADE                               
+            FROM T_FAGOMRAADE FO 
+            JOIN T_FAGGRUPPE FG ON FG.KODE_FAGGRUPPE = FO.KODE_FAGGRUPPE
+            and fg.KODE_FAGGRUPPE = :KODEFAGGRUPPE
+            """.trimIndent()
+        return using(sessionOf(dataSource)) { session ->
+            session.list(
+                queryOf(
+                    query,
+                    mapOf(
+                        "KODEFAGGRUPPE" to kodeFaggruppe,
+                    ),
+                ),
+            ) { (row) -> row.getString("KODE_FAGOMRAADE") }
+        }
+    }
+
     fun getOppdragslinjerPlain(oppdragsId: Int): List<OppdragslinjePlain> {
         val query =
             """
@@ -117,7 +151,7 @@ class AttestasjonRepository(
             FROM T_OPPDRAGSLINJE L
                      JOIN T_LINJE_STATUS STATUSNY ON STATUSNY.LINJE_ID = L.LINJE_ID AND STATUSNY.OPPDRAGS_ID = L.OPPDRAGS_ID
             WHERE STATUSNY.KODE_STATUS = 'NY'
-              AND NOT EXISTS(SELECT KORRANNUOPPH.TIDSPKT_REG
+               AND NOT EXISTS(SELECT 1
                              FROM T_LINJE_STATUS KORRANNUOPPH
                              WHERE KORRANNUOPPH.LINJE_ID = L.LINJE_ID
                                AND KORRANNUOPPH.OPPDRAGS_ID = L.OPPDRAGS_ID
