@@ -3,9 +3,12 @@ package no.nav.sokos.oppdrag.attestasjon.service
 import io.ktor.server.application.ApplicationCall
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
+import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.OppdragsDetaljer
+import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
+import no.nav.sokos.oppdrag.attestasjon.domain.OppdragslinjePlain
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
@@ -41,12 +44,17 @@ class AttestasjonService(
             )
         }
 
+        // hvis faggruppe er oppgitt kan vi søke på alle de fagområdene som er innunder den faggruppen
+        var fagomraader = kodeFagGruppe?.let { attestasjonRepository.getFagomraaderForFaggruppe(it) }
+
+        // hvis fagområde er oppgitt er det bare det ene vi skal søke på
+        kodeFagOmraade?. let { if (kodeFagOmraade.isNotBlank()) fagomraader = listOf(it) }
+
         return attestasjonRepository.getOppdrag(
-            gjelderId = gjelderId ?: "",
-            fagSystemId = fagSystemId ?: "",
-            kodeFaggruppe = kodeFagGruppe ?: "",
-            kodeFagomraade = kodeFagOmraade ?: "",
             attestert = attestert,
+            fagSystemId = fagSystemId,
+            gjelderId = gjelderId,
+            kodeFagOmraader = fagomraader,
         )
     }
 
@@ -55,7 +63,51 @@ class AttestasjonService(
     }
 
     fun getOppdragsDetaljer(oppdragsId: Int): List<OppdragsDetaljer> {
-        return attestasjonRepository.getOppdragsDetaljer(oppdragsId)
+        val oppdragslinjerPlain: List<OppdragslinjePlain> = attestasjonRepository.getOppdragslinjerPlain(oppdragsId)
+
+        val oppdragsInfo = attestasjonRepository.getEnkeltOppdrag(oppdragsId)
+
+        val linjerMedDatoVedtakTom: List<OppdragslinjePlain> =
+            oppdragslinjerPlain
+                .groupBy { l -> l.kodeKlasse }
+                .values.flatMap { l ->
+                    l.zipWithNext()
+                        .map { (curr, next) ->
+                            curr.copy(
+                                datoVedtakTom = curr.datoVedtakTom ?: next.datoVedtakFom.minusDays(1),
+                            )
+                        }
+                        .toList() + l.last()
+                }
+
+        val linjeIder = oppdragslinjerPlain.map { l -> l.linjeId }.toList()
+
+        val kostnadssteder = attestasjonRepository.getEnhetForLinjer(oppdragsId, linjeIder, "BOS")
+        val ansvarssteder = attestasjonRepository.getEnhetForLinjer(oppdragsId, linjeIder, "BEH")
+        val attestasjoner: Map<Int, List<Attestasjon>> = attestasjonRepository.getAttestasjonerForLinjer(oppdragsId, linjeIder)
+
+        val oppdragsdetaljer =
+            OppdragsDetaljer(
+                ansvarsStedForOppdrag = oppdragsInfo.ansvarsSted,
+                oppdragsId = oppdragsInfo.oppdragsId.toString(),
+                antallAttestanter = oppdragsInfo.antallAttestanter,
+                fagGruppe = oppdragsInfo.fagGruppe,
+                fagOmraade = oppdragsInfo.fagOmraade,
+                fagSystemId = oppdragsInfo.fagSystemId,
+                gjelderId = oppdragsInfo.gjelderId,
+                kostnadsStedForOppdrag = oppdragsInfo.kostnadsSted,
+                kodeFagOmraade = oppdragsInfo.kodeFagOmraade,
+                linjer =
+                    linjerMedDatoVedtakTom.map { l ->
+                        Oppdragslinje(
+                            oppdragsLinje = l,
+                            ansvarsStedForOppdragsLinje = ansvarssteder[l.linjeId],
+                            kostnadsStedForOppdragsLinje = kostnadssteder[l.linjeId],
+                            attestasjoner = attestasjoner[l.linjeId] ?: emptyList(),
+                        )
+                    },
+            )
+        return listOf(oppdragsdetaljer)
     }
 
     suspend fun attestereOppdrag(

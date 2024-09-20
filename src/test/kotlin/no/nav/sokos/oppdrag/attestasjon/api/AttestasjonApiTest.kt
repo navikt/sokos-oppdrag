@@ -20,9 +20,12 @@ import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
+import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.OppdragsDetaljer
+import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
+import no.nav.sokos.oppdrag.attestasjon.domain.OppdragslinjePlain
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponse
@@ -32,6 +35,7 @@ import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
 import org.hamcrest.Matchers.equalTo
+import java.time.LocalDate
 
 private const val PORT = 9090
 
@@ -55,12 +59,15 @@ internal class AttestasjonApiTest : FunSpec({
             listOf(
                 Oppdrag(
                     ansvarsSted = "1337",
+                    antallAttestanter = 1,
                     fagSystemId = "123456789",
                     gjelderId = "12345678901",
                     kostnadsSted = "8128",
                     fagGruppe = "navnFaggruppe",
                     fagOmraade = "navnFagomraade",
                     oppdragsId = 987654,
+                    kodeFagOmraade = "kodeFagomraade",
+                    kodeFagGruppe = "kodeFaggruppe",
                 ),
             )
 
@@ -145,30 +152,43 @@ internal class AttestasjonApiTest : FunSpec({
     }
 
     test("søk etter oppdragsId på oppdragslinjer endepunktet skal returnere 200 OK") {
-        val oppdragsDetaljerListe =
+        every { attestasjonService.getOppdragsDetaljer(any()) } returns
             listOf(
                 OppdragsDetaljer(
                     ansvarsStedForOppdrag = "1337",
                     antallAttestanter = 1,
-                    attestant = "attestant",
-                    datoVedtakFom = "2021-01-01",
-                    datoVedtakTom = "2021-12-31",
-                    delytelsesId = "delytelsesId",
+                    fagGruppe = "faggruppe",
+                    fagOmraade = "fagområde",
                     fagSystemId = "123456789",
-                    kodeKlasse = "KLASSE",
-                    kodeFagOmraade = "BEH",
+                    gjelderId = "12345612345",
+                    kodeFagOmraade = "FUBAR",
                     kostnadsStedForOppdrag = "8128",
-                    linjeId = "1",
-                    fagGruppe = "Aliens",
-                    fagOmraade = "Area 51",
-                    gjelderId = "123456789",
+                    linjer =
+                        listOf(
+                            Oppdragslinje(
+                                oppdragsLinje =
+                                    OppdragslinjePlain(
+                                        attestert = false,
+                                        datoVedtakFom = LocalDate.parse("2000-01-01"),
+                                        datoVedtakTom = null,
+                                        delytelseId = "FYL20170501007247481 79947001",
+                                        kodeKlasse = "FUBAR",
+                                        linjeId = 1,
+                                        oppdragsId = 12345678,
+                                        sats = 1234.56,
+                                        typeSats = "MND",
+                                    ),
+                                attestasjoner =
+                                    listOf(
+                                        Attestasjon(attestant = "X999123", datoUgyldigFom = LocalDate.parse("2050-01-01")),
+                                    ),
+                                ansvarsStedForOppdragsLinje = null,
+                                kostnadsStedForOppdragsLinje = null,
+                            ),
+                        ),
                     oppdragsId = "12345678",
-                    sats = 123.45,
-                    satstype = "satstype",
                 ),
             )
-
-        every { attestasjonService.getOppdragsDetaljer(any()) } returns oppdragsDetaljerListe
 
         val response =
             RestAssured.given().filter(validationFilter)
