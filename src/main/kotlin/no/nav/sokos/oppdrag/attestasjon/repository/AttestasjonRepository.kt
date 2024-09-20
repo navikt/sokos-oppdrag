@@ -235,6 +235,7 @@ class AttestasjonRepository(
                     WHERE A2.OPPDRAGS_ID = A.OPPDRAGS_ID
                       AND A2.LINJE_ID = A.LINJE_ID
                       AND A2.ATTESTANT_ID = A.ATTESTANT_ID))
+              AND A.DATO_UGYLDIG_FOM > CURRENT DATE
             ;
             """.trimIndent()
         return using(sessionOf(dataSource)) { session ->
