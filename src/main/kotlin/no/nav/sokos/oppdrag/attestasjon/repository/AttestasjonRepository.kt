@@ -18,7 +18,7 @@ class AttestasjonRepository(
         attestert: Boolean?,
         fagSystemId: String?,
         gjelderId: String?,
-        kodeFagOmraader: List<String>?
+        kodeFagOmraader: List<String>?,
     ): List<Oppdrag> {
         val statementParts =
             mutableListOf(
