@@ -83,7 +83,7 @@ class AttestasjonRepository(
 
         if (!gjelderId.isNullOrBlank()) statementParts.add("AND O.OPPDRAG_GJELDER_ID = '$gjelderId'")
         if (!fagSystemId.isNullOrBlank()) statementParts.add("AND O.FAGSYSTEM_ID LIKE '$fagSystemId%'")
-        if (!kodeFagOmraader.isNullOrEmpty()) statementParts.add("AND F.KODE_FAGOMRAADE IN (${kodeFagOmraader.joinToString("','", "'", postfix = "'")})")
+        if (!kodeFagOmraader.isNullOrEmpty()) statementParts.add("AND O.KODE_FAGOMRAADE IN (${kodeFagOmraader.joinToString("','", "'", postfix = "'")})")
 
         statementParts.add(
             "GROUP BY NAVN_FAGGRUPPE, NAVN_FAGOMRAADE, OPPDRAG_GJELDER_ID, O.OPPDRAGS_ID, FAGSYSTEM_ID, OS.KODE_STATUS,O.KODE_FAGOMRAADE,FO.KODE_FAGGRUPPE,FO.ANT_ATTESTANTER,OK.ENHET,OA.ENHET",
