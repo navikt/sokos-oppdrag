@@ -88,6 +88,8 @@ class AttestasjonRepository(
         statementParts.add("FETCH FIRST 200 ROWS ONLY")
         if (!gjelderId.isNullOrBlank() || !fagSystemId.isNullOrBlank()) statementParts.add("OPTIMIZE FOR 1 ROW")
 
+        print(statementParts.joinToString("\n", "", ";"))
+
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -319,7 +321,7 @@ class AttestasjonRepository(
             kodeKlasse = row.string("KODE_KLASSE"),
             datoVedtakFom = row.localDate("DATO_VEDTAK_FOM"),
             datoVedtakTom = row.localDateOrNull("DATO_VEDTAK_TOM"),
-            attestert = row.boolean("ATTESTERT"),
+            attestert = if (row.string("ATTESTERT").equals("J")) true else false,
             sats = row.double("SATS"),
             typeSats = row.string("TYPE_SATS"),
             delytelseId = row.string("DELYTELSE_ID"),
