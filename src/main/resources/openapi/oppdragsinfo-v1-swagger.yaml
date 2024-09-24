@@ -24,7 +24,7 @@ paths:
       description: Returnerer oppdragsegenskaper tilknyttet person eller foretak.
       operationId: hentOppdragsEgenskaper
       requestBody:
-        description: gjelderId er et krav, men fagGruppeKode er alternativ hvis filtrering er ønskelig
+        description: gjelderId er et krav, men faggruppeKode er alternativ hvis filtrering er ønskelig
         content:
           application/json:
             schema:
@@ -775,7 +775,7 @@ components:
           type: string
           example: "9 eller 11 siffer"
           description: 9 eller 11 siffer
-        fagGruppeKode:
+        faggruppeKode:
           type: string
           description: filtrering på faggruppeKode
 
@@ -864,13 +864,13 @@ components:
     Oppdrag:
       type: object
       properties:
-        fagSystemId:
+        fagsystemId:
           type: string
         oppdragsId:
           type: integer
         navnFagGruppe:
           type: string
-        navnFagOmraade:
+        navnFagomraade:
           type: string
         kjorIdag:
           type: string

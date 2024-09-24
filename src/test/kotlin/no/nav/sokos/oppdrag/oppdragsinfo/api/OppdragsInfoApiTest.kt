@@ -68,10 +68,10 @@ internal class OppdragsInfoApiTest : FunSpec({
         val oppdragsegenskaperList =
             listOf(
                 Oppdrag(
-                    fagSystemId = "12345678901",
+                    fagsystemId = "12345678901",
                     oppdragsId = 1234556,
                     navnFagGruppe = "faggruppeNavn",
-                    navnFagOmraade = "fagomraadeNavn",
+                    navnFagomraade = "fagomraadeNavn",
                     kjorIdag = "kjorIdag",
                     typeBilag = "bilagsType",
                     kodeStatus = "PASS",
@@ -84,7 +84,7 @@ internal class OppdragsInfoApiTest : FunSpec({
             RestAssured.given().filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(OppdragsRequest(gjelderId = "12345678901", fagGruppeKode = "ABC"))
+                .body(OppdragsRequest(gjelderId = "12345678901", faggruppeKode = "ABC"))
                 .port(PORT)
                 .post("$OPPDRAGSINFO_BASE_API_PATH/sok")
                 .then().assertThat()
@@ -100,7 +100,7 @@ internal class OppdragsInfoApiTest : FunSpec({
         RestAssured.given().filter(validationFilter)
             .header(HttpHeaders.ContentType, APPLICATION_JSON)
             .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-            .body(OppdragsRequest(gjelderId = "123", fagGruppeKode = ""))
+            .body(OppdragsRequest(gjelderId = "123", faggruppeKode = ""))
             .port(PORT)
             .post("$OPPDRAGSINFO_BASE_API_PATH/sok")
             .then().assertThat()
@@ -148,13 +148,13 @@ internal class OppdragsInfoApiTest : FunSpec({
 
     test("hent alle faggrupper skal returnere 200 OK") {
 
-        val fagGruppe =
+        val faggruppe =
             FagGruppe(
                 navn = "ABC",
                 type = "DEF",
             )
 
-        every { oppdragsInfoService.getFagGrupper() } returns listOf(fagGruppe)
+        every { oppdragsInfoService.getFagGrupper() } returns listOf(faggruppe)
 
         val response =
             RestAssured.given().filter(validationFilter)

@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class OppdragsRequest(
     val gjelderId: String,
-    val fagGruppeKode: String? = null,
+    val faggruppeKode: String? = null,
 )

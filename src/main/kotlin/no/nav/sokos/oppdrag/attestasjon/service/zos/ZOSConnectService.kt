@@ -74,7 +74,7 @@ class ZOSConnectService(
                             requestAttestasjon =
                                 PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjon(
                                     gjelderId = gjelderId,
-                                    fagomraade = kodeFagOmraade,
+                                    fagomraade = kodeFagomraade,
                                     oppdragsId = oppdragsId,
                                     brukerId = navIdent,
                                     kjorIdag = true,

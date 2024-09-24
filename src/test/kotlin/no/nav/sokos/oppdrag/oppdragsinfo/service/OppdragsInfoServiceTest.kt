@@ -20,10 +20,10 @@ internal class OppdragsInfoServiceTest : FunSpec({
         val oppdragList =
             listOf(
                 Oppdrag(
-                    fagSystemId = "12345678901",
+                    fagsystemId = "12345678901",
                     oppdragsId = 1234567890,
                     navnFagGruppe = "NAV Arbeid og ytelser",
-                    navnFagOmraade = "Arbeidsavklaringspenger",
+                    navnFagomraade = "Arbeidsavklaringspenger",
                     kjorIdag = "J",
                     typeBilag = "B",
                     kodeStatus = "A",

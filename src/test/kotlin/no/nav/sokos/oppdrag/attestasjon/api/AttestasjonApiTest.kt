@@ -21,7 +21,7 @@ import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
-import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
+import no.nav.sokos.oppdrag.attestasjon.domain.Fagomraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.OppdragsDetaljer
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
@@ -58,16 +58,16 @@ internal class AttestasjonApiTest : FunSpec({
         val oppdragsListe =
             listOf(
                 Oppdrag(
-                    ansvarsSted = "1337",
+                    ansvarssted = "1337",
                     antallAttestanter = 1,
-                    fagSystemId = "123456789",
+                    fagsystemId = "123456789",
                     gjelderId = "12345678901",
-                    kostnadsSted = "8128",
-                    fagGruppe = "navnFaggruppe",
-                    fagOmraade = "navnFagomraade",
+                    kostnadssted = "8128",
+                    faggruppe = "navnFaggruppe",
+                    fagomraade = "navnFagomraade",
                     oppdragsId = 987654,
-                    kodeFagOmraade = "kodeFagomraade",
-                    kodeFagGruppe = "kodeFaggruppe",
+                    kodeFagomraade = "kodeFagomraade",
+                    kodeFaggruppe = "kodeFaggruppe",
                 ),
             )
 
@@ -105,7 +105,7 @@ internal class AttestasjonApiTest : FunSpec({
         RestAssured.given().filter(validationFilter)
             .header(HttpHeaders.ContentType, APPLICATION_JSON)
             .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-            .body(OppdragsRequest(kodeFagGruppe = "BP", attestert = true))
+            .body(OppdragsRequest(kodeFaggruppe = "BP", attestert = true))
             .port(PORT)
             .post("$ATTESTASJON_BASE_API_PATH/sok")
             .then().assertThat()
@@ -120,7 +120,7 @@ internal class AttestasjonApiTest : FunSpec({
         RestAssured.given().filter(validationFilter)
             .header(HttpHeaders.ContentType, APPLICATION_JSON)
             .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-            .body(OppdragsRequest(kodeFagOmraade = "BP", attestert = false))
+            .body(OppdragsRequest(kodeFagomraade = "BP", attestert = false))
             .port(PORT)
             .post("$ATTESTASJON_BASE_API_PATH/sok")
             .then().assertThat()
@@ -129,13 +129,13 @@ internal class AttestasjonApiTest : FunSpec({
 
     test("hent alle fagområder skal returnere 200 OK") {
 
-        val fagOmraade =
-            FagOmraade(
+        val fagomraade =
+            Fagomraade(
                 navn = "Barnepensjon",
                 kode = "BP",
             )
 
-        every { attestasjonService.getFagOmraade() } returns listOf(fagOmraade)
+        every { attestasjonService.getFagomraade() } returns listOf(fagomraade)
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -147,22 +147,22 @@ internal class AttestasjonApiTest : FunSpec({
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
-        response.body.jsonPath().getList<FagOmraade>("navn").first().shouldBe("Barnepensjon")
-        response.body.jsonPath().getList<FagOmraade>("kode").first().shouldBe("BP")
+        response.body.jsonPath().getList<Fagomraade>("navn").first().shouldBe("Barnepensjon")
+        response.body.jsonPath().getList<Fagomraade>("kode").first().shouldBe("BP")
     }
 
     test("søk etter oppdragsId på oppdragslinjer endepunktet skal returnere 200 OK") {
         every { attestasjonService.getOppdragsDetaljer(any()) } returns
             listOf(
                 OppdragsDetaljer(
-                    ansvarsStedForOppdrag = "1337",
+                    ansvarsstedForOppdrag = "1337",
                     antallAttestanter = 1,
-                    fagGruppe = "faggruppe",
-                    fagOmraade = "fagområde",
-                    fagSystemId = "123456789",
+                    faggruppe = "faggruppe",
+                    fagomraade = "fagområde",
+                    fagsystemId = "123456789",
                     gjelderId = "12345612345",
-                    kodeFagOmraade = "FUBAR",
-                    kostnadsStedForOppdrag = "8128",
+                    kodeFagomraade = "FUBAR",
+                    kostnadsstedForOppdrag = "8128",
                     linjer =
                         listOf(
                             Oppdragslinje(
@@ -182,8 +182,8 @@ internal class AttestasjonApiTest : FunSpec({
                                     listOf(
                                         Attestasjon(attestant = "X999123", datoUgyldigFom = LocalDate.parse("2050-01-01")),
                                     ),
-                                ansvarsStedForOppdragsLinje = null,
-                                kostnadsStedForOppdragsLinje = null,
+                                ansvarsstedForOppdragsLinje = null,
+                                kostnadsstedForOppdragsLinje = null,
                             ),
                         ),
                     oppdragsId = "12345678",
@@ -200,7 +200,7 @@ internal class AttestasjonApiTest : FunSpec({
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
-        response.body.jsonPath().getList<Int>("fagSystemId").first().shouldBe("123456789")
+        response.body.jsonPath().getList<Int>("fagsystemId").first().shouldBe("123456789")
     }
 
     // TODO: En test for .get("$ATTESTASJON_BASE_API_PATH/oppdragsdetaljer/12341234") som returnerer 400 Bad Request??

@@ -19,7 +19,7 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
             call.respond(
                 oppdragsInfoService.getOppdrag(
                     request.gjelderId,
-                    request.fagGruppeKode,
+                    request.faggruppeKode,
                     call,
                 ),
             )

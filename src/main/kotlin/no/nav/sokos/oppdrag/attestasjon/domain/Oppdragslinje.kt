@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Oppdragslinje(
     val oppdragsLinje: OppdragslinjePlain,
-    val ansvarsStedForOppdragsLinje: String?,
-    val kostnadsStedForOppdragsLinje: String?,
+    val ansvarsstedForOppdragsLinje: String?,
+    val kostnadsstedForOppdragsLinje: String?,
     val attestasjoner: List<Attestasjon>,
 )

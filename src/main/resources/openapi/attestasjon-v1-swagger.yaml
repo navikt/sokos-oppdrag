@@ -63,7 +63,7 @@ paths:
         - attestasjon
       summary: Hent tilgjengelige fagområder
       description: Returnerer en liste av tilgjengelige fagområder. Fagområde kan brukes til å filtrere søket i endepunktet -> /sok
-      operationId: getFagOmraade
+      operationId: getFagomraade
       responses:
         200:
           description: OK - Hvis fagområder ikke finnes så returneres tom liste
@@ -72,7 +72,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/FagOmraade'
+                  $ref: '#/components/schemas/Fagomraade'
       security:
         - Bearer: [ ]
 
@@ -156,15 +156,15 @@ components:
           example: "9 eller 11 siffer"
           description: 9 eller 11 siffer
           nullable: true
-        fagSystemId:
+        fagsystemId:
           type: string
           example: "TU000123456789012"
           nullable: true
-        kodeFagGruppe:
+        kodeFaggruppe:
           type: string
           example: "PEN"
           nullable: true
-        kodeFagOmraade:
+        kodeFagomraade:
           type: string
           example: "MBA"
           nullable: true
@@ -210,10 +210,10 @@ components:
           type: string
           example: "9 eller 11 siffer"
           description: 9 eller 11 siffer
-        fagSystemId:
+        fagsystemId:
           type: string
           example: "TU000123456789012"
-        kodeFagOmraade:
+        kodeFagomraade:
           type: string
           example: "MBA"
         oppdragsId:
@@ -282,7 +282,7 @@ components:
           example: "2021-01-01"
           description: Dato for ugyldig fra
 
-    FagOmraade:
+    Fagomraade:
       type: object
       required:
         - navn
@@ -296,23 +296,23 @@ components:
     Oppdrag:
       type: object
       properties:
-        ansvarsSted:
+        ansvarssted:
           type: string
         antallAttestanter:
           type: integer
-        fagGruppe:
+        faggruppe:
           type: string
-        fagOmraade:
+        fagomraade:
           type: string
-        fagSystemId:
+        fagsystemId:
           type: string
         gjelderId:
           type: string
-        kostnadsSted:
+        kostnadssted:
           type: string
-        kodeFagGruppe:
+        kodeFaggruppe:
           type: string
-        kodeFagOmraade:
+        kodeFagomraade:
           type: string
         oppdragsId:
           type: integer
@@ -320,21 +320,21 @@ components:
     OppdragsDetaljer:
       type: object
       properties:
-        ansvarsStedForOppdrag:
+        ansvarsstedForOppdrag:
           type: string
         antallAttestanter:
           type: integer
-        fagGruppe:
+        faggruppe:
           type: string
-        fagOmraade:
+        fagomraade:
           type: string
-        fagSystemId:
+        fagsystemId:
           type: string
         gjelderId:
           type: string
-        kodeFagOmraade:
+        kodeFagomraade:
           type: string
-        kostnadsStedForOppdrag:
+        kostnadsstedForOppdrag:
           type: string
         oppdragsId:
           type: string
@@ -348,9 +348,9 @@ components:
       properties:
         oppdragsLinje:
           $ref: '#/components/schemas/OppdragslinjePlain'
-        ansvarsStedForOppdragsLinje:
+        ansvarsstedForOppdragsLinje:
           type: string
-        kostnadsStedForOppdragsLinje:
+        kostnadsstedForOppdragsLinje:
           type: string
         attestasjoner:
           type: array

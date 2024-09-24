@@ -6,7 +6,7 @@ import kotliquery.Row
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
-import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
+import no.nav.sokos.oppdrag.attestasjon.domain.Fagomraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.OppdragslinjePlain
 import no.nav.sokos.oppdrag.config.DatabaseConfig
@@ -16,9 +16,9 @@ class AttestasjonRepository(
 ) {
     fun getOppdrag(
         attestert: Boolean?,
-        fagSystemId: String?,
+        fagsystemId: String?,
         gjelderId: String?,
-        kodeFagOmraader: List<String>?,
+        kodeFagomraader: List<String>?,
     ): List<Oppdrag> {
         val statementParts =
             mutableListOf(
@@ -82,11 +82,11 @@ class AttestasjonRepository(
             )
 
         if (!gjelderId.isNullOrBlank()) statementParts.add("AND O.OPPDRAG_GJELDER_ID = '$gjelderId'")
-        if (!fagSystemId.isNullOrBlank()) statementParts.add("AND O.FAGSYSTEM_ID LIKE '$fagSystemId%'")
-        if (!kodeFagOmraader.isNullOrEmpty()) statementParts.add("AND O.KODE_FAGOMRAADE IN (${kodeFagOmraader.joinToString("','", "'", postfix = "'")})")
+        if (!fagsystemId.isNullOrBlank()) statementParts.add("AND O.FAGSYSTEM_ID LIKE '$fagsystemId%'")
+        if (!kodeFagomraader.isNullOrEmpty()) statementParts.add("AND O.KODE_FAGOMRAADE IN (${kodeFagomraader.joinToString("','", "'", postfix = "'")})")
 
         statementParts.add("FETCH FIRST 200 ROWS ONLY")
-        if (!gjelderId.isNullOrBlank() || !fagSystemId.isNullOrBlank()) statementParts.add("OPTIMIZE FOR 1 ROW")
+        if (!gjelderId.isNullOrBlank() || !fagsystemId.isNullOrBlank()) statementParts.add("OPTIMIZE FOR 1 ROW")
 
         print(statementParts.joinToString("\n", "", ";"))
 
@@ -100,7 +100,7 @@ class AttestasjonRepository(
         }
     }
 
-    fun getFagOmraader(): List<FagOmraade> {
+    fun getFagomraader(): List<Fagomraade> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -110,7 +110,7 @@ class AttestasjonRepository(
                     FROM T_FAGOMRAADE
                     """.trimIndent(),
                 ),
-                mapToFagOmraade,
+                mapToFagomraade,
             )
         }
     }
@@ -302,16 +302,16 @@ class AttestasjonRepository(
 
     private val mapToOppdrag: (Row) -> Oppdrag = { row ->
         Oppdrag(
-            ansvarsSted = row.stringOrNull("ANSVARSSTED"),
+            ansvarssted = row.stringOrNull("ANSVARSSTED"),
             antallAttestanter = row.int("ANT_ATTESTANTER"),
-            fagSystemId = row.string("FAGSYSTEM_ID"),
+            fagsystemId = row.string("FAGSYSTEM_ID"),
             gjelderId = row.string("OPPDRAG_GJELDER_ID"),
-            kostnadsSted = row.string("KOSTNADSSTED"),
-            fagGruppe = row.string("NAVN_FAGGRUPPE"),
-            fagOmraade = row.string("NAVN_FAGOMRAADE"),
+            kostnadssted = row.string("KOSTNADSSTED"),
+            faggruppe = row.string("NAVN_FAGGRUPPE"),
+            fagomraade = row.string("NAVN_FAGOMRAADE"),
             oppdragsId = row.int("OPPDRAGS_ID"),
-            kodeFagOmraade = row.string("KODE_FAGOMRAADE"),
-            kodeFagGruppe = row.string("KODE_FAGGRUPPE"),
+            kodeFagomraade = row.string("KODE_FAGOMRAADE"),
+            kodeFaggruppe = row.string("KODE_FAGGRUPPE"),
         )
     }
 
@@ -329,8 +329,8 @@ class AttestasjonRepository(
         )
     }
 
-    private val mapToFagOmraade: (Row) -> FagOmraade = { row ->
-        FagOmraade(
+    private val mapToFagomraade: (Row) -> Fagomraade = { row ->
+        Fagomraade(
             navn = row.string("NAVN_FAGOMRAADE"),
             kode = row.string("KODE_FAGOMRAADE"),
         )

@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AttestasjonRequest(
     val gjelderId: String,
-    val fagSystemId: String,
-    val kodeFagOmraade: String,
+    val fagsystemId: String,
+    val kodeFagomraade: String,
     val oppdragsId: Int,
     val linjer: List<AttestasjonLinje> = mutableListOf(),
 )

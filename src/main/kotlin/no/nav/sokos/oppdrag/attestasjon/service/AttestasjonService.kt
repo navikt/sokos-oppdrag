@@ -4,7 +4,7 @@ import io.ktor.server.application.ApplicationCall
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
-import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
+import no.nav.sokos.oppdrag.attestasjon.domain.Fagomraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.OppdragsDetaljer
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
@@ -27,10 +27,10 @@ class AttestasjonService(
     fun getOppdrag(
         applicationCall: ApplicationCall,
         attestert: Boolean? = null,
-        fagSystemId: String? = null,
+        fagsystemId: String? = null,
         gjelderId: String? = null,
-        kodeFagGruppe: String? = null,
-        kodeFagOmraade: String? = null,
+        kodeFaggruppe: String? = null,
+        kodeFagomraade: String? = null,
     ): List<Oppdrag> {
         if (!gjelderId.isNullOrBlank()) {
             val saksbehandler = getSaksbehandler(applicationCall)
@@ -45,21 +45,21 @@ class AttestasjonService(
         }
 
         // hvis faggruppe er oppgitt kan vi søke på alle de fagområdene som er innunder den faggruppen
-        var fagomraader = kodeFagGruppe?.let { attestasjonRepository.getFagomraaderForFaggruppe(it) }
+        var fagomraader = kodeFaggruppe?.let { attestasjonRepository.getFagomraaderForFaggruppe(it) }
 
         // hvis fagområde er oppgitt er det bare det ene vi skal søke på
-        kodeFagOmraade?. let { if (kodeFagOmraade.isNotBlank()) fagomraader = listOf(it) }
+        kodeFagomraade?. let { if (kodeFagomraade.isNotBlank()) fagomraader = listOf(it) }
 
         return attestasjonRepository.getOppdrag(
             attestert = attestert,
-            fagSystemId = fagSystemId,
+            fagsystemId = fagsystemId,
             gjelderId = gjelderId,
-            kodeFagOmraader = fagomraader,
+            kodeFagomraader = fagomraader,
         )
     }
 
-    fun getFagOmraade(): List<FagOmraade> {
-        return attestasjonRepository.getFagOmraader()
+    fun getFagomraade(): List<Fagomraade> {
+        return attestasjonRepository.getFagomraader()
     }
 
     fun getOppdragsDetaljer(oppdragsId: Int): List<OppdragsDetaljer> {
@@ -88,21 +88,21 @@ class AttestasjonService(
 
         val oppdragsdetaljer =
             OppdragsDetaljer(
-                ansvarsStedForOppdrag = oppdragsInfo.ansvarsSted,
+                ansvarsstedForOppdrag = oppdragsInfo.ansvarssted,
                 oppdragsId = oppdragsInfo.oppdragsId.toString(),
                 antallAttestanter = oppdragsInfo.antallAttestanter,
-                fagGruppe = oppdragsInfo.fagGruppe,
-                fagOmraade = oppdragsInfo.fagOmraade,
-                fagSystemId = oppdragsInfo.fagSystemId,
+                faggruppe = oppdragsInfo.faggruppe,
+                fagomraade = oppdragsInfo.fagomraade,
+                fagsystemId = oppdragsInfo.fagsystemId,
                 gjelderId = oppdragsInfo.gjelderId,
-                kostnadsStedForOppdrag = oppdragsInfo.kostnadsSted,
-                kodeFagOmraade = oppdragsInfo.kodeFagOmraade,
+                kostnadsstedForOppdrag = oppdragsInfo.kostnadssted,
+                kodeFagomraade = oppdragsInfo.kodeFagomraade,
                 linjer =
                     linjerMedDatoVedtakTom.map { l ->
                         Oppdragslinje(
                             oppdragsLinje = l,
-                            ansvarsStedForOppdragsLinje = ansvarssteder[l.linjeId],
-                            kostnadsStedForOppdragsLinje = kostnadssteder[l.linjeId],
+                            ansvarsstedForOppdragsLinje = ansvarssteder[l.linjeId],
+                            kostnadsstedForOppdragsLinje = kostnadssteder[l.linjeId],
                             attestasjoner = attestasjoner[l.linjeId] ?: emptyList(),
                         )
                     },

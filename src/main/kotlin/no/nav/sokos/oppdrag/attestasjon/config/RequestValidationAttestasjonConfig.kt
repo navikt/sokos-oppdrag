@@ -25,10 +25,10 @@ fun RequestValidationConfig.requestValidationAttestasjonConfig() {
 private fun validateSearchParams(oppdragsRequest: OppdragsRequest): Boolean {
     var valid = false
 
-    oppdragsRequest.kodeFagGruppe?.takeIf { oppdragsRequest.attestert == false }?.let { valid = true }
-    oppdragsRequest.kodeFagOmraade?.takeIf { oppdragsRequest.attestert == false }?.let { valid = true }
+    oppdragsRequest.kodeFaggruppe?.takeIf { oppdragsRequest.attestert == false }?.let { valid = true }
+    oppdragsRequest.kodeFagomraade?.takeIf { oppdragsRequest.attestert == false }?.let { valid = true }
     oppdragsRequest.gjelderId?.let { valid = true }
-    oppdragsRequest.fagSystemId?.let { oppdragsRequest.kodeFagOmraade?.let { valid = true } }
+    oppdragsRequest.fagsystemId?.let { oppdragsRequest.kodeFagomraade?.let { valid = true } }
 
     return valid
 }

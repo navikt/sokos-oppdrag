@@ -58,7 +58,7 @@ class OppdragsInfoRepository(
 
     fun getOppdrag(
         gjelderId: String,
-        fagGruppeKode: String?,
+        faggruppeKode: String?,
     ): List<Oppdrag> {
         return using(sessionOf(dataSource)) { session ->
             session.list(
@@ -77,7 +77,7 @@ class OppdragsInfoRepository(
                         T_FAGGRUPPE FG,
                         T_OPPDRAG_STATUS OS
                     WHERE OP.OPPDRAG_GJELDER_ID = :gjelderId
-                        ${if (fagGruppeKode != null) " AND FG.KODE_FAGGRUPPE = :fagGruppeKode" else ""}
+                        ${if (faggruppeKode != null) " AND FG.KODE_FAGGRUPPE = :faggruppeKode" else ""}
                     AND FO.KODE_FAGOMRAADE = OP.KODE_FAGOMRAADE
                     AND FG.KODE_FAGGRUPPE = FO.KODE_FAGGRUPPE
                     AND OS.OPPDRAGS_ID = OP.OPPDRAGS_ID
@@ -89,7 +89,7 @@ class OppdragsInfoRepository(
                     """.trimIndent(),
                     mapOf(
                         "gjelderId" to gjelderId,
-                        "fagGruppeKode" to fagGruppeKode,
+                        "faggruppeKode" to faggruppeKode,
                     ),
                 ),
                 mapToOppdrag,
@@ -576,10 +576,10 @@ class OppdragsInfoRepository(
 
     private val mapToOppdrag: (Row) -> Oppdrag = { row ->
         Oppdrag(
-            fagSystemId = row.string("FAGSYSTEM_ID"),
+            fagsystemId = row.string("FAGSYSTEM_ID"),
             oppdragsId = row.int("OPPDRAGS_ID"),
             navnFagGruppe = row.string("NAVN_FAGGRUPPE"),
-            navnFagOmraade = row.string("NAVN_FAGOMRAADE"),
+            navnFagomraade = row.string("NAVN_FAGOMRAADE"),
             kjorIdag = row.string("KJOR_IDAG"),
             typeBilag = row.string("TYPE_BILAG"),
             kodeStatus = row.string("KODE_STATUS"),

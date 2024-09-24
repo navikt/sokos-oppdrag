@@ -43,8 +43,8 @@ internal class AttestasjonServiceTest : FunSpec({
         val request =
             AttestasjonRequest(
                 gjelderId = "12345678900",
-                fagSystemId = "98765432100",
-                kodeFagOmraade = "BEH",
+                fagsystemId = "98765432100",
+                kodeFagomraade = "BEH",
                 oppdragsId = oppdragsid,
                 linjer =
                     listOf(
@@ -95,29 +95,29 @@ internal class AttestasjonServiceTest : FunSpec({
         every { attestasjonRepository.getAttestasjonerForLinjer(any(), any()) } returns emptyMap()
         every { attestasjonRepository.getEnkeltOppdrag(any()) } returns
             Oppdrag(
-                ansvarsSted = "8128",
+                ansvarssted = "8128",
                 antallAttestanter = 1,
-                fagGruppe = "faggruppenavn",
-                fagOmraade = "fagområdenavn",
-                fagSystemId = "fagsystemid",
+                faggruppe = "faggruppenavn",
+                fagomraade = "fagområdenavn",
+                fagsystemId = "fagsystemid",
                 gjelderId = "12345612345",
-                kodeFagGruppe = "faggruppekode",
-                kodeFagOmraade = "fagområdekode",
-                kostnadsSted = "1337",
+                kodeFaggruppe = "faggruppekode",
+                kodeFagomraade = "fagområdekode",
+                kostnadssted = "1337",
                 oppdragsId = 33550336,
             )
 
         attestasjonService.getOppdragsDetaljer(92345678) shouldContainOnly
             listOf(
                 OppdragsDetaljer(
-                    ansvarsStedForOppdrag = "8128",
+                    ansvarsstedForOppdrag = "8128",
                     antallAttestanter = 1,
-                    fagGruppe = "faggruppenavn",
-                    fagOmraade = "fagområdenavn",
-                    fagSystemId = "fagsystemid",
+                    faggruppe = "faggruppenavn",
+                    fagomraade = "fagområdenavn",
+                    fagsystemId = "fagsystemid",
                     gjelderId = "12345612345",
-                    kodeFagOmraade = "fagområdekode",
-                    kostnadsStedForOppdrag = "1337",
+                    kodeFagomraade = "fagområdekode",
+                    kostnadsstedForOppdrag = "1337",
                     linjer = emptyList(),
                     oppdragsId = "33550336",
                 ),
@@ -172,15 +172,15 @@ internal class AttestasjonServiceTest : FunSpec({
             )
         every { attestasjonRepository.getEnkeltOppdrag(any()) } returns
             Oppdrag(
-                ansvarsSted = "8128",
+                ansvarssted = "8128",
                 antallAttestanter = 1,
-                fagSystemId = "fagsystemid",
+                fagsystemId = "fagsystemid",
                 gjelderId = "12345612345",
-                kostnadsSted = "1337",
-                fagGruppe = "faggruppenavn",
-                kodeFagGruppe = "faggruppekode",
-                fagOmraade = "fagområdenavn",
-                kodeFagOmraade = "fagområdekode",
+                kostnadssted = "1337",
+                faggruppe = "faggruppenavn",
+                kodeFaggruppe = "faggruppekode",
+                fagomraade = "fagområdenavn",
+                kodeFagomraade = "fagområdekode",
                 oppdragsId = 1337,
             )
 
@@ -259,15 +259,15 @@ internal class AttestasjonServiceTest : FunSpec({
             )
         every { attestasjonRepository.getEnkeltOppdrag(any()) } returns
             Oppdrag(
-                ansvarsSted = "8128",
+                ansvarssted = "8128",
                 antallAttestanter = 1,
-                fagSystemId = "fagsystemid",
+                fagsystemId = "fagsystemid",
                 gjelderId = "12345612345",
-                kostnadsSted = "1337",
-                fagGruppe = "faggruppenavn",
-                kodeFagGruppe = "faggruppekode",
-                fagOmraade = "fagområdenavn",
-                kodeFagOmraade = "fagområdekode",
+                kostnadssted = "1337",
+                faggruppe = "faggruppenavn",
+                kodeFaggruppe = "faggruppekode",
+                fagomraade = "fagområdenavn",
+                kodeFagomraade = "fagområdekode",
                 oppdragsId = 1337,
             )
         val oppdragsDetaljer = attestasjonService.getOppdragsDetaljer(12345678)[0]
