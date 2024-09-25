@@ -152,7 +152,7 @@ internal class AttestasjonApiTest : FunSpec({
     }
 
     test("søk etter oppdragsId på oppdragslinjer endepunktet skal returnere 200 OK") {
-        every { attestasjonService.getOppdragsDetaljer(any()) } returns
+        every { attestasjonService.getOppdragsDetaljer(any(), any()) } returns
             listOf(
                 OppdragsDetaljer(
                     ansvarsStedForOppdrag = "1337",
@@ -163,6 +163,7 @@ internal class AttestasjonApiTest : FunSpec({
                     gjelderId = "12345612345",
                     kodeFagOmraade = "FUBAR",
                     kostnadsStedForOppdrag = "8128",
+                    oppdragsId = "12345678",
                     linjer =
                         listOf(
                             Oppdragslinje(
@@ -186,7 +187,7 @@ internal class AttestasjonApiTest : FunSpec({
                                 kostnadsStedForOppdragsLinje = null,
                             ),
                         ),
-                    oppdragsId = "12345678",
+                    saksbehandlerIdent = "X313373",
                 ),
             )
 

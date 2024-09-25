@@ -85,7 +85,7 @@ internal class AttestasjonServiceTest : FunSpec({
         every { attestasjonRepository.getEnkeltOppdrag(any()) } throws IllegalStateException("Oppdrag not found")
 
         assertThrows<IllegalStateException> {
-            attestasjonService.getOppdragsDetaljer(92345678)
+            attestasjonService.getOppdragsDetaljer(applicationCall = applicationCall, oppdragsId = 92345678)
         } shouldHaveMessage "Oppdrag not found"
     }
 
@@ -107,7 +107,7 @@ internal class AttestasjonServiceTest : FunSpec({
                 oppdragsId = 33550336,
             )
 
-        attestasjonService.getOppdragsDetaljer(92345678) shouldContainOnly
+        attestasjonService.getOppdragsDetaljer(applicationCall = applicationCall, oppdragsId = 92345678) shouldContainOnly
             listOf(
                 OppdragsDetaljer(
                     ansvarsStedForOppdrag = "8128",
@@ -118,8 +118,9 @@ internal class AttestasjonServiceTest : FunSpec({
                     gjelderId = "12345612345",
                     kodeFagOmraade = "fagområdekode",
                     kostnadsStedForOppdrag = "1337",
-                    linjer = emptyList(),
                     oppdragsId = "33550336",
+                    linjer = emptyList(),
+                    saksbehandlerIdent = "Z123456",
                 ),
             )
     }
@@ -185,7 +186,7 @@ internal class AttestasjonServiceTest : FunSpec({
             )
 
         // ACT / ASSERT
-        attestasjonService.getOppdragsDetaljer(12345678)[0].linjer.map { l -> l.oppdragsLinje } shouldContainExactly
+        attestasjonService.getOppdragsDetaljer(applicationCall = applicationCall, oppdragsId = 12345678)[0].linjer.map { l -> l.oppdragsLinje } shouldContainExactly
             plainOppdragslinjer(
                 """
                 +-----------+--------+------------+---------------+---------------+---------+--------+---------+-------------+
@@ -270,7 +271,7 @@ internal class AttestasjonServiceTest : FunSpec({
                 kodeFagOmraade = "fagområdekode",
                 oppdragsId = 1337,
             )
-        val oppdragsDetaljer = attestasjonService.getOppdragsDetaljer(12345678)[0]
+        val oppdragsDetaljer = attestasjonService.getOppdragsDetaljer(applicationCall = applicationCall, oppdragsId = 12345678)[0]
 
         oppdragsDetaljer.linjer.size shouldBe 15
 
