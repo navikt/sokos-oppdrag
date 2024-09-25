@@ -121,7 +121,7 @@ internal class AttestasjonServiceTest : FunSpec({
                     oppdragsId = "33550336",
                     linjer = emptyList(),
                     saksbehandlerIdent = "Z123456",
-                    ),
+                ),
             )
     }
 
