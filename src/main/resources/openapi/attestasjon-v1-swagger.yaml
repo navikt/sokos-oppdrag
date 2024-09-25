@@ -342,6 +342,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Oppdragslinje'
+        saksbehandlerIdent:
+          type: string
 
     Oppdragslinje:
       type: object

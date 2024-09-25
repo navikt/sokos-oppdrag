@@ -14,4 +14,5 @@ data class OppdragsDetaljer(
     val kostnadsStedForOppdrag: String,
     val oppdragsId: String,
     val linjer: List<Oppdragslinje>,
+    val saksbehandlerIdent: String,
 )
