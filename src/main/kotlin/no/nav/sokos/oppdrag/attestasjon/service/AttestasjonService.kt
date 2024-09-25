@@ -62,7 +62,10 @@ class AttestasjonService(
         return attestasjonRepository.getFagomraader()
     }
 
-    fun getOppdragsDetaljer(oppdragsId: Int): List<OppdragsDetaljer> {
+    fun getOppdragsDetaljer(
+        applicationCall: ApplicationCall,
+        oppdragsId: Int,
+    ): List<OppdragsDetaljer> {
         val oppdragslinjerPlain: List<OppdragslinjePlain> = attestasjonRepository.getOppdragslinjerPlain(oppdragsId)
 
         val oppdragsInfo = attestasjonRepository.getEnkeltOppdrag(oppdragsId)
@@ -97,6 +100,7 @@ class AttestasjonService(
                 gjelderId = oppdragsInfo.gjelderId,
                 kostnadsstedForOppdrag = oppdragsInfo.kostnadssted,
                 kodeFagomraade = oppdragsInfo.kodeFagomraade,
+                saksbehandlerIdent = getSaksbehandler(applicationCall).ident,
                 linjer =
                     linjerMedDatoVedtakTom.map { l ->
                         Oppdragslinje(

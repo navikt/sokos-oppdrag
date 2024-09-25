@@ -38,6 +38,7 @@ fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonSer
         get("oppdragsdetaljer/{oppdragsId}") {
             call.respond(
                 attestasjonService.getOppdragsDetaljer(
+                    applicationCall = call,
                     call.parameters["oppdragsId"].orEmpty().toInt(),
                 ),
             )
