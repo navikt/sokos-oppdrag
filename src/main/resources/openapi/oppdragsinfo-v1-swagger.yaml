@@ -868,7 +868,7 @@ components:
           type: string
         oppdragsId:
           type: integer
-        navnFagGruppe:
+        navnFaggruppe:
           type: string
         navnFagomraade:
           type: string

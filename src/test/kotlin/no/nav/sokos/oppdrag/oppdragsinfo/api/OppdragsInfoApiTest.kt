@@ -70,7 +70,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 Oppdrag(
                     fagsystemId = "12345678901",
                     oppdragsId = 1234556,
-                    navnFagGruppe = "faggruppeNavn",
+                    navnFaggruppe = "faggruppeNavn",
                     navnFagomraade = "fagomraadeNavn",
                     kjorIdag = "kjorIdag",
                     typeBilag = "bilagsType",

@@ -22,7 +22,7 @@ internal class OppdragsInfoServiceTest : FunSpec({
                 Oppdrag(
                     fagsystemId = "12345678901",
                     oppdragsId = 1234567890,
-                    navnFagGruppe = "NAV Arbeid og ytelser",
+                    navnFaggruppe = "NAV Arbeid og ytelser",
                     navnFagomraade = "Arbeidsavklaringspenger",
                     kjorIdag = "J",
                     typeBilag = "B",

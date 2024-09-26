@@ -578,7 +578,7 @@ class OppdragsInfoRepository(
         Oppdrag(
             fagsystemId = row.string("FAGSYSTEM_ID"),
             oppdragsId = row.int("OPPDRAGS_ID"),
-            navnFagGruppe = row.string("NAVN_FAGGRUPPE"),
+            navnFaggruppe = row.string("NAVN_FAGGRUPPE"),
             navnFagomraade = row.string("NAVN_FAGOMRAADE"),
             kjorIdag = row.string("KJOR_IDAG"),
             typeBilag = row.string("TYPE_BILAG"),
