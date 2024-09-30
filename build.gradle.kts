@@ -26,7 +26,7 @@ repositories {
 
 val db2JccVersion = "11.5.9.0"
 val graphqlClientVersion = "8.0.0"
-val hikariVersion = "5.1.0"
+val hikariVersion = "6.0.0"
 val janionVersion = "3.1.12"
 val kotestVersion = "5.9.1"
 val kotestWiremockVersion = "3.1.0"
