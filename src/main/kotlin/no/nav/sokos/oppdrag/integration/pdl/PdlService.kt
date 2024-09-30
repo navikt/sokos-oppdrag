@@ -67,7 +67,7 @@ class PdlService(
     private fun handleErrors(
         errors: List<GraphQLClientError>,
         ident: String,
-    ): Person? {
+    ) {
         val errorExtensions = errors.mapNotNull { it.extensions }
         val path = errors.mapNotNull { it.path?.firstOrNull() }
         val errorCode = errorExtensions.mapNotNull { it["code"] }
