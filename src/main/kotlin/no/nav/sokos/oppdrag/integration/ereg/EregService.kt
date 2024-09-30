@@ -31,7 +31,6 @@ class EregService(
                 header("Nav-Call-Id", MDC.get("x-correlation-id"))
             }
         Metrics.eregCallCounter.labelValues("${response.status.value}").inc()
-        println("HVA FÅR JEG HER?? ${response.body<String>()}")
 
         return when {
             response.status.isSuccess() -> response.body<Organisasjon>()

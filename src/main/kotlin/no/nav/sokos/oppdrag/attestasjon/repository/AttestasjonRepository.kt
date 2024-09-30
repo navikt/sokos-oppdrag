@@ -88,8 +88,6 @@ class AttestasjonRepository(
         statementParts.add("FETCH FIRST 200 ROWS ONLY")
         if (!gjelderId.isNullOrBlank() || !fagSystemId.isNullOrBlank()) statementParts.add("OPTIMIZE FOR 1 ROW")
 
-        print(statementParts.joinToString("\n", "", ";"))
-
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
