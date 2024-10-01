@@ -35,9 +35,9 @@ fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonSer
             )
         }
 
-        get("oppdragsdetaljer/{oppdragsId}") {
+        get("{oppdragsId}/oppdragsdetaljer") {
             call.respond(
-                attestasjonService.getOppdragsDetaljer(
+                attestasjonService.getOppdragsdetaljer(
                     applicationCall = call,
                     call.parameters["oppdragsId"].orEmpty().toInt(),
                 ),

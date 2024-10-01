@@ -6,9 +6,9 @@ import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
-import no.nav.sokos.oppdrag.attestasjon.domain.OppdragsDetaljer
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
-import no.nav.sokos.oppdrag.attestasjon.domain.OppdragslinjePlain
+import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
+import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
@@ -62,16 +62,14 @@ class AttestasjonService(
         return attestasjonRepository.getFagOmraader()
     }
 
-    fun getOppdragsDetaljer(
+    fun getOppdragsdetaljer(
         applicationCall: ApplicationCall,
         oppdragsId: Int,
-    ): List<OppdragsDetaljer> {
-        val oppdragslinjerPlain: List<OppdragslinjePlain> = attestasjonRepository.getOppdragslinjerPlain(oppdragsId)
+    ): List<OppdragsdetaljerDTO> {
+        val oppdragslinjer: List<Oppdragslinje> = attestasjonRepository.getOppdragslinjer(oppdragsId)
 
-        val oppdragsInfo = attestasjonRepository.getEnkeltOppdrag(oppdragsId)
-
-        val linjerMedDatoVedtakTom: List<OppdragslinjePlain> =
-            oppdragslinjerPlain
+        val linjerMedDatoVedtakTom: List<Oppdragslinje> =
+            oppdragslinjer
                 .groupBy { l -> l.kodeKlasse }
                 .values.flatMap { l ->
                     l.zipWithNext()
@@ -83,27 +81,18 @@ class AttestasjonService(
                         .toList() + l.last()
                 }
 
-        val linjeIder = oppdragslinjerPlain.map { l -> l.linjeId }.toList()
+        val linjeIder = oppdragslinjer.map { l -> l.linjeId }.toList()
 
         val kostnadssteder = attestasjonRepository.getEnhetForLinjer(oppdragsId, linjeIder, "BOS")
         val ansvarssteder = attestasjonRepository.getEnhetForLinjer(oppdragsId, linjeIder, "BEH")
         val attestasjoner: Map<Int, List<Attestasjon>> = attestasjonRepository.getAttestasjonerForLinjer(oppdragsId, linjeIder)
 
         val oppdragsdetaljer =
-            OppdragsDetaljer(
-                ansvarsStedForOppdrag = oppdragsInfo.ansvarsSted,
-                oppdragsId = oppdragsInfo.oppdragsId.toString(),
-                antallAttestanter = oppdragsInfo.antallAttestanter,
-                fagGruppe = oppdragsInfo.fagGruppe,
-                fagOmraade = oppdragsInfo.fagOmraade,
-                fagSystemId = oppdragsInfo.fagSystemId,
-                gjelderId = oppdragsInfo.gjelderId,
-                kostnadsStedForOppdrag = oppdragsInfo.kostnadsSted,
-                kodeFagOmraade = oppdragsInfo.kodeFagOmraade,
+            OppdragsdetaljerDTO(
                 saksbehandlerIdent = getSaksbehandler(applicationCall).ident,
                 linjer =
                     linjerMedDatoVedtakTom.map { l ->
-                        Oppdragslinje(
+                        OppdragslinjeDTO(
                             oppdragsLinje = l,
                             ansvarsStedForOppdragsLinje = ansvarssteder[l.linjeId],
                             kostnadsStedForOppdragsLinje = kostnadssteder[l.linjeId],

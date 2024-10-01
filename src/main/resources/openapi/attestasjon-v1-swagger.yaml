@@ -77,7 +77,7 @@ paths:
         - Bearer: [ ]
 
 
-  /oppdragsdetaljer/{oppdragsId}:
+  /{oppdragsId}/oppdragsdetaljer:
     get:
       tags:
         - attestasjon
@@ -320,24 +320,6 @@ components:
     OppdragsDetaljer:
       type: object
       properties:
-        ansvarsStedForOppdrag:
-          type: string
-        antallAttestanter:
-          type: integer
-        fagGruppe:
-          type: string
-        fagOmraade:
-          type: string
-        fagSystemId:
-          type: string
-        gjelderId:
-          type: string
-        kodeFagOmraade:
-          type: string
-        kostnadsStedForOppdrag:
-          type: string
-        oppdragsId:
-          type: string
         linjer:
           type: array
           items:

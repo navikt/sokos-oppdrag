@@ -4,7 +4,6 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainOnly
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.throwable.shouldHaveMessage
 import io.ktor.server.application.ApplicationCall
 import io.mockk.coEvery
 import io.mockk.every
@@ -13,16 +12,14 @@ import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
-import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
-import no.nav.sokos.oppdrag.attestasjon.domain.OppdragsDetaljer
-import no.nav.sokos.oppdrag.attestasjon.domain.OppdragslinjePlain
+import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
+import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponse
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvittering
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvitteringResponsAttestasjon
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
-import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 
 private val applicationCall = mockk<ApplicationCall>()
@@ -78,47 +75,14 @@ internal class AttestasjonServiceTest : FunSpec({
         attestasjonService.attestereOppdrag(applicationCall, request) shouldBe response
     }
 
-    test("getOppdragsdetaljer returnerer feilmelding for oppdrag som ikke finnes") {
-        every { attestasjonRepository.getOppdragslinjerPlain(any()) } returns emptyList()
-        every { attestasjonRepository.getEnhetForLinjer(any(), any(), any()) } returns emptyMap()
-        every { attestasjonRepository.getAttestasjonerForLinjer(any(), any()) } returns emptyMap()
-        every { attestasjonRepository.getEnkeltOppdrag(any()) } throws IllegalStateException("Oppdrag not found")
-
-        assertThrows<IllegalStateException> {
-            attestasjonService.getOppdragsDetaljer(applicationCall = applicationCall, oppdragsId = 92345678)
-        } shouldHaveMessage "Oppdrag not found"
-    }
-
     test("getOppdragsdetaljer returnerer tom liste for et gitt oppdrag som ikke har attestasjonslinjer") {
-        every { attestasjonRepository.getOppdragslinjerPlain(any()) } returns emptyList()
+        every { attestasjonRepository.getOppdragslinjer(any()) } returns emptyList()
         every { attestasjonRepository.getEnhetForLinjer(any(), any(), any()) } returns emptyMap()
         every { attestasjonRepository.getAttestasjonerForLinjer(any(), any()) } returns emptyMap()
-        every { attestasjonRepository.getEnkeltOppdrag(any()) } returns
-            Oppdrag(
-                ansvarsSted = "8128",
-                antallAttestanter = 1,
-                fagGruppe = "faggruppenavn",
-                fagOmraade = "fagområdenavn",
-                fagSystemId = "fagsystemid",
-                gjelderId = "12345612345",
-                kodeFagGruppe = "faggruppekode",
-                kodeFagOmraade = "fagområdekode",
-                kostnadsSted = "1337",
-                oppdragsId = 33550336,
-            )
 
-        attestasjonService.getOppdragsDetaljer(applicationCall = applicationCall, oppdragsId = 92345678) shouldContainOnly
+        attestasjonService.getOppdragsdetaljer(applicationCall = applicationCall, oppdragsId = 92345678) shouldContainOnly
             listOf(
-                OppdragsDetaljer(
-                    ansvarsStedForOppdrag = "8128",
-                    antallAttestanter = 1,
-                    fagGruppe = "faggruppenavn",
-                    fagOmraade = "fagområdenavn",
-                    fagSystemId = "fagsystemid",
-                    gjelderId = "12345612345",
-                    kodeFagOmraade = "fagområdekode",
-                    kostnadsStedForOppdrag = "1337",
-                    oppdragsId = "33550336",
+                OppdragsdetaljerDTO(
                     linjer = emptyList(),
                     saksbehandlerIdent = "Z123456",
                 ),
@@ -127,7 +91,7 @@ internal class AttestasjonServiceTest : FunSpec({
 
     test("getOppdragsDetaljer returnerer riktig datasett for et gitt scenario med UFOREUT") {
         // ARRANGE
-        every { attestasjonRepository.getOppdragslinjerPlain(any()) } returns
+        every { attestasjonRepository.getOppdragslinjer(any()) } returns
             plainOppdragslinjer(
                 """
                 +-----------+--------+------------+---------------+---------------+---------+--------+---------+-------------+
@@ -171,22 +135,9 @@ internal class AttestasjonServiceTest : FunSpec({
 
                 """.trimIndent(),
             )
-        every { attestasjonRepository.getEnkeltOppdrag(any()) } returns
-            Oppdrag(
-                ansvarsSted = "8128",
-                antallAttestanter = 1,
-                fagSystemId = "fagsystemid",
-                gjelderId = "12345612345",
-                kostnadsSted = "1337",
-                fagGruppe = "faggruppenavn",
-                kodeFagGruppe = "faggruppekode",
-                fagOmraade = "fagområdenavn",
-                kodeFagOmraade = "fagområdekode",
-                oppdragsId = 1337,
-            )
 
         // ACT / ASSERT
-        attestasjonService.getOppdragsDetaljer(applicationCall = applicationCall, oppdragsId = 12345678)[0].linjer.map { l -> l.oppdragsLinje } shouldContainExactly
+        attestasjonService.getOppdragsdetaljer(applicationCall = applicationCall, oppdragsId = 12345678)[0].linjer.map { l -> l.oppdragsLinje } shouldContainExactly
             plainOppdragslinjer(
                 """
                 +-----------+--------+------------+---------------+---------------+---------+--------+---------+-------------+
@@ -207,7 +158,7 @@ internal class AttestasjonServiceTest : FunSpec({
     }
 
     test("getOppdragsDetaljer returnerer riktig datasett for et gitt scenario med tre parallelle ytelser") {
-        every { attestasjonRepository.getOppdragslinjerPlain(any()) } returns
+        every { attestasjonRepository.getOppdragslinjer(any()) } returns
             plainOppdragslinjer(
                 """
                 +-----------+--------+------------+---------------+---------------+---------+--------+---------+-------------+
@@ -258,20 +209,8 @@ internal class AttestasjonServiceTest : FunSpec({
 
                 """.trimIndent(),
             )
-        every { attestasjonRepository.getEnkeltOppdrag(any()) } returns
-            Oppdrag(
-                ansvarsSted = "8128",
-                antallAttestanter = 1,
-                fagSystemId = "fagsystemid",
-                gjelderId = "12345612345",
-                kostnadsSted = "1337",
-                fagGruppe = "faggruppenavn",
-                kodeFagGruppe = "faggruppekode",
-                fagOmraade = "fagområdenavn",
-                kodeFagOmraade = "fagområdekode",
-                oppdragsId = 1337,
-            )
-        val oppdragsDetaljer = attestasjonService.getOppdragsDetaljer(applicationCall = applicationCall, oppdragsId = 12345678)[0]
+
+        val oppdragsDetaljer = attestasjonService.getOppdragsdetaljer(applicationCall = applicationCall, oppdragsId = 12345678)[0]
 
         oppdragsDetaljer.linjer.size shouldBe 15
 
@@ -317,7 +256,7 @@ internal class AttestasjonServiceTest : FunSpec({
     }
 })
 
-private fun plainOppdragslinjer(pretty: String): List<OppdragslinjePlain> {
+private fun plainOppdragslinjer(pretty: String): List<Oppdragslinje> {
     return pretty.split("\n").filter { s -> s.isNotBlank() && !s.contains("-----") && !s.contains("OPPDRAGS_ID") }
         .map { s -> s.split("|").map { it.trim() }.toList() }
         .map { l -> mapToOppdragslinjePlain(l) }
@@ -335,21 +274,21 @@ private fun attestasjoner(pretty: String): Map<Int, List<Attestasjon>> {
 
 fun mapToAttestasjon(params: List<String>): Attestasjon {
     return Attestasjon(
-        attestant = params.get(2),
-        datoUgyldigFom = LocalDate.parse(params.get(3)),
+        attestant = params[2],
+        datoUgyldigFom = LocalDate.parse(params[3]),
     )
 }
 
-private fun mapToOppdragslinjePlain(params: List<String>): OppdragslinjePlain {
-    return OppdragslinjePlain(
-        oppdragsId = params.get(1).toInt(),
-        linjeId = params.get(2).toInt(),
-        kodeKlasse = params.get(3),
-        datoVedtakFom = LocalDate.parse(params.get(4)),
-        datoVedtakTom = if (params.get(5).equals("null")) null else LocalDate.parse(params.get(5)),
-        attestert = (if (params.get(6).equals("J")) true else false),
-        sats = params.get(7).toDouble(),
-        typeSats = params.get(8),
-        delytelseId = params.get(9),
+private fun mapToOppdragslinjePlain(params: List<String>): Oppdragslinje {
+    return Oppdragslinje(
+        oppdragsId = params[1].toInt(),
+        linjeId = params[2].toInt(),
+        kodeKlasse = params[3],
+        datoVedtakFom = LocalDate.parse(params[4]),
+        datoVedtakTom = if (params[5] == "null") null else LocalDate.parse(params[5]),
+        attestert = (params[6] == "J"),
+        sats = params[7].toDouble(),
+        typeSats = params[8],
+        delytelseId = params[9],
     )
 }

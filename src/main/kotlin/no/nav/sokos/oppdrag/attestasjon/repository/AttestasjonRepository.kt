@@ -8,7 +8,7 @@ import kotliquery.sessionOf
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
-import no.nav.sokos.oppdrag.attestasjon.domain.OppdragslinjePlain
+import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
 import no.nav.sokos.oppdrag.config.DatabaseConfig
 
 class AttestasjonRepository(
@@ -133,7 +133,7 @@ class AttestasjonRepository(
         }
     }
 
-    fun getOppdragslinjerPlain(oppdragsId: Int): List<OppdragslinjePlain> {
+    fun getOppdragslinjer(oppdragsId: Int): List<Oppdragslinje> {
         val query =
             """
             SELECT  L.OPPDRAGS_ID          AS OPPDRAGS_ID,
@@ -173,7 +173,7 @@ class AttestasjonRepository(
                         "OPPDRAGSID" to oppdragsId,
                     ),
                 ),
-                mapToOppdragslinjerWithoutFluff,
+                mapToOppdragslinje,
             )
         }
     }
@@ -254,50 +254,6 @@ class AttestasjonRepository(
         }
     }
 
-    fun getEnkeltOppdrag(oppdragsId: Int): Oppdrag {
-        val query = """
-                    select TRIM(o.OPPDRAGS_ID)         as OPPDRAGS_ID, 
-                           TRIM(o.FAGSYSTEM_ID)        as FAGSYSTEM_ID, 
-                           TRIM(o.OPPDRAG_GJELDER_ID)  as OPPDRAG_GJELDER_ID, 
-                           TRIM(o.KODE_FAGOMRAADE)     as KODE_FAGOMRAADE, 
-                           TRIM(fo.NAVN_FAGOMRAADE)    as NAVN_FAGOMRAADE, 
-                           TRIM(fo.KODE_FAGGRUPPE)     as KODE_FAGGRUPPE,        
-                           fo.ANT_ATTESTANTER          as ANT_ATTESTANTER,
-                           TRIM(fg.NAVN_FAGGRUPPE)     as NAVN_FAGGRUPPE, 
-                           TRIM(ok.ENHET)              as kostnadssted,
-                           TRIM(oa.ENHET)              as ansvarssted
-                    from T_OPPDRAG o
-                             join T_FAGOMRAADE fo on fo.KODE_FAGOMRAADE = o.KODE_FAGOMRAADE
-                             join T_FAGGRUPPE fg on fg.KODE_FAGGRUPPE = fo.KODE_FAGGRUPPE
-                             join T_OPPDRAGSENHET ok on ok.OPPDRAGS_ID = o.OPPDRAGS_ID and ok.TYPE_ENHET = 'BOS'
-                             left join T_OPPDRAGSENHET oa on oa.OPPDRAGS_ID = o.OPPDRAGS_ID and oa.TYPE_ENHET = 'BEH'
-                    where 1 = 1
-                      AND OK.TIDSPKT_REG = (SELECT MAX(TIDSPKT_REG)
-                                            FROM T_OPPDRAGSENHET OK2
-                                            WHERE OK2.OPPDRAGS_ID = OK.OPPDRAGS_ID
-                                              AND OK2.TYPE_ENHET = OK.TYPE_ENHET
-                                              AND OK2.DATO_FOM <= CURRENT DATE)
-                      AND (OA.OPPDRAGS_ID IS NULL
-                        OR OA.TIDSPKT_REG = (SELECT MAX(TIDSPKT_REG)
-                                             FROM T_OPPDRAGSENHET OA2
-                                             WHERE OA2.OPPDRAGS_ID = OA.OPPDRAGS_ID
-                                               AND OA2.TYPE_ENHET = OA.TYPE_ENHET
-                                               AND OA2.DATO_FOM  <= CURRENT DATE))
-                      and o.OPPDRAGS_ID = :OPPDRAGSID
-                """
-        return using(sessionOf(dataSource)) { session ->
-            session.single(
-                queryOf(
-                    query,
-                    mapOf(
-                        "OPPDRAGSID" to oppdragsId,
-                    ),
-                ),
-                mapToOppdrag,
-            ) ?: throw IllegalStateException("Oppdrag not found")
-        }
-    }
-
     private val mapToOppdrag: (Row) -> Oppdrag = { row ->
         Oppdrag(
             ansvarsSted = row.stringOrNull("ANSVARSSTED"),
@@ -313,14 +269,14 @@ class AttestasjonRepository(
         )
     }
 
-    private val mapToOppdragslinjerWithoutFluff: (Row) -> OppdragslinjePlain = { row ->
-        OppdragslinjePlain(
+    private val mapToOppdragslinje: (Row) -> Oppdragslinje = { row ->
+        Oppdragslinje(
             oppdragsId = row.int("OPPDRAGS_ID"),
             linjeId = row.int("LINJE_ID"),
             kodeKlasse = row.string("KODE_KLASSE"),
             datoVedtakFom = row.localDate("DATO_VEDTAK_FOM"),
             datoVedtakTom = row.localDateOrNull("DATO_VEDTAK_TOM"),
-            attestert = if (row.string("ATTESTERT").equals("J")) true else false,
+            attestert = row.string("ATTESTERT") == "J",
             sats = row.double("SATS"),
             typeSats = row.string("TYPE_SATS"),
             delytelseId = row.string("DELYTELSE_ID"),
