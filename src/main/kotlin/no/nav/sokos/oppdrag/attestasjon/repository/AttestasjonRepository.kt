@@ -70,14 +70,8 @@ class AttestasjonRepository(
                                                                   AND ANDRESTATUSER.DATO_FOM >= STATUSNY.DATO_FOM
                                                                   AND ANDRESTATUSER.TIDSPKT_REG > KORRANNUOPPH.TIDSPKT_REG))
                                 AND L.OPPDRAGS_ID = O.OPPDRAGS_ID
-                                AND L.ATTESTERT ${if (attestert == null) {
-                    "LIKE '%'"
-                } else if (attestert) {
-                    "= 'J'"
-                } else {
-                    "= 'N'"
-                }}
-                                )
+                                ${attestert?.let { " AND L.ATTESTERT = '${if (it) "J" else "N"}'" } ?: ""}
+                  )
                 """.trimIndent(),
             )
 
@@ -246,10 +240,7 @@ class AttestasjonRepository(
                 ),
             ) { row ->
                 row.int("LINJE_ID") to
-                    Attestasjon(
-                        row.string("ATTESTANT_ID"),
-                        row.localDate("DATO_UGYLDIG_FOM"),
-                    )
+                    mapToAttestasjon(row)
             }.groupBy({ it.first }, { it.second })
         }
     }
@@ -287,6 +278,13 @@ class AttestasjonRepository(
         FagOmraade(
             navn = row.string("NAVN_FAGOMRAADE"),
             kode = row.string("KODE_FAGOMRAADE"),
+        )
+    }
+
+    private val mapToAttestasjon: (Row) -> Attestasjon = { row ->
+        Attestasjon(
+            attestant = row.string("ATTESTANT_ID"),
+            datoUgyldigFom = row.localDate("DATO_UGYLDIG_FOM"),
         )
     }
 }

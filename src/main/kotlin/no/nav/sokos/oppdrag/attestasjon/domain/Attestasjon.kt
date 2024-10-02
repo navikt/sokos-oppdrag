@@ -1,7 +1,7 @@
 package no.nav.sokos.oppdrag.attestasjon.domain
 
 import kotlinx.serialization.Serializable
-import no.nav.sokos.oppdrag.attestasjon.util.LocalDateSerializer
+import no.nav.sokos.oppdrag.common.util.LocalDateSerializer
 import java.time.LocalDate
 
 @Serializable

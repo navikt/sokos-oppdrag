@@ -3,10 +3,8 @@ package no.nav.sokos.oppdrag.attestasjon.service
 import io.ktor.server.application.ApplicationCall
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
-import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
-import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
@@ -44,17 +42,18 @@ class AttestasjonService(
             )
         }
 
-        // hvis faggruppe er oppgitt kan vi søke på alle de fagområdene som er innunder den faggruppen
-        var fagomraader = kodeFagGruppe?.let { attestasjonRepository.getFagomraaderForFaggruppe(it) }
-
-        // hvis fagområde er oppgitt er det bare det ene vi skal søke på
-        kodeFagOmraade?. let { if (kodeFagOmraade.isNotBlank()) fagomraader = listOf(it) }
+        val fagomraader =
+            when {
+                !kodeFagOmraade.isNullOrBlank() -> listOf(kodeFagOmraade)
+                !kodeFagGruppe.isNullOrBlank() -> attestasjonRepository.getFagomraaderForFaggruppe(kodeFagGruppe)
+                else -> emptyList()
+            }
 
         return attestasjonRepository.getOppdrag(
-            attestert = attestert,
-            fagSystemId = fagSystemId,
-            gjelderId = gjelderId,
-            kodeFagOmraader = fagomraader,
+            attestert,
+            fagSystemId,
+            gjelderId,
+            fagomraader,
         )
     }
 
@@ -66,40 +65,42 @@ class AttestasjonService(
         applicationCall: ApplicationCall,
         oppdragsId: Int,
     ): List<OppdragsdetaljerDTO> {
-        val oppdragslinjer: List<Oppdragslinje> = attestasjonRepository.getOppdragslinjer(oppdragsId)
+        val oppdragslinjer = attestasjonRepository.getOppdragslinjer(oppdragsId)
 
-        val linjerMedDatoVedtakTom: List<Oppdragslinje> =
+        if (oppdragslinjer.isEmpty()) {
+            return emptyList()
+        }
+
+        val oppdragslinjerMedDatoVedtakTom =
             oppdragslinjer
-                .groupBy { l -> l.kodeKlasse }
-                .values.flatMap { l ->
-                    l.zipWithNext()
-                        .map { (curr, next) ->
-                            curr.copy(
-                                datoVedtakTom = curr.datoVedtakTom ?: next.datoVedtakFom.minusDays(1),
-                            )
-                        }
-                        .toList() + l.last()
+                .zipWithNext { current, next ->
+                    if (current.kodeKlasse == next.kodeKlasse) {
+                        current.copy(datoVedtakTom = current.datoVedtakTom ?: next.datoVedtakFom.minusDays(1))
+                    } else {
+                        current
+                    }
                 }
+                .toList() + oppdragslinjer.last()
 
         val linjeIder = oppdragslinjer.map { l -> l.linjeId }.toList()
 
         val kostnadssteder = attestasjonRepository.getEnhetForLinjer(oppdragsId, linjeIder, "BOS")
         val ansvarssteder = attestasjonRepository.getEnhetForLinjer(oppdragsId, linjeIder, "BEH")
-        val attestasjoner: Map<Int, List<Attestasjon>> = attestasjonRepository.getAttestasjonerForLinjer(oppdragsId, linjeIder)
+        val attestasjoner = attestasjonRepository.getAttestasjonerForLinjer(oppdragsId, linjeIder)
 
         val oppdragsdetaljer =
             OppdragsdetaljerDTO(
-                saksbehandlerIdent = getSaksbehandler(applicationCall).ident,
-                linjer =
-                    linjerMedDatoVedtakTom.map { l ->
-                        OppdragslinjeDTO(
-                            oppdragsLinje = l,
-                            ansvarsStedForOppdragsLinje = ansvarssteder[l.linjeId],
-                            kostnadsStedForOppdragsLinje = kostnadssteder[l.linjeId],
-                            attestasjoner = attestasjoner[l.linjeId] ?: emptyList(),
-                        )
-                    },
+                oppdragslinjerMedDatoVedtakTom.map { linje ->
+                    OppdragslinjeDTO(
+                        linje,
+                        ansvarssteder[linje.linjeId],
+                        kostnadssteder[linje.linjeId],
+                        attestasjoner[linje.linjeId] ?: emptyList(),
+                    )
+                },
+                getSaksbehandler(applicationCall).ident,
             )
+
         return listOf(oppdragsdetaljer)
     }
 

@@ -58,16 +58,16 @@ internal class AttestasjonApiTest : FunSpec({
         val oppdragsListe =
             listOf(
                 Oppdrag(
-                    ansvarsSted = "1337",
-                    antallAttestanter = 1,
-                    fagSystemId = "123456789",
-                    gjelderId = "12345678901",
-                    kostnadsSted = "8128",
-                    fagGruppe = "navnFaggruppe",
-                    fagOmraade = "navnFagomraade",
-                    oppdragsId = 987654,
-                    kodeFagOmraade = "kodeFagomraade",
-                    kodeFagGruppe = "kodeFaggruppe",
+                    "1337",
+                    1,
+                    "navnFaggruppe",
+                    "navnFagomraade",
+                    "123456789",
+                    "12345678901",
+                    "kodeFaggruppe",
+                    "kodeFagomraade",
+                    "8128",
+                    987654,
                 ),
             )
 
@@ -155,30 +155,27 @@ internal class AttestasjonApiTest : FunSpec({
         every { attestasjonService.getOppdragsdetaljer(any(), any()) } returns
             listOf(
                 OppdragsdetaljerDTO(
-                    linjer =
-                        listOf(
-                            OppdragslinjeDTO(
-                                oppdragsLinje =
-                                    Oppdragslinje(
-                                        attestert = false,
-                                        datoVedtakFom = LocalDate.parse("2000-01-01"),
-                                        datoVedtakTom = null,
-                                        delytelseId = "FYL20170501007247481 79947001",
-                                        kodeKlasse = "FUBAR",
-                                        linjeId = 1,
-                                        oppdragsId = 12345678,
-                                        sats = 1234.56,
-                                        typeSats = "MND",
-                                    ),
-                                attestasjoner =
-                                    listOf(
-                                        Attestasjon(attestant = "X999123", datoUgyldigFom = LocalDate.parse("2050-01-01")),
-                                    ),
-                                ansvarsStedForOppdragsLinje = null,
-                                kostnadsStedForOppdragsLinje = null,
+                    listOf(
+                        OppdragslinjeDTO(
+                            Oppdragslinje(
+                                false,
+                                LocalDate.parse("2000-01-01"),
+                                null,
+                                "FYL20170501007247481 79947001",
+                                "FUBAR",
+                                1,
+                                12345678,
+                                1234.56,
+                                "MND",
+                            ),
+                            null,
+                            null,
+                            listOf(
+                                Attestasjon("X999123", LocalDate.parse("2050-01-01")),
                             ),
                         ),
-                    saksbehandlerIdent = "X313373",
+                    ),
+                    "X313373",
                 ),
             )
 
@@ -215,20 +212,17 @@ internal class AttestasjonApiTest : FunSpec({
 
         val zOsResponse =
             PostOSAttestasjonResponse200(
-                osAttestasjonOperationResponse =
-                    PostOSAttestasjonResponse200OSAttestasjonOperationResponse(
-                        attestasjonskvittering =
-                            PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvittering(
-                                responsAttestasjon =
-                                    PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvitteringResponsAttestasjon(
-                                        gjelderId = "123456789",
-                                        oppdragsId = 999_999_999,
-                                        antLinjerMottatt = 99_999,
-                                        statuskode = 99,
-                                        melding = "Test melding",
-                                    ),
-                            ),
+                PostOSAttestasjonResponse200OSAttestasjonOperationResponse(
+                    PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvittering(
+                        PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvitteringResponsAttestasjon(
+                            "123456789",
+                            999_999_999,
+                            99_999,
+                            99,
+                            "Test melding",
+                        ),
                     ),
+                ),
             )
 
         coEvery { attestasjonService.attestereOppdrag(any(), any()) } returns zOsResponse
