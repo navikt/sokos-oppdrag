@@ -37,7 +37,7 @@ class IntegrationService(
         return when {
             gjelderId.toLong() > 80_000_000_000 -> getLeverandorName(gjelderId)
             gjelderId.toLong() in 1_000_000_001..79_999_999_999 -> getPersonName(gjelderId)
-            else -> getOrganisasjonsName(gjelderId.replace("^0*".toRegex(), ""))
+            else -> getOrganisasjonsName(gjelderId.replace("^(00)?".toRegex(), ""))
         }
     }
 
