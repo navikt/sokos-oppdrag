@@ -18,7 +18,7 @@ class AttestasjonRepository(
         attestert: Boolean?,
         fagSystemId: String?,
         gjelderId: String?,
-        kodeFagOmraader: List<String>?,
+        kodeFagOmraader: List<String>,
     ): List<Oppdrag> {
         val statementParts =
             mutableListOf(
@@ -75,17 +75,31 @@ class AttestasjonRepository(
                 """.trimIndent(),
             )
 
-        if (!gjelderId.isNullOrBlank()) statementParts.add("AND O.OPPDRAG_GJELDER_ID = '$gjelderId'")
-        if (!fagSystemId.isNullOrBlank()) statementParts.add("AND O.FAGSYSTEM_ID LIKE '$fagSystemId%'")
-        if (!kodeFagOmraader.isNullOrEmpty()) statementParts.add("AND O.KODE_FAGOMRAADE IN (${kodeFagOmraader.joinToString("','", "'", postfix = "'")})")
+        val parameters = mutableListOf<String>()
 
-        statementParts.add("FETCH FIRST 200 ROWS ONLY")
-        if (!gjelderId.isNullOrBlank() || !fagSystemId.isNullOrBlank()) statementParts.add("OPTIMIZE FOR 1 ROW")
+        if (!gjelderId.isNullOrBlank()) {
+            statementParts.add(" AND O.OPPDRAG_GJELDER_ID = ?")
+            parameters.add(gjelderId)
+        }
+
+        if (!fagSystemId.isNullOrBlank()) {
+            statementParts.add(" AND O.FAGSYSTEM_ID LIKE ?")
+            parameters.add("$fagSystemId%")
+        }
+
+        if (kodeFagOmraader.isNotEmpty()) {
+            statementParts.add(" AND O.KODE_FAGOMRAADE IN (${kodeFagOmraader.joinToString(",") { "?" }})")
+            parameters.addAll(kodeFagOmraader)
+        }
+
+        statementParts.add(" FETCH FIRST 200 ROWS ONLY")
+        if (!gjelderId.isNullOrBlank() || !fagSystemId.isNullOrBlank()) statementParts.add(" OPTIMIZE FOR 1 ROW")
 
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
                     statementParts.joinToString("\n", "", ";"),
+                    *parameters.toTypedArray(),
                 ),
                 mapToOppdrag,
             )
@@ -102,8 +116,12 @@ class AttestasjonRepository(
                     FROM T_FAGOMRAADE
                     """.trimIndent(),
                 ),
-                mapToFagOmraade,
-            )
+            ) { row ->
+                FagOmraade(
+                    navn = row.string("NAVN_FAGOMRAADE"),
+                    kode = row.string("KODE_FAGOMRAADE"),
+                )
+            }
         }
     }
 
@@ -123,7 +141,7 @@ class AttestasjonRepository(
                         "KODEFAGGRUPPE" to kodeFaggruppe,
                     ),
                 ),
-            ) { (row) -> row.getString("KODE_FAGOMRAADE") }
+            ) { row -> row.string("KODE_FAGOMRAADE") }
         }
     }
 
@@ -183,10 +201,10 @@ class AttestasjonRepository(
             SELECT LINJE_ID, ENHET
             FROM T_LINJEENHET E
             WHERE 1=1
-              AND E.TYPE_ENHET=:TYPEENHET
+              AND E.TYPE_ENHET = :TYPEENHET
               AND ENHET != ''
-              AND LINJE_ID IN (${linjeIder.joinToString(",")})
               AND E.OPPDRAGS_ID = :OPPDRAGSID
+              AND LINJE_ID IN (${linjeIder.joinToString(",")})              
               AND NOT EXISTS(SELECT 1
                              FROM T_LINJEENHET DUP
                              WHERE E.OPPDRAGS_ID = DUP.OPPDRAGS_ID
@@ -194,6 +212,7 @@ class AttestasjonRepository(
                                AND E.TIDSPKT_REG < DUP.TIDSPKT_REG);
             """.trimIndent()
 
+        val parameters = mutableListOf(typeEnhet, oppdragsId)
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -239,8 +258,7 @@ class AttestasjonRepository(
                     ),
                 ),
             ) { row ->
-                row.int("LINJE_ID") to
-                    mapToAttestasjon(row)
+                row.int("LINJE_ID") to mapToAttestasjon(row)
             }.groupBy({ it.first }, { it.second })
         }
     }
@@ -271,13 +289,6 @@ class AttestasjonRepository(
             sats = row.double("SATS"),
             typeSats = row.string("TYPE_SATS"),
             delytelseId = row.string("DELYTELSE_ID"),
-        )
-    }
-
-    private val mapToFagOmraade: (Row) -> FagOmraade = { row ->
-        FagOmraade(
-            navn = row.string("NAVN_FAGOMRAADE"),
-            kode = row.string("KODE_FAGOMRAADE"),
         )
     }
 

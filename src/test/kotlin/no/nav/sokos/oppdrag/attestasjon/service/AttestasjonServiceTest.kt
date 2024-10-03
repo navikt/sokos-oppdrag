@@ -3,11 +3,10 @@ package no.nav.sokos.oppdrag.attestasjon.service
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
-import io.ktor.server.application.ApplicationCall
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
+import no.nav.sokos.oppdrag.TestUtil.navIdent
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
@@ -20,16 +19,11 @@ import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import java.time.LocalDate
 
-private val applicationCall = mockk<ApplicationCall>()
 private val attestasjonRepository = mockk<AttestasjonRepository>()
 private val zosConnectService: ZOSConnectService = mockk<ZOSConnectService>()
 private val attestasjonService = AttestasjonService(attestasjonRepository, zosConnectService = zosConnectService)
 
 internal class AttestasjonServiceTest : FunSpec({
-
-    beforeTest {
-        every { applicationCall.request.headers["Authorization"] } returns tokenWithNavIdent
-    }
 
     test("attestasjon av oppdrag") {
 
@@ -66,7 +60,7 @@ internal class AttestasjonServiceTest : FunSpec({
             )
 
         coEvery { zosConnectService.attestereOppdrag(any(), any()) } returns response
-        attestasjonService.attestereOppdrag(applicationCall, request) shouldBe response
+        attestasjonService.attestereOppdrag(request, navIdent) shouldBe response
     }
 
     test("getOppdragsdetaljer returnerer tom liste for et gitt oppdrag som ikke har attestasjonslinjer") {
@@ -75,7 +69,7 @@ internal class AttestasjonServiceTest : FunSpec({
         every { attestasjonRepository.getEnhetForLinjer(any(), any(), any()) } returns emptyMap()
         every { attestasjonRepository.getAttestasjonerForLinjer(any(), any()) } returns emptyMap()
 
-        attestasjonService.getOppdragsdetaljer(applicationCall = applicationCall, oppdragsId = 92345678) shouldBe emptyList()
+        attestasjonService.getOppdragsdetaljer(92345678, navIdent) shouldBe emptyList()
     }
 
     test("getOppdragsDetaljer returnerer riktig datasett for et gitt scenario med UFOREUT") {
@@ -127,7 +121,7 @@ internal class AttestasjonServiceTest : FunSpec({
             )
 
         // ACT / ASSERT
-        attestasjonService.getOppdragsdetaljer(applicationCall, 12345678)[0].linjer.map { l -> l.oppdragsLinje } shouldContainExactly
+        attestasjonService.getOppdragsdetaljer(12345678, navIdent)[0].linjer.map { l -> l.oppdragsLinje } shouldContainExactly
             oppdragslinjer(
                 """
                 +-----------+--------+------------+---------------+---------------+---------+--------+---------+-------------+
@@ -202,7 +196,7 @@ internal class AttestasjonServiceTest : FunSpec({
                 """.trimIndent(),
             )
 
-        val oppdragsDetaljer = attestasjonService.getOppdragsdetaljer(applicationCall = applicationCall, oppdragsId = 12345678)[0]
+        val oppdragsDetaljer = attestasjonService.getOppdragsdetaljer(12345678, navIdent)[0]
 
         oppdragsDetaljer.linjer.size shouldBe 15
 

@@ -2,15 +2,13 @@ package no.nav.sokos.oppdrag.oppdragsinfo.service
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import io.ktor.server.application.ApplicationCall
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
+import no.nav.sokos.oppdrag.TestUtil.navIdent
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdrag
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsInfoRepository
 
-private val applicationCall = mockk<ApplicationCall>()
 private val oppdragsInfoRepository = mockk<OppdragsInfoRepository>()
 private val oppdragsInfoService = OppdragsInfoService(oppdragsInfoRepository)
 
@@ -30,11 +28,10 @@ internal class OppdragsInfoServiceTest : FunSpec({
                 ),
             )
 
-        every { applicationCall.request.headers["Authorization"] } returns tokenWithNavIdent
         every { oppdragsInfoRepository.getOppdragId(any()) } returns "1234567890"
         every { oppdragsInfoRepository.getOppdrag(any(), "") } returns oppdragList
 
-        val result = oppdragsInfoService.getOppdrag("12345678901", "", applicationCall)
+        val result = oppdragsInfoService.getOppdrag("12345678901", "", navIdent)
 
         result.size shouldBe 1
     }
@@ -42,7 +39,6 @@ internal class OppdragsInfoServiceTest : FunSpec({
     test("hent liste av oppdragslinjer") {
 
         val oppdragsId = 12345
-        val gjelderId = "12345678901"
 
         val oppdragsLinjeList =
             listOf(

@@ -20,8 +20,8 @@ import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import no.nav.security.mock.oauth2.withMockOAuth2Server
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.OPPDRAGSINFO_BASE_API_PATH
-import no.nav.sokos.oppdrag.TestUtil.mockAuthConfig
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
+import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.config.securityConfig
@@ -29,7 +29,7 @@ import no.nav.sokos.oppdrag.integration.api.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoApi
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
 
-val oppdragsInfoService: OppdragsInfoService = mockk()
+val oppdragsInfoService = mockk<OppdragsInfoService>()
 
 /**
  * Test for å sjekke at sikkerhetsmekanismen fungerer som forventet. Bruker
@@ -104,5 +104,16 @@ private fun MockOAuth2Server.token() =
         issuerId = "default",
         clientId = "default",
         tokenCallback =
-            DefaultOAuth2TokenCallback(),
+            DefaultOAuth2TokenCallback(
+                claims =
+                    mapOf(
+                        "NAVident" to "Z123456",
+                    ),
+            ),
     ).serialize()
+
+private fun MockOAuth2Server.mockAuthConfig() =
+    PropertiesConfig.AzureAdProperties(
+        wellKnownUrl = wellKnownUrl("default").toString(),
+        clientId = "default",
+    )

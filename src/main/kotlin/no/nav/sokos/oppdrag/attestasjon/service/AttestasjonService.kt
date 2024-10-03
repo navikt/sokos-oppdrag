@@ -1,6 +1,5 @@
 package no.nav.sokos.oppdrag.attestasjon.service
 
-import io.ktor.server.application.ApplicationCall
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
@@ -12,8 +11,8 @@ import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
+import no.nav.sokos.oppdrag.common.audit.NavIdent
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
-import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
@@ -23,15 +22,14 @@ class AttestasjonService(
     private val zosConnectService: ZOSConnectService = ZOSConnectService(),
 ) {
     fun getOppdrag(
-        applicationCall: ApplicationCall,
-        attestert: Boolean? = null,
-        fagSystemId: String? = null,
         gjelderId: String? = null,
+        fagSystemId: String? = null,
         kodeFagGruppe: String? = null,
         kodeFagOmraade: String? = null,
+        attestert: Boolean? = null,
+        saksbehandler: NavIdent,
     ): List<Oppdrag> {
         if (!gjelderId.isNullOrBlank()) {
-            val saksbehandler = getSaksbehandler(applicationCall)
             secureLogger.info { "Henter attestasjonsdata for gjelderId: $gjelderId" }
             auditLogger.auditLog(
                 AuditLogg(
@@ -62,13 +60,13 @@ class AttestasjonService(
     }
 
     fun getOppdragsdetaljer(
-        applicationCall: ApplicationCall,
         oppdragsId: Int,
-    ): List<OppdragsdetaljerDTO> {
+        saksbehandler: NavIdent,
+    ): OppdragsdetaljerDTO {
         val oppdragslinjer = attestasjonRepository.getOppdragslinjer(oppdragsId)
 
         if (oppdragslinjer.isEmpty()) {
-            return emptyList()
+            return OppdragsdetaljerDTO(emptyList(), saksbehandler.ident)
         }
 
         val oppdragslinjerMedDatoVedtakTom =
@@ -98,17 +96,16 @@ class AttestasjonService(
                         attestasjoner[linje.linjeId] ?: emptyList(),
                     )
                 },
-                getSaksbehandler(applicationCall).ident,
+                saksbehandler.ident,
             )
 
-        return listOf(oppdragsdetaljer)
+        return oppdragsdetaljer
     }
 
     suspend fun attestereOppdrag(
-        applicationCall: ApplicationCall,
         attestasjonRequest: AttestasjonRequest,
+        saksbehandler: NavIdent,
     ): PostOSAttestasjonResponse200 {
-        val saksbehandler = getSaksbehandler(applicationCall)
         return zosConnectService.attestereOppdrag(attestasjonRequest, saksbehandler.ident)
     }
 }
