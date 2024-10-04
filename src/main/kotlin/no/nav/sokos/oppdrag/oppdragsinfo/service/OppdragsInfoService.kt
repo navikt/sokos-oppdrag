@@ -1,9 +1,9 @@
 package no.nav.sokos.oppdrag.oppdragsinfo.service
 
-import io.ktor.server.application.ApplicationCall
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
+import no.nav.sokos.oppdrag.common.audit.NavIdent
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
@@ -25,7 +25,6 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsEnhetDTO
 import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsLinjeDetaljerDTO
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsInfoRepository
-import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler
 
 private val logger = KotlinLogging.logger {}
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
@@ -37,14 +36,12 @@ class OppdragsInfoService(
     fun getOppdrag(
         gjelderId: String,
         faggruppeKode: String?,
-        applicationCall: ApplicationCall,
+        saksbehandler: NavIdent,
     ): List<Oppdrag> {
-        val saksbehandlerNavIdent = getSaksbehandler(applicationCall)
-
         secureLogger.info { "Søker etter oppdrag med gjelderId: $gjelderId" }
         auditLogger.auditLog(
             AuditLogg(
-                navIdent = saksbehandlerNavIdent.ident,
+                navIdent = saksbehandler.ident,
                 gjelderId = gjelderId,
                 brukerBehandlingTekst = "NAV-ansatt har gjort et søk på OppdragsInfo",
             ),

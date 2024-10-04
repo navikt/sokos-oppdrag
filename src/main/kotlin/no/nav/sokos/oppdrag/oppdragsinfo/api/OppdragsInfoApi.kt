@@ -9,6 +9,7 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
+import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler
 
 private const val BASE_PATH = "/api/v1/oppdragsinfo"
 
@@ -16,11 +17,12 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
     route(BASE_PATH) {
         post("sok") {
             val request = call.receive<OppdragsRequest>()
+            val saksbehandler = getSaksbehandler(call)
             call.respond(
                 oppdragsInfoService.getOppdrag(
                     request.gjelderId,
                     request.fagGruppeKode,
-                    call,
+                    saksbehandler,
                 ),
             )
         }

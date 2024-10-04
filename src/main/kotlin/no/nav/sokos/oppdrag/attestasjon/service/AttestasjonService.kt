@@ -1,21 +1,18 @@
 package no.nav.sokos.oppdrag.attestasjon.service
 
-import io.ktor.server.application.ApplicationCall
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
-import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
-import no.nav.sokos.oppdrag.attestasjon.domain.OppdragsDetaljer
-import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
-import no.nav.sokos.oppdrag.attestasjon.domain.OppdragslinjePlain
+import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
+import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
+import no.nav.sokos.oppdrag.common.audit.NavIdent
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
-import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
@@ -25,15 +22,14 @@ class AttestasjonService(
     private val zosConnectService: ZOSConnectService = ZOSConnectService(),
 ) {
     fun getOppdrag(
-        applicationCall: ApplicationCall,
-        attestert: Boolean? = null,
-        fagSystemId: String? = null,
         gjelderId: String? = null,
+        fagSystemId: String? = null,
         kodeFagGruppe: String? = null,
         kodeFagOmraade: String? = null,
+        attestert: Boolean? = null,
+        saksbehandler: NavIdent,
     ): List<Oppdrag> {
         if (!gjelderId.isNullOrBlank()) {
-            val saksbehandler = getSaksbehandler(applicationCall)
             secureLogger.info { "Henter attestasjonsdata for gjelderId: $gjelderId" }
             auditLogger.auditLog(
                 AuditLogg(
@@ -44,17 +40,18 @@ class AttestasjonService(
             )
         }
 
-        // hvis faggruppe er oppgitt kan vi søke på alle de fagområdene som er innunder den faggruppen
-        var fagomraader = kodeFagGruppe?.let { attestasjonRepository.getFagomraaderForFaggruppe(it) }
-
-        // hvis fagområde er oppgitt er det bare det ene vi skal søke på
-        kodeFagOmraade?. let { if (kodeFagOmraade.isNotBlank()) fagomraader = listOf(it) }
+        val fagomraader =
+            when {
+                !kodeFagOmraade.isNullOrBlank() -> listOf(kodeFagOmraade)
+                !kodeFagGruppe.isNullOrBlank() -> attestasjonRepository.getFagomraaderForFaggruppe(kodeFagGruppe)
+                else -> emptyList()
+            }
 
         return attestasjonRepository.getOppdrag(
-            attestert = attestert,
-            fagSystemId = fagSystemId,
-            gjelderId = gjelderId,
-            kodeFagOmraader = fagomraader,
+            attestert,
+            fagSystemId,
+            gjelderId,
+            fagomraader,
         )
     }
 
@@ -62,63 +59,53 @@ class AttestasjonService(
         return attestasjonRepository.getFagOmraader()
     }
 
-    fun getOppdragsDetaljer(
-        applicationCall: ApplicationCall,
+    fun getOppdragsdetaljer(
         oppdragsId: Int,
-    ): List<OppdragsDetaljer> {
-        val oppdragslinjerPlain: List<OppdragslinjePlain> = attestasjonRepository.getOppdragslinjerPlain(oppdragsId)
+        saksbehandler: NavIdent,
+    ): OppdragsdetaljerDTO {
+        val oppdragslinjer = attestasjonRepository.getOppdragslinjer(oppdragsId)
 
-        val oppdragsInfo = attestasjonRepository.getEnkeltOppdrag(oppdragsId)
+        if (oppdragslinjer.isEmpty()) {
+            return OppdragsdetaljerDTO(emptyList(), saksbehandler.ident)
+        }
 
-        val linjerMedDatoVedtakTom: List<OppdragslinjePlain> =
-            oppdragslinjerPlain
-                .groupBy { l -> l.kodeKlasse }
-                .values.flatMap { l ->
-                    l.zipWithNext()
-                        .map { (curr, next) ->
-                            curr.copy(
-                                datoVedtakTom = curr.datoVedtakTom ?: next.datoVedtakFom.minusDays(1),
-                            )
-                        }
-                        .toList() + l.last()
+        val oppdragslinjerMedDatoVedtakTom =
+            oppdragslinjer
+                .zipWithNext { current, next ->
+                    if (current.kodeKlasse == next.kodeKlasse) {
+                        current.copy(datoVedtakTom = current.datoVedtakTom ?: next.datoVedtakFom.minusDays(1))
+                    } else {
+                        current
+                    }
                 }
+                .toList() + oppdragslinjer.last()
 
-        val linjeIder = oppdragslinjerPlain.map { l -> l.linjeId }.toList()
+        val linjeIder = oppdragslinjer.map { l -> l.linjeId }.toList()
 
         val kostnadssteder = attestasjonRepository.getEnhetForLinjer(oppdragsId, linjeIder, "BOS")
         val ansvarssteder = attestasjonRepository.getEnhetForLinjer(oppdragsId, linjeIder, "BEH")
-        val attestasjoner: Map<Int, List<Attestasjon>> = attestasjonRepository.getAttestasjonerForLinjer(oppdragsId, linjeIder)
+        val attestasjoner = attestasjonRepository.getAttestasjonerForLinjer(oppdragsId, linjeIder)
 
         val oppdragsdetaljer =
-            OppdragsDetaljer(
-                ansvarsStedForOppdrag = oppdragsInfo.ansvarsSted,
-                oppdragsId = oppdragsInfo.oppdragsId.toString(),
-                antallAttestanter = oppdragsInfo.antallAttestanter,
-                fagGruppe = oppdragsInfo.fagGruppe,
-                fagOmraade = oppdragsInfo.fagOmraade,
-                fagSystemId = oppdragsInfo.fagSystemId,
-                gjelderId = oppdragsInfo.gjelderId,
-                kostnadsStedForOppdrag = oppdragsInfo.kostnadsSted,
-                kodeFagOmraade = oppdragsInfo.kodeFagOmraade,
-                saksbehandlerIdent = getSaksbehandler(applicationCall).ident,
-                linjer =
-                    linjerMedDatoVedtakTom.map { l ->
-                        Oppdragslinje(
-                            oppdragsLinje = l,
-                            ansvarsStedForOppdragsLinje = ansvarssteder[l.linjeId],
-                            kostnadsStedForOppdragsLinje = kostnadssteder[l.linjeId],
-                            attestasjoner = attestasjoner[l.linjeId] ?: emptyList(),
-                        )
-                    },
+            OppdragsdetaljerDTO(
+                oppdragslinjerMedDatoVedtakTom.map { linje ->
+                    OppdragslinjeDTO(
+                        linje,
+                        ansvarssteder[linje.linjeId],
+                        kostnadssteder[linje.linjeId],
+                        attestasjoner[linje.linjeId] ?: emptyList(),
+                    )
+                },
+                saksbehandler.ident,
             )
-        return listOf(oppdragsdetaljer)
+
+        return oppdragsdetaljer
     }
 
     suspend fun attestereOppdrag(
-        applicationCall: ApplicationCall,
         attestasjonRequest: AttestasjonRequest,
+        saksbehandler: NavIdent,
     ): PostOSAttestasjonResponse200 {
-        val saksbehandler = getSaksbehandler(applicationCall)
         return zosConnectService.attestereOppdrag(attestasjonRequest, saksbehandler.ident)
     }
 }

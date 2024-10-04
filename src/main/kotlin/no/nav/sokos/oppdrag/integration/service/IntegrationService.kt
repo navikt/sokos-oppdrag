@@ -1,15 +1,14 @@
 package no.nav.sokos.oppdrag.integration.service
 
-import io.ktor.server.application.ApplicationCall
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
+import no.nav.sokos.oppdrag.common.audit.NavIdent
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.api.model.GjelderIdResponse
 import no.nav.sokos.oppdrag.integration.ereg.EregService
 import no.nav.sokos.oppdrag.integration.pdl.PdlService
 import no.nav.sokos.oppdrag.integration.tp.TpService
-import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
@@ -21,10 +20,8 @@ class IntegrationService(
 ) {
     suspend fun getNavnForGjelderId(
         gjelderId: String,
-        applicationCall: ApplicationCall,
+        saksbehandler: NavIdent,
     ): GjelderIdResponse {
-        val saksbehandler = getSaksbehandler(applicationCall)
-
         secureLogger.info { "Henter navn for gjelderId: $gjelderId" }
         auditLogger.auditLog(
             AuditLogg(

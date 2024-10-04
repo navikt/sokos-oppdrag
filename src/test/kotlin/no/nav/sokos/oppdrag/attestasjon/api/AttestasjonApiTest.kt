@@ -23,9 +23,9 @@ import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
-import no.nav.sokos.oppdrag.attestasjon.domain.OppdragsDetaljer
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
-import no.nav.sokos.oppdrag.attestasjon.domain.OppdragslinjePlain
+import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
+import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponse
@@ -58,16 +58,16 @@ internal class AttestasjonApiTest : FunSpec({
         val oppdragsListe =
             listOf(
                 Oppdrag(
-                    ansvarsSted = "1337",
-                    antallAttestanter = 1,
-                    fagSystemId = "123456789",
-                    gjelderId = "12345678901",
-                    kostnadsSted = "8128",
-                    fagGruppe = "navnFaggruppe",
-                    fagOmraade = "navnFagomraade",
-                    oppdragsId = 987654,
-                    kodeFagOmraade = "kodeFagomraade",
-                    kodeFagGruppe = "kodeFaggruppe",
+                    "1337",
+                    1,
+                    "navnFaggruppe",
+                    "navnFagomraade",
+                    "123456789",
+                    "12345678901",
+                    "kodeFaggruppe",
+                    "kodeFagomraade",
+                    "8128",
+                    987654,
                 ),
             )
 
@@ -151,44 +151,30 @@ internal class AttestasjonApiTest : FunSpec({
         response.body.jsonPath().getList<FagOmraade>("kode").first().shouldBe("BP")
     }
 
-    test("søk etter oppdragsId på oppdragslinjer endepunktet skal returnere 200 OK") {
-        every { attestasjonService.getOppdragsDetaljer(any(), any()) } returns
-            listOf(
-                OppdragsDetaljer(
-                    ansvarsStedForOppdrag = "1337",
-                    antallAttestanter = 1,
-                    fagGruppe = "faggruppe",
-                    fagOmraade = "fagområde",
-                    fagSystemId = "123456789",
-                    gjelderId = "12345612345",
-                    kodeFagOmraade = "FUBAR",
-                    kostnadsStedForOppdrag = "8128",
-                    oppdragsId = "12345678",
-                    linjer =
-                        listOf(
-                            Oppdragslinje(
-                                oppdragsLinje =
-                                    OppdragslinjePlain(
-                                        attestert = false,
-                                        datoVedtakFom = LocalDate.parse("2000-01-01"),
-                                        datoVedtakTom = null,
-                                        delytelseId = "FYL20170501007247481 79947001",
-                                        kodeKlasse = "FUBAR",
-                                        linjeId = 1,
-                                        oppdragsId = 12345678,
-                                        sats = 1234.56,
-                                        typeSats = "MND",
-                                    ),
-                                attestasjoner =
-                                    listOf(
-                                        Attestasjon(attestant = "X999123", datoUgyldigFom = LocalDate.parse("2050-01-01")),
-                                    ),
-                                ansvarsStedForOppdragsLinje = null,
-                                kostnadsStedForOppdragsLinje = null,
-                            ),
+    test("søk etter oppdragsId på oppdragsdetaljer endepunktet skal returnere 200 OK") {
+        every { attestasjonService.getOppdragsdetaljer(any(), any()) } returns
+            OppdragsdetaljerDTO(
+                listOf(
+                    OppdragslinjeDTO(
+                        Oppdragslinje(
+                            false,
+                            LocalDate.parse("2000-01-01"),
+                            null,
+                            "FYL20170501007247481 79947001",
+                            "FUBAR",
+                            1,
+                            12345678,
+                            1234.56,
+                            "MND",
                         ),
-                    saksbehandlerIdent = "X313373",
+                        null,
+                        null,
+                        listOf(
+                            Attestasjon("X999123", LocalDate.parse("2050-01-01")),
+                        ),
+                    ),
                 ),
+                "X313373",
             )
 
         val response =
@@ -196,12 +182,12 @@ internal class AttestasjonApiTest : FunSpec({
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .port(PORT)
-                .get("$ATTESTASJON_BASE_API_PATH/oppdragsdetaljer/12341234")
+                .get("$ATTESTASJON_BASE_API_PATH/12341234/oppdragsdetaljer")
                 .then().assertThat()
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
-        response.body.jsonPath().getList<Int>("fagSystemId").first().shouldBe("123456789")
+        response.body.jsonPath().getList<Int>("linjer").size shouldBe 1
     }
 
     // TODO: En test for .get("$ATTESTASJON_BASE_API_PATH/oppdragsdetaljer/12341234") som returnerer 400 Bad Request??
@@ -224,20 +210,17 @@ internal class AttestasjonApiTest : FunSpec({
 
         val zOsResponse =
             PostOSAttestasjonResponse200(
-                osAttestasjonOperationResponse =
-                    PostOSAttestasjonResponse200OSAttestasjonOperationResponse(
-                        attestasjonskvittering =
-                            PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvittering(
-                                responsAttestasjon =
-                                    PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvitteringResponsAttestasjon(
-                                        gjelderId = "123456789",
-                                        oppdragsId = 999_999_999,
-                                        antLinjerMottatt = 99_999,
-                                        statuskode = 99,
-                                        melding = "Test melding",
-                                    ),
-                            ),
+                PostOSAttestasjonResponse200OSAttestasjonOperationResponse(
+                    PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvittering(
+                        PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvitteringResponsAttestasjon(
+                            "123456789",
+                            999_999_999,
+                            99_999,
+                            99,
+                            "Test melding",
+                        ),
                     ),
+                ),
             )
 
         coEvery { attestasjonService.attestereOppdrag(any(), any()) } returns zOsResponse

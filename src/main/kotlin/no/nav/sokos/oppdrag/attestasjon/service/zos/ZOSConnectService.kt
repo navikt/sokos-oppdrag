@@ -11,7 +11,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
-import no.nav.sokos.oppdrag.attestasjon.exception.ZOSException
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.createHttpClient
@@ -67,28 +66,26 @@ class ZOSConnectService(
 
     private fun AttestasjonRequest.mapToZosRequest(navIdent: String): PostOSAttestasjonRequest {
         return PostOSAttestasjonRequest(
-            osAttestasjonOperation =
-                PostOSAttestasjonRequestOSAttestasjonOperation(
-                    attestasjonsdata =
-                        PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdata(
-                            requestAttestasjon =
-                                PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjon(
-                                    gjelderId = gjelderId,
-                                    fagomraade = kodeFagOmraade,
-                                    oppdragsId = oppdragsId,
-                                    brukerId = navIdent,
-                                    kjorIdag = true,
-                                    linjeTab =
-                                        linjer.map {
-                                            PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjonLinjeTabInner(
-                                                linjeId = it.linjeId,
-                                                attestantId = it.attestantIdent ?: navIdent,
-                                                datoUgyldigFom = it.datoUgyldigFom,
-                                            )
-                                        },
-                                ),
-                        ),
+            PostOSAttestasjonRequestOSAttestasjonOperation(
+                PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdata(
+                    PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjon(
+                        gjelderId,
+                        kodeFagOmraade,
+                        oppdragsId,
+                        navIdent,
+                        true,
+                        linjer.map {
+                            PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjonLinjeTabInner(
+                                it.linjeId,
+                                it.attestantIdent ?: navIdent,
+                                it.datoUgyldigFom,
+                            )
+                        },
+                    ),
                 ),
+            ),
         )
     }
 }
+
+data class ZOSException(val apiError: ApiError) : Exception(apiError.error)

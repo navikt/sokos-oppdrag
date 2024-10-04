@@ -10,6 +10,7 @@ import io.ktor.server.routing.route
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
+import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler
 
 private const val BASE_PATH = "/api/v1/attestasjon"
 
@@ -17,14 +18,15 @@ fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonSer
     route(BASE_PATH) {
         post("sok") {
             val request = call.receive<OppdragsRequest>()
+            val saksbehandler = getSaksbehandler(call)
             call.respond(
                 attestasjonService.getOppdrag(
-                    gjelderId = request.gjelderId,
-                    fagSystemId = request.fagSystemId,
-                    kodeFagGruppe = request.kodeFagGruppe,
-                    kodeFagOmraade = request.kodeFagOmraade,
-                    attestert = request.attestert,
-                    applicationCall = call,
+                    request.gjelderId,
+                    request.fagSystemId,
+                    request.kodeFagGruppe,
+                    request.kodeFagOmraade,
+                    request.attestert,
+                    saksbehandler,
                 ),
             )
         }
@@ -35,19 +37,21 @@ fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonSer
             )
         }
 
-        get("oppdragsdetaljer/{oppdragsId}") {
+        get("{oppdragsId}/oppdragsdetaljer") {
+            val saksbehandler = getSaksbehandler(call)
             call.respond(
-                attestasjonService.getOppdragsDetaljer(
-                    applicationCall = call,
+                attestasjonService.getOppdragsdetaljer(
                     call.parameters["oppdragsId"].orEmpty().toInt(),
+                    saksbehandler,
                 ),
             )
         }
 
         post("attestere") {
             val request = call.receive<AttestasjonRequest>()
+            val saksbehandler = getSaksbehandler(call)
             call.respond(
-                attestasjonService.attestereOppdrag(call, request),
+                attestasjonService.attestereOppdrag(request, saksbehandler),
             )
         }
     }

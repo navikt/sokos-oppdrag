@@ -8,7 +8,7 @@ import kotliquery.sessionOf
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
-import no.nav.sokos.oppdrag.attestasjon.domain.OppdragslinjePlain
+import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
 import no.nav.sokos.oppdrag.config.DatabaseConfig
 
 class AttestasjonRepository(
@@ -18,7 +18,7 @@ class AttestasjonRepository(
         attestert: Boolean?,
         fagSystemId: String?,
         gjelderId: String?,
-        kodeFagOmraader: List<String>?,
+        kodeFagOmraader: List<String>,
     ): List<Oppdrag> {
         val statementParts =
             mutableListOf(
@@ -70,28 +70,36 @@ class AttestasjonRepository(
                                                                   AND ANDRESTATUSER.DATO_FOM >= STATUSNY.DATO_FOM
                                                                   AND ANDRESTATUSER.TIDSPKT_REG > KORRANNUOPPH.TIDSPKT_REG))
                                 AND L.OPPDRAGS_ID = O.OPPDRAGS_ID
-                                AND L.ATTESTERT ${if (attestert == null) {
-                    "LIKE '%'"
-                } else if (attestert) {
-                    "= 'J'"
-                } else {
-                    "= 'N'"
-                }}
-                                )
+                                ${attestert?.let { " AND L.ATTESTERT = '${if (it) "J" else "N"}'" } ?: ""}
+                  )
                 """.trimIndent(),
             )
 
-        if (!gjelderId.isNullOrBlank()) statementParts.add("AND O.OPPDRAG_GJELDER_ID = '$gjelderId'")
-        if (!fagSystemId.isNullOrBlank()) statementParts.add("AND O.FAGSYSTEM_ID LIKE '$fagSystemId%'")
-        if (!kodeFagOmraader.isNullOrEmpty()) statementParts.add("AND O.KODE_FAGOMRAADE IN (${kodeFagOmraader.joinToString("','", "'", postfix = "'")})")
+        val parameters = mutableListOf<String>()
 
-        statementParts.add("FETCH FIRST 200 ROWS ONLY")
-        if (!gjelderId.isNullOrBlank() || !fagSystemId.isNullOrBlank()) statementParts.add("OPTIMIZE FOR 1 ROW")
+        if (!gjelderId.isNullOrBlank()) {
+            statementParts.add(" AND O.OPPDRAG_GJELDER_ID = ?")
+            parameters.add(gjelderId)
+        }
+
+        if (!fagSystemId.isNullOrBlank()) {
+            statementParts.add(" AND O.FAGSYSTEM_ID LIKE ?")
+            parameters.add("$fagSystemId%")
+        }
+
+        if (kodeFagOmraader.isNotEmpty()) {
+            statementParts.add(" AND O.KODE_FAGOMRAADE IN (${kodeFagOmraader.joinToString(",") { "?" }})")
+            parameters.addAll(kodeFagOmraader)
+        }
+
+        statementParts.add(" FETCH FIRST 200 ROWS ONLY")
+        if (!gjelderId.isNullOrBlank() || !fagSystemId.isNullOrBlank()) statementParts.add(" OPTIMIZE FOR 1 ROW")
 
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
                     statementParts.joinToString("\n", "", ";"),
+                    *parameters.toTypedArray(),
                 ),
                 mapToOppdrag,
             )
@@ -108,8 +116,12 @@ class AttestasjonRepository(
                     FROM T_FAGOMRAADE
                     """.trimIndent(),
                 ),
-                mapToFagOmraade,
-            )
+            ) { row ->
+                FagOmraade(
+                    navn = row.string("NAVN_FAGOMRAADE"),
+                    kode = row.string("KODE_FAGOMRAADE"),
+                )
+            }
         }
     }
 
@@ -129,11 +141,11 @@ class AttestasjonRepository(
                         "KODEFAGGRUPPE" to kodeFaggruppe,
                     ),
                 ),
-            ) { (row) -> row.getString("KODE_FAGOMRAADE") }
+            ) { row -> row.string("KODE_FAGOMRAADE") }
         }
     }
 
-    fun getOppdragslinjerPlain(oppdragsId: Int): List<OppdragslinjePlain> {
+    fun getOppdragslinjer(oppdragsId: Int): List<Oppdragslinje> {
         val query =
             """
             SELECT  L.OPPDRAGS_ID          AS OPPDRAGS_ID,
@@ -173,7 +185,7 @@ class AttestasjonRepository(
                         "OPPDRAGSID" to oppdragsId,
                     ),
                 ),
-                mapToOppdragslinjerWithoutFluff,
+                mapToOppdragslinje,
             )
         }
     }
@@ -189,10 +201,10 @@ class AttestasjonRepository(
             SELECT LINJE_ID, ENHET
             FROM T_LINJEENHET E
             WHERE 1=1
-              AND E.TYPE_ENHET=:TYPEENHET
+              AND E.TYPE_ENHET = :TYPEENHET
               AND ENHET != ''
-              AND LINJE_ID IN (${linjeIder.joinToString(",")})
               AND E.OPPDRAGS_ID = :OPPDRAGSID
+              AND LINJE_ID IN (${linjeIder.joinToString(",")})              
               AND NOT EXISTS(SELECT 1
                              FROM T_LINJEENHET DUP
                              WHERE E.OPPDRAGS_ID = DUP.OPPDRAGS_ID
@@ -200,6 +212,7 @@ class AttestasjonRepository(
                                AND E.TIDSPKT_REG < DUP.TIDSPKT_REG);
             """.trimIndent()
 
+        val parameters = mutableListOf(typeEnhet, oppdragsId)
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -245,56 +258,8 @@ class AttestasjonRepository(
                     ),
                 ),
             ) { row ->
-                row.int("LINJE_ID") to
-                    Attestasjon(
-                        row.string("ATTESTANT_ID"),
-                        row.localDate("DATO_UGYLDIG_FOM"),
-                    )
+                row.int("LINJE_ID") to mapToAttestasjon(row)
             }.groupBy({ it.first }, { it.second })
-        }
-    }
-
-    fun getEnkeltOppdrag(oppdragsId: Int): Oppdrag {
-        val query = """
-                    select TRIM(o.OPPDRAGS_ID)         as OPPDRAGS_ID, 
-                           TRIM(o.FAGSYSTEM_ID)        as FAGSYSTEM_ID, 
-                           TRIM(o.OPPDRAG_GJELDER_ID)  as OPPDRAG_GJELDER_ID, 
-                           TRIM(o.KODE_FAGOMRAADE)     as KODE_FAGOMRAADE, 
-                           TRIM(fo.NAVN_FAGOMRAADE)    as NAVN_FAGOMRAADE, 
-                           TRIM(fo.KODE_FAGGRUPPE)     as KODE_FAGGRUPPE,        
-                           fo.ANT_ATTESTANTER          as ANT_ATTESTANTER,
-                           TRIM(fg.NAVN_FAGGRUPPE)     as NAVN_FAGGRUPPE, 
-                           TRIM(ok.ENHET)              as kostnadssted,
-                           TRIM(oa.ENHET)              as ansvarssted
-                    from T_OPPDRAG o
-                             join T_FAGOMRAADE fo on fo.KODE_FAGOMRAADE = o.KODE_FAGOMRAADE
-                             join T_FAGGRUPPE fg on fg.KODE_FAGGRUPPE = fo.KODE_FAGGRUPPE
-                             join T_OPPDRAGSENHET ok on ok.OPPDRAGS_ID = o.OPPDRAGS_ID and ok.TYPE_ENHET = 'BOS'
-                             left join T_OPPDRAGSENHET oa on oa.OPPDRAGS_ID = o.OPPDRAGS_ID and oa.TYPE_ENHET = 'BEH'
-                    where 1 = 1
-                      AND OK.TIDSPKT_REG = (SELECT MAX(TIDSPKT_REG)
-                                            FROM T_OPPDRAGSENHET OK2
-                                            WHERE OK2.OPPDRAGS_ID = OK.OPPDRAGS_ID
-                                              AND OK2.TYPE_ENHET = OK.TYPE_ENHET
-                                              AND OK2.DATO_FOM <= CURRENT DATE)
-                      AND (OA.OPPDRAGS_ID IS NULL
-                        OR OA.TIDSPKT_REG = (SELECT MAX(TIDSPKT_REG)
-                                             FROM T_OPPDRAGSENHET OA2
-                                             WHERE OA2.OPPDRAGS_ID = OA.OPPDRAGS_ID
-                                               AND OA2.TYPE_ENHET = OA.TYPE_ENHET
-                                               AND OA2.DATO_FOM  <= CURRENT DATE))
-                      and o.OPPDRAGS_ID = :OPPDRAGSID
-                """
-        return using(sessionOf(dataSource)) { session ->
-            session.single(
-                queryOf(
-                    query,
-                    mapOf(
-                        "OPPDRAGSID" to oppdragsId,
-                    ),
-                ),
-                mapToOppdrag,
-            ) ?: throw IllegalStateException("Oppdrag not found")
         }
     }
 
@@ -313,24 +278,24 @@ class AttestasjonRepository(
         )
     }
 
-    private val mapToOppdragslinjerWithoutFluff: (Row) -> OppdragslinjePlain = { row ->
-        OppdragslinjePlain(
+    private val mapToOppdragslinje: (Row) -> Oppdragslinje = { row ->
+        Oppdragslinje(
             oppdragsId = row.int("OPPDRAGS_ID"),
             linjeId = row.int("LINJE_ID"),
             kodeKlasse = row.string("KODE_KLASSE"),
             datoVedtakFom = row.localDate("DATO_VEDTAK_FOM"),
             datoVedtakTom = row.localDateOrNull("DATO_VEDTAK_TOM"),
-            attestert = if (row.string("ATTESTERT").equals("J")) true else false,
+            attestert = row.string("ATTESTERT") == "J",
             sats = row.double("SATS"),
             typeSats = row.string("TYPE_SATS"),
             delytelseId = row.string("DELYTELSE_ID"),
         )
     }
 
-    private val mapToFagOmraade: (Row) -> FagOmraade = { row ->
-        FagOmraade(
-            navn = row.string("NAVN_FAGOMRAADE"),
-            kode = row.string("KODE_FAGOMRAADE"),
+    private val mapToAttestasjon: (Row) -> Attestasjon = { row ->
+        Attestasjon(
+            attestant = row.string("ATTESTANT_ID"),
+            datoUgyldigFom = row.localDate("DATO_UGYLDIG_FOM"),
         )
     }
 }

@@ -77,7 +77,7 @@ paths:
         - Bearer: [ ]
 
 
-  /oppdragsdetaljer/{oppdragsId}:
+  /{oppdragsId}/oppdragsdetaljer:
     get:
       tags:
         - attestasjon
@@ -97,9 +97,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/OppdragsDetaljer'
+                  $ref: '#/components/schemas/OppdragsdetaljerDTO'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
@@ -172,36 +170,6 @@ components:
           type: boolean
           example: true
           nullable: true
-
-    ApiError:
-      type: object
-      required:
-        - timestamp
-        - status
-        - error
-        - message
-        - path
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: Tidspunkt feilen oppsto
-        status:
-          type: integer
-          example: 4xx
-          description: HTTP status kode
-        error:
-          type: string
-          example: Bad Request
-          description: En kort, lesbar oppsummering av problemet
-        message:
-          type: string
-          example: Det skjedde en feil
-          description: En lesbar forklaring som er spesifikk for denne forekomsten av problemet
-        path:
-          type: string
-          example: /api/v1/attestasjon/sok
-          description: Endepunktet hvor feilen oppstå
 
     AttestasjonRequest:
       type: object
@@ -317,39 +285,21 @@ components:
         oppdragsId:
           type: integer
 
-    OppdragsDetaljer:
+    OppdragsdetaljerDTO:
       type: object
       properties:
-        ansvarsStedForOppdrag:
-          type: string
-        antallAttestanter:
-          type: integer
-        fagGruppe:
-          type: string
-        fagOmraade:
-          type: string
-        fagSystemId:
-          type: string
-        gjelderId:
-          type: string
-        kodeFagOmraade:
-          type: string
-        kostnadsStedForOppdrag:
-          type: string
-        oppdragsId:
-          type: string
         linjer:
           type: array
           items:
-            $ref: '#/components/schemas/Oppdragslinje'
+            $ref: '#/components/schemas/OppdragslinjeDTO'
         saksbehandlerIdent:
           type: string
 
-    Oppdragslinje:
+    OppdragslinjeDTO:
       type: object
       properties:
         oppdragsLinje:
-          $ref: '#/components/schemas/OppdragslinjePlain'
+          $ref: '#/components/schemas/Oppdragslinje'
         ansvarsStedForOppdragsLinje:
           type: string
         kostnadsStedForOppdragsLinje:
@@ -359,7 +309,7 @@ components:
           items:
             $ref: '#/components/schemas/Attestasjon'
 
-    OppdragslinjePlain:
+    Oppdragslinje:
       type: object
       properties:
         attestert:
@@ -380,6 +330,36 @@ components:
           type: number
         typeSats:
           type: string
+
+    ApiError:
+      type: object
+      required:
+        - timestamp
+        - status
+        - error
+        - message
+        - path
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Tidspunkt feilen oppsto
+        status:
+          type: integer
+          example: 4xx
+          description: HTTP status kode
+        error:
+          type: string
+          example: Bad Request
+          description: En kort, lesbar oppsummering av problemet
+        message:
+          type: string
+          example: Det skjedde en feil
+          description: En lesbar forklaring som er spesifikk for denne forekomsten av problemet
+        path:
+          type: string
+          example: /api/v1/attestasjon/sok
+          description: Endepunktet hvor feilen oppstå
 
   securitySchemes:
     Bearer:
