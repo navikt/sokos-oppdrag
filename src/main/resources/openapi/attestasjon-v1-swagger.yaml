@@ -97,8 +97,6 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
                   $ref: '#/components/schemas/OppdragsdetaljerDTO'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt

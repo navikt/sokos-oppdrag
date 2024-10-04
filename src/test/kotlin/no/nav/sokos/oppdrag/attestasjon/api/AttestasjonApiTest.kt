@@ -153,30 +153,28 @@ internal class AttestasjonApiTest : FunSpec({
 
     test("søk etter oppdragsId på oppdragsdetaljer endepunktet skal returnere 200 OK") {
         every { attestasjonService.getOppdragsdetaljer(any(), any()) } returns
-            listOf(
-                OppdragsdetaljerDTO(
-                    listOf(
-                        OppdragslinjeDTO(
-                            Oppdragslinje(
-                                false,
-                                LocalDate.parse("2000-01-01"),
-                                null,
-                                "FYL20170501007247481 79947001",
-                                "FUBAR",
-                                1,
-                                12345678,
-                                1234.56,
-                                "MND",
-                            ),
+            OppdragsdetaljerDTO(
+                listOf(
+                    OppdragslinjeDTO(
+                        Oppdragslinje(
+                            false,
+                            LocalDate.parse("2000-01-01"),
                             null,
-                            null,
-                            listOf(
-                                Attestasjon("X999123", LocalDate.parse("2050-01-01")),
-                            ),
+                            "FYL20170501007247481 79947001",
+                            "FUBAR",
+                            1,
+                            12345678,
+                            1234.56,
+                            "MND",
+                        ),
+                        null,
+                        null,
+                        listOf(
+                            Attestasjon("X999123", LocalDate.parse("2050-01-01")),
                         ),
                     ),
-                    "X313373",
                 ),
+                "X313373",
             )
 
         val response =

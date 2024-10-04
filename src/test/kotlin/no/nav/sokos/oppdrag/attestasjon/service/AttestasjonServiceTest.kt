@@ -11,6 +11,7 @@ import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
+import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponse
@@ -69,7 +70,7 @@ internal class AttestasjonServiceTest : FunSpec({
         every { attestasjonRepository.getEnhetForLinjer(any(), any(), any()) } returns emptyMap()
         every { attestasjonRepository.getAttestasjonerForLinjer(any(), any()) } returns emptyMap()
 
-        attestasjonService.getOppdragsdetaljer(92345678, navIdent) shouldBe emptyList()
+        attestasjonService.getOppdragsdetaljer(92345678, navIdent) shouldBe OppdragsdetaljerDTO(emptyList(), navIdent.ident)
     }
 
     test("getOppdragsDetaljer returnerer riktig datasett for et gitt scenario med UFOREUT") {
@@ -121,7 +122,7 @@ internal class AttestasjonServiceTest : FunSpec({
             )
 
         // ACT / ASSERT
-        attestasjonService.getOppdragsdetaljer(12345678, navIdent)[0].linjer.map { l -> l.oppdragsLinje } shouldContainExactly
+        attestasjonService.getOppdragsdetaljer(12345678, navIdent).linjer.map { l -> l.oppdragsLinje } shouldContainExactly
             oppdragslinjer(
                 """
                 +-----------+--------+------------+---------------+---------------+---------+--------+---------+-------------+
@@ -196,7 +197,7 @@ internal class AttestasjonServiceTest : FunSpec({
                 """.trimIndent(),
             )
 
-        val oppdragsDetaljer = attestasjonService.getOppdragsdetaljer(12345678, navIdent)[0]
+        val oppdragsDetaljer = attestasjonService.getOppdragsdetaljer(12345678, navIdent)
 
         oppdragsDetaljer.linjer.size shouldBe 15
 
