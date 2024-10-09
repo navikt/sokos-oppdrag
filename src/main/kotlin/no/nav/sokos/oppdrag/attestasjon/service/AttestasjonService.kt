@@ -2,12 +2,12 @@ package no.nav.sokos.oppdrag.attestasjon.service
 
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
+import no.nav.sokos.oppdrag.attestasjon.api.model.ZOsResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
-import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
@@ -105,7 +105,7 @@ class AttestasjonService(
     suspend fun attestereOppdrag(
         attestasjonRequest: AttestasjonRequest,
         saksbehandler: NavIdent,
-    ): PostOSAttestasjonResponse200 {
+    ): ZOsResponse {
         return zosConnectService.attestereOppdrag(attestasjonRequest, saksbehandler.ident)
     }
 }

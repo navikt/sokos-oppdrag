@@ -20,6 +20,7 @@ import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
+import no.nav.sokos.oppdrag.attestasjon.api.model.ZOsResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
@@ -27,10 +28,6 @@ import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
-import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
-import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponse
-import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvittering
-import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvitteringResponsAttestasjon
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
@@ -209,18 +206,8 @@ internal class AttestasjonApiTest : FunSpec({
             )
 
         val zOsResponse =
-            PostOSAttestasjonResponse200(
-                PostOSAttestasjonResponse200OSAttestasjonOperationResponse(
-                    PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvittering(
-                        PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvitteringResponsAttestasjon(
-                            "123456789",
-                            999_999_999,
-                            99_999,
-                            99,
-                            "Test melding",
-                        ),
-                    ),
-                ),
+            ZOsResponse(
+                "Oppdatering vellykket. 99999 linjer oppdatert",
             )
 
         coEvery { attestasjonService.attestereOppdrag(any(), any()) } returns zOsResponse
@@ -236,16 +223,7 @@ internal class AttestasjonApiTest : FunSpec({
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
-        response.body.jsonPath().getString("OSAttestasjonOperationResponse.Attestasjonskvittering.ResponsAttestasjon.GjelderId")
-            .shouldBe("123456789")
-        response.body.jsonPath().getInt("OSAttestasjonOperationResponse.Attestasjonskvittering.ResponsAttestasjon.OppdragsId")
-            .shouldBe(999_999_999)
-        response.body.jsonPath().getInt("OSAttestasjonOperationResponse.Attestasjonskvittering.ResponsAttestasjon.AntLinjerMottatt")
-            .shouldBe(99_999)
-        response.body.jsonPath().getInt("OSAttestasjonOperationResponse.Attestasjonskvittering.ResponsAttestasjon.Statuskode")
-            .shouldBe(99)
-        response.body.jsonPath().getString("OSAttestasjonOperationResponse.Attestasjonskvittering.ResponsAttestasjon.Melding")
-            .shouldBe("Test melding")
+        response.body().jsonPath().getString("message") shouldBe "Oppdatering vellykket. 99999 linjer oppdatert"
     }
 })
 

@@ -45,11 +45,7 @@ internal class ZOSConnectServiceTest : FunSpec({
                 "Z999999",
             )
 
-        response.osAttestasjonOperationResponse?.attestasjonskvittering?.responsAttestasjon?.gjelderId shouldBe "43128412345"
-        response.osAttestasjonOperationResponse?.attestasjonskvittering?.responsAttestasjon?.oppdragsId shouldBe 63835213
-        response.osAttestasjonOperationResponse?.attestasjonskvittering?.responsAttestasjon?.antLinjerMottatt shouldBe 1
-        response.osAttestasjonOperationResponse?.attestasjonskvittering?.responsAttestasjon?.statuskode shouldBe 0
-        response.osAttestasjonOperationResponse?.attestasjonskvittering?.responsAttestasjon?.melding shouldBe ""
+        response.message shouldBe "Oppdatering vellykket. 1 linjer oppdatert"
     }
 
     test("attesterer oppdrag gir http status kode 400 Bad Request, og statuskode 8 fra OppdragZ hvor oppdragslinje ikke funnet") {

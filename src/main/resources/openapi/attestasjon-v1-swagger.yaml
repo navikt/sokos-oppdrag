@@ -134,7 +134,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PostOSAttestasjonResponse200'
+                $ref: '#/components/schemas/ZOsResponse'
         500:
           description: Annen feil
           content:
@@ -193,38 +193,13 @@ components:
             items:
               $ref: '#/components/schemas/AttestasjonLinje'
 
-    PostOSAttestasjonResponse200:
+    ZOsResponse:
       type: object
       properties:
-        OSAttestasjonOperationResponse:
-          type: object
-          properties:
-            Attestasjonskvittering:
-              type: object
-              properties:
-                ResponsAttestasjon:
-                  type: object
-                  properties:
-                    GjelderId:
-                      type: string
-                      maxLength: 11
-                    OppdragsId:
-                      type: integer
-                      minimum: 0
-                      maximum: 9999999999
-                    AntLinjerMottatt:
-                      type: integer
-                      minimum: 0
-                      maximum: 99999
-                    Statuskode:
-                      type: integer
-                      minimum: 0
-                      maximum: 99
-                    Melding:
-                      type: string
-                      maxLength: 100
-          required:
-            - Attestasjonskvittering
+        message:
+          type: string
+          example: "Oppdatering vellykket. 2 linjer oppdatert."
+          description: Melding om oppdatering er vellykket og antall linjer oppdatert
 
     Attestasjon:
       type: object
