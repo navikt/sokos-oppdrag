@@ -9,14 +9,11 @@ import io.mockk.mockk
 import no.nav.sokos.oppdrag.TestUtil.navIdent
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
+import no.nav.sokos.oppdrag.attestasjon.api.model.ZOsResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
-import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200
-import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponse
-import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvittering
-import no.nav.sokos.oppdrag.attestasjon.service.zos.PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvitteringResponsAttestasjon
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import java.time.LocalDate
 
@@ -46,18 +43,8 @@ internal class AttestasjonServiceTest : FunSpec({
             )
 
         val response =
-            PostOSAttestasjonResponse200(
-                PostOSAttestasjonResponse200OSAttestasjonOperationResponse(
-                    PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvittering(
-                        PostOSAttestasjonResponse200OSAttestasjonOperationResponseAttestasjonskvitteringResponsAttestasjon(
-                            "string",
-                            999999999,
-                            99999,
-                            99,
-                            "string",
-                        ),
-                    ),
-                ),
+            ZOsResponse(
+                "Oppdatering vellykket. 1 linjer oppdatert",
             )
 
         coEvery { zosConnectService.attestereOppdrag(any(), any()) } returns response
