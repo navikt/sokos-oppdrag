@@ -12,7 +12,7 @@
 ---
 
 # 1. Funksjonelle Krav
-Applikasjon for å hente Oppdrag fra DB2 på stormaskin. Håndterer også Attestering av oppdrag.
+Applikasjon er en proxy mellom OppdragZ og Utbetalingsportalen (intern arbeidsflate).
 
 # 2. Utviklingsmiljø
 ### Forutsetninger
@@ -20,11 +20,11 @@ Applikasjon for å hente Oppdrag fra DB2 på stormaskin. Håndterer også Attest
 * Gradle 8
 
 ### Bygge prosjekt
-`./gradlew build`
+`./gradlew clean build shadowJar`
 
 ### Lokal utvikling
 Kjør `./setupLocalEnvironment.sh` for å sette opp prosjektet lokalt.
-Du trenger en db2 lisens fil for å koble til DB2 lokalt. Kontakt en utvikler fra Team MOBY for å få denne filen.
+Applikasjonen trenger en db2 lisens fil for å koble til DB2 lokalt. Kontakt en utvikler fra Team MOBY for å få denne filen.
 
 # 3. Programvarearkitektur
 Legg ved skissediagram for hvordan arkitekturen er bygget
@@ -33,19 +33,26 @@ Legg ved skissediagram for hvordan arkitekturen er bygget
 Distribusjon av tjenesten er gjort med bruk av Github Actions.
 [sokos-oppdrag CI / CD](https://github.com/navikt/sokos-oppdrag/actions)
 
-Push/merge til main branche vil teste, bygge og deploye til produksjonsmiljø og testmiljø.
+Push/merge til main branch direkte er ikke mulig. Det må opprettes PR og godkjennes før merge til main branch.
+Når PR er merged til main branch vil Github Actions bygge og deploye til dev-fss og prod-fss.
+Har også mulighet for å deploye manuelt til testmiljø ved å deploye PR.
 
 # 5. Autentisering
-Applikasjonen bruker [AzureAD](https://docs.nais.io/security/auth/azure-ad/) autentisering
+Applikasjonen bruker [AzureAD](https://docs.nais.io/security/auth/azure-ad/) autentisering.
+Applikasjonen brukes mest av [Utbetalingsportalen](https://github.com/navikt/sokos-utbetalingsportalen) og derfor brukes det OBO-token
+som må genereres for å teste mot dev-miljøet.
 
 # 6. Drift og støtte
 
 ### Logging
-Hvor finner jeg logger? Hvordan filtrerer jeg mellom dev og prod logger?
 
-[sikker-utvikling/logging](https://sikkerhet.nav.no/docs/sikker-utvikling/logging) - Anbefales å lese
+https://logs.adeo.no.
+
+Feilmeldinger og infomeldinger som ikke innheholder sensitive data logges til data view `Applikasjonslogger`.  
+Sensetive meldinger logges til data view `Securelogs` [sikker-utvikling/logging](https://sikkerhet.nav.no/docs/sikker-utvikling/logging)).
 
 ### Kubectl
+
 For dev-gcp:
 ```shell script
 kubectl config use-context dev-gcp
@@ -63,13 +70,28 @@ kubectl logs -f sokos-oppdrag-<POD-ID> --namespace okonomi -c sokos-oppdrag
 ### Alarmer
 Vi bruker [nais-alerts](https://doc.nais.io/observability/alerts) for å sette opp alarmer. 
 Disse finner man konfigurert i [.nais/alerts-dev.yaml](.nais/alerts-dev.yaml) filen og [.nais/alerts-prod.yaml](.nais/alerts-prod.yaml)
+Alarmene blir publisert i Slack kanalen #team-moby-alerts-dev og #team-moby-alerts-prod.
 
 ### Grafana
-- [sokos-oppdrag](https://grafana.nav.cloud.nais.io/dashboards/f/lnzUddLmk/tob) (ikke laget enda)
+- [sokos-oppdrag](https://grafana.nav.cloud.nais.io/d/fds82z8c0pq0wf/sokos-oppdrag?orgId=1)
 ---
 
 # 7. Swagger
-Hva er url til Lokal, dev og prod?
+
+Integration:
+- [Prod-fss](https://sokos-oppdrag.intern.nav.no/api/v1/integration/docs)
+- [Dev-fss](https://sokos-oppdrag.intern.dev.nav.no/api/v1/integration/docs)
+- [Lokalt](http://0.0.0.0:8080/api/v1/integration/docs)
+
+Oppdragsinfo:
+- [Prod-fss](https://sokos-oppdrag.intern.nav.no/api/v1/oppdragsinfo/docs)
+- [Dev-fss](https://sokos-oppdrag.intern.dev.nav.no/api/v1/oppdragsinfo/docs)
+- [Lokalt](http://0.0.0.0:8080/api/v1/oppdragsinfo/docs)
+
+Oppdragsinfo:
+- [Prod-fss](https://sokos-oppdrag.intern.nav.no/api/v1/attestasjon/docs)
+- [Dev-fss](https://sokos-oppdrag.intern.dev.nav.no/api/v1/attestasjon/docs)
+- [Lokalt](http://0.0.0.0:8080/api/v1/oppdragsinfo/docs)
 
 # 8. Henvendelser
    Spørsmål knyttet til koden eller prosjektet kan stilles som issues her på Github.
