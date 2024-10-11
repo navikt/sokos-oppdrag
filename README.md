@@ -88,10 +88,10 @@ Oppdragsinfo:
 - [Dev-fss](https://sokos-oppdrag.intern.dev.nav.no/api/v1/oppdragsinfo/docs)
 - [Lokalt](http://0.0.0.0:8080/api/v1/oppdragsinfo/docs)
 
-Oppdragsinfo:
+Attestasjon:
 - [Prod-fss](https://sokos-oppdrag.intern.nav.no/api/v1/attestasjon/docs)
 - [Dev-fss](https://sokos-oppdrag.intern.dev.nav.no/api/v1/attestasjon/docs)
-- [Lokalt](http://0.0.0.0:8080/api/v1/oppdragsinfo/docs)
+- [Lokalt](http://0.0.0.0:8080/api/v1/attestasjon/docs)
 
 # 8. Henvendelser
    Spørsmål knyttet til koden eller prosjektet kan stilles som issues her på Github.
