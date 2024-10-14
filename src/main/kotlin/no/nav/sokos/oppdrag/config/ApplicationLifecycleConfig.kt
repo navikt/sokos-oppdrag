@@ -5,11 +5,11 @@ import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.ApplicationStopped
 
 fun Application.applicationLifeCycleConfig(applicationState: ApplicationState) {
-    environment.monitor.subscribe(ApplicationStarted) {
+    monitor.subscribe(ApplicationStarted) {
         applicationState.ready = true
     }
 
-    environment.monitor.subscribe(ApplicationStopped) {
+    monitor.subscribe(ApplicationStopped) {
         applicationState.ready = false
     }
 }

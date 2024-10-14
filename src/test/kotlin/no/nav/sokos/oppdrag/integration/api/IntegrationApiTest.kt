@@ -6,6 +6,7 @@ import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
+import io.ktor.server.engine.EmbeddedServer
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
@@ -26,7 +27,7 @@ import org.hamcrest.Matchers.equalTo
 
 private const val PORT = 9090
 
-private lateinit var server: NettyApplicationEngine
+private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
 
 private val validationFilter = OpenApiValidationFilter("openapi/integration-v1-swagger.yaml")
 private val integrationService = mockk<IntegrationService>()

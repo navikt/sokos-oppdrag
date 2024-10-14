@@ -3,49 +3,41 @@ package no.nav.sokos.oppdrag.security
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
-import io.ktor.server.testing.TestApplicationEngine
-import io.ktor.server.testing.createTestEnvironment
+import io.ktor.server.application.ApplicationCall
+import io.mockk.every
+import io.mockk.mockk
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
 import no.nav.sokos.oppdrag.TestUtil.tokenWithoutNavIdent
 import org.junit.jupiter.api.assertThrows
 
-private val engine = TestApplicationEngine(createTestEnvironment())
-
 internal class AuthTokenTest : FunSpec({
-
-    beforeTest {
-        engine.start(wait = true)
-    }
 
     test("token bør returnere NAVident") {
 
-        val call =
-            engine.handleRequest {
-                addHeader(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-            }
+        val call = mockk<ApplicationCall>(relaxed = true)
+        every { call.request.headers[HttpHeaders.Authorization] } returns "Bearer $tokenWithNavIdent"
 
-        val navIdent = AuthToken.getSaksbehandler(call)
-        navIdent.ident shouldBe "Z123456"
+        val result = AuthToken.getSaksbehandler(call)
+        result.ident shouldBe "Z123456"
     }
 
     test("token uten NAVident kaster en RuntimeException") {
 
-        val call =
-            engine.handleRequest {
-                addHeader(HttpHeaders.Authorization, "Bearer $tokenWithoutNavIdent")
-            }
+        val call = mockk<ApplicationCall>(relaxed = true)
+        every { call.request.headers[HttpHeaders.Authorization] } returns "Bearer $tokenWithoutNavIdent"
 
-        val exception =
+        val result =
             assertThrows<RuntimeException> {
                 AuthToken.getSaksbehandler(call)
             }
 
-        exception.message shouldBe "Missing NAVident in private claims"
+        result.message shouldBe "Missing NAVident in private claims"
     }
 
     test("mangler token i header kaster en Error") {
-        val call =
-            engine.handleRequest {}
+
+        val call = mockk<ApplicationCall>(relaxed = true)
+        every { call.request.headers[HttpHeaders.Authorization] } returns null
 
         val exception =
             assertThrows<Error> {
