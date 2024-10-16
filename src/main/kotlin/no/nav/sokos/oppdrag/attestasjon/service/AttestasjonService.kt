@@ -95,7 +95,7 @@ class AttestasjonService(
                         kostnadssteder[linje.linjeId],
                         attestasjoner[linje.linjeId] ?: emptyList(),
                     )
-                },
+                }.sortedBy { oppdragslinjeDTO -> oppdragslinjeDTO.oppdragsLinje.linjeId },
                 saksbehandler.ident,
             )
 
