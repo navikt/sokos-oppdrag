@@ -12,15 +12,19 @@ import kotlinx.serialization.json.Json
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
+import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows
 
-private val zosConnectService =
-    ZOSConnectService(
-        zOsUrl = wiremock.baseUrl(),
-    )
-
 internal class ZOSConnectServiceTest : FunSpec({
+
+    extensions(listOf(WiremockListener))
+
+    val zosConnectService: ZOSConnectService by lazy {
+        ZOSConnectService(
+            zOsUrl = wiremock.baseUrl(),
+        )
+    }
 
     test("attesterer oppdrag gir http status kode 200 OK, og statuskode 0 fra OppdragZ") {
         wiremock.stubFor(

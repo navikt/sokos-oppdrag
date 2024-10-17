@@ -28,8 +28,8 @@ val db2JccVersion = "11.5.9.0"
 val graphqlClientVersion = "8.1.0"
 val hikariVersion = "6.0.0"
 val janionVersion = "3.1.12"
-val kotestVersion = "5.9.1"
-val kotestWiremockVersion = "3.1.0"
+val kotestVersion = "6.0.0.M1"
+val wiremockVersion = "3.0.1"
 val kotlinLoggingVersion = "3.0.5"
 val kotlinxSerializationVersion = "1.7.3"
 val kotliqueryVersion = "1.9.0"
@@ -96,7 +96,7 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
-    testImplementation("io.kotest.extensions:kotest-extensions-wiremock:$kotestWiremockVersion")
+    testImplementation("com.github.tomakehurst:wiremock:$wiremockVersion")
     testImplementation("com.atlassian.oai:swagger-request-validator-restassured:$swaggerRequestValidatorVersion")
 }
 
