@@ -7,6 +7,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
+import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows
 
@@ -18,6 +19,14 @@ private val tpService =
     )
 
 internal class TpServiceTest : FunSpec({
+
+    extensions(listOf(WiremockListener))
+
+    val tpService: TpService by lazy {
+        TpService(
+            tpUrl = wiremock.baseUrl(),
+        )
+    }
 
     test("hent leverandørnavn") {
         wiremock.stubFor(

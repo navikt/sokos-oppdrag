@@ -7,24 +7,20 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import io.mockk.coEvery
-import io.mockk.mockk
 import no.nav.sokos.oppdrag.APPLICATION_JSON
+import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
-import no.nav.sokos.oppdrag.security.AccessTokenClient
 import org.junit.jupiter.api.assertThrows
-
-private val accessTokenClient = mockk<AccessTokenClient>()
-private val pdlService =
-    PdlService(
-        pdlUrl = wiremock.baseUrl(),
-        accessTokenClient = accessTokenClient,
-    )
 
 internal class PdlServiceTest : FunSpec({
 
-    beforeTest {
-        coEvery { accessTokenClient.getSystemToken() } returns "token"
+    extensions(listOf(WiremockListener))
+
+    val pdlService: PdlService by lazy {
+        PdlService(
+            pdlUrl = wiremock.baseUrl(),
+            accessTokenClient = WiremockListener.accessTokenClient,
+        )
     }
 
     test("hent navn fra PDL returnerer 200 OK") {

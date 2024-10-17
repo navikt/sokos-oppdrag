@@ -9,17 +9,21 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import no.nav.sokos.oppdrag.APPLICATION_JSON
+import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows
 
 const val ORGANISASJONSNUMMER = "123456789"
 
-private val eregService =
-    EregService(
-        eregUrl = wiremock.baseUrl(),
-    )
-
 internal class EregServiceTest : FunSpec({
+
+    extensions(listOf(WiremockListener))
+
+    val eregService: EregService by lazy {
+        EregService(
+            eregUrl = wiremock.baseUrl(),
+        )
+    }
 
     test("hent organisasjonsnavn") {
         wiremock.stubFor(
