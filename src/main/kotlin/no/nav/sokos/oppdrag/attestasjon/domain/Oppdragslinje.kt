@@ -10,7 +10,7 @@ data class Oppdragslinje(
     @Serializable(with = LocalDateSerializer::class)
     val datoVedtakFom: LocalDate,
     @Serializable(with = LocalDateSerializer::class)
-    val datoVedtakTom: LocalDate?,
+    val datoVedtakTom: LocalDate? = null,
     val delytelseId: String,
     val kodeKlasse: String,
     val linjeId: Int,

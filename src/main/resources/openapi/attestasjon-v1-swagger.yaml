@@ -73,6 +73,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/FagOmraade'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
       security:
         - Bearer: [ ]
 
@@ -104,8 +110,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
-        401:
-          description: Ingen tilgang
         500:
           description: Annen feil
           content:
@@ -277,8 +281,10 @@ components:
           $ref: '#/components/schemas/Oppdragslinje'
         ansvarsStedForOppdragsLinje:
           type: string
+          nullable: true
         kostnadsStedForOppdragsLinje:
           type: string
+          nullable: true
         attestasjoner:
           type: array
           items:
@@ -293,6 +299,7 @@ components:
           type: string
         datoVedtakTom:
           type: string
+          nullable: true
         delytelseId:
           type: string
         kodeKlasse:

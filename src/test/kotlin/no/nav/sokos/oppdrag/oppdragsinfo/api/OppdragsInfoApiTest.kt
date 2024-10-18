@@ -113,10 +113,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Bad Request",
-                status = 400,
+                error = HttpStatusCode.BadRequest.description,
+                status = HttpStatusCode.BadRequest.value,
                 message = "gjelderId er ugyldig. Tillatt format er 9 eller 11 siffer",
-                path = "/api/v1/oppdragsinfo/sok",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/sok",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -137,10 +137,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "The token was expected to have 3 parts, but got 0.",
-                path = "/api/v1/oppdragsinfo/sok",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/sok",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -186,10 +186,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/faggrupper",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/faggrupper",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -248,10 +248,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/oppdragslinjer",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/oppdragslinjer",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -305,10 +305,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/enheter",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/enheter",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -362,10 +362,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/omposteringer",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/omposteringer",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -412,10 +412,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/enhetshistorikk",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/enhetshistorikk",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -462,10 +462,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/statushistorikk",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/statushistorikk",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -513,10 +513,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/1/statuser",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/1/statuser",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -562,10 +562,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/1/attestanter",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/1/attestanter",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -635,10 +635,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/1/detaljer",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/1/detaljer",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -689,10 +689,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/1/valutaer",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/1/valutaer",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -741,10 +741,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/1/skyldnere",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/1/skyldnere",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -793,10 +793,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/1/kravhavere",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/1/kravhavere",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -847,10 +847,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/1/enheter",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/1/enheter",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -899,10 +899,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/1/grader",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/1/grader",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -948,10 +948,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/1/tekster",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/1/tekster",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -1000,10 +1000,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/1/kid",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/1/kid",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -1052,10 +1052,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/1/maksdatoer",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/1/maksdatoer",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
@@ -1103,10 +1103,10 @@ internal class OppdragsInfoApiTest : FunSpec({
 
         Json.decodeFromString<ApiError>(response.asString()) shouldBe
             ApiError(
-                error = "Internal Server Error",
-                status = 500,
+                error = HttpStatusCode.InternalServerError.description,
+                status = HttpStatusCode.InternalServerError.value,
                 message = "En feil",
-                path = "/api/v1/oppdragsinfo/123/1/ovrig",
+                path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/1/ovrig",
                 timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
             )
     }

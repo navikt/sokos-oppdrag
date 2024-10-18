@@ -15,6 +15,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.restassured.RestAssured
+import kotlinx.serialization.json.Json
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.ATTESTASJON_BASE_API_PATH
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
@@ -30,10 +31,12 @@ import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
+import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
-import org.hamcrest.Matchers.equalTo
+import no.nav.sokos.oppdrag.integration.api.model.GjelderIdRequest
 import java.time.LocalDate
+import java.time.ZonedDateTime
 
 private const val PORT = 9090
 
@@ -52,7 +55,7 @@ internal class AttestasjonApiTest : FunSpec({
         server.stop(5, 5)
     }
 
-    test("søk etter oppdrag med gyldig gjelderId skal returnere 200 OK") {
+    test("søk etter oppdrag med gyldig gjelderId returnerer 200 OK") {
         val oppdragsListe =
             listOf(
                 Oppdrag(
@@ -82,36 +85,58 @@ internal class AttestasjonApiTest : FunSpec({
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
-        response.body.jsonPath().getList<Oppdrag>("oppdragsId").first().shouldBe(987654)
+        Json.decodeFromString<List<Oppdrag>>(response.body.asString()) shouldBe oppdragsListe
     }
 
-    test("sok etter oppdrag med ugyldig gjelderId skal returnere 400 Bad Request") {
+    test("sok etter oppdrag med ugyldig gjelderId returnerer 400 Bad Request") {
 
-        RestAssured.given().filter(validationFilter)
-            .header(HttpHeaders.ContentType, APPLICATION_JSON)
-            .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-            .body(OppdragsRequest(gjelderId = "123"))
-            .port(PORT)
-            .post("$ATTESTASJON_BASE_API_PATH/sok")
-            .then().assertThat()
-            .statusCode(HttpStatusCode.BadRequest.value)
-            .body("message", equalTo("gjelderId er ugyldig. Tillatt format er 9 eller 11 siffer"))
+        val response =
+            RestAssured.given().filter(validationFilter)
+                .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                .body(OppdragsRequest(gjelderId = "123"))
+                .port(PORT)
+                .post("$ATTESTASJON_BASE_API_PATH/sok")
+                .then().assertThat()
+                .statusCode(HttpStatusCode.BadRequest.value)
+                .extract()
+                .response()
+
+        Json.decodeFromString<ApiError>(response.asString()) shouldBe
+            ApiError(
+                status = HttpStatusCode.BadRequest.value,
+                error = HttpStatusCode.BadRequest.description,
+                message = "gjelderId er ugyldig. Tillatt format er 9 eller 11 siffer",
+                path = "$ATTESTASJON_BASE_API_PATH/sok",
+                timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
+            )
     }
 
-    test("sok etter oppdrag med ugyldige søkeparametere skal returnere 400 Bad Request") {
+    test("sok etter oppdrag med ugyldige søkeparametere returnerer 400 Bad Request") {
 
-        RestAssured.given().filter(validationFilter)
-            .header(HttpHeaders.ContentType, APPLICATION_JSON)
-            .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-            .body(OppdragsRequest(kodeFagGruppe = "BP", attestert = true))
-            .port(PORT)
-            .post("$ATTESTASJON_BASE_API_PATH/sok")
-            .then().assertThat()
-            .statusCode(HttpStatusCode.BadRequest.value)
-            .body("message", equalTo("Ugyldig kombinasjon av søkeparametere"))
+        val response =
+            RestAssured.given().filter(validationFilter)
+                .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                .body(OppdragsRequest(kodeFagGruppe = "BP", attestert = true))
+                .port(PORT)
+                .post("$ATTESTASJON_BASE_API_PATH/sok")
+                .then().assertThat()
+                .statusCode(HttpStatusCode.BadRequest.value)
+                .extract()
+                .response()
+
+        Json.decodeFromString<ApiError>(response.asString()) shouldBe
+            ApiError(
+                status = HttpStatusCode.BadRequest.value,
+                error = HttpStatusCode.BadRequest.description,
+                message = "Ugyldig kombinasjon av søkeparametere",
+                path = "$ATTESTASJON_BASE_API_PATH/sok",
+                timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
+            )
     }
 
-    test("sok etter oppdrag med gyldig søkeparametere skal returnere 200 OK") {
+    test("sok etter oppdrag med gyldig søkeparametere returnerer 200 OK") {
 
         every { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any()) } returns emptyList()
 
@@ -125,15 +150,41 @@ internal class AttestasjonApiTest : FunSpec({
             .statusCode(HttpStatusCode.OK.value)
     }
 
-    test("hent alle fagområder skal returnere 200 OK") {
+    test("sok etter oppdrag med dummy token returnerer 500 Internal Server Error") {
 
-        val fagOmraade =
-            FagOmraade(
-                navn = "Barnepensjon",
-                kode = "BP",
+        val response =
+            RestAssured.given().filter(validationFilter)
+                .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                .header(HttpHeaders.Authorization, "dummytoken")
+                .body(GjelderIdRequest(gjelderId = "123456789"))
+                .port(PORT)
+                .post("$ATTESTASJON_BASE_API_PATH/sok")
+                .then().assertThat()
+                .statusCode(HttpStatusCode.InternalServerError.value)
+                .extract()
+                .response()
+
+        Json.decodeFromString<ApiError>(response.asString()) shouldBe
+            ApiError(
+                status = HttpStatusCode.InternalServerError.value,
+                error = HttpStatusCode.InternalServerError.description,
+                message = "The token was expected to have 3 parts, but got 0.",
+                path = "$ATTESTASJON_BASE_API_PATH/sok",
+                timestamp = ZonedDateTime.parse(response.jsonPath().getString("timestamp")),
+            )
+    }
+
+    test("hent alle fagområder returnerer 200 OK") {
+
+        val fagOmraadeList =
+            listOf(
+                FagOmraade(
+                    navn = "Barnepensjon",
+                    kode = "BP",
+                ),
             )
 
-        every { attestasjonService.getFagOmraade() } returns listOf(fagOmraade)
+        every { attestasjonService.getFagOmraade() } returns fagOmraadeList
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -145,12 +196,36 @@ internal class AttestasjonApiTest : FunSpec({
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
-        response.body.jsonPath().getList<FagOmraade>("navn").first().shouldBe("Barnepensjon")
-        response.body.jsonPath().getList<FagOmraade>("kode").first().shouldBe("BP")
+        Json.decodeFromString<List<FagOmraade>>(response.body.asString()) shouldBe fagOmraadeList
     }
 
-    test("søk etter oppdragsId på oppdragsdetaljer endepunktet skal returnere 200 OK") {
-        every { attestasjonService.getOppdragsdetaljer(any(), any()) } returns
+    test("hent alle fagområder returnerer 500 Internal Server Error") {
+
+        every { attestasjonService.getFagOmraade() } throws RuntimeException("Noe gikk galt")
+
+        val response =
+            RestAssured.given().filter(validationFilter)
+                .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                .port(PORT)
+                .get("$ATTESTASJON_BASE_API_PATH/fagomraader")
+                .then().assertThat()
+                .statusCode(HttpStatusCode.InternalServerError.value)
+                .extract().response()
+
+        Json.decodeFromString<ApiError>(response.asString()) shouldBe
+            ApiError(
+                status = HttpStatusCode.InternalServerError.value,
+                error = HttpStatusCode.InternalServerError.description,
+                message = "Noe gikk galt",
+                path = "$ATTESTASJON_BASE_API_PATH/fagomraader",
+                timestamp = ZonedDateTime.parse(response.jsonPath().getString("timestamp")),
+            )
+    }
+
+    test("søk etter oppdragsId på oppdragsdetaljer returnerer 200 OK") {
+
+        val oppdragsDetaljerDto =
             OppdragsdetaljerDTO(
                 listOf(
                     OppdragslinjeDTO(
@@ -175,6 +250,8 @@ internal class AttestasjonApiTest : FunSpec({
                 "X313373",
             )
 
+        every { attestasjonService.getOppdragsdetaljer(any(), any()) } returns oppdragsDetaljerDto
+
         val response =
             RestAssured.given().filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
@@ -185,12 +262,34 @@ internal class AttestasjonApiTest : FunSpec({
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
-        response.body.jsonPath().getList<Int>("linjer").size shouldBe 1
+        Json.decodeFromString<OppdragsdetaljerDTO>(response.body.asString()) shouldBe oppdragsDetaljerDto
     }
 
-    // TODO: En test for .get("$ATTESTASJON_BASE_API_PATH/oppdragsdetaljer/12341234") som returnerer 400 Bad Request??
+    test("søk etter oppdragsId på oppdragsdetaljer returnerer 500 Internal Server Error") {
 
-    test("attestering av oppdrag skal returnere 200 OK") {
+        every { attestasjonService.getOppdragsdetaljer(any(), any()) } throws RuntimeException("Noe gikk galt")
+
+        val response =
+            RestAssured.given().filter(validationFilter)
+                .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                .port(PORT)
+                .get("$ATTESTASJON_BASE_API_PATH/12341234/oppdragsdetaljer")
+                .then().assertThat()
+                .statusCode(HttpStatusCode.InternalServerError.value)
+                .extract().response()
+
+        Json.decodeFromString<ApiError>(response.asString()) shouldBe
+            ApiError(
+                status = HttpStatusCode.InternalServerError.value,
+                error = HttpStatusCode.InternalServerError.description,
+                message = "Noe gikk galt",
+                path = "$ATTESTASJON_BASE_API_PATH/12341234/oppdragsdetaljer",
+                timestamp = ZonedDateTime.parse(response.jsonPath().getString("timestamp")),
+            )
+    }
+
+    test("attestering av oppdrag returnerer 200 OK") {
 
         val request =
             AttestasjonRequest(
@@ -224,7 +323,46 @@ internal class AttestasjonApiTest : FunSpec({
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
-        response.body().jsonPath().getString("message") shouldBe "Oppdatering vellykket. 99999 linjer oppdatert"
+        Json.decodeFromString<ZOsResponse>(response.body.asString()) shouldBe zOsResponse
+    }
+
+    test("attestering av oppdrag returnerer 500 Internal Server Error") {
+
+        val request =
+            AttestasjonRequest(
+                "123456789",
+                "98765432100",
+                "BEH",
+                123456789,
+                listOf(
+                    AttestasjonLinje(
+                        99999,
+                        "2021-01-01",
+                    ),
+                ),
+            )
+
+        coEvery { attestasjonService.attestereOppdrag(any(), any()) } throws RuntimeException("Ukjent feil")
+
+        val response =
+            RestAssured.given().filter(validationFilter)
+                .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                .port(PORT)
+                .body(request)
+                .post("$ATTESTASJON_BASE_API_PATH/attestere")
+                .then().assertThat()
+                .statusCode(HttpStatusCode.InternalServerError.value)
+                .extract().response()
+
+        Json.decodeFromString<ApiError>(response.asString()) shouldBe
+            ApiError(
+                status = HttpStatusCode.InternalServerError.value,
+                error = HttpStatusCode.InternalServerError.description,
+                message = "Ukjent feil",
+                path = "$ATTESTASJON_BASE_API_PATH/attestere",
+                timestamp = ZonedDateTime.parse(response.jsonPath().getString("timestamp")),
+            )
     }
 })
 
