@@ -11,14 +11,17 @@ class VenteregisterService() {
     fun getAnsatte(): List<AnsatteDTO> {
         return listOf(
             AnsatteDTO(
+                1,
                 "Ola Nordmann",
                 "Snekker",
             ),
             AnsatteDTO(
+                2,
                 "Kari Nordmann",
                 "Tømrer",
             ),
             AnsatteDTO(
+                3,
                 "Per Hansen",
                 "Elektriker",
             ),
