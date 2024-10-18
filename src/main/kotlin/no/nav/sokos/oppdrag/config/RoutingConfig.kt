@@ -9,6 +9,7 @@ import no.nav.sokos.oppdrag.attestasjon.api.attestasjonSwaggerApi
 import no.nav.sokos.oppdrag.integration.api.integrationApi
 import no.nav.sokos.oppdrag.integration.api.integrationSwaggerApi
 import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoApi
+import no.nav.sokos.oppdrag.venteregister.api.venteregisterApi
 import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoSwaggerApi as oppdragsinfoSwaggerApi
 
 fun Application.routingConfig(
@@ -20,6 +21,7 @@ fun Application.routingConfig(
         oppdragsinfoSwaggerApi()
         integrationSwaggerApi()
         attestasjonSwaggerApi()
+        venteregisterApi()
         authenticate(useAuthentication, AUTHENTICATION_NAME) {
             integrationApi()
             oppdragsInfoApi()
