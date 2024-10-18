@@ -7,7 +7,7 @@ import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
 @Serializable
 data class OppdragslinjeDTO(
     val oppdragsLinje: Oppdragslinje,
-    val ansvarsStedForOppdragsLinje: String?,
-    val kostnadsStedForOppdragsLinje: String?,
+    val ansvarsStedForOppdragsLinje: String? = null,
+    val kostnadsStedForOppdragsLinje: String? = null,
     val attestasjoner: List<Attestasjon>,
 )
