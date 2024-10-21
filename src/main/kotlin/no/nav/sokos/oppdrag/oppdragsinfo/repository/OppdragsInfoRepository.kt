@@ -48,7 +48,9 @@ class OppdragsInfoRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT NAVN_FAGGRUPPE, KODE_FAGGRUPPE FROM T_FAGGRUPPE ORDER BY NAVN_FAGGRUPPE
+                    SELECT TRIM(NAVN_FAGGRUPPE) AS NAVN_FAGGRUPPE, 
+                           TRIM(KODE_FAGGRUPPE) AS KODE_FAGGRUPPE 
+                    FROM T_FAGGRUPPE ORDER BY NAVN_FAGGRUPPE
                     """.trimIndent(),
                 ),
                 mapToFagGruppe,

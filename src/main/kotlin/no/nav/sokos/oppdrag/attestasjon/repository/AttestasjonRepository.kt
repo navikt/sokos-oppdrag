@@ -113,7 +113,7 @@ class AttestasjonRepository(
                     """
                     SELECT TRIM(NAVN_FAGOMRAADE) AS NAVN_FAGOMRAADE, 
                            TRIM(KODE_FAGOMRAADE) AS KODE_FAGOMRAADE 
-                    FROM T_FAGOMRAADE
+                    FROM T_FAGOMRAADE ORDER BY NAVN_FAGOMRAADE
                     """.trimIndent(),
                 ),
             ) { row ->
