@@ -36,9 +36,9 @@ object PropertiesConfig {
             "prod-fss" -> ConfigurationProperties.systemProperties() overriding EnvironmentVariables() overriding prodProperties overriding defaultProperties
             else ->
                 ConfigurationProperties.systemProperties() overriding EnvironmentVariables() overriding
-                        ConfigurationProperties.fromOptionalFile(
-                            File("defaults.properties"),
-                        ) overriding localDevProperties overriding defaultProperties
+                    ConfigurationProperties.fromOptionalFile(
+                        File("defaults.properties"),
+                    ) overriding localDevProperties overriding defaultProperties
         }
 
     operator fun get(key: String): String = config[Key(key, stringType)]
