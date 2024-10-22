@@ -45,6 +45,11 @@ spec:
       claims:
         extra:
           - NAVident
+        groups:
+          - id: a0a00387-1830-47f6-af7e-3122c5940437 # 0000-GA-okonomi-fortrolig
+          - id: 9d135c69-105c-4364-86f4-e22916758e93 # 0000-GA-okonomi-strengt_fortrolig
+          - id: 1c7eec30-e0b3-4374-a175-13692bd299a3 # 0000-GA-okonomi-egne_ansatte
+          - id: e1e9c6ba-114f-4b71-adf1-3db2f1608759 # 0000-GA-SOKOS-MF-Attestasjon-WRITE
   accessPolicy:
     inbound:
       rules:
@@ -89,6 +94,12 @@ spec:
     # Ereg
     - name: EREG_URL
       value: "https://ereg-services-q1.dev.intern.nav.no"
+
+    # Nom
+    - name: SKJERMING_URL
+      value: http://skjermede-personer-pip.nom
+    - name: SKJERMING_CLIENT_ID
+      value: dev-gcp.nom.skjermede-personer-pip
 
     # Tp
     - name: TP_URL
