@@ -6,10 +6,6 @@ import com.natpryce.konfig.EnvironmentVariables
 import com.natpryce.konfig.Key
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
-import no.nav.sokos.oppdrag.common.audit.GRUPPE_ATTESTASJON_SKRIV
-import no.nav.sokos.oppdrag.common.audit.GRUPPE_EGNE_ANSATTE
-import no.nav.sokos.oppdrag.common.audit.GRUPPE_FORTROLIG
-import no.nav.sokos.oppdrag.common.audit.GRUPPE_STRENGT_FORTROLIG
 import java.io.File
 import java.util.UUID
 
@@ -40,9 +36,9 @@ object PropertiesConfig {
             "prod-fss" -> ConfigurationProperties.systemProperties() overriding EnvironmentVariables() overriding prodProperties overriding defaultProperties
             else ->
                 ConfigurationProperties.systemProperties() overriding EnvironmentVariables() overriding
-                    ConfigurationProperties.fromOptionalFile(
-                        File("defaults.properties"),
-                    ) overriding localDevProperties overriding defaultProperties
+                        ConfigurationProperties.fromOptionalFile(
+                            File("defaults.properties"),
+                        ) overriding localDevProperties overriding defaultProperties
         }
 
     operator fun get(key: String): String = config[Key(key, stringType)]
@@ -72,10 +68,10 @@ object PropertiesConfig {
         val clientSecret: String = getOrEmpty("AZURE_APP_CLIENT_SECRET"),
         val rolleMap: Map<UUID, String> =
             mapOf(
-                UUID.fromString(get("UUID_ROLLE_EGNE_ANSATTE")) to GRUPPE_EGNE_ANSATTE,
-                UUID.fromString(get("UUID_ROLLE_FORTROLIG")) to GRUPPE_FORTROLIG,
-                UUID.fromString(get("UUID_ROLLE_STRENGT_FORTROLIG")) to GRUPPE_STRENGT_FORTROLIG,
-                UUID.fromString(get("UUID_ROLLE_ATTESTASJON_SKRIV")) to GRUPPE_ATTESTASJON_SKRIV,
+//                UUID.fromString(get("UUID_ROLLE_EGNE_ANSATTE")) to GRUPPE_EGNE_ANSATTE,
+//                UUID.fromString(get("UUID_ROLLE_FORTROLIG")) to GRUPPE_FORTROLIG,
+//                UUID.fromString(get("UUID_ROLLE_STRENGT_FORTROLIG")) to GRUPPE_STRENGT_FORTROLIG,
+//                UUID.fromString(get("UUID_ROLLE_ATTESTASJON_SKRIV")) to GRUPPE_ATTESTASJON_SKRIV,
             ),
     )
 
