@@ -3,13 +3,11 @@ package no.nav.sokos.oppdrag.security
 import com.auth0.jwt.JWT
 import io.ktor.http.HttpHeaders
 import io.ktor.server.application.ApplicationCall
-import java.util.*
 import no.nav.sokos.oppdrag.common.audit.NavIdent
-import no.nav.sokos.oppdrag.config.PropertiesConfig
+import java.util.UUID
 
 const val JWT_CLAIM_NAVIDENT = "NAVident"
 const val JWT_CLAIM_GROUPS = "groups"
-
 
 object AuthToken {
     fun getSaksbehandler(call: ApplicationCall): NavIdent {
@@ -17,11 +15,11 @@ object AuthToken {
             call.request.headers[HttpHeaders.Authorization]?.removePrefix("Bearer ")
                 ?: throw Error("Could not get token from request header")
         val navIdent = getNAVIdentFromToken(oboToken)
-        val groupUUIDs = getGroupsFromToken(oboToken)
-        val rolleMap = PropertiesConfig.AzureAdProperties().rolleMap
-        val groups = groupUUIDs.mapNotNull(rolleMap::get)
+//        val groupUUIDs = getGroupsFromToken(oboToken)
+//        val rolleMap = PropertiesConfig.AzureAdProperties().rolleMap
+//        val groups = groupUUIDs.mapNotNull(rolleMap::get)
 
-        return NavIdent(navIdent, groups)
+        return NavIdent(navIdent)
     }
 
     private fun getNAVIdentFromToken(token: String): String {
@@ -35,5 +33,4 @@ object AuthToken {
         return decodedJWT.claims[JWT_CLAIM_GROUPS]?.asList(UUID::class.java)
             ?: throw RuntimeException("Missing Groups in private claims")
     }
-
 }
