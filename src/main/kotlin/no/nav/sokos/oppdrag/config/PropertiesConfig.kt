@@ -7,6 +7,11 @@ import com.natpryce.konfig.Key
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 import java.io.File
+import java.util.UUID
+import no.nav.sokos.oppdrag.common.audit.GRUPPE_ATTESTASJON_SKRIV
+import no.nav.sokos.oppdrag.common.audit.GRUPPE_EGNE_ANSATTE
+import no.nav.sokos.oppdrag.common.audit.GRUPPE_FORTROLIG
+import no.nav.sokos.oppdrag.common.audit.GRUPPE_STRENGT_FORTROLIG
 
 object PropertiesConfig {
     private val defaultProperties =
@@ -65,6 +70,13 @@ object PropertiesConfig {
         val wellKnownUrl: String = getOrEmpty("AZURE_APP_WELL_KNOWN_URL"),
         val tenantId: String = getOrEmpty("AZURE_APP_TENANT_ID"),
         val clientSecret: String = getOrEmpty("AZURE_APP_CLIENT_SECRET"),
+        val rolleMap: Map<UUID, String> =
+            mapOf(
+                UUID.fromString(get("UUID_ROLLE_EGNE_ANSATTE")) to GRUPPE_EGNE_ANSATTE,
+                UUID.fromString(get("UUID_ROLLE_FORTROLIG")) to GRUPPE_FORTROLIG,
+                UUID.fromString(get("UUID_ROLLE_STRENGT_FORTROLIG")) to GRUPPE_STRENGT_FORTROLIG,
+                UUID.fromString(get("UUID_ROLLE_ATTESTASJON_SKRIV")) to GRUPPE_ATTESTASJON_SKRIV,
+            ),
     )
 
     data class EksterneHostProperties(
