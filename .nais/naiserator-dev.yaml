@@ -97,9 +97,9 @@ spec:
 
     # Nom
     - name: SKJERMING_URL
-      value: http://skjermede-personer-pip.nom
+      value: "http://skjermede-personer-pip.nom"
     - name: SKJERMING_CLIENT_ID
-      value: dev-gcp.nom.skjermede-personer-pip
+      value: "dev-gcp.nom.skjermede-personer-pip/.default"
     - name: UUID_ROLLE_EGNE_ANSATTE
       value: 1c7eec30-e0b3-4374-a175-13692bd299a3
 
