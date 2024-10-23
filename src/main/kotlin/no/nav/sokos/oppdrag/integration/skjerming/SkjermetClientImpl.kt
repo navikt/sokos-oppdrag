@@ -53,5 +53,6 @@ class SkjermetClientImpl(
         return response.bodyAsText() == "true"
     }
 }
+
 @Serializable
 data class SkjermetPersonRequest(val personident: String)
