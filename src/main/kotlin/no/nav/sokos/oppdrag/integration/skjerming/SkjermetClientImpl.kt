@@ -9,6 +9,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import kotlinx.serialization.Serializable
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.createHttpClient
@@ -52,5 +53,5 @@ class SkjermetClientImpl(
         return response.bodyAsText() == "true"
     }
 }
-
+@Serializable
 data class SkjermetPersonRequest(val personident: String)
