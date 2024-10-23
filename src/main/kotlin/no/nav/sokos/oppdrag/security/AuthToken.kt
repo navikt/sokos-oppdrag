@@ -21,7 +21,7 @@ object AuthToken {
 
         println("GRUPPER JEG HAR TILGANG TIL: $groups")
 
-        return NavIdent(navIdent)
+        return NavIdent(navIdent, groups)
     }
 
     private fun getNAVIdentFromToken(token: String): String {
