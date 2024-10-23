@@ -25,7 +25,6 @@ import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.integration.api.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.integration.api.model.GjelderIdResponse
 import no.nav.sokos.oppdrag.integration.service.IntegrationService
-import no.nav.sokos.oppdrag.integration.skjerming.SkjermetService
 import java.time.ZonedDateTime
 
 private const val PORT = 9090
@@ -34,7 +33,6 @@ private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplica
 
 private val validationFilter = OpenApiValidationFilter("openapi/integration-v1-swagger.yaml")
 private val integrationService = mockk<IntegrationService>()
-private val skjermetService = mockk<SkjermetService>()
 
 internal class IntegrationApiTest : FunSpec({
 
@@ -51,7 +49,6 @@ internal class IntegrationApiTest : FunSpec({
         val gjelderIdResponse = GjelderIdResponse("Test Testesen")
 
         coEvery { integrationService.getNavnForGjelderId(any(), any()) } returns gjelderIdResponse
-        coEvery { skjermetService.kanSaksbehandlerSePerson(any(), any()) } returns true
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -65,29 +62,6 @@ internal class IntegrationApiTest : FunSpec({
                 .extract().response()
 
         Json.decodeFromString<GjelderIdResponse>(response.asString()) shouldBe gjelderIdResponse
-    }
-
-    test("søk navn for skjermet person returnerer 403 Forbidden") {
-
-        val gjelderIdResponse = GjelderIdResponse("Test Testesen")
-
-        coEvery { integrationService.getNavnForGjelderId(any(), any()) } returns gjelderIdResponse
-        coEvery { skjermetService.kanSaksbehandlerSePerson(any(), any()) } returns false
-
-        val response =
-            RestAssured.given().filter(validationFilter)
-                .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(GjelderIdRequest(gjelderId = "12345678901"))
-                .port(PORT)
-                .post("$INTEGRATION_BASE_API_PATH/hentnavn")
-                .then().assertThat()
-                .statusCode(HttpStatusCode.Forbidden.value)
-                .extract().response()
-
-        val apiError = Json.decodeFromString<ApiError>(response.asString())
-
-        apiError.status shouldBe HttpStatusCode.Forbidden.value
     }
 
     test("sok navn med ugyldig gjelderId returnerer 400 Bad Request") {
@@ -143,7 +117,7 @@ private fun Application.applicationTestModule() {
     commonConfig()
     routing {
         authenticate(false, AUTHENTICATION_NAME) {
-            integrationApi(integrationService = integrationService, skjermetService = skjermetService)
+            integrationApi(integrationService = integrationService)
         }
     }
 }
