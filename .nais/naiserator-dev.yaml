@@ -119,6 +119,6 @@ spec:
 
     # ZOS-Connect
     - name: ZOS_URL
-      value: "https://155.55.1.82:9080/osattestasjonapi"
+      value: "http://155.55.1.82:9080/osattestasjonapi"
     - name: UUID_ROLLE_ATTESTASJON_SKRIV
       value: e1e9c6ba-114f-4b71-adf1-3db2f1608759
