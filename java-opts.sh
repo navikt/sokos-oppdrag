@@ -56,8 +56,3 @@ fi
 # Inject proxy settings set by the NAIS platform
 export JAVA_OPTS="${JAVA_OPTS} ${JAVA_PROXY_OPTIONS}"
 
-# OpenTelemetry
-if [ ! -z "${OTEL_EXPORTER_OTLP_ENDPOINT}" ]; then
-    JAVA_OPTS="${JAVA_OPTS} -javaagent:/opentelemetry-javaagent.jar"
-fi
-

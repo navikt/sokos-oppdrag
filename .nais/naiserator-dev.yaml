@@ -64,18 +64,6 @@ spec:
     - name: USE_AUTHENTICATION
       value: "true"
 
-    # OpenTelemetry
-    - name: OTEL_EXPORTER_OTLP_ENDPOINT
-      value: "https://elastic-apm.adeo.no"
-    - name: OTEL_METRICS_EXPORTER
-      value: "otlp"
-    - name: OTEL_LOGS_EXPORTER
-      value: "none"
-    - name: OTEL_RESOURCE_ATTRIBUTES
-      value: "service.name=sokos-oppdrag,service.version=sokos-oppdrag,deployment.environment=q"
-    - name: OTEL_TRACES_EXPORTER
-      value: "otlp"
-
     # Db2
     - name: DATABASE_HOST
       value: "155.55.1.82"
