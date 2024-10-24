@@ -1,5 +1,6 @@
 package no.nav.sokos.oppdrag.integration.service
 
+import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import no.nav.pdl.enums.AdressebeskyttelseGradering
 import no.nav.pdl.hentperson.Person
@@ -43,6 +44,24 @@ class IntegrationService(
         }
     }
 
+    suspend fun sjekkSkjerming(gjelderId: String?, saksbehandler: NavIdent) {
+        if (gjelderId?.toLong() !in 1_000_000_001..79_999_999_999) return
+
+        val graderinger: List<AdressebeskyttelseGradering?> =
+            getPerson(gjelderId!!)?.adressebeskyttelse?.map { it?.gradering } ?: emptyList()
+
+        if (!saksbehandler.harTilgangTilStrengtFortrolig() && graderinger.contains(AdressebeskyttelseGradering.STRENGT_FORTROLIG)) {
+            throw SkjermetException("Skjermet person: (strengt fortrolig)")
+        }
+        if (!saksbehandler.harTilgangTilFortrolig() && graderinger.contains(AdressebeskyttelseGradering.FORTROLIG)) {
+            throw SkjermetException("Skjermet person (fortrolig)")
+        }
+        if (!skjermetService.kanSaksbehandlerSePerson(gjelderId, saksbehandler)) {
+            throw SkjermetException("Skjermet person (egen ansatt)")
+        }
+
+    }
+
     private suspend fun getPerson(gjelderId: String): Person? {
         val person = pdlService.getPersonNavn(gjelderId)
         return person
@@ -57,19 +76,10 @@ class IntegrationService(
         gjelderId: String,
         saksbehandler: NavIdent,
     ): GjelderIdResponse {
-        val graderinger: List<AdressebeskyttelseGradering?> = getPerson(gjelderId)?.adressebeskyttelse?.map { it?.gradering } ?: emptyList()
-
-        if (!saksbehandler.harTilgangTilStrengtFortrolig() && graderinger.contains(AdressebeskyttelseGradering.STRENGT_FORTROLIG)) {
-            return GjelderIdResponse("Skjermet person: (strengt fortrolig)")
-        }
-        if (!saksbehandler.harTilgangTilFortrolig() && graderinger.contains(AdressebeskyttelseGradering.FORTROLIG)) {
-            return GjelderIdResponse("Skjermet person (fortrolig)")
-        }
-        if (!skjermetService.kanSaksbehandlerSePerson(gjelderId, saksbehandler)) {
-            return GjelderIdResponse("Skjermet person (egen ansatt)")
-        }
+        runBlocking { sjekkSkjerming(gjelderId, saksbehandler) }
         val person = pdlService.getPersonNavn(gjelderId)?.navn?.first()
-        val personName = person?.mellomnavn?.let { "${person.fornavn} ${person.mellomnavn} ${person.etternavn}" } ?: "${person?.fornavn} ${person?.etternavn}"
+        val personName = person?.mellomnavn?.let { "${person.fornavn} ${person.mellomnavn} ${person.etternavn}" }
+            ?: "${person?.fornavn} ${person?.etternavn}"
         return GjelderIdResponse(personName)
     }
 
@@ -78,3 +88,5 @@ class IntegrationService(
         return GjelderIdResponse(organisasjonName)
     }
 }
+
+class SkjermetException(val msg: String) : Exception()
