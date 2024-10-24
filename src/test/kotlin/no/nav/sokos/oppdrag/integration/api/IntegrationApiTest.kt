@@ -117,7 +117,7 @@ private fun Application.applicationTestModule() {
     commonConfig()
     routing {
         authenticate(false, AUTHENTICATION_NAME) {
-            integrationApi(integrationService)
+            integrationApi(integrationService = integrationService)
         }
     }
 }

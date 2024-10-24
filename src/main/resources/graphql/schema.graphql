@@ -8,6 +8,7 @@ type Query {
 
 type Person {
     navn(historikk: Boolean = false): [Navn!]!
+    adressebeskyttelse: [Adressebeskyttelse]
 }
 
 type Navn {
@@ -15,4 +16,15 @@ type Navn {
     mellomnavn: String
     etternavn: String!
     forkortetNavn: String
+}
+
+type Adressebeskyttelse {
+    gradering: AdressebeskyttelseGradering!
+}
+
+enum AdressebeskyttelseGradering {
+    STRENGT_FORTROLIG_UTLAND
+    STRENGT_FORTROLIG
+    FORTROLIG
+    UGRADERT
 }

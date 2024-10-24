@@ -11,6 +11,7 @@ import no.nav.sokos.oppdrag.integration.ereg.EregService
 import no.nav.sokos.oppdrag.integration.ereg.Navn
 import no.nav.sokos.oppdrag.integration.ereg.Organisasjon
 import no.nav.sokos.oppdrag.integration.pdl.PdlService
+import no.nav.sokos.oppdrag.integration.skjerming.SkjermetService
 import no.nav.sokos.oppdrag.integration.tp.TpResponse
 import no.nav.sokos.oppdrag.integration.tp.TpService
 import no.nav.pdl.hentperson.Navn as PdlNavn
@@ -18,8 +19,9 @@ import no.nav.pdl.hentperson.Navn as PdlNavn
 private val eregService = mockk<EregService>()
 private val tpService = mockk<TpService>()
 private val pdlService = mockk<PdlService>()
+private val skjermetService = mockk<SkjermetService>()
 
-private val integrationService = IntegrationService(pdlService = pdlService, tpService = tpService, eregService = eregService)
+private val integrationService = IntegrationService(pdlService = pdlService, tpService = tpService, eregService = eregService, skjermetService = skjermetService)
 
 internal class IntegrationServiceTest : FunSpec({
 
@@ -48,6 +50,7 @@ internal class IntegrationServiceTest : FunSpec({
     test("søk navn henter fra Pdl") {
 
         coEvery { pdlService.getPersonNavn(any()) } returns Person(listOf(PdlNavn("Ola", "Heter", "Nordmann")))
+        coEvery { skjermetService.kanSaksbehandlerSePerson(any(), any()) } returns true
 
         val result = integrationService.getNavnForGjelderId("10000000001", navIdent)
 
@@ -56,6 +59,7 @@ internal class IntegrationServiceTest : FunSpec({
     test("søk navn henter fra Pdl født før 10. i en måned") {
 
         coEvery { pdlService.getPersonNavn(any()) } returns Person(listOf(PdlNavn("Ola", "Heter", "Nordmann")))
+        coEvery { skjermetService.kanSaksbehandlerSePerson(any(), any()) } returns true
 
         val result = integrationService.getNavnForGjelderId("01010212345", navIdent)
 
