@@ -110,5 +110,5 @@ spec:
       value: "http://155.55.1.82:9080/osattestasjonapi"
 
     # Utbetalingsportalen
-    - name: 0000-GA-SOKOS-MF-Attestasjon-WRITE
+    - name: UUID-0000-GA-SOKOS-MF-Attestasjon-WRITE
       value: e1e9c6ba-114f-4b71-adf1-3db2f1608759
