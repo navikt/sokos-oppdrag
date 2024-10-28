@@ -3,9 +3,11 @@ name: Security
 on:
   schedule:
     - cron: '0 6 * * 1'
+  workflow_dispatch:
 
 env:
   LATEST_IMAGE: ${{ github.event.repository.name }}:latest
+  TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db
 
 jobs:
   vulnerability-analyze:
