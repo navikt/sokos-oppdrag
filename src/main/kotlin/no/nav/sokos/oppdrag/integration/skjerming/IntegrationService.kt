@@ -43,23 +43,66 @@ class IntegrationService(
     suspend fun checkSkjermetPerson(
         gjelderId: String,
         saksbehandler: NavIdent,
-    ) {
-        if (gjelderId.toLong() !in 1_000_000_001..79_999_999_999) return
+    ): Boolean {
+        if (gjelderId.toLong() !in 1_000_000_001..79_999_999_999) return false
 
         val graderinger: List<AdressebeskyttelseGradering?> =
             pdlClientService.getPerson(listOf(gjelderId))[gjelderId]?.adressebeskyttelse?.map { it.gradering } ?: emptyList()
 
-        val isPersonSkjermet =
-            when {
-                !saksbehandler.harTilgangTilFortrolig() && graderinger.contains(AdressebeskyttelseGradering.FORTROLIG) -> true
-                !saksbehandler.harTilgangTilStrengtFortrolig() && graderinger.contains(AdressebeskyttelseGradering.STRENGT_FORTROLIG) -> true
-                !saksbehandler.harTilgangTilEgneAnsatte() && skjermetClientService.isSkjermedePersonerInSkjermingslosningen(listOf(gjelderId))[gjelderId] == true -> true
+        return when {
+            !saksbehandler.harTilgangTilFortrolig() && graderinger.contains(AdressebeskyttelseGradering.FORTROLIG) -> true
+            !saksbehandler.harTilgangTilStrengtFortrolig() &&
+                graderinger.intersect(listOf(AdressebeskyttelseGradering.STRENGT_FORTROLIG, AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND))
+                    .isNotEmpty()
+            -> true
 
-                else -> false
-            }
-        if (isPersonSkjermet) {
-            throw SkjermetException("Du har ikke tilgang til å se denne personen")
+            !saksbehandler.harTilgangTilEgneAnsatte() && skjermetClientService.isSkjermedePersonerInSkjermingslosningen(listOf(gjelderId))[gjelderId] == true -> true
+
+            else -> false
         }
+    }
+
+    suspend fun getIsSkjermetByFoedselsnummer(
+        identer: List<String>,
+        saksbehandler: NavIdent,
+    ): Map<String, Boolean> {
+        val deduplicatedIdenter = identer.distinct()
+
+        val personIdenter = deduplicatedIdenter.filter { it.toLong() in 1_000_000_001..79_999_999_999 }
+
+        val egenAnsattMap =
+            skjermetClientService.isSkjermedePersonerInSkjermingslosningen(
+                personIdenter,
+            )
+        val adressebeskyttelseMap =
+            pdlClientService.getPerson(
+                identer = personIdenter,
+            ).map { (key, person) ->
+                val graderinger = person.adressebeskyttelse.map { it.gradering }
+
+                when {
+                    !saksbehandler.harTilgangTilFortrolig() && graderinger.contains(AdressebeskyttelseGradering.FORTROLIG) -> key to true
+                    !saksbehandler.harTilgangTilStrengtFortrolig() &&
+                        graderinger.intersect(listOf(AdressebeskyttelseGradering.STRENGT_FORTROLIG, AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND))
+                            .isNotEmpty()
+                    -> key to true
+
+                    else -> key to false
+                }
+            }.toMap()
+
+        val list =
+            deduplicatedIdenter
+                .distinct()
+                .associateWith { key ->
+                    val egenAnsattValue = egenAnsattMap[key] != false
+                    val adressebeskyttelseValue = adressebeskyttelseMap[key] != false
+                    egenAnsattValue || adressebeskyttelseValue
+                }
+
+        println("Skjermede: $list")
+
+        return list
     }
 
     private suspend fun getLeverandorName(gjelderId: String): GjelderIdResponse {

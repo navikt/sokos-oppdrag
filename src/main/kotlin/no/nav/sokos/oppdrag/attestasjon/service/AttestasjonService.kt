@@ -40,7 +40,9 @@ class AttestasjonService(
                     brukerBehandlingTekst = "NAV-ansatt har gjort et oppslag på navn",
                 ),
             )
-            integrationService.checkSkjermetPerson(gjelderId, saksbehandler)
+            if (integrationService.checkSkjermetPerson(gjelderId, saksbehandler)) {
+                return emptyList()
+            }
         }
 
         val fagomraader =
@@ -50,12 +52,18 @@ class AttestasjonService(
                 else -> emptyList()
             }
 
-        return attestasjonRepository.getOppdrag(
-            attestert,
-            fagSystemId,
-            gjelderId,
-            fagomraader,
-        )
+        val oppdragList =
+            attestasjonRepository.getOppdrag(
+                attestert,
+                fagSystemId,
+                gjelderId,
+                fagomraader,
+            )
+
+        val map = integrationService.getIsSkjermetByFoedselsnummer(oppdragList.map { gjelderId!! }, saksbehandler)
+        return oppdragList.map { oppdrag ->
+            oppdrag.copy(skjermet = map[oppdrag.gjelderId] == true)
+        }
     }
 
     fun getFagOmraade(): List<FagOmraade> {

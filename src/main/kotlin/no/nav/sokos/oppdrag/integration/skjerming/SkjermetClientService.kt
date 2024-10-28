@@ -29,11 +29,11 @@ class SkjermetClientService(
     private val httpClient: HttpClient = createHttpClient(),
     private val skjermetUrl: String = PropertiesConfig.EksterneHostProperties().skjermetUrl,
     private val skjermetScope: String = PropertiesConfig.EksterneHostProperties().skjermetScope,
-    private val accessTokenProvider: AccessTokenClient = AccessTokenClient(azureAdScope = skjermetScope),
+    private val accessTokenClient: AccessTokenClient = AccessTokenClient(azureAdScope = skjermetScope),
 ) {
     suspend fun isSkjermedePersonerInSkjermingslosningen(personIdenter: List<String>): Map<String, Boolean> {
         logger.info("Henter accesstoken mot skjerming-tjenesten")
-        val token = accessTokenProvider.getSystemToken()
+        val token = accessTokenClient.getSystemToken()
 
         val skjermetUrl = "$skjermetUrl/skjermetBulk"
         logger.info("Kaller skjermingtjeneste med url: $skjermetUrl")

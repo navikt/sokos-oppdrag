@@ -12,6 +12,8 @@ import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows
 
+private const val FNR = "12345678912"
+
 internal class PdlClientServiceTest : FunSpec({
 
     extensions(listOf(WiremockListener))
@@ -34,11 +36,11 @@ internal class PdlClientServiceTest : FunSpec({
                 ),
         )
 
-        val response = pdlClientService.getPerson("12345678912")
+        val response = pdlClientService.getPerson(listOf(FNR))
 
-        response?.navn?.first()?.fornavn shouldBe "Ola"
-        response?.navn?.first()?.mellomnavn shouldBe null
-        response?.navn?.first()?.etternavn shouldBe "Nordmann"
+        response[FNR]?.navn?.first()?.fornavn shouldBe "Ola"
+        response[FNR]?.navn?.first()?.mellomnavn shouldBe null
+        response[FNR]?.navn?.first()?.etternavn shouldBe "Nordmann"
     }
 
     test("hent navn fra pdl returnerer json svar at person ikke finnes") {
@@ -54,7 +56,7 @@ internal class PdlClientServiceTest : FunSpec({
 
         val exception =
             assertThrows<PdlException> {
-                pdlClientService.getPerson("12345678912")
+                pdlClientService.getPerson(listOf(FNR))
             }
 
         exception.message shouldBe "(Path: [\"hentPerson\"], Code: [\"not_found\"], Message: Fant ikke person)"
@@ -73,7 +75,7 @@ internal class PdlClientServiceTest : FunSpec({
 
         val exception =
             assertThrows<PdlException> {
-                pdlClientService.getPerson("12345678912")
+                pdlClientService.getPerson(listOf(FNR))
             }
 
         exception.message shouldBe "(Path: [\"hentPerson\"], Code: [\"unauthenticated\"], Message: Ikke autentisert)"
@@ -82,17 +84,24 @@ internal class PdlClientServiceTest : FunSpec({
 
 private val jsonResponseNavnFunnet =
     """
-    {
+     {
       "data": {
-        "hentPerson": {
-          "navn": [
-            {
-              "fornavn": "Ola",
-              "mellomnavn": null,
-              "etternavn": "Nordmann"
-            }
-          ]
-        }
+        "hentPersonBolk": [
+          {
+            "ident": "70078749472",
+            "person": {
+              "navn": [
+                {
+                  "fornavn": "TRIVIELL",
+                  "mellomnavn": null,
+                  "etternavn": "SKILPADDE"
+                }
+              ],
+              "adressebeskyttelse": []
+            },
+            "code": "ok"
+          }
+        ]
       }
     }
     """.trimIndent()

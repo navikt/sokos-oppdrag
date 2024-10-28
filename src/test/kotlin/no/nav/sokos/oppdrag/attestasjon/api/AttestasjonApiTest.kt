@@ -72,7 +72,7 @@ internal class AttestasjonApiTest : FunSpec({
                 ),
             )
 
-        // every { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any()) } returns oppdragsListe
+        coEvery { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any()) } returns oppdragsListe
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -138,7 +138,7 @@ internal class AttestasjonApiTest : FunSpec({
 
     test("sok etter oppdrag med gyldig søkeparametere returnerer 200 OK") {
 
-        // every { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any()) } returns emptyList()
+        coEvery { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any()) } returns emptyList()
 
         RestAssured.given().filter(validationFilter)
             .header(HttpHeaders.ContentType, APPLICATION_JSON)
@@ -250,7 +250,7 @@ internal class AttestasjonApiTest : FunSpec({
                 "X313373",
             )
 
-        every { attestasjonService.getOppdragsdetaljer(any(), any()) } returns oppdragsDetaljerDto
+        coEvery { attestasjonService.getOppdragsdetaljer(any(), any()) } returns oppdragsDetaljerDto
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -267,7 +267,7 @@ internal class AttestasjonApiTest : FunSpec({
 
     test("søk etter oppdragsId på oppdragsdetaljer returnerer 500 Internal Server Error") {
 
-        every { attestasjonService.getOppdragsdetaljer(any(), any()) } throws RuntimeException("Noe gikk galt")
+        coEvery { attestasjonService.getOppdragsdetaljer(any(), any()) } throws RuntimeException("Noe gikk galt")
 
         val response =
             RestAssured.given().filter(validationFilter)
