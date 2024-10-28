@@ -45,6 +45,11 @@ spec:
       claims:
         extra:
           - NAVident
+        groups:
+          - id: a0a00387-1830-47f6-af7e-3122c5940437 # 0000-GA-okonomi-fortrolig
+          - id: 9d135c69-105c-4364-86f4-e22916758e93 # 0000-GA-okonomi-strengt_fortrolig
+          - id: 1c7eec30-e0b3-4374-a175-13692bd299a3 # 0000-GA-okonomi-egne_ansatte
+          - id: e1e9c6ba-114f-4b71-adf1-3db2f1608759 # 0000-GA-SOKOS-MF-Attestasjon-WRITE
   accessPolicy:
     inbound:
       rules:
@@ -78,6 +83,14 @@ spec:
     - name: EREG_URL
       value: "https://ereg-services-q1.dev.intern.nav.no"
 
+    # Nom
+    - name: SKJERMING_URL
+      value: "https://skjermede-personer-pip.intern.dev.nav.no"
+    - name: SKJERMING_CLIENT_ID
+      value: "api://dev-gcp.nom.skjermede-personer-pip/.default"
+    - name: UUID_ROLLE_EGNE_ANSATTE
+      value: 1c7eec30-e0b3-4374-a175-13692bd299a3
+
     # Tp
     - name: TP_URL
       value: "https://tp-q1.dev.intern.nav.no"
@@ -87,7 +100,15 @@ spec:
       value: "https://pdl-api-q1.dev.intern.nav.no"
     - name: PDL_SCOPE
       value: "api://dev-fss.pdl.pdl-api-q1/.default"
+    - name: UUID_ROLLE_FORTROLIG
+      value: a0a00387-1830-47f6-af7e-3122c5940437
+    - name: UUID_ROLLE_STRENGT_FORTROLIG
+      value: 9d135c69-105c-4364-86f4-e22916758e93
 
     # ZOS-Connect
     - name: ZOS_URL
-      value: "https://155.55.1.82:9080/osattestasjonapi"
+      value: "http://155.55.1.82:9080/osattestasjonapi"
+
+    # Utbetalingsportalen
+    - name: 0000-GA-SOKOS-MF-Attestasjon-WRITE
+      value: e1e9c6ba-114f-4b71-adf1-3db2f1608759
