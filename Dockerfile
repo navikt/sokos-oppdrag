@@ -1,7 +1,6 @@
-FROM bellsoft/liberica-openjdk-alpine:21@sha256:ee40d83d93023b804847568d847e6540799091bd1b61322f8272de2ef369aa8b
+FROM bellsoft/liberica-openjdk-alpine:21@sha256:45083bf56e4cf13c34c6ec04356deec655638c8aa8443f9dcab7a90fb4db8fb6
 
 RUN apk update && apk add --no-cache \
-  curl \
   dumb-init \
   && rm -rf /var/lib/apt/lists/*
 
@@ -9,7 +8,6 @@ COPY build/libs/*.jar app.jar
 COPY java-opts.sh /
 
 RUN chmod +x /java-opts.sh
-RUN curl -L -O https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
 
 ENV TZ="Europe/Oslo"
 ENV JAVA_OPTS="-XX:MaxRAMPercentage=75"
