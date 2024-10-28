@@ -24,7 +24,7 @@ import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.integration.api.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.integration.api.model.GjelderIdResponse
-import no.nav.sokos.oppdrag.integration.service.IntegrationService
+import no.nav.sokos.oppdrag.integration.skjerming.SkjermingService
 import java.time.ZonedDateTime
 
 private const val PORT = 9090
@@ -32,7 +32,7 @@ private const val PORT = 9090
 private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
 
 private val validationFilter = OpenApiValidationFilter("openapi/integration-v1-swagger.yaml")
-private val integrationService = mockk<IntegrationService>()
+private val skjermingService = mockk<SkjermingService>()
 
 internal class IntegrationApiTest : FunSpec({
 
@@ -48,7 +48,7 @@ internal class IntegrationApiTest : FunSpec({
 
         val gjelderIdResponse = GjelderIdResponse("Test Testesen")
 
-        coEvery { integrationService.getNavnForGjelderId(any(), any()) } returns gjelderIdResponse
+        coEvery { skjermingService.getNavnForGjelderId(any(), any()) } returns gjelderIdResponse
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -117,7 +117,7 @@ private fun Application.applicationTestModule() {
     commonConfig()
     routing {
         authenticate(false, AUTHENTICATION_NAME) {
-            integrationApi(integrationService = integrationService)
+            integrationApi(skjermingService = skjermingService)
         }
     }
 }

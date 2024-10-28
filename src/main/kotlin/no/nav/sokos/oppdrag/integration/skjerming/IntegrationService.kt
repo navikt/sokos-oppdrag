@@ -1,28 +1,24 @@
-package no.nav.sokos.oppdrag.integration.service
+package no.nav.sokos.oppdrag.integration.skjerming
 
-import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
 import no.nav.pdl.enums.AdressebeskyttelseGradering
-import no.nav.pdl.hentperson.Person
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.common.audit.NavIdent
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.api.model.GjelderIdResponse
 import no.nav.sokos.oppdrag.integration.ereg.EregService
-import no.nav.sokos.oppdrag.integration.pdl.PdlService
-import no.nav.sokos.oppdrag.integration.skjerming.SkjermetClientImpl
-import no.nav.sokos.oppdrag.integration.skjerming.SkjermetService
+import no.nav.sokos.oppdrag.integration.pdl.PdlClientService
 import no.nav.sokos.oppdrag.integration.tp.TpService
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
 class IntegrationService(
-    private val pdlService: PdlService = PdlService(),
+    private val pdlClientService: PdlClientService = PdlClientService(),
     private val tpService: TpService = TpService(),
     private val eregService: EregService = EregService(),
     private val auditLogger: AuditLogger = AuditLogger(),
-    private val skjermetService: SkjermetService = SkjermetService(SkjermetClientImpl()),
+    private val skjermetClientService: SkjermetClientService = SkjermetClientService(),
 ) {
     suspend fun getNavnForGjelderId(
         gjelderId: String,
@@ -44,27 +40,26 @@ class IntegrationService(
         }
     }
 
-    suspend fun sjekkSkjerming(gjelderId: String?, saksbehandler: NavIdent) {
-        if (gjelderId?.toLong() !in 1_000_000_001..79_999_999_999) return
+    suspend fun checkSkjermetPerson(
+        gjelderId: String,
+        saksbehandler: NavIdent,
+    ) {
+        if (gjelderId.toLong() !in 1_000_000_001..79_999_999_999) return
 
         val graderinger: List<AdressebeskyttelseGradering?> =
-            getPerson(gjelderId!!)?.adressebeskyttelse?.map { it?.gradering } ?: emptyList()
+            pdlClientService.getPerson(listOf(gjelderId))[gjelderId]?.adressebeskyttelse?.map { it.gradering } ?: emptyList()
 
-        if (!saksbehandler.harTilgangTilStrengtFortrolig() && graderinger.contains(AdressebeskyttelseGradering.STRENGT_FORTROLIG)) {
-            throw SkjermetException("Skjermet person: (strengt fortrolig)")
-        }
-        if (!saksbehandler.harTilgangTilFortrolig() && graderinger.contains(AdressebeskyttelseGradering.FORTROLIG)) {
-            throw SkjermetException("Skjermet person (fortrolig)")
-        }
-        if (!skjermetService.kanSaksbehandlerSePerson(gjelderId, saksbehandler)) {
-            throw SkjermetException("Skjermet person (egen ansatt)")
-        }
+        val isPersonSkjermet =
+            when {
+                !saksbehandler.harTilgangTilFortrolig() && graderinger.contains(AdressebeskyttelseGradering.FORTROLIG) -> true
+                !saksbehandler.harTilgangTilStrengtFortrolig() && graderinger.contains(AdressebeskyttelseGradering.STRENGT_FORTROLIG) -> true
+                !saksbehandler.harTilgangTilEgneAnsatte() && skjermetClientService.isSkjermedePersonerInSkjermingslosningen(listOf(gjelderId))[gjelderId] == true -> true
 
-    }
-
-    private suspend fun getPerson(gjelderId: String): Person? {
-        val person = pdlService.getPersonNavn(gjelderId)
-        return person
+                else -> false
+            }
+        if (isPersonSkjermet) {
+            throw SkjermetException("Du har ikke tilgang til å se denne personen")
+        }
     }
 
     private suspend fun getLeverandorName(gjelderId: String): GjelderIdResponse {
@@ -76,10 +71,15 @@ class IntegrationService(
         gjelderId: String,
         saksbehandler: NavIdent,
     ): GjelderIdResponse {
-        runBlocking { sjekkSkjerming(gjelderId, saksbehandler) }
-        val person = pdlService.getPersonNavn(gjelderId)?.navn?.first()
-        val personName = person?.mellomnavn?.let { "${person.fornavn} ${person.mellomnavn} ${person.etternavn}" }
-            ?: "${person?.fornavn} ${person?.etternavn}"
+        checkSkjermetPerson(gjelderId, saksbehandler)
+        val person = pdlClientService.getPerson(listOf(gjelderId))[gjelderId]?.navn?.first()
+        val personName =
+            person?.let {
+                when (person.mellomnavn) {
+                    null -> "${person.fornavn} ${person.etternavn}"
+                    else -> "${person.fornavn} ${person.mellomnavn} ${person.etternavn}"
+                }
+            }
         return GjelderIdResponse(personName)
     }
 
@@ -89,4 +89,4 @@ class IntegrationService(
     }
 }
 
-class SkjermetException(val msg: String) : Exception()
+data class SkjermetException(override val message: String) : Exception(message)

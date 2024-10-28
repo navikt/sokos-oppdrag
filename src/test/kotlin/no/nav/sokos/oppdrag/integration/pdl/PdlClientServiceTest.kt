@@ -12,12 +12,12 @@ import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows
 
-internal class PdlServiceTest : FunSpec({
+internal class PdlClientServiceTest : FunSpec({
 
     extensions(listOf(WiremockListener))
 
-    val pdlService: PdlService by lazy {
-        PdlService(
+    val pdlClientService: PdlClientService by lazy {
+        PdlClientService(
             pdlUrl = wiremock.baseUrl(),
             accessTokenClient = WiremockListener.accessTokenClient,
         )
@@ -34,7 +34,7 @@ internal class PdlServiceTest : FunSpec({
                 ),
         )
 
-        val response = pdlService.getPersonNavn("12345678912")
+        val response = pdlClientService.getPerson("12345678912")
 
         response?.navn?.first()?.fornavn shouldBe "Ola"
         response?.navn?.first()?.mellomnavn shouldBe null
@@ -54,7 +54,7 @@ internal class PdlServiceTest : FunSpec({
 
         val exception =
             assertThrows<PdlException> {
-                pdlService.getPersonNavn("12345678912")
+                pdlClientService.getPerson("12345678912")
             }
 
         exception.message shouldBe "(Path: [\"hentPerson\"], Code: [\"not_found\"], Message: Fant ikke person)"
@@ -73,7 +73,7 @@ internal class PdlServiceTest : FunSpec({
 
         val exception =
             assertThrows<PdlException> {
-                pdlService.getPersonNavn("12345678912")
+                pdlClientService.getPerson("12345678912")
             }
 
         exception.message shouldBe "(Path: [\"hentPerson\"], Code: [\"unauthenticated\"], Message: Ikke autentisert)"
