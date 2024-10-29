@@ -40,7 +40,7 @@ class AttestasjonService(
                     brukerBehandlingTekst = "NAV-ansatt har gjort et oppslag på navn",
                 ),
             )
-            if (integrationService.checkSkjermetPerson(gjelderId, saksbehandler)) {
+            if ((gjelderId.toLong() in 1_000_000_001..79_999_999_999) && integrationService.checkSkjermetPerson(gjelderId, saksbehandler)) {
                 return emptyList()
             }
         }

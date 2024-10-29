@@ -24,23 +24,41 @@ repositories {
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
 }
 
-val db2JccVersion = "11.5.9.0"
-val graphqlClientVersion = "8.2.1"
-val hikariVersion = "6.0.0"
-val janionVersion = "3.1.12"
-val kotestVersion = "6.0.0.M1"
-val wiremockVersion = "3.0.1"
-val kotlinLoggingVersion = "3.0.5"
-val kotlinxSerializationVersion = "1.7.3"
-val kotliqueryVersion = "1.9.0"
+// Ktor
 val ktorVersion = "3.0.0"
+
+// Serialization
+val kotlinxSerializationVersion = "1.7.3"
+
+// Monitorering
+val micrometerVersion = "1.13.6"
+
+// Logging
+val kotlinLoggingVersion = "3.0.5"
+val janionVersion = "3.1.12"
 val logbackVersion = "1.5.12"
 val logstashVersion = "8.0"
-val micrometerVersion = "1.13.6"
+val papertrailappVersion = "1.0.0"
+
+// Config
+val natpryceVersion = "1.6.10.0"
+
+// Database
+val hikariVersion = "6.0.0"
+val db2JccVersion = "11.5.9.0"
+val kotliqueryVersion = "1.9.0"
+
+// GraphQL
+val graphqlClientVersion = "8.2.1"
+
+// Cache
+val caffeineVersion = "3.1.8"
+
+// Test
+val kotestVersion = "6.0.0.M1"
+val wiremockVersion = "3.0.1"
 val mockOAuth2ServerVersion = "2.1.9"
 val mockkVersion = "1.13.13"
-val natpryceVersion = "1.6.10.0"
-val papertrailappVersion = "1.0.0"
 val swaggerRequestValidatorVersion = "2.43.0"
 
 dependencies {
@@ -89,6 +107,9 @@ dependencies {
     implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphqlClientVersion") {
         exclude("com.expediagroup:graphql-kotlin-client-jackson")
     }
+
+    // Cache
+    implementation("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
 
     // Test
     testImplementation("io.ktor:ktor-server-test-host-jvm:$ktorVersion")

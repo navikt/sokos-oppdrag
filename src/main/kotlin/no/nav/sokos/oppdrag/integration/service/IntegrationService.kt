@@ -1,16 +1,20 @@
 package no.nav.sokos.oppdrag.integration.service
 
+import com.github.benmanes.caffeine.cache.Caffeine
 import mu.KotlinLogging
 import no.nav.pdl.enums.AdressebeskyttelseGradering
+import no.nav.pdl.hentpersonbolk.Person
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.common.audit.NavIdent
+import no.nav.sokos.oppdrag.common.util.getAsync
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.api.model.GjelderIdResponse
 import no.nav.sokos.oppdrag.integration.ereg.EregClientService
 import no.nav.sokos.oppdrag.integration.pdl.PdlClientService
 import no.nav.sokos.oppdrag.integration.skjerming.SkjermetClientService
 import no.nav.sokos.oppdrag.integration.tp.TpClientService
+import java.time.Duration
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
@@ -21,6 +25,18 @@ class IntegrationService(
     private val auditLogger: AuditLogger = AuditLogger(),
     private val skjermetClientService: SkjermetClientService = SkjermetClientService(),
 ) {
+    private val bolkPdlCache =
+        Caffeine.newBuilder()
+            .expireAfterWrite(Duration.ofMinutes(15))
+            .maximumSize(10_000)
+            .buildAsync<String, Map<String, Person>>()
+
+    private val bolkEgneAnsatteCache =
+        Caffeine.newBuilder()
+            .expireAfterWrite(Duration.ofMinutes(15))
+            .maximumSize(10_000)
+            .buildAsync<String, Map<String, Boolean>>()
+
     suspend fun getNavnForGjelderId(
         gjelderId: String,
         saksbehandler: NavIdent,
@@ -36,7 +52,7 @@ class IntegrationService(
 
         return when {
             gjelderId.toLong() > 80_000_000_000 -> getLeverandorName(gjelderId)
-            gjelderId.toLong() in 1_000_000_001..79_999_999_999 -> getPersonName(gjelderId, saksbehandler)
+            gjelderId.toLong() in 1_000_000_001..79_999_999_999 -> getPersonName(gjelderId)
             else -> getOrganisasjonsName(gjelderId.replace("^(00)?".toRegex(), ""))
         }
     }
@@ -54,13 +70,16 @@ class IntegrationService(
         }
 
         val egenAnsattMap =
-            skjermetClientService.isSkjermedePersonerInSkjermingslosningen(
-                personIdenter,
-            ).map { (fnr, skjermet) -> fnr to !skjermet }.toMap()
+            bolkEgneAnsatteCache.getAsync(personIdenter.joinToString()) { _ ->
+                skjermetClientService.isSkjermedePersonerInSkjermingslosningen(
+                    personIdenter,
+                )
+            }.map { (fnr, skjermet) -> fnr to !skjermet }.toMap()
+
         val adressebeskyttelseMap =
-            pdlClientService.getPerson(
-                identer = personIdenter,
-            ).map { (key, person) ->
+            bolkPdlCache.getAsync(personIdenter.joinToString()) { _ ->
+                pdlClientService.getPerson(identer = personIdenter)
+            }.map { (key, person) ->
                 val graderinger = person.adressebeskyttelse.map { it.gradering }
 
                 when {
@@ -90,10 +109,15 @@ class IntegrationService(
         gjelderId: String,
         saksbehandler: NavIdent,
     ): Boolean {
-        if (gjelderId.toLong() !in 1_000_000_001..79_999_999_999) return false
+        val graderinger =
+            bolkPdlCache.getAsync(gjelderId) { _ ->
+                pdlClientService.getPerson(listOf(gjelderId))
+            }[gjelderId]?.adressebeskyttelse?.map { it.gradering } ?: emptyList()
 
-        val graderinger: List<AdressebeskyttelseGradering?> =
-            pdlClientService.getPerson(listOf(gjelderId))[gjelderId]?.adressebeskyttelse?.map { it.gradering } ?: emptyList()
+        val skjermedeEgneAnsatte =
+            bolkEgneAnsatteCache.getAsync(gjelderId) { _ ->
+                skjermetClientService.isSkjermedePersonerInSkjermingslosningen(listOf(gjelderId))
+            }
 
         return when {
             !saksbehandler.harTilgangTilFortrolig() && graderinger.contains(AdressebeskyttelseGradering.FORTROLIG) -> true
@@ -102,7 +126,7 @@ class IntegrationService(
                     .isNotEmpty()
             -> true
 
-            !saksbehandler.harTilgangTilEgneAnsatte() && skjermetClientService.isSkjermedePersonerInSkjermingslosningen(listOf(gjelderId))[gjelderId] == true -> true
+            !saksbehandler.harTilgangTilEgneAnsatte() && skjermedeEgneAnsatte[gjelderId] == true -> true
 
             else -> false
         }
@@ -113,11 +137,7 @@ class IntegrationService(
         return GjelderIdResponse(leverandorName)
     }
 
-    private suspend fun getPersonName(
-        gjelderId: String,
-        saksbehandler: NavIdent,
-    ): GjelderIdResponse {
-        checkSkjermetPerson(gjelderId, saksbehandler)
+    private suspend fun getPersonName(gjelderId: String): GjelderIdResponse {
         val person = pdlClientService.getPerson(listOf(gjelderId))[gjelderId]?.navn?.first()
         val personName =
             person?.let {
