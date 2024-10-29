@@ -62,7 +62,7 @@ class AttestasjonService(
 
         val map = integrationService.getIsSkjermetByFoedselsnummer(oppdragList.map { it.gjelderId }, saksbehandler)
         return oppdragList.map { oppdrag ->
-            oppdrag.copy(skjermet = map[oppdrag.gjelderId] == true)
+            oppdrag.copy(erSkjermetForSaksbehandler = map[oppdrag.gjelderId] == true)
         }
     }
 

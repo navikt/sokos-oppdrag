@@ -56,7 +56,7 @@ class IntegrationService(
         val egenAnsattMap =
             skjermetClientService.isSkjermedePersonerInSkjermingslosningen(
                 personIdenter,
-            )
+            ).map { (fnr, skjermet) -> fnr to !skjermet }.toMap()
         val adressebeskyttelseMap =
             pdlClientService.getPerson(
                 identer = personIdenter,
