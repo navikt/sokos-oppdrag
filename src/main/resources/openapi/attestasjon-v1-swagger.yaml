@@ -263,7 +263,7 @@ components:
           type: string
         oppdragsId:
           type: integer
-        skjermet:
+        erSkjermetForSaksbehandler:
           type: boolean
 
     OppdragsdetaljerDTO:
