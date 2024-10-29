@@ -14,12 +14,11 @@ object AuthToken {
         val oboToken =
             call.request.headers[HttpHeaders.Authorization]?.removePrefix("Bearer ")
                 ?: throw Error("Could not get token from request header")
+
         val navIdent = getNAVIdentFromToken(oboToken)
         val groupsFromOboToken = getGroupsFromToken(oboToken)
         val groupAccess = PropertiesConfig.AzureAdProperties().groupAccess
         val groups = groupsFromOboToken.mapNotNull { groupAccess[it] }
-
-        println("GRUPPER JEG HAR TILGANG TIL: $groups")
 
         return NavIdent(navIdent, groups)
     }

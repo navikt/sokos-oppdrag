@@ -145,24 +145,6 @@ class AttestasjonRepository(
         }
     }
 
-    fun getGjelderIdForOppdrag(oppdragsId: Int): String? {
-        val query =
-            """
-            SELECT GJELDER_ID FROM T_OPPDRAG_GJELDER WHERE OPPDRAGS_ID = :OPPDRAGSID
-            """.trimIndent()
-
-        return using(sessionOf(dataSource)) { session ->
-            session.single(
-                queryOf(
-                    query,
-                    mapOf(
-                        "OPPDRAGSID" to oppdragsId,
-                    ),
-                ),
-            ) { row -> row.string("GJELDER_ID") }
-        }
-    }
-
     fun getOppdragslinjer(oppdragsId: Int): List<Oppdragslinje> {
         val query =
             """

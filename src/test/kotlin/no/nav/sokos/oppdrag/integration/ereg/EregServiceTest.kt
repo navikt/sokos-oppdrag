@@ -19,8 +19,8 @@ internal class EregServiceTest : FunSpec({
 
     extensions(listOf(WiremockListener))
 
-    val eregService: EregService by lazy {
-        EregService(
+    val eregClientService: EregClientService by lazy {
+        EregClientService(
             eregUrl = wiremock.baseUrl(),
         )
     }
@@ -33,7 +33,7 @@ internal class EregServiceTest : FunSpec({
                 ),
         )
 
-        val response = eregService.getOrganisasjonsNavn(ORGANISASJONSNUMMER)
+        val response = eregClientService.getOrganisasjonsNavn(ORGANISASJONSNUMMER)
         response shouldBe
             Organisasjon(
                 Navn(
@@ -55,7 +55,7 @@ internal class EregServiceTest : FunSpec({
 
         val exception =
             assertThrows<EregException> {
-                eregService.getOrganisasjonsNavn(ORGANISASJONSNUMMER)
+                eregClientService.getOrganisasjonsNavn(ORGANISASJONSNUMMER)
             }
 
         exception.shouldNotBeNull()
@@ -78,7 +78,7 @@ internal class EregServiceTest : FunSpec({
 
         val exception =
             assertThrows<EregException> {
-                eregService.getOrganisasjonsNavn(ORGANISASJONSNUMMER)
+                eregClientService.getOrganisasjonsNavn(ORGANISASJONSNUMMER)
             }
 
         exception.shouldNotBeNull()

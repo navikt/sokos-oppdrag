@@ -13,8 +13,8 @@ import org.junit.jupiter.api.assertThrows
 
 const val TSS_ID = "12345678912"
 
-private val tpService =
-    TpService(
+private val tpClientService =
+    TpClientService(
         tpUrl = wiremock.baseUrl(),
     )
 
@@ -22,8 +22,8 @@ internal class TpServiceTest : FunSpec({
 
     extensions(listOf(WiremockListener))
 
-    val tpService: TpService by lazy {
-        TpService(
+    val tpClientService: TpClientService by lazy {
+        TpClientService(
             tpUrl = wiremock.baseUrl(),
         )
     }
@@ -39,7 +39,7 @@ internal class TpServiceTest : FunSpec({
                 ),
         )
 
-        val response = tpService.getLeverandorNavn(TSS_ID)
+        val response = tpClientService.getLeverandorNavn(TSS_ID)
         response.navn shouldBe "Ola Nordmann"
     }
 
@@ -55,7 +55,7 @@ internal class TpServiceTest : FunSpec({
 
         val exception =
             assertThrows<TpException> {
-                tpService.getLeverandorNavn(TSS_ID)
+                tpClientService.getLeverandorNavn(TSS_ID)
             }
 
         exception.shouldNotBeNull()

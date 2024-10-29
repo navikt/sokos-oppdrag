@@ -56,8 +56,8 @@ fun StatusPagesConfig.statusPageConfig() {
 
                 is SkjermetException -> {
                     Pair(
-                        HttpStatusCode.BadRequest,
-                        cause.message,
+                        cause.response.status,
+                        cause.apiError,
                     )
                 }
 

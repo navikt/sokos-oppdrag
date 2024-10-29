@@ -24,7 +24,7 @@ import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.integration.api.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.integration.api.model.GjelderIdResponse
-import no.nav.sokos.oppdrag.integration.skjerming.IntegrationService
+import no.nav.sokos.oppdrag.integration.service.IntegrationService
 import java.time.ZonedDateTime
 
 private const val PORT = 9090

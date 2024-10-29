@@ -17,6 +17,7 @@ import no.nav.pdl.hentpersonbolk.Person
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.config.createHttpClient
+import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import no.nav.sokos.oppdrag.security.AccessTokenClient
 import org.slf4j.MDC
 
@@ -44,6 +45,8 @@ class PdlClientService(
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }
+
+        Metrics.pdlCallCounter.labelValues("${response.status.value}").inc()
 
         return when {
             response.status.isSuccess() -> {

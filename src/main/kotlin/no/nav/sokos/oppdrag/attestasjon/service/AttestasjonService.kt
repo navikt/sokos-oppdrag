@@ -13,7 +13,7 @@ import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.common.audit.NavIdent
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
-import no.nav.sokos.oppdrag.integration.skjerming.IntegrationService
+import no.nav.sokos.oppdrag.integration.service.IntegrationService
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
@@ -60,7 +60,7 @@ class AttestasjonService(
                 fagomraader,
             )
 
-        val map = integrationService.getIsSkjermetByFoedselsnummer(oppdragList.map { gjelderId!! }, saksbehandler)
+        val map = integrationService.getIsSkjermetByFoedselsnummer(oppdragList.map { it.gjelderId }, saksbehandler)
         return oppdragList.map { oppdrag ->
             oppdrag.copy(skjermet = map[oppdrag.gjelderId] == true)
         }
@@ -70,12 +70,10 @@ class AttestasjonService(
         return attestasjonRepository.getFagOmraader()
     }
 
-    suspend fun getOppdragsdetaljer(
+    fun getOppdragsdetaljer(
         oppdragsId: Int,
         saksbehandler: NavIdent,
     ): OppdragsdetaljerDTO {
-        attestasjonRepository.getGjelderIdForOppdrag(oppdragsId)?.let { gjelderId -> integrationService.checkSkjermetPerson(gjelderId, saksbehandler) }
-
         val oppdragslinjer = attestasjonRepository.getOppdragslinjer(oppdragsId)
 
         if (oppdragslinjer.isEmpty()) {
