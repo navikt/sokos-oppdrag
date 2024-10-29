@@ -71,11 +71,11 @@ object PropertiesConfig {
         val clientSecret: String = getOrEmpty("AZURE_APP_CLIENT_SECRET"),
         val groupAccess: Map<String, String> =
             mapOf(
-                getOrEmpty("UUID_ROLLE_EGNE_ANSATTE") to GRUPPE_EGNE_ANSATTE,
-                getOrEmpty("UUID_ROLLE_FORTROLIG")
+                getOrEmpty("GA_OKONOMI_EGNE_ANSATTE") to GRUPPE_EGNE_ANSATTE,
+                getOrEmpty("GA_OKONOMI_FORTROLIG")
                     to GRUPPE_FORTROLIG,
-                getOrEmpty("UUID_ROLLE_STRENGT_FORTROLIG") to GRUPPE_STRENGT_FORTROLIG,
-                getOrEmpty("UUID_ROLLE_ATTESTASJON_SKRIV") to GRUPPE_ATTESTASJON_SKRIV,
+                getOrEmpty("GA_OKONOMI_STRENGT_FORTROLIG") to GRUPPE_STRENGT_FORTROLIG,
+                getOrEmpty("GA_SOKOS_MF_Attestasjon_WRITE") to GRUPPE_ATTESTASJON_SKRIV,
             ),
     )
 

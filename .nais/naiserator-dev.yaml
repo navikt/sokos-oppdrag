@@ -88,7 +88,7 @@ spec:
       value: "https://skjermede-personer-pip.intern.dev.nav.no"
     - name: SKJERMING_CLIENT_ID
       value: "api://dev-gcp.nom.skjermede-personer-pip/.default"
-    - name: UUID_ROLLE_EGNE_ANSATTE
+    - name: GA_OKONOMI_EGNE_ANSATTE
       value: 1c7eec30-e0b3-4374-a175-13692bd299a3
 
     # Tp
@@ -100,9 +100,9 @@ spec:
       value: "https://pdl-api-q1.dev.intern.nav.no"
     - name: PDL_SCOPE
       value: "api://dev-fss.pdl.pdl-api-q1/.default"
-    - name: UUID_ROLLE_FORTROLIG
+    - name: GA_OKONOMI_FORTROLIG
       value: a0a00387-1830-47f6-af7e-3122c5940437
-    - name: UUID_ROLLE_STRENGT_FORTROLIG
+    - name: GA_OKONOMI_STRENGT_FORTROLIG
       value: 9d135c69-105c-4364-86f4-e22916758e93
 
     # ZOS-Connect
@@ -110,5 +110,5 @@ spec:
       value: "http://155.55.1.82:9080/osattestasjonapi"
 
     # Utbetalingsportalen
-    - name: UUID-0000-GA-SOKOS-MF-Attestasjon-WRITE
+    - name: GA_SOKOS_MF_Attestasjon_WRITE
       value: e1e9c6ba-114f-4b71-adf1-3db2f1608759
