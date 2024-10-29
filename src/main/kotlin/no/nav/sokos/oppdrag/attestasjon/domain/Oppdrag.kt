@@ -14,5 +14,5 @@ data class Oppdrag(
     val kodeFagOmraade: String,
     val kostnadsSted: String,
     val oppdragsId: Int,
-    val skjermet: Boolean = false,
+    val erSkjermetForSaksbehandler: Boolean = false,
 )
