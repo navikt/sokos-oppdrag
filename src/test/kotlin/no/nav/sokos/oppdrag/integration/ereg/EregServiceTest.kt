@@ -8,12 +8,15 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows
 
-const val ORGANISASJONSNUMMER = "123456789"
+private const val GYLDIG_ORGANISASJONSNUMMER = "123456789"
+private const val UGYLDIG_ORGANISASJONSNUMMER = "12345678"
+private const val IKKE_FUNNET_ORGANISASJONSNUMMER = "821230153"
 
 internal class EregServiceTest : FunSpec({
 
@@ -27,13 +30,13 @@ internal class EregServiceTest : FunSpec({
 
     test("hent organisasjonsnavn") {
         wiremock.stubFor(
-            get(urlEqualTo("/v2/organisasjon/$ORGANISASJONSNUMMER/noekkelinfo"))
+            get(urlEqualTo("/v2/organisasjon/$GYLDIG_ORGANISASJONSNUMMER/noekkelinfo"))
                 .willReturn(
                     okJson(jsonResponseOrgFunnet),
                 ),
         )
 
-        val response = eregClientService.getOrganisasjonsNavn(ORGANISASJONSNUMMER)
+        val response = eregClientService.getOrganisasjonsNavn(GYLDIG_ORGANISASJONSNUMMER)
         response shouldBe
             Organisasjon(
                 Navn(
@@ -44,7 +47,7 @@ internal class EregServiceTest : FunSpec({
 
     test("hent organisasjonsnavn returnerer 400 BadRequest") {
         wiremock.stubFor(
-            get(urlEqualTo("/v2/organisasjon/$ORGANISASJONSNUMMER/noekkelinfo"))
+            get(urlEqualTo("/v2/organisasjon/$UGYLDIG_ORGANISASJONSNUMMER/noekkelinfo"))
                 .willReturn(
                     aResponse()
                         .withStatus(400)
@@ -55,19 +58,19 @@ internal class EregServiceTest : FunSpec({
 
         val exception =
             assertThrows<EregException> {
-                eregClientService.getOrganisasjonsNavn(ORGANISASJONSNUMMER)
+                eregClientService.getOrganisasjonsNavn(UGYLDIG_ORGANISASJONSNUMMER)
             }
 
         exception.shouldNotBeNull()
-        exception.apiError.error shouldBe "Bad Request"
-        exception.apiError.status shouldBe 400
-        exception.apiError.message shouldBe "Organisasjonsnummeret (12) er på et ugyldig format"
-        exception.apiError.path shouldBe "${wiremock.baseUrl()}/v2/organisasjon/$ORGANISASJONSNUMMER/noekkelinfo"
+        exception.apiError.error shouldBe HttpStatusCode.BadRequest.description
+        exception.apiError.status shouldBe HttpStatusCode.BadRequest.value
+        exception.apiError.message shouldBe "Organisasjonsnummeret (${UGYLDIG_ORGANISASJONSNUMMER}) er på et ugyldig format"
+        exception.apiError.path shouldBe "${wiremock.baseUrl()}/v2/organisasjon/$UGYLDIG_ORGANISASJONSNUMMER/noekkelinfo"
     }
 
     test("hent organisasjonsnavn returnerer 404 NotFound") {
         wiremock.stubFor(
-            get(urlEqualTo("/v2/organisasjon/$ORGANISASJONSNUMMER/noekkelinfo"))
+            get(urlEqualTo("/v2/organisasjon/$IKKE_FUNNET_ORGANISASJONSNUMMER/noekkelinfo"))
                 .willReturn(
                     aResponse()
                         .withStatus(404)
@@ -78,14 +81,14 @@ internal class EregServiceTest : FunSpec({
 
         val exception =
             assertThrows<EregException> {
-                eregClientService.getOrganisasjonsNavn(ORGANISASJONSNUMMER)
+                eregClientService.getOrganisasjonsNavn(IKKE_FUNNET_ORGANISASJONSNUMMER)
             }
 
         exception.shouldNotBeNull()
-        exception.apiError.error shouldBe "Not Found"
-        exception.apiError.status shouldBe 404
-        exception.apiError.message shouldBe "Ingen organisasjon med organisasjonsnummer $ORGANISASJONSNUMMER ble funnet"
-        exception.apiError.path shouldBe "${wiremock.baseUrl()}/v2/organisasjon/$ORGANISASJONSNUMMER/noekkelinfo"
+        exception.apiError.status shouldBe HttpStatusCode.NotFound.value
+        exception.apiError.error shouldBe HttpStatusCode.NotFound.description
+        exception.apiError.message shouldBe "Ingen organisasjon med organisasjonsnummer $IKKE_FUNNET_ORGANISASJONSNUMMER ble funnet"
+        exception.apiError.path shouldBe "${wiremock.baseUrl()}/v2/organisasjon/$IKKE_FUNNET_ORGANISASJONSNUMMER/noekkelinfo"
     }
 })
 
@@ -101,13 +104,13 @@ private val jsonResponseOrgFunnet =
 private val jsonResponseOrgBadRequest =
     """
     {
-      "melding": "Organisasjonsnummeret (12) er på et ugyldig format"
+      "melding": "Organisasjonsnummeret (${UGYLDIG_ORGANISASJONSNUMMER}) er på et ugyldig format"
     }
     """.trimIndent()
 
 private val jsonResponseOrgIkkeFunnet =
     """
     {
-      "melding": "Ingen organisasjon med organisasjonsnummer $ORGANISASJONSNUMMER ble funnet"
+      "melding": "Ingen organisasjon med organisasjonsnummer $IKKE_FUNNET_ORGANISASJONSNUMMER ble funnet"
     }
     """.trimIndent()

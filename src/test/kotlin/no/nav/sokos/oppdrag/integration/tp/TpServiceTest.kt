@@ -7,11 +7,12 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows
 
-const val TSS_ID = "12345678912"
+private const val TSS_ID = "12345678912"
 
 private val tpClientService =
     TpClientService(
@@ -59,8 +60,8 @@ internal class TpServiceTest : FunSpec({
             }
 
         exception.shouldNotBeNull()
-        exception.apiError.error shouldBe "Not Found"
-        exception.apiError.status shouldBe 404
+        exception.apiError.error shouldBe HttpStatusCode.NotFound.description
+        exception.apiError.status shouldBe HttpStatusCode.NotFound.value
         exception.apiError.message shouldBe "Fant ingen leverandørnavn med tssId $TSS_ID"
         exception.apiError.path shouldBe "${wiremock.baseUrl()}/api/ordninger/tss/$TSS_ID"
     }

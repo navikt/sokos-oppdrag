@@ -69,6 +69,7 @@ internal class AttestasjonApiTest : FunSpec({
                     "kodeFagomraade",
                     "8128",
                     987654,
+                    erSkjermetForSaksbehandler = true,
                 ),
             )
 

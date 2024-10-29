@@ -7,11 +7,15 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import no.nav.sokos.oppdrag.integration.api.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.integration.service.IntegrationService
+import no.nav.sokos.oppdrag.integration.tp.TpClientService
 import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler
 
 private const val BASE_PATH = "/api/v1/integration"
 
-fun Route.integrationApi(integrationService: IntegrationService = IntegrationService()) {
+fun Route.integrationApi(
+    integrationService: IntegrationService = IntegrationService(),
+    tpService: TpClientService = TpClientService(),
+) {
     route(BASE_PATH) {
         post("hentnavn") {
             val gjelderIdRequest = call.receive<GjelderIdRequest>()
@@ -21,6 +25,13 @@ fun Route.integrationApi(integrationService: IntegrationService = IntegrationSer
                     gjelderIdRequest.gjelderId,
                     saksbehandler,
                 ),
+            )
+        }
+
+        post("testnom") {
+            val saksbehandler = getSaksbehandler(call)
+            call.respond(
+                tpService.getLeverandorNavn("80000111999"),
             )
         }
     }

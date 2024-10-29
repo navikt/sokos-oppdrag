@@ -50,7 +50,7 @@ class TpClientService(
                         ZonedDateTime.now(),
                         response.status.value,
                         response.status.description,
-                        "Noe gikk galt ved oppslag av $tssId i TP",
+                        "Noe gikk galt ved oppslag mot TP-tjenesten",
                         "$tpUrl/api/ordninger/tss/$tssId",
                     ),
                     response,

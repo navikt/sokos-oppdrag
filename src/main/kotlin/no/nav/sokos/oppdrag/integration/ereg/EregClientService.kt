@@ -5,7 +5,6 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.statement.HttpResponse
-import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
@@ -34,39 +33,13 @@ class EregClientService(
 
         return when {
             response.status.isSuccess() -> response.body<Organisasjon>()
-            response.status.value == 400 -> {
-                throw EregException(
-                    ApiError(
-                        ZonedDateTime.now(),
-                        response.status.value,
-                        HttpStatusCode.BadRequest.description,
-                        response.errorMessage() ?: "",
-                        "$eregUrl/v2/organisasjon/$organisasjonsNummer/noekkelinfo",
-                    ),
-                    response,
-                )
-            }
-
-            response.status.value == 404 -> {
-                throw EregException(
-                    ApiError(
-                        ZonedDateTime.now(),
-                        response.status.value,
-                        HttpStatusCode.NotFound.description,
-                        response.errorMessage() ?: "",
-                        "$eregUrl/v2/organisasjon/$organisasjonsNummer/noekkelinfo",
-                    ),
-                    response,
-                )
-            }
-
             else -> {
                 throw EregException(
                     ApiError(
                         ZonedDateTime.now(),
                         response.status.value,
                         response.status.description,
-                        "Noe gikk galt ved oppslag av $organisasjonsNummer i Ereg",
+                        response.errorMessage() ?: "Noe gikk galt ved oppslag mot Ereg-tjenesten",
                         "$eregUrl/v2/organisasjon/$organisasjonsNummer/noekkelinfo",
                     ),
                     response,

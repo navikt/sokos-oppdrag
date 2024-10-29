@@ -10,11 +10,13 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.createHttpClient
-import no.nav.sokos.oppdrag.config.errorMessage
 import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import no.nav.sokos.oppdrag.security.AccessTokenClient
 import java.time.ZonedDateTime
@@ -59,7 +61,7 @@ class SkjermetClientService(
                         ZonedDateTime.now(),
                         response.status.value,
                         response.status.description,
-                        response.errorMessage() ?: "Noe gikk galt ved oppslag mot $skjermetUrl",
+                        response.errorMessage() ?: "Noe gikk galt ved oppslag mot Skjerming-tjenesten",
                         skjermetUrl,
                     ),
                     response,
@@ -68,5 +70,7 @@ class SkjermetClientService(
         }
     }
 }
+
+private suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject["message"]?.jsonPrimitive?.content
 
 data class SkjermetException(val apiError: ApiError, val response: HttpResponse) : Exception(apiError.error)
