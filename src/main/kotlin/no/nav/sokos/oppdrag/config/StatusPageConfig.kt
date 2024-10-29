@@ -12,6 +12,7 @@ import kotlinx.serialization.Serializable
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSException
 import no.nav.sokos.oppdrag.common.util.ZonedDateTimeSerializer
 import no.nav.sokos.oppdrag.integration.ereg.EregException
+import no.nav.sokos.oppdrag.integration.skjerming.SkjermetException
 import no.nav.sokos.oppdrag.integration.tp.TpException
 import java.time.ZonedDateTime
 
@@ -49,6 +50,13 @@ fun StatusPagesConfig.statusPageConfig() {
                 is ZOSException -> {
                     Pair(
                         HttpStatusCode.allStatusCodes.find { it.value == cause.apiError.status }!!,
+                        cause.apiError,
+                    )
+                }
+
+                is SkjermetException -> {
+                    Pair(
+                        cause.response.status,
                         cause.apiError,
                     )
                 }

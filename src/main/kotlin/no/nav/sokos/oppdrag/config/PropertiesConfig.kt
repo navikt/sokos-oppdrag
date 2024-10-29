@@ -6,6 +6,10 @@ import com.natpryce.konfig.EnvironmentVariables
 import com.natpryce.konfig.Key
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
+import no.nav.sokos.oppdrag.common.audit.GRUPPE_ATTESTASJON_SKRIV
+import no.nav.sokos.oppdrag.common.audit.GRUPPE_EGNE_ANSATTE
+import no.nav.sokos.oppdrag.common.audit.GRUPPE_FORTROLIG
+import no.nav.sokos.oppdrag.common.audit.GRUPPE_STRENGT_FORTROLIG
 import java.io.File
 
 object PropertiesConfig {
@@ -65,12 +69,22 @@ object PropertiesConfig {
         val wellKnownUrl: String = getOrEmpty("AZURE_APP_WELL_KNOWN_URL"),
         val tenantId: String = getOrEmpty("AZURE_APP_TENANT_ID"),
         val clientSecret: String = getOrEmpty("AZURE_APP_CLIENT_SECRET"),
+        val groupAccess: Map<String, String> =
+            mapOf(
+                getOrEmpty("GA_OKONOMI_EGNE_ANSATTE") to GRUPPE_EGNE_ANSATTE,
+                getOrEmpty("GA_OKONOMI_FORTROLIG")
+                    to GRUPPE_FORTROLIG,
+                getOrEmpty("GA_OKONOMI_STRENGT_FORTROLIG") to GRUPPE_STRENGT_FORTROLIG,
+                getOrEmpty("GA_SOKOS_MF_Attestasjon_WRITE") to GRUPPE_ATTESTASJON_SKRIV,
+            ),
     )
 
     data class EksterneHostProperties(
-        val pdlUrl: String = getOrEmpty("PDL_URL"),
-        val pdlScope: String = getOrEmpty("PDL_SCOPE"),
         val eregUrl: String = getOrEmpty("EREG_URL"),
+        val skjermetScope: String = getOrEmpty("SKJERMING_CLIENT_ID"),
+        val skjermetUrl: String = getOrEmpty("SKJERMING_URL"),
+        val pdlScope: String = getOrEmpty("PDL_SCOPE"),
+        val pdlUrl: String = getOrEmpty("PDL_URL"),
         val tpUrl: String = getOrEmpty("TP_URL"),
         val zosUrl: String = getOrEmpty("ZOS_URL"),
     )

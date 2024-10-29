@@ -1,9 +1,0 @@
-query($ident: ID!) {
-    hentPerson(ident: $ident) {
-        navn {
-            fornavn
-            mellomnavn
-            etternavn
-        }
-    }
-}

@@ -17,7 +17,7 @@ import java.time.ZonedDateTime
 
 private val logger = KotlinLogging.logger {}
 
-class TpService(
+class TpClientService(
     private val tpUrl: String = PropertiesConfig.EksterneHostProperties().tpUrl,
     private val client: HttpClient = createHttpClient(),
 ) {

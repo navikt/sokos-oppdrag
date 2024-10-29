@@ -107,7 +107,7 @@ spec:
 
     # ZOS-Connect
     - name: ZOS_URL
-      value: "http://155.55.1.82:9080/osattestasjonapi"
+      value: "https://155.55.1.82:9080/osattestasjonapi"
 
     # Utbetalingsportalen
     - name: GA_SOKOS_MF_Attestasjon_WRITE

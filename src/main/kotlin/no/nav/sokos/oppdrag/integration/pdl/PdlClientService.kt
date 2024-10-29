@@ -12,25 +12,26 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import mu.KotlinLogging
-import no.nav.pdl.HentPerson
-import no.nav.pdl.hentperson.Person
+import no.nav.pdl.HentPersonBolk
+import no.nav.pdl.hentpersonbolk.Person
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.config.createHttpClient
+import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import no.nav.sokos.oppdrag.security.AccessTokenClient
 import org.slf4j.MDC
 
 private val logger = KotlinLogging.logger {}
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
-class PdlService(
+class PdlClientService(
     private val pdlUrl: String = PropertiesConfig.EksterneHostProperties().pdlUrl,
     private val pdlScope: String = PropertiesConfig.EksterneHostProperties().pdlScope,
     private val client: HttpClient = createHttpClient(),
     private val accessTokenClient: AccessTokenClient = AccessTokenClient(azureAdScope = pdlScope),
 ) {
-    suspend fun getPersonNavn(ident: String): Person? {
-        val request = HentPerson(HentPerson.Variables(ident = ident))
+    suspend fun getPerson(identer: List<String>): Map<String, Person> {
+        val request = HentPersonBolk(HentPersonBolk.Variables(identer = identer))
 
         logger.info { "Henter accesstoken for oppslag mot PDL" }
         val accessToken = accessTokenClient.getSystemToken()
@@ -45,17 +46,21 @@ class PdlService(
                 setBody(request)
             }
 
+        Metrics.pdlCallCounter.labelValues("${response.status.value}").inc()
+
         return when {
             response.status.isSuccess() -> {
-                val result = response.body<GraphQLResponse<HentPerson.Result>>()
+                val result = response.body<GraphQLResponse<HentPersonBolk.Result>>()
                 if (result.errors?.isNotEmpty() == true) {
-                    handleErrors(result.errors, ident)
+                    handleErrors(result.errors, result.data?.hentPersonBolk?.map { it.ident } ?: emptyList())
                 }
-                result.data?.hentPerson
+                result.data?.hentPersonBolk
+                    ?.filter { item -> item.person != null }
+                    ?.map { item -> item.ident to item.person!! }
+                    ?.toMap() ?: emptyMap()
             }
-
             else -> {
-                secureLogger.error { "Noe gikk galt ved oppslag mot PDL for ident: $ident" }
+                secureLogger.error { "Noe gikk galt ved oppslag mot PDL for ident: $identer" }
                 throw ClientRequestException(
                     response,
                     "Noe gikk galt ved oppslag mot PDL",
@@ -66,7 +71,7 @@ class PdlService(
 
     private fun handleErrors(
         errors: List<GraphQLClientError>,
-        ident: String,
+        ident: List<String>,
     ) {
         val errorExtensions = errors.mapNotNull { it.extensions }
         val path = errors.mapNotNull { it.path?.firstOrNull() }
@@ -74,7 +79,7 @@ class PdlService(
         val errorMessage = errors.joinToString { it.message }
 
         val exceptionMessage = "(Path: $path, Code: $errorCode, Message: $errorMessage)"
-        val secureExceptionMessage = "(Ident: $ident, Path: $path, Code: $errorCode, Message: $errorMessage)"
+        val secureExceptionMessage = "(Identer: ${ident.joinToString()}, Path: $path, Code: $errorCode, Message: $errorMessage)"
 
         secureLogger.error { secureExceptionMessage }
 

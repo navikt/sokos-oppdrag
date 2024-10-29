@@ -212,7 +212,6 @@ class AttestasjonRepository(
                                AND E.TIDSPKT_REG < DUP.TIDSPKT_REG);
             """.trimIndent()
 
-        val parameters = mutableListOf(typeEnhet, oppdragsId)
         return using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(

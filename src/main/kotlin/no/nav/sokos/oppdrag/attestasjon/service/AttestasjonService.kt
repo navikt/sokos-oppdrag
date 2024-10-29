@@ -13,6 +13,7 @@ import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.common.audit.NavIdent
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
+import no.nav.sokos.oppdrag.integration.service.IntegrationService
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
@@ -20,8 +21,9 @@ class AttestasjonService(
     private val attestasjonRepository: AttestasjonRepository = AttestasjonRepository(),
     private val auditLogger: AuditLogger = AuditLogger(),
     private val zosConnectService: ZOSConnectService = ZOSConnectService(),
+    private val integrationService: IntegrationService = IntegrationService(),
 ) {
-    fun getOppdrag(
+    suspend fun getOppdrag(
         gjelderId: String? = null,
         fagSystemId: String? = null,
         kodeFagGruppe: String? = null,
@@ -38,6 +40,9 @@ class AttestasjonService(
                     brukerBehandlingTekst = "NAV-ansatt har gjort et oppslag på navn",
                 ),
             )
+            if (integrationService.checkSkjermetPerson(gjelderId, saksbehandler)) {
+                return emptyList()
+            }
         }
 
         val fagomraader =
@@ -47,12 +52,18 @@ class AttestasjonService(
                 else -> emptyList()
             }
 
-        return attestasjonRepository.getOppdrag(
-            attestert,
-            fagSystemId,
-            gjelderId,
-            fagomraader,
-        )
+        val oppdragList =
+            attestasjonRepository.getOppdrag(
+                attestert,
+                fagSystemId,
+                gjelderId,
+                fagomraader,
+            )
+
+        val map = integrationService.getIsSkjermetByFoedselsnummer(oppdragList.map { it.gjelderId }, saksbehandler)
+        return oppdragList.map { oppdrag ->
+            oppdrag.copy(skjermet = map[oppdrag.gjelderId] == true)
+        }
     }
 
     fun getFagOmraade(): List<FagOmraade> {

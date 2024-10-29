@@ -20,7 +20,7 @@ import java.time.ZonedDateTime
 
 private val logger = KotlinLogging.logger {}
 
-class EregService(
+class EregClientService(
     private val eregUrl: String = PropertiesConfig.EksterneHostProperties().eregUrl,
     private val client: HttpClient = createHttpClient(),
 ) {

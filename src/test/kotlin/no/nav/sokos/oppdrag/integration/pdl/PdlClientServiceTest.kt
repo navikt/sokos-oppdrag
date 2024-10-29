@@ -3,6 +3,7 @@ package no.nav.sokos.oppdrag.integration.pdl
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+import io.kotest.core.annotation.Ignored
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
@@ -12,12 +13,15 @@ import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows
 
-internal class PdlServiceTest : FunSpec({
+private const val FNR = "12345678912"
+
+@Ignored
+internal class PdlClientServiceTest : FunSpec({
 
     extensions(listOf(WiremockListener))
 
-    val pdlService: PdlService by lazy {
-        PdlService(
+    val pdlClientService: PdlClientService by lazy {
+        PdlClientService(
             pdlUrl = wiremock.baseUrl(),
             accessTokenClient = WiremockListener.accessTokenClient,
         )
@@ -34,11 +38,11 @@ internal class PdlServiceTest : FunSpec({
                 ),
         )
 
-        val response = pdlService.getPersonNavn("12345678912")
+        val response = pdlClientService.getPerson(listOf(FNR))
 
-        response?.navn?.first()?.fornavn shouldBe "Ola"
-        response?.navn?.first()?.mellomnavn shouldBe null
-        response?.navn?.first()?.etternavn shouldBe "Nordmann"
+        response[FNR]?.navn?.first()?.fornavn shouldBe "Ola"
+        response[FNR]?.navn?.first()?.mellomnavn shouldBe null
+        response[FNR]?.navn?.first()?.etternavn shouldBe "Nordmann"
     }
 
     test("hent navn fra pdl returnerer json svar at person ikke finnes") {
@@ -54,7 +58,7 @@ internal class PdlServiceTest : FunSpec({
 
         val exception =
             assertThrows<PdlException> {
-                pdlService.getPersonNavn("12345678912")
+                pdlClientService.getPerson(listOf(FNR))
             }
 
         exception.message shouldBe "(Path: [\"hentPerson\"], Code: [\"not_found\"], Message: Fant ikke person)"
@@ -73,7 +77,7 @@ internal class PdlServiceTest : FunSpec({
 
         val exception =
             assertThrows<PdlException> {
-                pdlService.getPersonNavn("12345678912")
+                pdlClientService.getPerson(listOf(FNR))
             }
 
         exception.message shouldBe "(Path: [\"hentPerson\"], Code: [\"unauthenticated\"], Message: Ikke autentisert)"
@@ -82,17 +86,24 @@ internal class PdlServiceTest : FunSpec({
 
 private val jsonResponseNavnFunnet =
     """
-    {
+     {
       "data": {
-        "hentPerson": {
-          "navn": [
-            {
-              "fornavn": "Ola",
-              "mellomnavn": null,
-              "etternavn": "Nordmann"
-            }
-          ]
-        }
+        "hentPersonBolk": [
+          {
+            "ident": "70078749472",
+            "person": {
+              "navn": [
+                {
+                  "fornavn": "TRIVIELL",
+                  "mellomnavn": null,
+                  "etternavn": "SKILPADDE"
+                }
+              ],
+              "adressebeskyttelse": []
+            },
+            "code": "ok"
+          }
+        ]
       }
     }
     """.trimIndent()

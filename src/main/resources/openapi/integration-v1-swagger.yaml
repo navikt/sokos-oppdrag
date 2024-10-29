@@ -43,6 +43,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
+        403:
+          description: Prøver å hente navn for skjermet person
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
         500:
           description: Annen feil
           content:

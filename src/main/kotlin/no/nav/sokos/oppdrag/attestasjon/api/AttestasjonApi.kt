@@ -1,6 +1,5 @@
 package no.nav.sokos.oppdrag.attestasjon.api
 
-import io.ktor.server.application.call
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -19,6 +18,7 @@ fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonSer
         post("sok") {
             val request = call.receive<OppdragsRequest>()
             val saksbehandler = getSaksbehandler(call)
+
             call.respond(
                 attestasjonService.getOppdrag(
                     request.gjelderId,
