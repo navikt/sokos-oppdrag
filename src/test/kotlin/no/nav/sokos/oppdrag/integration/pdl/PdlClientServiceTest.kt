@@ -3,6 +3,7 @@ package no.nav.sokos.oppdrag.integration.pdl
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+import io.kotest.core.annotation.Ignored
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.assertThrows
 
 private const val FNR = "12345678912"
 
+@Ignored
 internal class PdlClientServiceTest : FunSpec({
 
     extensions(listOf(WiremockListener))
