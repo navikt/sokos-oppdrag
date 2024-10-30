@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.integration.pdl
+package no.nav.sokos.oppdrag.integration.client.pdl
 
 import com.expediagroup.graphql.client.types.GraphQLClientError
 import com.expediagroup.graphql.client.types.GraphQLClientResponse

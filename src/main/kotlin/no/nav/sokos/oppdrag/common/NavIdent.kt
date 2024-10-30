@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.common.audit
+package no.nav.sokos.oppdrag.common
 
 const val GRUPPE_FORTROLIG = "0000-GA-okonomi-fortrolig"
 const val GRUPPE_STRENGT_FORTROLIG = "0000-GA-okonomi-strengt_fortrolig"

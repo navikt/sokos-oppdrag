@@ -90,7 +90,7 @@ internal class SecurityTest : FunSpec({
                     client.post("$OPPDRAGSINFO_BASE_API_PATH/sok") {
                         header(HttpHeaders.Authorization, "Bearer ${token()}")
                         header(HttpHeaders.ContentType, APPLICATION_JSON)
-                        setBody(GjelderIdRequest(gjelderId = "12345678901"))
+                        setBody(GjelderIdRequest("12345678901"))
                     }
 
                 response.status shouldBe HttpStatusCode.OK

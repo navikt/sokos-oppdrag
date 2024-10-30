@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.integration.tp
+package no.nav.sokos.oppdrag.integration.client.tp
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -21,7 +21,7 @@ class TpClientService(
     private val tpUrl: String = PropertiesConfig.EksterneHostProperties().tpUrl,
     private val client: HttpClient = createHttpClient(),
 ) {
-    suspend fun getLeverandorNavn(tssId: String): TpResponse {
+    suspend fun getLeverandorNavn(tssId: String): String {
         logger.info { "Henter leverandørnavn for $tssId fra TP." }
         val response =
             client.get("$tpUrl/api/ordninger/tss/$tssId") {
@@ -29,7 +29,7 @@ class TpClientService(
             }
         Metrics.tpCallCounter.labelValues("${response.status.value}").inc()
         return when {
-            response.status.isSuccess() -> TpResponse(response.body<String>())
+            response.status.isSuccess() -> response.body<String>()
 
             response.status.value == 404 -> {
                 throw TpException(
@@ -50,7 +50,7 @@ class TpClientService(
                         ZonedDateTime.now(),
                         response.status.value,
                         response.status.description,
-                        "Noe gikk galt ved oppslag av $tssId i TP",
+                        "Noe gikk galt ved oppslag mot TP-tjenesten",
                         "$tpUrl/api/ordninger/tss/$tssId",
                     ),
                     response,

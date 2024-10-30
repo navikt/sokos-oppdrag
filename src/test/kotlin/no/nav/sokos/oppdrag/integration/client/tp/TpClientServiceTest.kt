@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.integration.tp
+package no.nav.sokos.oppdrag.integration.client.tp
 
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
@@ -7,18 +7,19 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows
 
-const val TSS_ID = "12345678912"
+private const val TSS_ID = "12345678912"
 
 private val tpClientService =
     TpClientService(
         tpUrl = wiremock.baseUrl(),
     )
 
-internal class TpServiceTest : FunSpec({
+internal class TpClientServiceTest : FunSpec({
 
     extensions(listOf(WiremockListener))
 
@@ -40,7 +41,7 @@ internal class TpServiceTest : FunSpec({
         )
 
         val response = tpClientService.getLeverandorNavn(TSS_ID)
-        response.navn shouldBe "Ola Nordmann"
+        response shouldBe "Ola Nordmann"
     }
 
     test("hent leverandørnavn returnerer 404 NotFound") {
@@ -59,8 +60,8 @@ internal class TpServiceTest : FunSpec({
             }
 
         exception.shouldNotBeNull()
-        exception.apiError.error shouldBe "Not Found"
-        exception.apiError.status shouldBe 404
+        exception.apiError.error shouldBe HttpStatusCode.NotFound.description
+        exception.apiError.status shouldBe HttpStatusCode.NotFound.value
         exception.apiError.message shouldBe "Fant ingen leverandørnavn med tssId $TSS_ID"
         exception.apiError.path shouldBe "${wiremock.baseUrl()}/api/ordninger/tss/$TSS_ID"
     }

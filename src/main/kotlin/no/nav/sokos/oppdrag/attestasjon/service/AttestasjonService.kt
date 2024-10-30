@@ -7,13 +7,14 @@ import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
+import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
+import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
-import no.nav.sokos.oppdrag.common.audit.NavIdent
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
-import no.nav.sokos.oppdrag.integration.service.IntegrationService
+import no.nav.sokos.oppdrag.integration.service.SkjermingService
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
@@ -21,7 +22,7 @@ class AttestasjonService(
     private val attestasjonRepository: AttestasjonRepository = AttestasjonRepository(),
     private val auditLogger: AuditLogger = AuditLogger(),
     private val zosConnectService: ZOSConnectService = ZOSConnectService(),
-    private val integrationService: IntegrationService = IntegrationService(),
+    private val skjermingService: SkjermingService = SkjermingService(),
 ) {
     suspend fun getOppdrag(
         gjelderId: String? = null,
@@ -40,8 +41,8 @@ class AttestasjonService(
                     brukerBehandlingTekst = "NAV-ansatt har gjort et oppslag på navn",
                 ),
             )
-            if ((gjelderId.toLong() in 1_000_000_001..79_999_999_999) && integrationService.checkSkjermetPerson(gjelderId, saksbehandler)) {
-                return emptyList()
+            if ((gjelderId.toLong() in 1_000_000_001..79_999_999_999) && skjermingService.getSkjermingForIdent(gjelderId, saksbehandler)) {
+                throw AttestasjonException("Mangler rettigheter til å se informasjon!")
             }
         }
 
@@ -60,7 +61,7 @@ class AttestasjonService(
                 fagomraader,
             )
 
-        val map = integrationService.getIsSkjermetByFoedselsnummer(oppdragList.map { it.gjelderId }, saksbehandler)
+        val map = skjermingService.getSkjermingForIdentListe(oppdragList.map { it.gjelderId }, saksbehandler)
         return oppdragList.map { oppdrag ->
             oppdrag.copy(erSkjermetForSaksbehandler = map[oppdrag.gjelderId] == true)
         }
