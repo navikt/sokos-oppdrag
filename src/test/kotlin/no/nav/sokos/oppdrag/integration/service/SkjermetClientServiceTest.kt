@@ -9,6 +9,7 @@ import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import no.nav.sokos.oppdrag.APPLICATION_JSON
+import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetClientService
 import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetException
 import no.nav.sokos.oppdrag.listener.WiremockListener
@@ -30,13 +31,16 @@ internal class SkjermetClientServiceTest : FunSpec({
     }
 
     test("hent skjermet personer returnerer 200 OK") {
+
+        val personerSkjermetResponse = "skjerming/personerSkjermetResponse.json".readFromResource()
+
         wiremock.stubFor(
             post(urlEqualTo("/skjermetBulk"))
                 .willReturn(
                     aResponse()
                         .withHeader(HttpHeaders.ContentType, APPLICATION_JSON)
                         .withStatus(HttpStatusCode.OK.value)
-                        .withBody(jsonResponseSkjermetPersoner),
+                        .withBody(personerSkjermetResponse),
                 ),
         )
 
@@ -47,13 +51,16 @@ internal class SkjermetClientServiceTest : FunSpec({
     }
 
     test("hent skjermet personer returnerer 400 BadRequest") {
+
+        val personerSkjermetBadRequestResponse = "skjerming/personerSkjermetBadRequestResponse.json".readFromResource()
+
         wiremock.stubFor(
             post(urlEqualTo("/skjermetBulk"))
                 .willReturn(
                     aResponse()
                         .withHeader(HttpHeaders.ContentType, APPLICATION_JSON)
                         .withStatus(HttpStatusCode.BadRequest.value)
-                        .withBody(jsonResponseSkjermetPersonerBadRequest),
+                        .withBody(personerSkjermetBadRequestResponse),
                 ),
         )
 
@@ -69,18 +76,3 @@ internal class SkjermetClientServiceTest : FunSpec({
         exception.apiError.path shouldBe "${wiremock.baseUrl()}/skjermetBulk"
     }
 })
-
-private val jsonResponseSkjermetPersoner =
-    """
-    {
-        "$FNR": false,
-        "$FNR_SKJERMET": true
-    }
-    """.trimIndent()
-
-private val jsonResponseSkjermetPersonerBadRequest =
-    """
-    {
-      "message": "Personident mangler"
-    }
-    """.trimIndent()
