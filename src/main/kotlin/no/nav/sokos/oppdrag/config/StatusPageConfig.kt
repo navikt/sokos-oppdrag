@@ -9,11 +9,12 @@ import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
 import io.ktor.server.response.respond
 import kotlinx.serialization.Serializable
+import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSException
 import no.nav.sokos.oppdrag.common.util.ZonedDateTimeSerializer
-import no.nav.sokos.oppdrag.integration.ereg.EregException
-import no.nav.sokos.oppdrag.integration.skjerming.SkjermetException
-import no.nav.sokos.oppdrag.integration.tp.TpException
+import no.nav.sokos.oppdrag.integration.client.ereg.EregException
+import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetException
+import no.nav.sokos.oppdrag.integration.client.tp.TpException
 import java.time.ZonedDateTime
 
 fun StatusPagesConfig.statusPageConfig() {
@@ -28,6 +29,19 @@ fun StatusPagesConfig.statusPageConfig() {
                             HttpStatusCode.BadRequest.value,
                             HttpStatusCode.BadRequest.description,
                             cause.reasons.joinToString(),
+                            call.request.path(),
+                        ),
+                    )
+                }
+
+                is AttestasjonException -> {
+                    Pair(
+                        HttpStatusCode.BadRequest,
+                        ApiError(
+                            ZonedDateTime.now(),
+                            HttpStatusCode.BadRequest.value,
+                            HttpStatusCode.BadRequest.description,
+                            cause.message,
                             call.request.path(),
                         ),
                     )

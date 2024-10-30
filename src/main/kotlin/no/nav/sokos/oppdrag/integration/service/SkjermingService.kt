@@ -1,28 +1,16 @@
 package no.nav.sokos.oppdrag.integration.service
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import mu.KotlinLogging
 import no.nav.pdl.enums.AdressebeskyttelseGradering
 import no.nav.pdl.hentpersonbolk.Person
-import no.nav.sokos.oppdrag.common.audit.AuditLogg
-import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.common.audit.NavIdent
 import no.nav.sokos.oppdrag.common.util.getAsync
-import no.nav.sokos.oppdrag.config.SECURE_LOGGER
-import no.nav.sokos.oppdrag.integration.api.model.GjelderIdResponse
-import no.nav.sokos.oppdrag.integration.ereg.EregClientService
-import no.nav.sokos.oppdrag.integration.pdl.PdlClientService
-import no.nav.sokos.oppdrag.integration.skjerming.SkjermetClientService
-import no.nav.sokos.oppdrag.integration.tp.TpClientService
+import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
+import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetClientService
 import java.time.Duration
 
-private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
-
-class IntegrationService(
+class SkjermingService(
     private val pdlClientService: PdlClientService = PdlClientService(),
-    private val tpClientService: TpClientService = TpClientService(),
-    private val eregClientService: EregClientService = EregClientService(),
-    private val auditLogger: AuditLogger = AuditLogger(),
     private val skjermetClientService: SkjermetClientService = SkjermetClientService(),
 ) {
     private val bolkPdlCache =
@@ -37,27 +25,7 @@ class IntegrationService(
             .maximumSize(10_000)
             .buildAsync<String, Map<String, Boolean>>()
 
-    suspend fun getNavnForGjelderId(
-        gjelderId: String,
-        saksbehandler: NavIdent,
-    ): GjelderIdResponse {
-        secureLogger.info { "Henter navn for gjelderId: $gjelderId" }
-        auditLogger.auditLog(
-            AuditLogg(
-                navIdent = saksbehandler.ident,
-                gjelderId = gjelderId,
-                brukerBehandlingTekst = "NAV-ansatt har gjort et oppslag på gjelderId for å hente navn",
-            ),
-        )
-
-        return when {
-            gjelderId.toLong() > 80_000_000_000 -> getLeverandorName(gjelderId)
-            gjelderId.toLong() in 1_000_000_001..79_999_999_999 -> getPersonName(gjelderId)
-            else -> getOrganisasjonsName(gjelderId.replace("^(00)?".toRegex(), ""))
-        }
-    }
-
-    suspend fun getIsSkjermetByFoedselsnummer(
+    suspend fun getSkjermingForIdentListe(
         identer: List<String>,
         saksbehandler: NavIdent,
     ): Map<String, Boolean> {
@@ -74,22 +42,22 @@ class IntegrationService(
                 skjermetClientService.isSkjermedePersonerInSkjermingslosningen(
                     personIdenter,
                 )
-            }.map { (fnr, skjermet) -> fnr to !skjermet }.toMap()
+            }.map { (fnr, skjermet) -> fnr to (!saksbehandler.harTilgangTilEgneAnsatte() && skjermet) }.toMap()
 
         val adressebeskyttelseMap =
             bolkPdlCache.getAsync(personIdenter.joinToString()) { _ ->
                 pdlClientService.getPerson(identer = personIdenter)
-            }.map { (key, person) ->
+            }.map { (fnr, person) ->
                 val graderinger = person.adressebeskyttelse.map { it.gradering }
 
                 when {
-                    !saksbehandler.harTilgangTilFortrolig() && graderinger.contains(AdressebeskyttelseGradering.FORTROLIG) -> key to true
+                    !saksbehandler.harTilgangTilFortrolig() && graderinger.contains(AdressebeskyttelseGradering.FORTROLIG) -> fnr to true
                     !saksbehandler.harTilgangTilStrengtFortrolig() &&
                         graderinger.intersect(listOf(AdressebeskyttelseGradering.STRENGT_FORTROLIG, AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND))
                             .isNotEmpty()
-                    -> key to true
+                    -> fnr to true
 
-                    else -> key to false
+                    else -> fnr to false
                 }
             }.toMap()
 
@@ -105,7 +73,7 @@ class IntegrationService(
         return list
     }
 
-    suspend fun checkSkjermetPerson(
+    suspend fun getSkjermingForIdent(
         gjelderId: String,
         saksbehandler: NavIdent,
     ): Boolean {
@@ -130,27 +98,5 @@ class IntegrationService(
 
             else -> false
         }
-    }
-
-    private suspend fun getLeverandorName(gjelderId: String): GjelderIdResponse {
-        val leverandorName = tpClientService.getLeverandorNavn(gjelderId).navn
-        return GjelderIdResponse(leverandorName)
-    }
-
-    private suspend fun getPersonName(gjelderId: String): GjelderIdResponse {
-        val person = pdlClientService.getPerson(listOf(gjelderId))[gjelderId]?.navn?.first()
-        val personName =
-            person?.let {
-                when (person.mellomnavn) {
-                    null -> "${person.fornavn} ${person.etternavn}"
-                    else -> "${person.fornavn} ${person.mellomnavn} ${person.etternavn}"
-                }
-            }
-        return GjelderIdResponse(personName)
-    }
-
-    private suspend fun getOrganisasjonsName(gjelderId: String): GjelderIdResponse {
-        val organisasjonName = eregClientService.getOrganisasjonsNavn(gjelderId).navn.sammensattnavn
-        return GjelderIdResponse(organisasjonName)
     }
 }

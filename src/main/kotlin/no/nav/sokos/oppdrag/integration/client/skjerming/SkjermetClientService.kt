@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.integration.skjerming
+package no.nav.sokos.oppdrag.integration.client.skjerming
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -10,6 +10,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -74,3 +75,6 @@ class SkjermetClientService(
 private suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject["message"]?.jsonPrimitive?.content
 
 data class SkjermetException(val apiError: ApiError, val response: HttpResponse) : Exception(apiError.error)
+
+@Serializable
+data class SkjermingRequest(val personidenter: List<String>)

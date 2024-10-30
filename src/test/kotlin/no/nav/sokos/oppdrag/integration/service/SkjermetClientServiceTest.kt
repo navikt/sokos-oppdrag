@@ -9,8 +9,8 @@ import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import no.nav.sokos.oppdrag.APPLICATION_JSON
-import no.nav.sokos.oppdrag.integration.skjerming.SkjermetClientService
-import no.nav.sokos.oppdrag.integration.skjerming.SkjermetException
+import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetClientService
+import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetException
 import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows
@@ -73,8 +73,8 @@ internal class SkjermetClientServiceTest : FunSpec({
 private val jsonResponseSkjermetPersoner =
     """
     {
-        $FNR: false,
-        $FNR_SKJERMET": true
+        "$FNR": false,
+        "$FNR_SKJERMET": true
     }
     """.trimIndent()
 

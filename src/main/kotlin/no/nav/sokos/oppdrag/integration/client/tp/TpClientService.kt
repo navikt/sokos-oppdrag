@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.integration.tp
+package no.nav.sokos.oppdrag.integration.client.tp
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

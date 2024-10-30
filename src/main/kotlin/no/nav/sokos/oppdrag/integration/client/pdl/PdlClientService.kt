@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.integration.pdl
+package no.nav.sokos.oppdrag.integration.client.pdl
 
 import com.expediagroup.graphql.client.types.GraphQLClientError
 import io.ktor.client.HttpClient
@@ -48,6 +48,8 @@ class PdlClientService(
 
         Metrics.pdlCallCounter.labelValues("${response.status.value}").inc()
 
+        println("RESPONSE :: ${response.body<String>()}")
+
         return when {
             response.status.isSuccess() -> {
                 val result = response.body<GraphQLResponse<HentPersonBolk.Result>>()
@@ -55,9 +57,7 @@ class PdlClientService(
                     handleErrors(result.errors, result.data?.hentPersonBolk?.map { it.ident } ?: emptyList())
                 }
                 result.data?.hentPersonBolk
-                    ?.filter { item -> item.person != null }
-                    ?.map { item -> item.ident to item.person!! }
-                    ?.toMap() ?: emptyMap()
+                    ?.filter { item -> item.person != null }?.associate { item -> item.ident to item.person!! } ?: emptyMap()
             }
             else -> {
                 secureLogger.error { "Noe gikk galt ved oppslag mot PDL for ident: $identer" }

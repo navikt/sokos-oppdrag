@@ -10,6 +10,10 @@ import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import no.nav.sokos.oppdrag.APPLICATION_JSON
+import no.nav.sokos.oppdrag.integration.client.ereg.EregClientService
+import no.nav.sokos.oppdrag.integration.client.ereg.EregException
+import no.nav.sokos.oppdrag.integration.client.ereg.Navn
+import no.nav.sokos.oppdrag.integration.client.ereg.Organisasjon
 import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows

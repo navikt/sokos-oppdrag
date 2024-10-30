@@ -23,8 +23,8 @@ import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.integration.api.model.GjelderIdRequest
-import no.nav.sokos.oppdrag.integration.api.model.GjelderIdResponse
-import no.nav.sokos.oppdrag.integration.service.IntegrationService
+import no.nav.sokos.oppdrag.integration.service.NameResponse
+import no.nav.sokos.oppdrag.integration.service.NameService
 import java.time.ZonedDateTime
 
 private const val PORT = 9090
@@ -32,7 +32,7 @@ private const val PORT = 9090
 private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
 
 private val validationFilter = OpenApiValidationFilter("openapi/integration-v1-swagger.yaml")
-private val integrationService = mockk<IntegrationService>()
+private val nameService = mockk<NameService>()
 
 internal class IntegrationApiTest : FunSpec({
 
@@ -46,9 +46,9 @@ internal class IntegrationApiTest : FunSpec({
 
     test("søk navn for gjelderId returnerer 200 OK") {
 
-        val gjelderIdResponse = GjelderIdResponse("Test Testesen")
+        val nameResponse = NameResponse("Test Testesen")
 
-        coEvery { integrationService.getNavnForGjelderId(any(), any()) } returns gjelderIdResponse
+        coEvery { nameService.getNavn(any(), any()) } returns nameResponse
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -61,7 +61,7 @@ internal class IntegrationApiTest : FunSpec({
                 .statusCode(HttpStatusCode.OK.value)
                 .extract().response()
 
-        Json.decodeFromString<GjelderIdResponse>(response.asString()) shouldBe gjelderIdResponse
+        Json.decodeFromString<NameResponse>(response.asString()) shouldBe nameResponse
     }
 
     test("sok navn med ugyldig gjelderId returnerer 400 Bad Request") {
@@ -117,7 +117,7 @@ private fun Application.applicationTestModule() {
     commonConfig()
     routing {
         authenticate(false, AUTHENTICATION_NAME) {
-            integrationApi(integrationService = integrationService)
+            integrationApi(nameService)
         }
     }
 }

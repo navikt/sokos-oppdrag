@@ -15,17 +15,17 @@ import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
-import no.nav.sokos.oppdrag.integration.service.IntegrationService
+import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import java.time.LocalDate
 
 private val attestasjonRepository = mockk<AttestasjonRepository>()
 private val zosConnectService: ZOSConnectService = mockk<ZOSConnectService>()
-private val integrationService = mockk<IntegrationService>()
+private val skjermingService = mockk<SkjermingService>()
 private val attestasjonService =
     AttestasjonService(
         attestasjonRepository = attestasjonRepository,
         zosConnectService = zosConnectService,
-        integrationService = integrationService,
+        skjermingService = skjermingService,
     )
 
 internal class AttestasjonServiceTest :
