@@ -9,7 +9,6 @@ import no.nav.sokos.oppdrag.TestUtil.navIdent
 import no.nav.sokos.oppdrag.integration.client.ereg.EregClientService
 import no.nav.sokos.oppdrag.integration.client.ereg.Organisasjon
 import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
-import no.nav.sokos.oppdrag.integration.client.tp.Leverandor
 import no.nav.sokos.oppdrag.integration.client.tp.TpClientService
 import no.nav.pdl.hentpersonbolk.Navn as PdlNavn
 import no.nav.sokos.oppdrag.integration.client.ereg.Navn as EregNavn
@@ -73,8 +72,7 @@ internal class NameServiceTest : FunSpec({
 
         val leverandorId = "1234567890123"
 
-        coEvery { tpClientService.getLeverandorNavn(any()) } returns
-            Leverandor("NAV Arbeid og ytelser")
+        coEvery { tpClientService.getLeverandorNavn(any()) } returns "NAV Arbeid og ytelser"
 
         val name = nameService.getNavn(leverandorId, navIdent)
 

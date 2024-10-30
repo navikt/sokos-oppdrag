@@ -41,7 +41,7 @@ internal class TpClientServiceTest : FunSpec({
         )
 
         val response = tpClientService.getLeverandorNavn(TSS_ID)
-        response.navn shouldBe "Ola Nordmann"
+        response shouldBe "Ola Nordmann"
     }
 
     test("hent leverandørnavn returnerer 404 NotFound") {

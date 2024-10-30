@@ -39,7 +39,7 @@ class NameService(
     }
 
     private suspend fun getLeverandorName(gjelderId: String): NameResponse {
-        val leverandorName = tpClientService.getLeverandorNavn(gjelderId).navn
+        val leverandorName = tpClientService.getLeverandorNavn(gjelderId)
         return NameResponse(leverandorName)
     }
 
