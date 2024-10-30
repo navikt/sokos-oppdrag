@@ -10,6 +10,7 @@ import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import no.nav.sokos.oppdrag.APPLICATION_JSON
+import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.integration.client.ereg.EregClientService
 import no.nav.sokos.oppdrag.integration.client.ereg.EregException
 import no.nav.sokos.oppdrag.integration.client.ereg.Navn
@@ -33,10 +34,13 @@ internal class EregServiceTest : FunSpec({
     }
 
     test("hent organisasjonsnavn") {
+
+        val orgFunnetResponse = "ereg/orgFunnetResponse.json".readFromResource()
+
         wiremock.stubFor(
             get(urlEqualTo("/v2/organisasjon/$GYLDIG_ORGANISASJONSNUMMER/noekkelinfo"))
                 .willReturn(
-                    okJson(jsonResponseOrgFunnet),
+                    okJson(orgFunnetResponse),
                 ),
         )
 
@@ -50,13 +54,16 @@ internal class EregServiceTest : FunSpec({
     }
 
     test("hent organisasjonsnavn returnerer 400 BadRequest") {
+
+        val orgUgyldigFormatResponse = "ereg/orgUgyldigFormatResponse.json".readFromResource()
+
         wiremock.stubFor(
             get(urlEqualTo("/v2/organisasjon/$UGYLDIG_ORGANISASJONSNUMMER/noekkelinfo"))
                 .willReturn(
                     aResponse()
                         .withStatus(400)
                         .withHeader(HttpHeaders.ContentType, APPLICATION_JSON)
-                        .withBody(jsonResponseOrgBadRequest),
+                        .withBody(orgUgyldigFormatResponse),
                 ),
         )
 
@@ -73,13 +80,16 @@ internal class EregServiceTest : FunSpec({
     }
 
     test("hent organisasjonsnavn returnerer 404 NotFound") {
+
+        val orgIkkeFunnetResponse = "ereg/orgIkkeFunnetResponse.json".readFromResource()
+
         wiremock.stubFor(
             get(urlEqualTo("/v2/organisasjon/$IKKE_FUNNET_ORGANISASJONSNUMMER/noekkelinfo"))
                 .willReturn(
                     aResponse()
                         .withStatus(404)
                         .withHeader(HttpHeaders.ContentType, APPLICATION_JSON)
-                        .withBody(jsonResponseOrgIkkeFunnet),
+                        .withBody(orgIkkeFunnetResponse),
                 ),
         )
 
@@ -95,26 +105,3 @@ internal class EregServiceTest : FunSpec({
         exception.apiError.path shouldBe "${wiremock.baseUrl()}/v2/organisasjon/$IKKE_FUNNET_ORGANISASJONSNUMMER/noekkelinfo"
     }
 })
-
-private val jsonResponseOrgFunnet =
-    """
-    {
-      "navn": {
-       "sammensattnavn": "NAV AS"
-      }
-    }
-    """.trimIndent()
-
-private val jsonResponseOrgBadRequest =
-    """
-    {
-      "melding": "Organisasjonsnummeret (${UGYLDIG_ORGANISASJONSNUMMER}) er på et ugyldig format"
-    }
-    """.trimIndent()
-
-private val jsonResponseOrgIkkeFunnet =
-    """
-    {
-      "melding": "Ingen organisasjon med organisasjonsnummer $IKKE_FUNNET_ORGANISASJONSNUMMER ble funnet"
-    }
-    """.trimIndent()

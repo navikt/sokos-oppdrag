@@ -1,0 +1,56 @@
+{
+  "data": {
+    "hentPersonBolk": [
+      {
+        "ident": "08527338671",
+        "person": {
+          "navn": [
+            {
+              "fornavn": "UEMOSJONELL",
+              "mellomnavn": null,
+              "etternavn": "HØYTTALER"
+            }
+          ],
+          "adressebeskyttelse": [
+            {
+              "gradering": "STRENGT_FORTROLIG"
+            }
+          ]
+        },
+        "code": "ok"
+      },
+      {
+        "ident": "02437024319",
+        "person": {
+          "navn": [
+            {
+              "fornavn": "AKROBATISK",
+              "mellomnavn": null,
+              "etternavn": "JURIST"
+            }
+          ],
+          "adressebeskyttelse": [
+            {
+              "gradering": "FORTROLIG"
+            }
+          ]
+        },
+        "code": "ok"
+      },
+      {
+        "ident": "30074203236",
+        "person": {
+          "navn": [
+            {
+              "fornavn": "FIN",
+              "mellomnavn": null,
+              "etternavn": "VANE"
+            }
+          ],
+          "adressebeskyttelse": []
+        },
+        "code": "ok"
+      }
+    ]
+  }
+}

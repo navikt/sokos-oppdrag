@@ -1,0 +1,22 @@
+{
+  "errors": [
+    {
+      "message": "Mangler behandlingsnummer",
+      "locations": [
+        {
+          "line": 2,
+          "column": 3
+        }
+      ],
+      "path": [
+        "hentPersonBolk"
+      ],
+      "extensions": {
+        "code": "bad_request",
+        "id": "mangler_behandlingsnummer",
+        "classification": "ValidationError"
+      }
+    }
+  ],
+  "data": null
+}

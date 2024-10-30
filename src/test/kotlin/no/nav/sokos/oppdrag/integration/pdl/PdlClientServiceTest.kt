@@ -3,12 +3,13 @@ package no.nav.sokos.oppdrag.integration.pdl
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
-import io.kotest.core.annotation.Ignored
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import no.nav.pdl.enums.AdressebeskyttelseGradering
 import no.nav.sokos.oppdrag.APPLICATION_JSON
+import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
 import no.nav.sokos.oppdrag.integration.client.pdl.PdlException
 import no.nav.sokos.oppdrag.listener.WiremockListener
@@ -16,8 +17,13 @@ import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows
 
 private const val FNR = "12345678912"
+private val FNR_LIST =
+    listOf(
+        "08527338671",
+        "02437024319",
+        "30074203236",
+    )
 
-@Ignored
 internal class PdlClientServiceTest : FunSpec({
 
     extensions(listOf(WiremockListener))
@@ -29,32 +35,66 @@ internal class PdlClientServiceTest : FunSpec({
         )
     }
 
-    test("hent navn fra PDL returnerer 200 OK") {
+    test("hent personer fra PDL returnerer personer") {
+
+        val personerFunnetResponse = "pdl/personerFunnetResponse.json".readFromResource()
+
         wiremock.stubFor(
             post(urlEqualTo("/graphql"))
                 .willReturn(
                     aResponse()
                         .withHeader(HttpHeaders.ContentType, APPLICATION_JSON)
                         .withStatus(HttpStatusCode.OK.value)
-                        .withBody(jsonResponseNavnFunnet),
+                        .withBody(personerFunnetResponse),
+                ),
+        )
+
+        val response = pdlClientService.getPerson(FNR_LIST)
+
+        response.size shouldBe 3
+        response["08527338671"]?.navn?.get(0)?.fornavn shouldBe "UEMOSJONELL"
+        response["08527338671"]?.navn?.get(0)?.etternavn shouldBe "HØYTTALER"
+        response["08527338671"]?.adressebeskyttelse?.get(0)?.gradering shouldBe AdressebeskyttelseGradering.STRENGT_FORTROLIG
+
+        response["02437024319"]?.navn?.get(0)?.fornavn shouldBe "AKROBATISK"
+        response["02437024319"]?.navn?.get(0)?.etternavn shouldBe "JURIST"
+        response["02437024319"]?.adressebeskyttelse?.get(0)?.gradering shouldBe AdressebeskyttelseGradering.FORTROLIG
+
+        response["30074203236"]?.navn?.get(0)?.fornavn shouldBe "FIN"
+        response["30074203236"]?.navn?.get(0)?.etternavn shouldBe "VANE"
+        response["30074203236"]?.adressebeskyttelse?.size shouldBe 0
+    }
+
+    test("hent personer fra pdl returnerer personer ikke funnet") {
+
+        val personerIkkeFunnetResponse = "pdl/personerIkkeFunnetResponse.json".readFromResource()
+
+        wiremock.stubFor(
+            post(urlEqualTo("/graphql"))
+                .willReturn(
+                    aResponse()
+                        .withHeader(HttpHeaders.ContentType, APPLICATION_JSON)
+                        .withStatus(HttpStatusCode.OK.value)
+                        .withBody(personerIkkeFunnetResponse),
                 ),
         )
 
         val response = pdlClientService.getPerson(listOf(FNR))
 
-        response[FNR]?.navn?.first()?.fornavn shouldBe "Ola"
-        response[FNR]?.navn?.first()?.mellomnavn shouldBe null
-        response[FNR]?.navn?.first()?.etternavn shouldBe "Nordmann"
+        response.size shouldBe 0
     }
 
-    test("hent navn fra pdl returnerer json svar at person ikke finnes") {
+    test("hent personer fra pdl returnerer clienten ikke er autentisert") {
+
+        val ikkeAutentisertResponse = "pdl/ikkeAutentisertResponse.json".readFromResource()
+
         wiremock.stubFor(
             post(urlEqualTo("/graphql"))
                 .willReturn(
                     aResponse()
                         .withHeader(HttpHeaders.ContentType, APPLICATION_JSON)
                         .withStatus(HttpStatusCode.OK.value)
-                        .withBody(jsonResponseNavnIkkeFunnet),
+                        .withBody(ikkeAutentisertResponse),
                 ),
         )
 
@@ -63,17 +103,20 @@ internal class PdlClientServiceTest : FunSpec({
                 pdlClientService.getPerson(listOf(FNR))
             }
 
-        exception.message shouldBe "(Path: [\"hentPerson\"], Code: [\"not_found\"], Message: Fant ikke person)"
+        exception.message shouldBe "(Path: [\"hentPersonBolk\"], Code: [\"unauthenticated\"], Message: Ikke autentisert)"
     }
 
-    test("hent navn fra pdl returnerer json svar at clienten ikke er autentisert") {
+    test("hent personer fra pdl returnerer clienten ikke sender med behandlingsnummer") {
+
+        val manglerBehandlingsnummerResponse = "pdl/manglerBehandlingsnummerResponse.json".readFromResource()
+
         wiremock.stubFor(
             post(urlEqualTo("/graphql"))
                 .willReturn(
                     aResponse()
                         .withHeader(HttpHeaders.ContentType, APPLICATION_JSON)
                         .withStatus(HttpStatusCode.OK.value)
-                        .withBody(jsonResponseIkkeAutentisert),
+                        .withBody(manglerBehandlingsnummerResponse),
                 ),
         )
 
@@ -82,84 +125,6 @@ internal class PdlClientServiceTest : FunSpec({
                 pdlClientService.getPerson(listOf(FNR))
             }
 
-        exception.message shouldBe "(Path: [\"hentPerson\"], Code: [\"unauthenticated\"], Message: Ikke autentisert)"
+        exception.message shouldBe "(Path: [\"hentPersonBolk\"], Code: [\"bad_request\"], Message: Mangler behandlingsnummer)"
     }
 })
-
-private val jsonResponseNavnFunnet =
-    """
-     {
-      "data": {
-        "hentPersonBolk": [
-          {
-            "ident": "70078749472",
-            "person": {
-              "navn": [
-                {
-                  "fornavn": "TRIVIELL",
-                  "mellomnavn": null,
-                  "etternavn": "SKILPADDE"
-                }
-              ],
-              "adressebeskyttelse": []
-            },
-            "code": "ok"
-          }
-        ]
-      }
-    }
-    """.trimIndent()
-
-private val jsonResponseNavnIkkeFunnet =
-    """
-    {
-      "errors": [
-        {
-          "message": "Fant ikke person",
-          "locations": [
-            {
-              "line": 2,
-              "column": 3
-            }
-          ],
-          "path": [
-            "hentPerson"
-          ],
-          "extensions": {
-            "code": "not_found",
-            "classification": "ExecutionAborted"
-          }
-        }
-      ],
-      "data": {
-        "hentPerson": null
-      }
-    }
-    """.trimIndent()
-
-private val jsonResponseIkkeAutentisert =
-    """
-    {
-      "errors": [
-        {
-          "message": "Ikke autentisert",
-          "locations": [
-            {
-              "line": 2,
-              "column": 2
-            }
-          ],
-          "path": [
-            "hentPerson"
-          ],
-          "extensions": {
-            "code": "unauthenticated",
-            "classification": "ExecutionAborted"
-          }
-        }
-      ],
-      "data": {
-        "hentPerson": null
-      }
-    }
-    """.trimIndent()
