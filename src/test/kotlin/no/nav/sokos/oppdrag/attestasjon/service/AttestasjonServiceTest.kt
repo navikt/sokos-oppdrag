@@ -1,5 +1,6 @@
 package no.nav.sokos.oppdrag.attestasjon.service
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
@@ -11,8 +12,10 @@ import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.ZOsResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
+import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
+import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
@@ -30,32 +33,44 @@ private val attestasjonService =
 
 internal class AttestasjonServiceTest : FunSpec({
 
-    test("attestasjon av oppdrag") {
+    test("hent oppdrag for en gjelderId kaster exception når saksbehandler ikke har tilgang til personen") {
+        val gjelderId = "12345678900"
 
-        val oppdragsid = 999999999
+        coEvery { skjermingService.getSkjermingForIdent(gjelderId, navIdent) } returns true
 
-        val request =
-            AttestasjonRequest(
-                "12345678900",
-                "98765432100",
-                "BEH",
-                oppdragsid,
-                listOf(
-                    AttestasjonLinje(
-                        99999,
-                        "Z999999",
-                        "string",
-                    ),
+        val exception =
+            shouldThrow<AttestasjonException> {
+                attestasjonService.getOppdrag(gjelderId, null, null, null, null, navIdent)
+            }
+
+        exception.message shouldBe "Mangler rettigheter til å se informasjon!"
+    }
+
+    test("hent oppdrag for en gjelderId kaster ikke exception når saksbehandler har tilgang til personen") {
+        val gjelderId = "12345678900"
+
+        val oppdragList =
+            listOf(
+                Oppdrag(
+                    antallAttestanter = 1,
+                    fagGruppe = "fagGruppe",
+                    fagOmraade = "fagOmraade",
+                    fagSystemId = "fagSystemId",
+                    gjelderId = gjelderId,
+                    kodeFagGruppe = "kodeFagGruppe",
+                    kodeFagOmraade = "kodeFagOmraade",
+                    kostnadsSted = "kostnadsSted",
+                    oppdragsId = 1,
+                    erSkjermetForSaksbehandler = false,
                 ),
             )
 
-        val response =
-            ZOsResponse(
-                "Oppdatering vellykket. 1 linjer oppdatert",
-            )
+        every { attestasjonRepository.getOppdrag(any(), any(), gjelderId, any()) } returns oppdragList
+        coEvery { skjermingService.getSkjermingForIdent(gjelderId, navIdent) } returns false
+        coEvery { skjermingService.getSkjermingForIdentListe(listOf(gjelderId), any()) } returns mapOf(gjelderId to false)
 
-        coEvery { zosConnectService.attestereOppdrag(any(), any()) } returns response
-        attestasjonService.attestereOppdrag(request, navIdent) shouldBe response
+        val result = attestasjonService.getOppdrag(gjelderId, null, null, null, null, navIdent)
+        result shouldBe oppdragList
     }
 
     test("getOppdragsdetaljer returnerer tom liste for et gitt oppdrag som ikke har attestasjonslinjer") {
@@ -64,11 +79,13 @@ internal class AttestasjonServiceTest : FunSpec({
         every { attestasjonRepository.getEnhetForLinjer(any(), any(), any()) } returns emptyMap()
         every { attestasjonRepository.getAttestasjonerForLinjer(any(), any()) } returns emptyMap()
 
-        attestasjonService.getOppdragsdetaljer(92345678, navIdent) shouldBe OppdragsdetaljerDTO(emptyList(), navIdent.ident)
+        val result = attestasjonService.getOppdragsdetaljer(92345678, navIdent)
+
+        result shouldBe OppdragsdetaljerDTO(emptyList(), navIdent.ident)
     }
 
     test("getOppdragsDetaljer returnerer riktig datasett for et gitt scenario med UFOREUT") {
-        // ARRANGE
+
         every { attestasjonRepository.getOppdragslinjer(any()) } returns
             oppdragslinjer(
                 """
@@ -115,7 +132,6 @@ internal class AttestasjonServiceTest : FunSpec({
                 """.trimIndent(),
             )
 
-        // ACT / ASSERT
         attestasjonService.getOppdragsdetaljer(12345678, navIdent).linjer.map { l -> l.oppdragsLinje } shouldContainExactly
             oppdragslinjer(
                 """
@@ -196,22 +212,22 @@ internal class AttestasjonServiceTest : FunSpec({
         oppdragsDetaljer.linjer.size shouldBe 15
 
         // Det er 2 attestasjoner på linjen med id 13
-        // Sjekker at begge kommer med i svaret
         val enAvLinjene = oppdragsDetaljer.linjer.filter { l -> l.oppdragsLinje.linjeId == 13 }
+
+        // Sjekker at begge kommer med i svaret
         enAvLinjene.size shouldBe 1
         enAvLinjene[0].attestasjoner.size shouldBe 2
 
-        // linje 15 har en til-og-med-dato satt til en måned før neste periode starter
-        // Det er urealistisk at bare tilleggspensjon slutter og har en pause slik uten at de andre også har det,
-        // men hvis det skjer så fall skal vi bruke den til-og-med-datoen som er oppgitt
-
+        // Linje 15 har en til-og-med-dato satt til en måned før neste periode starter
         val linje15 = oppdragsDetaljer.linjer.filter { l -> l.oppdragsLinje.linjeId == 15 }
         linje15.size shouldBe 1
+
+        // Men hvis det skjer så fall skal vi bruke den til-og-med-datoen som er oppgitt
         linje15[0].oppdragsLinje.datoVedtakTom shouldBe LocalDate.parse("2024-03-31")
 
         // Sjekker til-og-med-datoene
         // Etter at til-og-med-datoene er satt inn skal linjene overordnet sorteres til en rekkefølge
-        // basert på linjeid. Fra-og-med-dato og delytelsesid vil også være strengt stigende ved linjeid
+        // Basert på linjeid. Fra-og-med-dato og delytelsesid vil også være strengt stigende ved linjeid
         oppdragsDetaljer.linjer.map { l -> l.oppdragsLinje } shouldContainExactly
             oppdragslinjer(
                 """
@@ -236,6 +252,32 @@ internal class AttestasjonServiceTest : FunSpec({
                 +-----------+--------+------------+---------------+---------------+---------+--------+---------+-------------+
                 """.trimIndent(),
             )
+    }
+
+    test("attestasjon av oppdrag") {
+
+        val request =
+            AttestasjonRequest(
+                "12345678900",
+                "98765432100",
+                "BEH",
+                999999999,
+                listOf(
+                    AttestasjonLinje(
+                        99999,
+                        "Z999999",
+                        "2021-01-01",
+                    ),
+                ),
+            )
+
+        val response =
+            ZOsResponse(
+                "Oppdatering vellykket. 1 linjer oppdatert",
+            )
+
+        coEvery { zosConnectService.attestereOppdrag(any(), any()) } returns response
+        attestasjonService.attestereOppdrag(request, navIdent) shouldBe response
     }
 })
 

@@ -22,7 +22,7 @@ class RequestValidationAttestasjonConfigTest : FunSpec({
     context("skal ikke gi valideringsfeil") {
 
         test("gjelderId") {
-            val gjelderIdResult = runBlocking { validator.validate(OppdragsRequest(gjelderId = "123456789")) }
+            val gjelderIdResult = runBlocking { validator.validate(OppdragsRequest("123456789")) }
             gjelderIdResult shouldBe ValidationResult.Valid
         }
 
@@ -46,11 +46,11 @@ class RequestValidationAttestasjonConfigTest : FunSpec({
                 runBlocking {
                     validator.validate(
                         OppdragsRequest(
-                            gjelderId = "123456789",
-                            kodeFagGruppe = "faggruppe",
-                            kodeFagOmraade = "kodeFagomraade",
-                            fagSystemId = "fagSystemId",
-                            attestert = true,
+                            "123456789",
+                            "faggruppe",
+                            "kodeFagomraade",
+                            "fagSystemId",
+                            true,
                         ),
                     )
                 }

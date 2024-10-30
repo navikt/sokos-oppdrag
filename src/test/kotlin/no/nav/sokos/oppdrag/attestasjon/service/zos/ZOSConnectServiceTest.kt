@@ -77,8 +77,8 @@ internal class ZOSConnectServiceTest : FunSpec({
                 )
             }
 
-        exception.apiError.error shouldBe "Bad Request"
-        exception.apiError.status shouldBe 400
+        exception.apiError.error shouldBe HttpStatusCode.BadRequest.description
+        exception.apiError.status shouldBe HttpStatusCode.BadRequest.value
         exception.apiError.message shouldBe "Oppdragslinje ikke funnet: 43128412345/63835213"
         exception.apiError.path shouldBe "${wiremock.baseUrl()}/oppdaterAttestasjon"
     }

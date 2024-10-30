@@ -53,7 +53,12 @@ class SkjermingService(
                 when {
                     !saksbehandler.harTilgangTilFortrolig() && graderinger.contains(AdressebeskyttelseGradering.FORTROLIG) -> fnr to true
                     !saksbehandler.harTilgangTilStrengtFortrolig() &&
-                        graderinger.intersect(listOf(AdressebeskyttelseGradering.STRENGT_FORTROLIG, AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND)).isNotEmpty() -> fnr to true
+                        graderinger.intersect(
+                            listOf(
+                                AdressebeskyttelseGradering.STRENGT_FORTROLIG,
+                                AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND,
+                            ),
+                        ).isNotEmpty() -> fnr to true
 
                     else -> fnr to false
                 }
