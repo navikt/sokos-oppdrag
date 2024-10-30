@@ -6,10 +6,10 @@ import com.natpryce.konfig.EnvironmentVariables
 import com.natpryce.konfig.Key
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
-import no.nav.sokos.oppdrag.common.audit.GRUPPE_ATTESTASJON_SKRIV
-import no.nav.sokos.oppdrag.common.audit.GRUPPE_EGNE_ANSATTE
-import no.nav.sokos.oppdrag.common.audit.GRUPPE_FORTROLIG
-import no.nav.sokos.oppdrag.common.audit.GRUPPE_STRENGT_FORTROLIG
+import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_SKRIV
+import no.nav.sokos.oppdrag.common.GRUPPE_EGNE_ANSATTE
+import no.nav.sokos.oppdrag.common.GRUPPE_FORTROLIG
+import no.nav.sokos.oppdrag.common.GRUPPE_STRENGT_FORTROLIG
 import java.io.File
 
 object PropertiesConfig {

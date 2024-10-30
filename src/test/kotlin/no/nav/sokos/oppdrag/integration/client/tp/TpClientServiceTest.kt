@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.integration.tp
+package no.nav.sokos.oppdrag.integration.client.tp
 
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
@@ -8,8 +8,6 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import no.nav.sokos.oppdrag.integration.client.tp.TpClientService
-import no.nav.sokos.oppdrag.integration.client.tp.TpException
 import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows
@@ -21,7 +19,7 @@ private val tpClientService =
         tpUrl = wiremock.baseUrl(),
     )
 
-internal class TpServiceTest : FunSpec({
+internal class TpClientServiceTest : FunSpec({
 
     extensions(listOf(WiremockListener))
 

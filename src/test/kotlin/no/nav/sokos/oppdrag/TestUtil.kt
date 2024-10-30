@@ -1,6 +1,6 @@
 package no.nav.sokos.oppdrag
 
-import no.nav.sokos.oppdrag.common.audit.NavIdent
+import no.nav.sokos.oppdrag.common.NavIdent
 
 const val APPLICATION_JSON = "application/json"
 const val INTEGRATION_BASE_API_PATH = "/api/v1/integration"

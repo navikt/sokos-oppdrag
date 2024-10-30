@@ -6,6 +6,8 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.isSuccess
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -52,3 +54,15 @@ class EregClientService(
 private suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject["melding"]?.jsonPrimitive?.content
 
 data class EregException(val apiError: ApiError, val response: HttpResponse) : Exception(apiError.error)
+
+@Serializable
+data class Organisasjon(
+    @SerialName("navn")
+    val navn: Navn,
+)
+
+@Serializable
+data class Navn(
+    @SerialName("sammensattnavn")
+    val sammensattnavn: String,
+)

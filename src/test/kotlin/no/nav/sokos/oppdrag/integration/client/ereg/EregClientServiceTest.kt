@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.integration.ereg
+package no.nav.sokos.oppdrag.integration.client.ereg
 
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
@@ -11,10 +11,6 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
-import no.nav.sokos.oppdrag.integration.client.ereg.EregClientService
-import no.nav.sokos.oppdrag.integration.client.ereg.EregException
-import no.nav.sokos.oppdrag.integration.client.ereg.Navn
-import no.nav.sokos.oppdrag.integration.client.ereg.Organisasjon
 import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows
@@ -23,7 +19,7 @@ private const val GYLDIG_ORGANISASJONSNUMMER = "123456789"
 private const val UGYLDIG_ORGANISASJONSNUMMER = "12345678"
 private const val IKKE_FUNNET_ORGANISASJONSNUMMER = "821230153"
 
-internal class EregServiceTest : FunSpec({
+internal class EregClientServiceTest : FunSpec({
 
     extensions(listOf(WiremockListener))
 
@@ -75,7 +71,7 @@ internal class EregServiceTest : FunSpec({
         exception.shouldNotBeNull()
         exception.apiError.error shouldBe HttpStatusCode.BadRequest.description
         exception.apiError.status shouldBe HttpStatusCode.BadRequest.value
-        exception.apiError.message shouldBe "Organisasjonsnummeret (${UGYLDIG_ORGANISASJONSNUMMER}) er på et ugyldig format"
+        exception.apiError.message shouldBe "Organisasjonsnummeret ($UGYLDIG_ORGANISASJONSNUMMER) er på et ugyldig format"
         exception.apiError.path shouldBe "${wiremock.baseUrl()}/v2/organisasjon/$UGYLDIG_ORGANISASJONSNUMMER/noekkelinfo"
     }
 

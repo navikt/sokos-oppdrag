@@ -3,7 +3,7 @@ package no.nav.sokos.oppdrag.integration.service
 import com.github.benmanes.caffeine.cache.Caffeine
 import no.nav.pdl.enums.AdressebeskyttelseGradering
 import no.nav.pdl.hentpersonbolk.Person
-import no.nav.sokos.oppdrag.common.audit.NavIdent
+import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.util.getAsync
 import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
 import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetClientService

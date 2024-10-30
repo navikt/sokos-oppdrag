@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.integration.pdl
+package no.nav.sokos.oppdrag.integration.client.pdl
 
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.post
@@ -10,8 +10,6 @@ import io.ktor.http.HttpStatusCode
 import no.nav.pdl.enums.AdressebeskyttelseGradering
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
-import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
-import no.nav.sokos.oppdrag.integration.client.pdl.PdlException
 import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows

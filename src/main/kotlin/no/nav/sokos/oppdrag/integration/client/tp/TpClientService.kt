@@ -7,6 +7,7 @@ import io.ktor.client.request.header
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
+import kotlinx.serialization.Serializable
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.PropertiesConfig
@@ -21,7 +22,7 @@ class TpClientService(
     private val tpUrl: String = PropertiesConfig.EksterneHostProperties().tpUrl,
     private val client: HttpClient = createHttpClient(),
 ) {
-    suspend fun getLeverandorNavn(tssId: String): TpResponse {
+    suspend fun getLeverandorNavn(tssId: String): Leverandor {
         logger.info { "Henter leverandørnavn for $tssId fra TP." }
         val response =
             client.get("$tpUrl/api/ordninger/tss/$tssId") {
@@ -29,7 +30,7 @@ class TpClientService(
             }
         Metrics.tpCallCounter.labelValues("${response.status.value}").inc()
         return when {
-            response.status.isSuccess() -> TpResponse(response.body<String>())
+            response.status.isSuccess() -> Leverandor(response.body<String>())
 
             response.status.value == 404 -> {
                 throw TpException(
@@ -61,3 +62,8 @@ class TpClientService(
 }
 
 data class TpException(val apiError: ApiError, val response: HttpResponse) : Exception(apiError.error)
+
+@Serializable
+data class Leverandor(
+    val navn: String,
+)
