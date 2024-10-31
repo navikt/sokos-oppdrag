@@ -19,6 +19,7 @@ import mu.KotlinLogging
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.createHttpClient
+import no.nav.sokos.oppdrag.integration.exception.IntegrationException
 import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import no.nav.sokos.oppdrag.security.AccessTokenClient
 
@@ -57,7 +58,7 @@ class SkjermetClientService(
         return when {
             response.status.isSuccess() -> response.body<Map<String, Boolean>>()
             else -> {
-                throw SkjermetException(
+                throw IntegrationException(
                     ApiError(
                         Clock.System.now(),
                         response.status.value,
@@ -73,8 +74,6 @@ class SkjermetClientService(
 }
 
 private suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject["message"]?.jsonPrimitive?.content
-
-data class SkjermetException(val apiError: ApiError, val response: HttpResponse) : Exception(apiError.error)
 
 @Serializable
 data class SkjermingRequest(val personidenter: List<String>)

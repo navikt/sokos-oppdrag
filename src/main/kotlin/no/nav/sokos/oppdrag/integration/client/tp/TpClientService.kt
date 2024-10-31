@@ -4,7 +4,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
 import kotlinx.datetime.Clock
@@ -12,6 +11,7 @@ import mu.KotlinLogging
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.createHttpClient
+import no.nav.sokos.oppdrag.integration.exception.IntegrationException
 import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import org.slf4j.MDC
 
@@ -32,7 +32,7 @@ class TpClientService(
             response.status.isSuccess() -> response.body<String>()
 
             response.status.value == 404 -> {
-                throw TpException(
+                throw IntegrationException(
                     ApiError(
                         Clock.System.now(),
                         response.status.value,
@@ -45,7 +45,7 @@ class TpClientService(
             }
 
             else -> {
-                throw TpException(
+                throw IntegrationException(
                     ApiError(
                         Clock.System.now(),
                         response.status.value,
@@ -59,5 +59,3 @@ class TpClientService(
         }
     }
 }
-
-data class TpException(val apiError: ApiError, val response: HttpResponse) : Exception(apiError.error)

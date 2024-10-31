@@ -33,20 +33,7 @@ private val attestasjonService =
 
 internal class AttestasjonServiceTest : FunSpec({
 
-    test("hent oppdrag for en gjelderId kaster exception når saksbehandler ikke har tilgang til personen") {
-        val gjelderId = "12345678900"
-
-        coEvery { skjermingService.getSkjermingForIdent(gjelderId, navIdent) } returns true
-
-        val exception =
-            shouldThrow<AttestasjonException> {
-                attestasjonService.getOppdrag(gjelderId, null, null, null, null, navIdent)
-            }
-
-        exception.message shouldBe "Mangler rettigheter til å se informasjon!"
-    }
-
-    test("hent oppdrag for en gjelderId kaster ikke exception når saksbehandler har tilgang til personen") {
+    test("hent oppdrag for en gjelderId når saksbehandler har tilgang til personen") {
         val gjelderId = "12345678900"
 
         val oppdragList =
@@ -71,6 +58,19 @@ internal class AttestasjonServiceTest : FunSpec({
 
         val result = attestasjonService.getOppdrag(gjelderId, null, null, null, null, navIdent)
         result shouldBe oppdragList
+    }
+
+    test("hent oppdrag for en gjelderId kaster exception når saksbehandler ikke har tilgang til personen") {
+        val gjelderId = "12345678900"
+
+        coEvery { skjermingService.getSkjermingForIdent(gjelderId, navIdent) } returns true
+
+        val exception =
+            shouldThrow<AttestasjonException> {
+                attestasjonService.getOppdrag(gjelderId, null, null, null, null, navIdent)
+            }
+
+        exception.message shouldBe "Mangler rettigheter til å se informasjon!"
     }
 
     test("getOppdragsdetaljer returnerer tom liste for et gitt oppdrag som ikke har attestasjonslinjer") {

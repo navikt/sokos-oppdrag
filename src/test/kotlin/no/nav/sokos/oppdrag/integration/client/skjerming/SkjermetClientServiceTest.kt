@@ -10,6 +10,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
+import no.nav.sokos.oppdrag.integration.exception.IntegrationException
 import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows
@@ -63,7 +64,7 @@ internal class SkjermetClientServiceTest : FunSpec({
         )
 
         val exception =
-            assertThrows<SkjermetException> {
+            assertThrows<IntegrationException> {
                 skjermetClientService.isSkjermedePersonerInSkjermingslosningen(emptyList())
             }
 
