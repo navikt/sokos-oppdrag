@@ -1,5 +1,7 @@
 package no.nav.sokos.oppdrag.attestasjon.service
 
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.minus
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.ZOsResponse
@@ -85,7 +87,7 @@ class AttestasjonService(
             oppdragslinjer
                 .zipWithNext { current, next ->
                     if (current.kodeKlasse == next.kodeKlasse) {
-                        current.copy(datoVedtakTom = current.datoVedtakTom ?: next.datoVedtakFom.minusDays(1))
+                        current.copy(datoVedtakTom = current.datoVedtakTom ?: next.datoVedtakFom.minus(1, DateTimeUnit.DAY))
                     } else {
                         current
                     }

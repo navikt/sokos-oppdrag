@@ -15,6 +15,8 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.restassured.RestAssured
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.json.Json
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.ATTESTASJON_BASE_API_PATH
@@ -35,8 +37,6 @@ import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.integration.api.model.GjelderIdRequest
-import java.time.LocalDate
-import java.time.ZonedDateTime
 
 private const val PORT = 9090
 
@@ -109,7 +109,7 @@ internal class AttestasjonApiTest : FunSpec({
                 error = HttpStatusCode.BadRequest.description,
                 message = "gjelderId er ugyldig. Tillatt format er 9 eller 11 siffer",
                 path = "$ATTESTASJON_BASE_API_PATH/sok",
-                timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
+                timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
 
@@ -133,7 +133,7 @@ internal class AttestasjonApiTest : FunSpec({
                 error = HttpStatusCode.BadRequest.description,
                 message = "Ugyldig kombinasjon av søkeparametere",
                 path = "$ATTESTASJON_BASE_API_PATH/sok",
-                timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
+                timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
 
@@ -171,7 +171,7 @@ internal class AttestasjonApiTest : FunSpec({
                 error = HttpStatusCode.InternalServerError.description,
                 message = "The token was expected to have 3 parts, but got 0.",
                 path = "$ATTESTASJON_BASE_API_PATH/sok",
-                timestamp = ZonedDateTime.parse(response.jsonPath().getString("timestamp")),
+                timestamp = Instant.parse(response.jsonPath().getString("timestamp")),
             )
     }
 
@@ -220,7 +220,7 @@ internal class AttestasjonApiTest : FunSpec({
                 error = HttpStatusCode.InternalServerError.description,
                 message = "Noe gikk galt",
                 path = "$ATTESTASJON_BASE_API_PATH/fagomraader",
-                timestamp = ZonedDateTime.parse(response.jsonPath().getString("timestamp")),
+                timestamp = Instant.parse(response.jsonPath().getString("timestamp")),
             )
     }
 
@@ -232,7 +232,7 @@ internal class AttestasjonApiTest : FunSpec({
                     OppdragslinjeDTO(
                         Oppdragslinje(
                             false,
-                            LocalDate.parse("2000-01-01"),
+                            kotlinx.datetime.LocalDate.parse("2000-01-01"),
                             null,
                             "FYL20170501007247481 79947001",
                             "FUBAR",
@@ -286,7 +286,7 @@ internal class AttestasjonApiTest : FunSpec({
                 error = HttpStatusCode.InternalServerError.description,
                 message = "Noe gikk galt",
                 path = "$ATTESTASJON_BASE_API_PATH/12341234/oppdragsdetaljer",
-                timestamp = ZonedDateTime.parse(response.jsonPath().getString("timestamp")),
+                timestamp = Instant.parse(response.jsonPath().getString("timestamp")),
             )
     }
 
@@ -362,7 +362,7 @@ internal class AttestasjonApiTest : FunSpec({
                 error = HttpStatusCode.InternalServerError.description,
                 message = "Ukjent feil",
                 path = "$ATTESTASJON_BASE_API_PATH/attestere",
-                timestamp = ZonedDateTime.parse(response.jsonPath().getString("timestamp")),
+                timestamp = Instant.parse(response.jsonPath().getString("timestamp")),
             )
     }
 })

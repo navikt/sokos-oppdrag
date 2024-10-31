@@ -10,6 +10,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
+import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
@@ -20,7 +21,6 @@ import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.createHttpClient
 import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import no.nav.sokos.oppdrag.security.AccessTokenClient
-import java.time.ZonedDateTime
 
 private val logger = KotlinLogging.logger {}
 
@@ -59,7 +59,7 @@ class SkjermetClientService(
             else -> {
                 throw SkjermetException(
                     ApiError(
-                        ZonedDateTime.now(),
+                        Clock.System.now(),
                         response.status.value,
                         response.status.description,
                         response.errorMessage() ?: "Noe gikk galt ved oppslag mot Skjerming-tjenesten",

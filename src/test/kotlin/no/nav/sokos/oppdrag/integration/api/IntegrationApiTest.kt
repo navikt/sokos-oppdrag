@@ -14,6 +14,7 @@ import io.ktor.server.routing.routing
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.restassured.RestAssured
+import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.INTEGRATION_BASE_API_PATH
@@ -25,7 +26,6 @@ import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.integration.api.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.integration.service.NameResponse
 import no.nav.sokos.oppdrag.integration.service.NameService
-import java.time.ZonedDateTime
 
 private const val PORT = 9090
 
@@ -84,7 +84,7 @@ internal class IntegrationApiTest : FunSpec({
                 error = HttpStatusCode.BadRequest.description,
                 message = "gjelderId er ugyldig. Tillatt format er 9 eller 11 siffer",
                 path = "$INTEGRATION_BASE_API_PATH/hentnavn",
-                timestamp = ZonedDateTime.parse(response.body.jsonPath().getString("timestamp")),
+                timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
             )
     }
 
@@ -108,7 +108,7 @@ internal class IntegrationApiTest : FunSpec({
                 error = HttpStatusCode.InternalServerError.description,
                 message = "The token was expected to have 3 parts, but got 0.",
                 path = "$INTEGRATION_BASE_API_PATH/hentnavn",
-                timestamp = ZonedDateTime.parse(response.jsonPath().getString("timestamp")),
+                timestamp = Instant.parse(response.jsonPath().getString("timestamp")),
             )
     }
 })
