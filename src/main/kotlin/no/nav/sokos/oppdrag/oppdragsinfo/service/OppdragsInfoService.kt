@@ -5,6 +5,7 @@ import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
+import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
@@ -24,6 +25,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsEnhetDTO
 import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsLinjeDetaljerDTO
+import no.nav.sokos.oppdrag.oppdragsinfo.exception.OppdragsinfoException
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsInfoRepository
 
 private val logger = KotlinLogging.logger {}
@@ -31,9 +33,10 @@ private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
 class OppdragsInfoService(
     private val oppdragsInfoRepository: OppdragsInfoRepository = OppdragsInfoRepository(),
+    private val skjermingService: SkjermingService = SkjermingService(),
     private val auditLogger: AuditLogger = AuditLogger(),
 ) {
-    fun getOppdrag(
+    suspend fun getOppdrag(
         gjelderId: String,
         faggruppeKode: String?,
         saksbehandler: NavIdent,
@@ -46,6 +49,10 @@ class OppdragsInfoService(
                 brukerBehandlingTekst = "NAV-ansatt har gjort et søk på OppdragsInfo",
             ),
         )
+
+        if ((gjelderId.toLong() in 1_000_000_001..79_999_999_999) && skjermingService.getSkjermingForIdent(gjelderId, saksbehandler)) {
+            throw OppdragsinfoException("Mangler rettigheter til å se informasjon!")
+        }
 
         val oppdragId = oppdragsInfoRepository.getOppdragId(gjelderId)
 

@@ -1,6 +1,5 @@
 package no.nav.sokos.oppdrag.config
 
-import io.ktor.client.plugins.ClientRequestException
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.log
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
@@ -13,9 +12,8 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSException
-import no.nav.sokos.oppdrag.integration.client.ereg.EregException
-import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetException
-import no.nav.sokos.oppdrag.integration.client.tp.TpException
+import no.nav.sokos.oppdrag.integration.exception.IntegrationException
+import no.nav.sokos.oppdrag.oppdragsinfo.exception.OppdragsinfoException
 
 fun StatusPagesConfig.statusPageConfig() {
     exception<Throwable> { call, cause ->
@@ -34,7 +32,7 @@ fun StatusPagesConfig.statusPageConfig() {
                     )
                 }
 
-                is AttestasjonException -> {
+                is AttestasjonException, is OppdragsinfoException -> {
                     Pair(
                         HttpStatusCode.BadRequest,
                         ApiError(
@@ -47,14 +45,7 @@ fun StatusPagesConfig.statusPageConfig() {
                     )
                 }
 
-                is EregException -> {
-                    Pair(
-                        cause.response.status,
-                        cause.apiError,
-                    )
-                }
-
-                is TpException -> {
+                is IntegrationException -> {
                     Pair(
                         cause.response.status,
                         cause.apiError,
@@ -65,26 +56,6 @@ fun StatusPagesConfig.statusPageConfig() {
                     Pair(
                         HttpStatusCode.allStatusCodes.find { it.value == cause.apiError.status }!!,
                         cause.apiError,
-                    )
-                }
-
-                is SkjermetException -> {
-                    Pair(
-                        cause.response.status,
-                        cause.apiError,
-                    )
-                }
-
-                is ClientRequestException -> {
-                    Pair(
-                        cause.response.status,
-                        ApiError(
-                            Clock.System.now(),
-                            cause.response.status.value,
-                            cause.response.status.description,
-                            cause.message,
-                            call.request.path(),
-                        ),
                     )
                 }
 
@@ -114,6 +85,6 @@ data class ApiError(
     val timestamp: Instant,
     val status: Int,
     val error: String,
-    val message: String,
+    val message: String?,
     val path: String,
 )

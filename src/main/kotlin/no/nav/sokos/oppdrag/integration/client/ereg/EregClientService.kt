@@ -16,6 +16,7 @@ import mu.KotlinLogging
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.createHttpClient
+import no.nav.sokos.oppdrag.integration.exception.IntegrationException
 import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import org.slf4j.MDC
 
@@ -36,7 +37,7 @@ class EregClientService(
         return when {
             response.status.isSuccess() -> response.body<Organisasjon>()
             else -> {
-                throw EregException(
+                throw IntegrationException(
                     ApiError(
                         Clock.System.now(),
                         response.status.value,
@@ -52,8 +53,6 @@ class EregClientService(
 }
 
 private suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject["melding"]?.jsonPrimitive?.content
-
-data class EregException(val apiError: ApiError, val response: HttpResponse) : Exception(apiError.error)
 
 @Serializable
 data class Organisasjon(

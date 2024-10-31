@@ -11,6 +11,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.server.routing.routing
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.restassured.RestAssured
@@ -80,7 +81,7 @@ internal class OppdragsInfoApiTest : FunSpec({
                 ),
             )
 
-        every { oppdragsInfoService.getOppdrag(any(), any(), any()) } returns oppdragsegenskaperList
+        coEvery { oppdragsInfoService.getOppdrag(any(), any(), any()) } returns oppdragsegenskaperList
 
         val response =
             RestAssured.given().filter(validationFilter)
