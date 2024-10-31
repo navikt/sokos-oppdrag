@@ -10,6 +10,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
+import kotlinx.datetime.Clock
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.ZOsResponse
 import no.nav.sokos.oppdrag.config.ApiError
@@ -18,7 +19,6 @@ import no.nav.sokos.oppdrag.config.createHttpClient
 import no.nav.sokos.oppdrag.config.errorDetails
 import no.nav.sokos.oppdrag.config.errorMessage
 import org.slf4j.MDC
-import java.time.ZonedDateTime
 
 class ZOSConnectService(
     private val zOsUrl: String = PropertiesConfig.EksterneHostProperties().zosUrl,
@@ -46,7 +46,7 @@ class ZOSConnectService(
                 if (attestasjonskvittering?.statuskode != 0) {
                     throw ZOSException(
                         ApiError(
-                            ZonedDateTime.now(),
+                            Clock.System.now(),
                             HttpStatusCode.BadRequest.value,
                             HttpStatusCode.BadRequest.description,
                             attestasjonskvittering?.melding ?: "Ukjent feil",
@@ -59,7 +59,7 @@ class ZOSConnectService(
 
             else -> throw ZOSException(
                 ApiError(
-                    ZonedDateTime.now(),
+                    Clock.System.now(),
                     response.status.value,
                     response.status.description,
                     "Message: ${response.errorMessage()}, Details: ${response.errorDetails()}",

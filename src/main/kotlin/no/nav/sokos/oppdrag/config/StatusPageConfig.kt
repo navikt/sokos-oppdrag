@@ -8,14 +8,14 @@ import io.ktor.server.plugins.statuspages.StatusPagesConfig
 import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
 import io.ktor.server.response.respond
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSException
-import no.nav.sokos.oppdrag.common.util.ZonedDateTimeSerializer
 import no.nav.sokos.oppdrag.integration.client.ereg.EregException
 import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetException
 import no.nav.sokos.oppdrag.integration.client.tp.TpException
-import java.time.ZonedDateTime
 
 fun StatusPagesConfig.statusPageConfig() {
     exception<Throwable> { call, cause ->
@@ -25,7 +25,7 @@ fun StatusPagesConfig.statusPageConfig() {
                     Pair(
                         HttpStatusCode.BadRequest,
                         ApiError(
-                            ZonedDateTime.now(),
+                            Clock.System.now(),
                             HttpStatusCode.BadRequest.value,
                             HttpStatusCode.BadRequest.description,
                             cause.reasons.joinToString(),
@@ -38,7 +38,7 @@ fun StatusPagesConfig.statusPageConfig() {
                     Pair(
                         HttpStatusCode.BadRequest,
                         ApiError(
-                            ZonedDateTime.now(),
+                            Clock.System.now(),
                             HttpStatusCode.BadRequest.value,
                             HttpStatusCode.BadRequest.description,
                             cause.message,
@@ -79,7 +79,7 @@ fun StatusPagesConfig.statusPageConfig() {
                     Pair(
                         cause.response.status,
                         ApiError(
-                            ZonedDateTime.now(),
+                            Clock.System.now(),
                             cause.response.status.value,
                             cause.response.status.description,
                             cause.message,
@@ -92,7 +92,7 @@ fun StatusPagesConfig.statusPageConfig() {
                     Pair(
                         HttpStatusCode.InternalServerError,
                         ApiError(
-                            ZonedDateTime.now(),
+                            Clock.System.now(),
                             HttpStatusCode.InternalServerError.value,
                             HttpStatusCode.InternalServerError.description,
                             cause.message ?: "En teknisk feil har oppstått. Ta kontakt med utviklerne",
@@ -111,8 +111,7 @@ fun StatusPagesConfig.statusPageConfig() {
 
 @Serializable
 data class ApiError(
-    @Serializable(with = ZonedDateTimeSerializer::class)
-    val timestamp: ZonedDateTime,
+    val timestamp: Instant,
     val status: Int,
     val error: String,
     val message: String,

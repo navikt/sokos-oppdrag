@@ -29,6 +29,7 @@ val ktorVersion = "3.0.0"
 
 // Serialization
 val kotlinxSerializationVersion = "1.7.3"
+val kotlinxDatetimeVersion = "0.6.1"
 
 // Monitorering
 val micrometerVersion = "1.13.6"
@@ -83,6 +84,7 @@ dependencies {
     // Serialization
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:$kotlinxSerializationVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
 
     // Monitorering
     implementation("io.ktor:ktor-server-metrics-micrometer-jvm:$ktorVersion")

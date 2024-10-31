@@ -6,6 +6,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.isSuccess
+import kotlinx.datetime.Clock
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
@@ -17,7 +18,6 @@ import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.createHttpClient
 import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import org.slf4j.MDC
-import java.time.ZonedDateTime
 
 private val logger = KotlinLogging.logger {}
 
@@ -38,7 +38,7 @@ class EregClientService(
             else -> {
                 throw EregException(
                     ApiError(
-                        ZonedDateTime.now(),
+                        Clock.System.now(),
                         response.status.value,
                         response.status.description,
                         response.errorMessage() ?: "Noe gikk galt ved oppslag mot Ereg-tjenesten",

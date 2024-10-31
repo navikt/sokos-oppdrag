@@ -7,13 +7,13 @@ import io.ktor.client.request.header
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
+import kotlinx.datetime.Clock
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.createHttpClient
 import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import org.slf4j.MDC
-import java.time.ZonedDateTime
 
 private val logger = KotlinLogging.logger {}
 
@@ -34,7 +34,7 @@ class TpClientService(
             response.status.value == 404 -> {
                 throw TpException(
                     ApiError(
-                        ZonedDateTime.now(),
+                        Clock.System.now(),
                         response.status.value,
                         HttpStatusCode.NotFound.description,
                         "Fant ingen leverandørnavn med tssId $tssId",
@@ -47,7 +47,7 @@ class TpClientService(
             else -> {
                 throw TpException(
                     ApiError(
-                        ZonedDateTime.now(),
+                        Clock.System.now(),
                         response.status.value,
                         response.status.description,
                         "Noe gikk galt ved oppslag mot TP-tjenesten",

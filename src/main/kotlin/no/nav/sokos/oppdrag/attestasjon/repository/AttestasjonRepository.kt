@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.attestasjon.repository
 
 import com.zaxxer.hikari.HikariDataSource
+import kotlinx.datetime.toKotlinLocalDate
 import kotliquery.LoanPattern.using
 import kotliquery.Row
 import kotliquery.queryOf
@@ -282,8 +283,8 @@ class AttestasjonRepository(
             oppdragsId = row.int("OPPDRAGS_ID"),
             linjeId = row.int("LINJE_ID"),
             kodeKlasse = row.string("KODE_KLASSE"),
-            datoVedtakFom = row.localDate("DATO_VEDTAK_FOM"),
-            datoVedtakTom = row.localDateOrNull("DATO_VEDTAK_TOM"),
+            datoVedtakFom = row.localDate("DATO_VEDTAK_FOM").toKotlinLocalDate(),
+            datoVedtakTom = row.localDateOrNull("DATO_VEDTAK_TOM")?.toKotlinLocalDate(),
             attestert = row.string("ATTESTERT") == "J",
             sats = row.double("SATS"),
             typeSats = row.string("TYPE_SATS"),
@@ -294,7 +295,7 @@ class AttestasjonRepository(
     private val mapToAttestasjon: (Row) -> Attestasjon = { row ->
         Attestasjon(
             attestant = row.string("ATTESTANT_ID"),
-            datoUgyldigFom = row.localDate("DATO_UGYLDIG_FOM"),
+            datoUgyldigFom = row.localDate("DATO_UGYLDIG_FOM").toKotlinLocalDate(),
         )
     }
 }

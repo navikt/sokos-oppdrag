@@ -1,15 +1,12 @@
 package no.nav.sokos.oppdrag.attestasjon.domain
 
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
-import no.nav.sokos.oppdrag.common.util.LocalDateSerializer
-import java.time.LocalDate
 
 @Serializable
 data class Oppdragslinje(
     val attestert: Boolean,
-    @Serializable(with = LocalDateSerializer::class)
     val datoVedtakFom: LocalDate,
-    @Serializable(with = LocalDateSerializer::class)
     val datoVedtakTom: LocalDate? = null,
     val delytelseId: String,
     val kodeKlasse: String,
