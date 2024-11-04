@@ -25,7 +25,7 @@ repositories {
 }
 
 // Ktor
-val ktorVersion = "3.0.0"
+val ktorVersion = "3.0.1"
 
 // Serialization
 val kotlinxSerializationVersion = "1.7.3"
@@ -58,7 +58,7 @@ val caffeineVersion = "3.1.8"
 // Test
 val kotestVersion = "6.0.0.M1"
 val wiremockVersion = "3.0.1"
-val mockOAuth2ServerVersion = "2.1.9"
+val mockOAuth2ServerVersion = "2.1.10"
 val mockkVersion = "1.13.13"
 val swaggerRequestValidatorVersion = "2.43.0"
 
