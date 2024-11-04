@@ -19,372 +19,373 @@ private val pdlClientService = mockk<PdlClientService>()
 private val skjermingClientService = mockk<SkjermetClientService>()
 val skjermingService = SkjermingService(pdlClientService, skjermingClientService)
 
-internal class SkjermingServiceTest : FunSpec({
+internal class SkjermingServiceTest :
+    FunSpec({
 
-    test("sjekk skjerming for enkeltperson når saksbehandler har tilgang til egne ansatte og personen er skjermet") {
+        test("sjekk skjerming for enkeltperson når saksbehandler har tilgang til egne ansatte og personen er skjermet") {
 
-        val ident = "12345678912"
-        val navIdentMedEgneAnsatte = NavIdent("Z999999", listOf(GRUPPE_EGNE_ANSATTE))
+            val ident = "12045678912"
+            val navIdentMedEgneAnsatte = NavIdent("Z999999", listOf(GRUPPE_EGNE_ANSATTE))
 
-        coEvery { pdlClientService.getPerson(any()) } returns
-            mapOf(
-                ident to
-                    Person(
-                        listOf(Navn("Ola", null, "Nordmann")),
-                        emptyList(),
-                    ),
-            )
-
-        coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
-            mapOf(
-                ident to true,
-            )
-
-        val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentMedEgneAnsatte)
-
-        erPersonSkjermetForSakbehandler shouldBe false
-    }
-
-    test("sjekk skjerming for enkeltperson når personen har adressebeskyttelse strengt fortrolig og saksbehandler har strengt fortrolig rolle") {
-
-        val ident = "12345678913"
-        val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_STRENGT_FORTROLIG))
-
-        coEvery { pdlClientService.getPerson(any()) } returns
-            mapOf(
-                ident to
-                    Person(
-                        listOf(Navn("Ola", null, "Nordmann")),
-                        listOf(
-                            Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG),
+            coEvery { pdlClientService.getPerson(any()) } returns
+                mapOf(
+                    ident to
+                        Person(
+                            listOf(Navn("Ola", null, "Nordmann")),
+                            emptyList(),
                         ),
-                    ),
-            )
+                )
 
-        coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
-            mapOf(
-                ident to false,
-            )
+            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+                mapOf(
+                    ident to true,
+                )
 
-        val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentMedStrengtFortrolig)
+            val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentMedEgneAnsatte)
 
-        erPersonSkjermetForSakbehandler shouldBe false
-    }
+            erPersonSkjermetForSakbehandler shouldBe false
+        }
 
-    test("sjekk skjerming for enkeltperson når personen har adressebeskyttelse fortrolig og saksbehandler har fortrolig rolle") {
+        test("sjekk skjerming for enkeltperson når personen har adressebeskyttelse strengt fortrolig og saksbehandler har strengt fortrolig rolle") {
 
-        val ident = "12345678914"
-        val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
+            val ident = "12045678913"
+            val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_STRENGT_FORTROLIG))
 
-        coEvery { pdlClientService.getPerson(any()) } returns
-            mapOf(
-                ident to
-                    Person(
-                        listOf(Navn("Ola", null, "Nordmann")),
-                        listOf(
-                            Adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG),
+            coEvery { pdlClientService.getPerson(any()) } returns
+                mapOf(
+                    ident to
+                        Person(
+                            listOf(Navn("Ola", null, "Nordmann")),
+                            listOf(
+                                Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG),
+                            ),
                         ),
-                    ),
-            )
+                )
 
-        coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
-            mapOf(
-                ident to false,
-            )
+            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+                mapOf(
+                    ident to false,
+                )
 
-        val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentMedStrengtFortrolig)
+            val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentMedStrengtFortrolig)
 
-        erPersonSkjermetForSakbehandler shouldBe false
-    }
+            erPersonSkjermetForSakbehandler shouldBe false
+        }
 
-    test("sjekk at saksbehandler uten tilgang til strengt fortrolig ikke får tilgang til enkeltperson med adressebeskyttelse strengt fortrolig") {
+        test("sjekk skjerming for enkeltperson når personen har adressebeskyttelse fortrolig og saksbehandler har fortrolig rolle") {
 
-        val ident = "12345678915"
-        val navIdentUtenTilgang = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
+            val ident = "12045678914"
+            val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
 
-        coEvery { pdlClientService.getPerson(any()) } returns
-            mapOf(
-                ident to
-                    Person(
-                        listOf(Navn("Ola", null, "Nordmann")),
-                        listOf(
-                            Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG),
+            coEvery { pdlClientService.getPerson(any()) } returns
+                mapOf(
+                    ident to
+                        Person(
+                            listOf(Navn("Ola", null, "Nordmann")),
+                            listOf(
+                                Adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG),
+                            ),
                         ),
-                    ),
-            )
+                )
 
-        coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
-            mapOf(
-                ident to false,
-            )
+            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+                mapOf(
+                    ident to false,
+                )
 
-        val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentUtenTilgang)
+            val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentMedStrengtFortrolig)
 
-        erPersonSkjermetForSakbehandler shouldBe true
-    }
+            erPersonSkjermetForSakbehandler shouldBe false
+        }
 
-    test("sjekk at saksbehandler uten tilgang til fortrolig ikke får tilgang til enkeltperson med adressebeskyttelse fortrolig") {
+        test("sjekk at saksbehandler uten tilgang til strengt fortrolig ikke får tilgang til enkeltperson med adressebeskyttelse strengt fortrolig") {
 
-        val ident = "12345678916"
-        val navIdentUtenTilgang = NavIdent("Z999999", listOf(GRUPPE_EGNE_ANSATTE))
+            val ident = "12045678915"
+            val navIdentUtenTilgang = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
 
-        coEvery { pdlClientService.getPerson(any()) } returns
-            mapOf(
-                ident to
-                    Person(
-                        listOf(Navn("Ola", null, "Nordmann")),
-                        listOf(
-                            Adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG),
+            coEvery { pdlClientService.getPerson(any()) } returns
+                mapOf(
+                    ident to
+                        Person(
+                            listOf(Navn("Ola", null, "Nordmann")),
+                            listOf(
+                                Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG),
+                            ),
                         ),
-                    ),
-            )
+                )
 
-        coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
-            mapOf(
-                ident to false,
-            )
+            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+                mapOf(
+                    ident to false,
+                )
 
-        val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentUtenTilgang)
+            val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentUtenTilgang)
 
-        erPersonSkjermetForSakbehandler shouldBe true
-    }
+            erPersonSkjermetForSakbehandler shouldBe true
+        }
 
-    test("sjekk at saksbehandler uten tilgang til egne ansatte ikke får tilgang til enkeltperson som er skjermet med egen ansatte") {
+        test("sjekk at saksbehandler uten tilgang til fortrolig ikke får tilgang til enkeltperson med adressebeskyttelse fortrolig") {
 
-        val ident = "12345678917"
-        val navIdentUtenTilgang = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
+            val ident = "12045678916"
+            val navIdentUtenTilgang = NavIdent("Z999999", listOf(GRUPPE_EGNE_ANSATTE))
 
-        coEvery { pdlClientService.getPerson(any()) } returns
-            mapOf(
-                ident to
-                    Person(
-                        listOf(Navn("Ola", null, "Nordmann")),
-                        emptyList(),
-                    ),
-            )
-
-        coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
-            mapOf(
-                ident to true,
-            )
-
-        val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentUtenTilgang)
-
-        erPersonSkjermetForSakbehandler shouldBe true
-    }
-
-    test("sjekk at saksbehandler med tilgang til strengt fortrolig kan se personer med strengt fortrolig utland") {
-
-        val ident = "12345678924"
-        val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_STRENGT_FORTROLIG))
-
-        coEvery { pdlClientService.getPerson(any()) } returns
-            mapOf(
-                ident to
-                    Person(
-                        listOf(Navn("Ola", null, "Nordmann")),
-                        listOf(
-                            Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND),
+            coEvery { pdlClientService.getPerson(any()) } returns
+                mapOf(
+                    ident to
+                        Person(
+                            listOf(Navn("Ola", null, "Nordmann")),
+                            listOf(
+                                Adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG),
+                            ),
                         ),
-                    ),
-            )
+                )
 
-        coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
-            mapOf(
-                ident to false,
-            )
+            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+                mapOf(
+                    ident to false,
+                )
 
-        val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentMedStrengtFortrolig)
+            val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentUtenTilgang)
 
-        erPersonSkjermetForSakbehandler shouldBe false
-    }
+            erPersonSkjermetForSakbehandler shouldBe true
+        }
 
-    test("sjekk at saksbehandler med fortrolig ikke får tilgang til strengt fortrolig utland") {
+        test("sjekk at saksbehandler uten tilgang til egne ansatte ikke får tilgang til enkeltperson som er skjermet med egen ansatte") {
 
-        val ident = "12345678927"
-        val navIdentMedFortrolig = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
+            val ident = "12045678917"
+            val navIdentUtenTilgang = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
 
-        coEvery { pdlClientService.getPerson(any()) } returns
-            mapOf(
-                ident to
-                    Person(
-                        listOf(Navn("Ola", null, "Nordmann")),
-                        listOf(
-                            Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND),
+            coEvery { pdlClientService.getPerson(any()) } returns
+                mapOf(
+                    ident to
+                        Person(
+                            listOf(Navn("Ola", null, "Nordmann")),
+                            emptyList(),
                         ),
-                    ),
-            )
+                )
 
-        coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
-            mapOf(
-                ident to false,
-            )
+            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+                mapOf(
+                    ident to true,
+                )
 
-        val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentMedFortrolig)
+            val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentUtenTilgang)
 
-        erPersonSkjermetForSakbehandler shouldBe true
-    }
+            erPersonSkjermetForSakbehandler shouldBe true
+        }
 
-    test("sjekk skjerming for personer når saksbehandler har tilgang til egne ansatte og en av personene er skjermet") {
+        test("sjekk at saksbehandler med tilgang til strengt fortrolig kan se personer med strengt fortrolig utland") {
 
-        val ident1 = "12345678918"
-        val ident2 = "12345678919"
-        val navIdentMedEgneAnsatte = NavIdent("Z999999", listOf(GRUPPE_EGNE_ANSATTE))
+            val ident = "12045678924"
+            val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_STRENGT_FORTROLIG))
 
-        coEvery { pdlClientService.getPerson(any()) } returns
-            mapOf(
-                ident1 to
-                    Person(
-                        listOf(Navn("Ola", null, "Nordmann")),
-                        emptyList(),
-                    ),
-                ident2 to
-                    Person(
-                        listOf(Navn("Kari", null, "Nordmann")),
-                        emptyList(),
-                    ),
-            )
-
-        coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
-            mapOf(
-                ident1 to false,
-                ident2 to true,
-            )
-
-        val erPersonSkjermetForSakbehandlerMap = skjermingService.getSkjermingForIdentListe(listOf(ident1, ident2), navIdentMedEgneAnsatte)
-
-        erPersonSkjermetForSakbehandlerMap[ident1] shouldBe false
-        erPersonSkjermetForSakbehandlerMap[ident2] shouldBe false
-    }
-
-    test("sjekk skjerming for personer når saksbehandler har tilgang til strengt fortrolig og personene har adressebeskyttelse strengt fortrolig") {
-
-        val ident1 = "12345678920"
-        val ident2 = "12345678921"
-        val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_STRENGT_FORTROLIG))
-
-        coEvery { pdlClientService.getPerson(any()) } returns
-            mapOf(
-                ident1 to
-                    Person(
-                        listOf(Navn("Ola", null, "Nordmann")),
-                        listOf(
-                            Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG),
+            coEvery { pdlClientService.getPerson(any()) } returns
+                mapOf(
+                    ident to
+                        Person(
+                            listOf(Navn("Ola", null, "Nordmann")),
+                            listOf(
+                                Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND),
+                            ),
                         ),
-                    ),
-                ident2 to
-                    Person(
-                        listOf(Navn("Kari", null, "Nordmann")),
-                        listOf(
-                            Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG),
+                )
+
+            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+                mapOf(
+                    ident to false,
+                )
+
+            val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentMedStrengtFortrolig)
+
+            erPersonSkjermetForSakbehandler shouldBe false
+        }
+
+        test("sjekk at saksbehandler med fortrolig ikke får tilgang til strengt fortrolig utland") {
+
+            val ident = "12045678927"
+            val navIdentMedFortrolig = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
+
+            coEvery { pdlClientService.getPerson(any()) } returns
+                mapOf(
+                    ident to
+                        Person(
+                            listOf(Navn("Ola", null, "Nordmann")),
+                            listOf(
+                                Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND),
+                            ),
                         ),
-                    ),
-            )
+                )
 
-        coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
-            mapOf(
-                ident1 to false,
-                ident2 to false,
-            )
+            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+                mapOf(
+                    ident to false,
+                )
 
-        val erPersonSkjermetForSakbehandlerMap = skjermingService.getSkjermingForIdentListe(listOf(ident1, ident2), navIdentMedStrengtFortrolig)
+            val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentMedFortrolig)
 
-        erPersonSkjermetForSakbehandlerMap[ident1] shouldBe false
-        erPersonSkjermetForSakbehandlerMap[ident2] shouldBe false
-    }
+            erPersonSkjermetForSakbehandler shouldBe true
+        }
 
-    test("sjekk skjerming for personer når saksbehandler har tilgang til fortrolig og personene har adressebeskyttelse fortrolig") {
+        test("sjekk skjerming for personer når saksbehandler har tilgang til egne ansatte og en av personene er skjermet") {
 
-        val ident1 = "12345678922"
-        val ident2 = "12345678923"
-        val navIdentMedFortrolig = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
+            val ident1 = "12045678918"
+            val ident2 = "12045678919"
+            val navIdentMedEgneAnsatte = NavIdent("Z999999", listOf(GRUPPE_EGNE_ANSATTE))
 
-        coEvery { pdlClientService.getPerson(any()) } returns
-            mapOf(
-                ident1 to
-                    Person(
-                        listOf(Navn("Ola", null, "Nordmann")),
-                        listOf(
-                            Adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG),
+            coEvery { pdlClientService.getPerson(any()) } returns
+                mapOf(
+                    ident1 to
+                        Person(
+                            listOf(Navn("Ola", null, "Nordmann")),
+                            emptyList(),
                         ),
-                    ),
-                ident2 to
-                    Person(
-                        listOf(Navn("Kari", null, "Nordmann")),
-                        listOf(
-                            Adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG),
+                    ident2 to
+                        Person(
+                            listOf(Navn("Kari", null, "Nordmann")),
+                            emptyList(),
                         ),
-                    ),
-            )
+                )
 
-        coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
-            mapOf(
-                ident1 to false,
-                ident2 to false,
-            )
+            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+                mapOf(
+                    ident1 to false,
+                    ident2 to true,
+                )
 
-        val erPersonSkjermetForSakbehandlerMap = skjermingService.getSkjermingForIdentListe(listOf(ident1, ident2), navIdentMedFortrolig)
+            val erPersonSkjermetForSakbehandlerMap = skjermingService.getSkjermingForIdentListe(listOf(ident1, ident2), navIdentMedEgneAnsatte)
 
-        erPersonSkjermetForSakbehandlerMap[ident1] shouldBe false
-        erPersonSkjermetForSakbehandlerMap[ident2] shouldBe false
-    }
+            erPersonSkjermetForSakbehandlerMap[ident1] shouldBe false
+            erPersonSkjermetForSakbehandlerMap[ident2] shouldBe false
+        }
 
-    test("har saksbehandler ingen tilganger og personene er ikke skjermet skal de få tilgang") {
+        test("sjekk skjerming for personer når saksbehandler har tilgang til strengt fortrolig og personene har adressebeskyttelse strengt fortrolig") {
 
-        val ident = "12345678924"
-        val ident2 = "12345678925"
-        val navIdentUtenTilgangTilSkjerming = NavIdent("Z999999", emptyList())
+            val ident1 = "12045678920"
+            val ident2 = "12045678921"
+            val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_STRENGT_FORTROLIG))
 
-        coEvery { pdlClientService.getPerson(any()) } returns
-            mapOf(
-                ident to
-                    Person(
-                        listOf(Navn("Ola", null, "Nordmann")),
-                        emptyList(),
-                    ),
-                ident2 to
-                    Person(
-                        listOf(Navn("Kari", null, "Nordmann")),
-                        emptyList(),
-                    ),
-            )
-
-        coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
-            mapOf(
-                ident to false,
-                ident2 to false,
-            )
-
-        val erPersonSkjermetForSakbehandlerMap = skjermingService.getSkjermingForIdentListe(listOf(ident, ident2), navIdentUtenTilgangTilSkjerming)
-
-        erPersonSkjermetForSakbehandlerMap[ident] shouldBe false
-        erPersonSkjermetForSakbehandlerMap[ident2] shouldBe false
-    }
-
-    test("sjekk skjerming for personer når saksbehandler har tilgang til strengt fortrolig og personene har adressebeskyttelse strengt fortrolig og strengt fortrolig utland") {
-
-        val ident1 = "12345678926"
-        val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_STRENGT_FORTROLIG))
-
-        coEvery { pdlClientService.getPerson(any()) } returns
-            mapOf(
-                ident1 to
-                    Person(
-                        listOf(Navn("Ola", null, "Nordmann")),
-                        listOf(
-                            Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG),
-                            Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND),
+            coEvery { pdlClientService.getPerson(any()) } returns
+                mapOf(
+                    ident1 to
+                        Person(
+                            listOf(Navn("Ola", null, "Nordmann")),
+                            listOf(
+                                Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG),
+                            ),
                         ),
-                    ),
-            )
+                    ident2 to
+                        Person(
+                            listOf(Navn("Kari", null, "Nordmann")),
+                            listOf(
+                                Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG),
+                            ),
+                        ),
+                )
 
-        coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
-            mapOf(
-                ident1 to false,
-            )
+            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+                mapOf(
+                    ident1 to false,
+                    ident2 to false,
+                )
 
-        val erPersonSkjermetForSakbehandlerMap = skjermingService.getSkjermingForIdentListe(listOf(ident1), navIdentMedStrengtFortrolig)
+            val erPersonSkjermetForSakbehandlerMap = skjermingService.getSkjermingForIdentListe(listOf(ident1, ident2), navIdentMedStrengtFortrolig)
 
-        erPersonSkjermetForSakbehandlerMap[ident1] shouldBe false
-    }
-})
+            erPersonSkjermetForSakbehandlerMap[ident1] shouldBe false
+            erPersonSkjermetForSakbehandlerMap[ident2] shouldBe false
+        }
+
+        test("sjekk skjerming for personer når saksbehandler har tilgang til fortrolig og personene har adressebeskyttelse fortrolig") {
+
+            val ident1 = "12045678922"
+            val ident2 = "12045678923"
+            val navIdentMedFortrolig = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
+
+            coEvery { pdlClientService.getPerson(any()) } returns
+                mapOf(
+                    ident1 to
+                        Person(
+                            listOf(Navn("Ola", null, "Nordmann")),
+                            listOf(
+                                Adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG),
+                            ),
+                        ),
+                    ident2 to
+                        Person(
+                            listOf(Navn("Kari", null, "Nordmann")),
+                            listOf(
+                                Adressebeskyttelse(AdressebeskyttelseGradering.FORTROLIG),
+                            ),
+                        ),
+                )
+
+            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+                mapOf(
+                    ident1 to false,
+                    ident2 to false,
+                )
+
+            val erPersonSkjermetForSakbehandlerMap = skjermingService.getSkjermingForIdentListe(listOf(ident1, ident2), navIdentMedFortrolig)
+
+            erPersonSkjermetForSakbehandlerMap[ident1] shouldBe false
+            erPersonSkjermetForSakbehandlerMap[ident2] shouldBe false
+        }
+
+        test("har saksbehandler ingen tilganger og personene er ikke skjermet skal de få tilgang") {
+
+            val ident = "12045678924"
+            val ident2 = "12045678925"
+            val navIdentUtenTilgangTilSkjerming = NavIdent("Z999999", emptyList())
+
+            coEvery { pdlClientService.getPerson(any()) } returns
+                mapOf(
+                    ident to
+                        Person(
+                            listOf(Navn("Ola", null, "Nordmann")),
+                            emptyList(),
+                        ),
+                    ident2 to
+                        Person(
+                            listOf(Navn("Kari", null, "Nordmann")),
+                            emptyList(),
+                        ),
+                )
+
+            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+                mapOf(
+                    ident to false,
+                    ident2 to false,
+                )
+
+            val erPersonSkjermetForSakbehandlerMap = skjermingService.getSkjermingForIdentListe(listOf(ident, ident2), navIdentUtenTilgangTilSkjerming)
+
+            erPersonSkjermetForSakbehandlerMap[ident] shouldBe false
+            erPersonSkjermetForSakbehandlerMap[ident2] shouldBe false
+        }
+
+        test("sjekk skjerming for personer når saksbehandler har tilgang til strengt fortrolig og personene har adressebeskyttelse strengt fortrolig og strengt fortrolig utland") {
+
+            val ident1 = "12045678926"
+            val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_STRENGT_FORTROLIG))
+
+            coEvery { pdlClientService.getPerson(any()) } returns
+                mapOf(
+                    ident1 to
+                        Person(
+                            listOf(Navn("Ola", null, "Nordmann")),
+                            listOf(
+                                Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG),
+                                Adressebeskyttelse(AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND),
+                            ),
+                        ),
+                )
+
+            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+                mapOf(
+                    ident1 to false,
+                )
+
+            val erPersonSkjermetForSakbehandlerMap = skjermingService.getSkjermingForIdentListe(listOf(ident1), navIdentMedStrengtFortrolig)
+
+            erPersonSkjermetForSakbehandlerMap[ident1] shouldBe false
+        }
+    })

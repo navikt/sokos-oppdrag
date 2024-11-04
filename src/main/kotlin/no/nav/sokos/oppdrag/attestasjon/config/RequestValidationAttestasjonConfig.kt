@@ -3,12 +3,12 @@ package no.nav.sokos.oppdrag.attestasjon.config
 import io.ktor.server.plugins.requestvalidation.RequestValidationConfig
 import io.ktor.server.plugins.requestvalidation.ValidationResult
 import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
-import no.nav.sokos.oppdrag.common.util.Util.validGjelderId
+import no.nav.sokos.oppdrag.common.util.GjelderIdValidator.isValidGjelderId
 
 fun RequestValidationConfig.requestValidationAttestasjonConfig() {
     validate<OppdragsRequest> { request ->
         when {
-            !request.gjelderId.isNullOrEmpty() && !validGjelderId(request.gjelderId) -> ValidationResult.Invalid("gjelderId er ugyldig. Tillatt format er 9 eller 11 siffer")
+            !request.gjelderId.isNullOrEmpty() && !isValidGjelderId(request.gjelderId) -> ValidationResult.Invalid("gjelderId er ugyldig. Tillatt format er 9 eller 11 siffer")
             !validateSearchParams(request) -> ValidationResult.Invalid("Ugyldig kombinasjon av søkeparametere")
             else -> ValidationResult.Valid
         }

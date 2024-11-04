@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.config
 
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.log
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import io.ktor.server.plugins.statuspages.StatusPagesConfig
@@ -19,57 +20,10 @@ fun StatusPagesConfig.statusPageConfig() {
     exception<Throwable> { call, cause ->
         val (responseStatus, apiError) =
             when (cause) {
-                is RequestValidationException -> {
-                    Pair(
-                        HttpStatusCode.BadRequest,
-                        ApiError(
-                            Clock.System.now(),
-                            HttpStatusCode.BadRequest.value,
-                            HttpStatusCode.BadRequest.description,
-                            cause.reasons.joinToString(),
-                            call.request.path(),
-                        ),
-                    )
-                }
-
-                is AttestasjonException, is OppdragsinfoException -> {
-                    Pair(
-                        HttpStatusCode.BadRequest,
-                        ApiError(
-                            Clock.System.now(),
-                            HttpStatusCode.BadRequest.value,
-                            HttpStatusCode.BadRequest.description,
-                            cause.message,
-                            call.request.path(),
-                        ),
-                    )
-                }
-
-                is IntegrationException -> {
-                    Pair(
-                        cause.response.status,
-                        cause.apiError,
-                    )
-                }
-
-                is ZOSException -> {
-                    Pair(
-                        HttpStatusCode.allStatusCodes.find { it.value == cause.apiError.status }!!,
-                        cause.apiError,
-                    )
-                }
-
-                else ->
-                    Pair(
-                        HttpStatusCode.InternalServerError,
-                        ApiError(
-                            Clock.System.now(),
-                            HttpStatusCode.InternalServerError.value,
-                            HttpStatusCode.InternalServerError.description,
-                            cause.message ?: "En teknisk feil har oppstått. Ta kontakt med utviklerne",
-                            call.request.path(),
-                        ),
-                    )
+                is RequestValidationException -> createApiError(HttpStatusCode.BadRequest, cause.reasons.joinToString(), call)
+                is AttestasjonException, is OppdragsinfoException, is IntegrationException -> createApiError(HttpStatusCode.BadRequest, cause.message, call)
+                is ZOSException -> Pair(HttpStatusCode.allStatusCodes.find { it.value == cause.apiError.status }!!, cause.apiError)
+                else -> createApiError(HttpStatusCode.InternalServerError, cause.message ?: "En teknisk feil har oppstått. Ta kontakt med utviklerne", call)
             }
 
         call.application.log.error(
@@ -79,6 +33,22 @@ fun StatusPagesConfig.statusPageConfig() {
         call.respond(responseStatus, apiError)
     }
 }
+
+private fun createApiError(
+    status: HttpStatusCode,
+    message: String?,
+    call: ApplicationCall,
+): Pair<HttpStatusCode, ApiError> =
+    Pair(
+        status,
+        ApiError(
+            Clock.System.now(),
+            status.value,
+            status.description,
+            message,
+            call.request.path(),
+        ),
+    )
 
 @Serializable
 data class ApiError(
