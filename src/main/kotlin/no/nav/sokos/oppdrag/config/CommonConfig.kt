@@ -29,7 +29,8 @@ import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import no.nav.sokos.oppdrag.oppdragsinfo.config.requestValidationOppdragsInfoConfig
 import org.slf4j.event.Level
 import java.util.UUID
-import no.nav.sokos.oppdrag.integration.metrics.Metrics as AppMetrics
+import no.nav.sokos.oppdrag.attestasjon.metrics.Metrics as AttestasjonMetrics
+import no.nav.sokos.oppdrag.integration.metrics.Metrics as IntegrationMetrics
 import no.nav.sokos.oppdrag.oppdragsinfo.metrics.Metrics as OppdragsInfoMetrics
 
 const val SECURE_LOGGER = "secureLogger"
@@ -105,7 +106,11 @@ fun Routing.internalNaisRoutes(
             }
         }
         get("metrics") {
-            call.respondText(AppMetrics.prometheusMeterRegistry.scrape() + OppdragsInfoMetrics.prometheusMeterRegistryOppdragsInfo.scrape())
+            call.respondText(
+                IntegrationMetrics.prometheusMeterRegistry.scrape() +
+                    OppdragsInfoMetrics.prometheusMeterRegistryOppdragsInfo.scrape() +
+                    AttestasjonMetrics.prometheusMeterRegistryAttestasjon.scrape(),
+            )
         }
     }
 }
