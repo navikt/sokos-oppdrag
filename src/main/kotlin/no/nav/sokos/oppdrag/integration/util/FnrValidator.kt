@@ -1,11 +1,11 @@
-package no.nav.sokos.oppdrag.common.util
+package no.nav.sokos.oppdrag.integration.util
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 private const val FNR_LENGTH = 11
 
-object PidValidator {
+object FnrValidator {
     fun String.isValidPid(): Boolean =
         when {
             (this.length != FNR_LENGTH || !this.all { it.isDigit() }) -> false
