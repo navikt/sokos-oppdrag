@@ -7,7 +7,6 @@ import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.util.getAsync
 import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
 import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetClientService
-import no.nav.sokos.oppdrag.integration.util.FnrValidator.isValidPid
 import java.time.Duration
 
 class SkjermingService(
@@ -33,7 +32,7 @@ class SkjermingService(
         saksbehandler: NavIdent,
     ): Map<String, Boolean> {
         val deduplicatedIdenter = identer.distinct()
-        val personIdenter = deduplicatedIdenter.filter { it.isValidPid() }
+        val personIdenter = deduplicatedIdenter.filter { it.toLong() in 1_000_000_001..79_999_999_999 }
 
         if (personIdenter.isEmpty()) {
             return deduplicatedIdenter.associateWith { false }
