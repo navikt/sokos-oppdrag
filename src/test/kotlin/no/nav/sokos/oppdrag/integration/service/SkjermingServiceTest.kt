@@ -22,7 +22,7 @@ val skjermingService = SkjermingService(pdlClientService, skjermingClientService
 internal class SkjermingServiceTest :
     FunSpec({
 
-        test("sjekk skjerming for enkeltperson når saksbehandler har tilgang til egne ansatte og personen er skjermet") {
+        test("saksbehandler med tilgang til egne ansatte skal kunne se person som er skjermet") {
 
             val ident = "12045678912"
             val navIdentMedEgneAnsatte = NavIdent("Z999999", listOf(GRUPPE_EGNE_ANSATTE))
@@ -46,7 +46,7 @@ internal class SkjermingServiceTest :
             erPersonSkjermetForSakbehandler shouldBe false
         }
 
-        test("sjekk skjerming for enkeltperson når personen har adressebeskyttelse strengt fortrolig og saksbehandler har strengt fortrolig rolle") {
+        test("saksbehandler med strengt fortrolig rolle skal kunne se person med adressebeskyttelse strengt fortrolig") {
 
             val ident = "12045678913"
             val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_STRENGT_FORTROLIG))
@@ -72,7 +72,7 @@ internal class SkjermingServiceTest :
             erPersonSkjermetForSakbehandler shouldBe false
         }
 
-        test("sjekk skjerming for enkeltperson når personen har adressebeskyttelse fortrolig og saksbehandler har fortrolig rolle") {
+        test("saksbehandler med fortrolig skal kunne se person med adressebeskyttelse fortrolig") {
 
             val ident = "12045678914"
             val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
@@ -98,7 +98,7 @@ internal class SkjermingServiceTest :
             erPersonSkjermetForSakbehandler shouldBe false
         }
 
-        test("sjekk at saksbehandler uten tilgang til strengt fortrolig ikke får tilgang til enkeltperson med adressebeskyttelse strengt fortrolig") {
+        test("saksbehandler med tilgang til fortrolig skal ikke få se person med adressebeskyttelse strengt fortrolig") {
 
             val ident = "12045678915"
             val navIdentUtenTilgang = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
@@ -124,7 +124,7 @@ internal class SkjermingServiceTest :
             erPersonSkjermetForSakbehandler shouldBe true
         }
 
-        test("sjekk at saksbehandler uten tilgang til fortrolig ikke får tilgang til enkeltperson med adressebeskyttelse fortrolig") {
+        test("saksbehandler med tilgang til egne ansatte skal ikke få se person med adressebeskyttelse fortrolig") {
 
             val ident = "12045678916"
             val navIdentUtenTilgang = NavIdent("Z999999", listOf(GRUPPE_EGNE_ANSATTE))
@@ -226,7 +226,7 @@ internal class SkjermingServiceTest :
             erPersonSkjermetForSakbehandler shouldBe true
         }
 
-        test("sjekk skjerming for personer når saksbehandler har tilgang til egne ansatte og en av personene er skjermet") {
+        test("saksbehandler har tilgang til egne ansatte og skal kun se en av personene siden den ene er skjermet") {
 
             val ident1 = "12045678918"
             val ident2 = "12045678919"
@@ -258,7 +258,7 @@ internal class SkjermingServiceTest :
             erPersonSkjermetForSakbehandlerMap[ident2] shouldBe false
         }
 
-        test("sjekk skjerming for personer når saksbehandler har tilgang til strengt fortrolig og personene har adressebeskyttelse strengt fortrolig") {
+        test("saksbehandler skal kunne se personer når hen har tilgang til strengt fortrolig og personene har adressebeskyttelse strengt fortrolig") {
 
             val ident1 = "12045678920"
             val ident2 = "12045678921"
@@ -294,7 +294,7 @@ internal class SkjermingServiceTest :
             erPersonSkjermetForSakbehandlerMap[ident2] shouldBe false
         }
 
-        test("sjekk skjerming for personer når saksbehandler har tilgang til fortrolig og personene har adressebeskyttelse fortrolig") {
+        test("saksbehandler skal se personer når hen har tilgang til fortrolig og personene har adressebeskyttelse fortrolig") {
 
             val ident1 = "12045678922"
             val ident2 = "12045678923"
@@ -362,7 +362,7 @@ internal class SkjermingServiceTest :
             erPersonSkjermetForSakbehandlerMap[ident2] shouldBe false
         }
 
-        test("sjekk skjerming for personer når saksbehandler har tilgang til strengt fortrolig og personene har adressebeskyttelse strengt fortrolig og strengt fortrolig utland") {
+        test("saksbehandler skal ha tilgang til å se person når hen har tilgang til strengt fortrolig og personen har adressebeskyttelse strengt fortrolig og strengt fortrolig utland") {
 
             val ident1 = "12045678926"
             val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_STRENGT_FORTROLIG))
