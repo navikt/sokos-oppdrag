@@ -37,6 +37,9 @@ spec:
     path: /internal/metrics
   secureLogs:
     enabled: true
+  observability:
+    enabled: true
+    runtime: java
   azure:
     application:
       enabled: true
