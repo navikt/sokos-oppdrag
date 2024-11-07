@@ -26,6 +26,7 @@ fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonSer
                     request.kodeFagGruppe,
                     request.kodeFagOmraade,
                     request.attestert,
+                    request.lastOppdragsId,
                     saksbehandler,
                 ),
             )

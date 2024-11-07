@@ -20,6 +20,7 @@ class AttestasjonRepository(
         fagSystemId: String?,
         gjelderId: String?,
         kodeFagOmraader: List<String>,
+        lastOppdragsId: Number?,
     ): List<Oppdrag> {
         val statementParts =
             mutableListOf(
@@ -91,6 +92,11 @@ class AttestasjonRepository(
         if (kodeFagOmraader.isNotEmpty()) {
             statementParts.add(" AND O.KODE_FAGOMRAADE IN (${kodeFagOmraader.joinToString(",") { "?" }})")
             parameters.addAll(kodeFagOmraader)
+        }
+
+        if (lastOppdragsId != null) {
+            statementParts.add(" AND O.OPPDRAGS_ID > $lastOppdragsId")
+            parameters.add("$lastOppdragsId")
         }
 
         statementParts.add(" FETCH FIRST 200 ROWS ONLY")

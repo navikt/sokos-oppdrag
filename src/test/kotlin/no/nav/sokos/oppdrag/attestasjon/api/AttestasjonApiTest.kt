@@ -73,7 +73,7 @@ internal class AttestasjonApiTest : FunSpec({
                 ),
             )
 
-        coEvery { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any()) } returns oppdragsListe
+        coEvery { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any(), any()) } returns oppdragsListe
 
         val response =
             RestAssured.given().filter(validationFilter)
@@ -139,7 +139,7 @@ internal class AttestasjonApiTest : FunSpec({
 
     test("sok etter oppdrag med gyldig søkeparametere returnerer 200 OK") {
 
-        coEvery { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any()) } returns emptyList()
+        coEvery { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any(), any()) } returns emptyList()
 
         RestAssured.given().filter(validationFilter)
             .header(HttpHeaders.ContentType, APPLICATION_JSON)

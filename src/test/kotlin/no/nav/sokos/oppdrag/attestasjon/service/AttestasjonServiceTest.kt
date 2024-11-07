@@ -52,11 +52,11 @@ internal class AttestasjonServiceTest : FunSpec({
                 ),
             )
 
-        every { attestasjonRepository.getOppdrag(any(), any(), gjelderId, any()) } returns oppdragList
+        every { attestasjonRepository.getOppdrag(any(), any(), gjelderId, any(), any()) } returns oppdragList
         coEvery { skjermingService.getSkjermingForIdent(gjelderId, navIdent) } returns false
         coEvery { skjermingService.getSkjermingForIdentListe(listOf(gjelderId), any()) } returns mapOf(gjelderId to false)
 
-        val result = attestasjonService.getOppdrag(gjelderId, null, null, null, null, navIdent)
+        val result = attestasjonService.getOppdrag(gjelderId, null, null, null, null, null, navIdent)
         result shouldBe oppdragList
     }
 
@@ -67,7 +67,7 @@ internal class AttestasjonServiceTest : FunSpec({
 
         val exception =
             shouldThrow<AttestasjonException> {
-                attestasjonService.getOppdrag(gjelderId, null, null, null, null, navIdent)
+                attestasjonService.getOppdrag(gjelderId, null, null, null, null, null, navIdent)
             }
 
         exception.message shouldBe "Mangler rettigheter til å se informasjon!"

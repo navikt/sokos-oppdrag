@@ -32,6 +32,7 @@ class AttestasjonService(
         kodeFagGruppe: String? = null,
         kodeFagOmraade: String? = null,
         attestert: Boolean? = null,
+        lastOppdragsId: Number? = null,
         saksbehandler: NavIdent,
     ): List<Oppdrag> {
         if (!gjelderId.isNullOrBlank()) {
@@ -61,6 +62,7 @@ class AttestasjonService(
                 fagSystemId,
                 gjelderId,
                 fagomraader,
+                lastOppdragsId,
             )
 
         val map = skjermingService.getSkjermingForIdentListe(oppdragList.map { it.gjelderId }, saksbehandler)
