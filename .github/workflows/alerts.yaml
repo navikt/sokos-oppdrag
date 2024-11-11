@@ -22,6 +22,7 @@ jobs:
 
 #  deploy-prod:
 #    name: Deploy to prod-fss
+#    needs: deploy-dev
 #    uses: navikt/moby-gha-workflows/.github/workflows/nais-alert-deploy.yaml@main
 #    with:
 #      cluster: prod-fss
