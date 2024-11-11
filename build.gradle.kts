@@ -45,7 +45,7 @@ val papertrailappVersion = "1.0.0"
 val natpryceVersion = "1.6.10.0"
 
 // Database
-val hikariVersion = "6.0.0"
+val hikariVersion = "6.1.0"
 val db2JccVersion = "11.5.9.0"
 val kotliqueryVersion = "1.9.0"
 
