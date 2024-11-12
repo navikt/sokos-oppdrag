@@ -1,5 +1,6 @@
 package no.nav.sokos.oppdrag.attestasjon.service
 
+import com.github.benmanes.caffeine.cache.Caffeine
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import mu.KotlinLogging
@@ -15,8 +16,10 @@ import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
+import no.nav.sokos.oppdrag.common.util.getAsync
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
+import java.time.Duration
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
@@ -26,14 +29,30 @@ class AttestasjonService(
     private val zosConnectService: ZOSConnectService = ZOSConnectService(),
     private val skjermingService: SkjermingService = SkjermingService(),
 ) {
+    private val oppdragCache =
+        Caffeine
+            .newBuilder()
+            .expireAfterWrite(Duration.ofMinutes(60))
+            .maximumSize(10_000)
+            .buildAsync<String, List<Oppdrag>>()
+
+    private val oppdragCountCache =
+        Caffeine
+            .newBuilder()
+            .expireAfterWrite(Duration.ofMinutes(60))
+            .maximumSize(10_000)
+            .buildAsync<String, Int>()
+
     suspend fun getOppdrag(
         gjelderId: String? = null,
         fagSystemId: String? = null,
         kodeFagGruppe: String? = null,
         kodeFagOmraade: String? = null,
         attestert: Boolean? = null,
+        page: Int? = null,
+        rows: Int? = null,
         saksbehandler: NavIdent,
-    ): List<Oppdrag> {
+    ): Pair<List<Oppdrag>, Int> {
         if (!gjelderId.isNullOrBlank()) {
             secureLogger.info { "Henter attestasjonsdata for gjelderId: $gjelderId" }
             auditLogger.auditLog(
@@ -55,23 +74,22 @@ class AttestasjonService(
                 else -> emptyList()
             }
 
-        val oppdragList =
-            attestasjonRepository.getOppdrag(
-                attestert,
-                fagSystemId,
-                gjelderId,
-                fagomraader,
-            )
+        val totalCount =
+            oppdragCountCache.getAsync("$gjelderId-${fagomraader.joinToString()}-$fagSystemId-$attestert") {
+                attestasjonRepository.getOppdragCount(attestert, fagSystemId, gjelderId, fagomraader)
+            }
 
-        val map = skjermingService.getSkjermingForIdentListe(oppdragList.map { it.gjelderId }, saksbehandler)
-        return oppdragList.map { oppdrag ->
-            oppdrag.copy(erSkjermetForSaksbehandler = map[oppdrag.gjelderId] == true)
-        }
+        val oppdragListe =
+            oppdragCache.getAsync("$gjelderId-${fagomraader.joinToString()}-$fagSystemId-$attestert-$page-$rows") {
+                attestasjonRepository.getOppdrag(attestert, fagSystemId, gjelderId, fagomraader, page, rows)
+            }
+        val skjermingMap = skjermingService.getSkjermingForIdentListe(oppdragListe.map { it.gjelderId }, saksbehandler)
+        val data = oppdragListe.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.gjelderId] == true) }
+
+        return Pair(data, if (data.size > totalCount) data.size else totalCount)
     }
 
-    fun getFagOmraade(): List<FagOmraade> {
-        return attestasjonRepository.getFagOmraader()
-    }
+    fun getFagOmraade(): List<FagOmraade> = attestasjonRepository.getFagOmraader()
 
     fun getOppdragsdetaljer(
         oppdragsId: Int,
@@ -91,8 +109,7 @@ class AttestasjonService(
                     } else {
                         current
                     }
-                }
-                .toList() + oppdragslinjer.last()
+                }.toList() + oppdragslinjer.last()
 
         val linjeIder = oppdragslinjer.map { l -> l.linjeId }.toList()
 
@@ -102,14 +119,15 @@ class AttestasjonService(
 
         val oppdragsdetaljer =
             OppdragsdetaljerDTO(
-                oppdragslinjerMedDatoVedtakTom.map { linje ->
-                    OppdragslinjeDTO(
-                        linje,
-                        ansvarssteder[linje.linjeId],
-                        kostnadssteder[linje.linjeId],
-                        attestasjoner[linje.linjeId] ?: emptyList(),
-                    )
-                }.sortedBy { oppdragslinjeDTO -> oppdragslinjeDTO.oppdragsLinje.linjeId },
+                oppdragslinjerMedDatoVedtakTom
+                    .map { linje ->
+                        OppdragslinjeDTO(
+                            linje,
+                            ansvarssteder[linje.linjeId],
+                            kostnadssteder[linje.linjeId],
+                            attestasjoner[linje.linjeId] ?: emptyList(),
+                        )
+                    }.sortedBy { oppdragslinjeDTO -> oppdragslinjeDTO.oppdragsLinje.linjeId },
                 saksbehandler.ident,
             )
 
@@ -119,7 +137,5 @@ class AttestasjonService(
     suspend fun attestereOppdrag(
         attestasjonRequest: AttestasjonRequest,
         saksbehandler: NavIdent,
-    ): ZOsResponse {
-        return zosConnectService.attestereOppdrag(attestasjonRequest, saksbehandler.ident)
-    }
+    ): ZOsResponse = zosConnectService.attestereOppdrag(attestasjonRequest, saksbehandler.ident)
 }
