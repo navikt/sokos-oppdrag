@@ -32,7 +32,7 @@ val kotlinxSerializationVersion = "1.7.3"
 val kotlinxDatetimeVersion = "0.6.1"
 
 // Monitorering
-val micrometerVersion = "1.13.6"
+val micrometerVersion = "1.14.1"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
@@ -45,7 +45,7 @@ val papertrailappVersion = "1.0.0"
 val natpryceVersion = "1.6.10.0"
 
 // Database
-val hikariVersion = "6.1.0"
+val hikariVersion = "6.2.0"
 val db2JccVersion = "11.5.9.0"
 val kotliqueryVersion = "1.9.0"
 
