@@ -53,8 +53,8 @@ internal class AttestasjonServiceTest :
                     ),
                 )
 
-            every { attestasjonRepository.getOppdrag(any(), any(), gjelderId, any(), any(), any()) } returns oppdragList
-            every { attestasjonRepository.getOppdragCount(any(), any(), gjelderId, any()) } returns oppdragList.size
+            coEvery { attestasjonRepository.getOppdrag(any(), any(), gjelderId, any(), any(), any()) } returns oppdragList
+            coEvery { attestasjonRepository.getOppdragCount(any(), any(), gjelderId, any()) } returns oppdragList.size
             coEvery { skjermingService.getSkjermingForIdent(gjelderId, navIdent) } returns false
             coEvery { skjermingService.getSkjermingForIdentListe(listOf(gjelderId), any()) } returns mapOf(gjelderId to false)
 

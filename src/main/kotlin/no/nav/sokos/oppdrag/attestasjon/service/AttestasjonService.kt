@@ -1,6 +1,8 @@
 package no.nav.sokos.oppdrag.attestasjon.service
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import mu.KotlinLogging
@@ -52,42 +54,49 @@ class AttestasjonService(
         page: Int? = null,
         rows: Int? = null,
         saksbehandler: NavIdent,
-    ): Pair<List<Oppdrag>, Int> {
-        if (!gjelderId.isNullOrBlank()) {
-            secureLogger.info { "Henter attestasjonsdata for gjelderId: $gjelderId" }
-            auditLogger.auditLog(
-                AuditLogg(
-                    navIdent = saksbehandler.ident,
-                    gjelderId = gjelderId,
-                    brukerBehandlingTekst = "NAV-ansatt har gjort et oppslag på navn",
-                ),
-            )
-            if ((gjelderId.toLong() in 1_000_000_001..79_999_999_999) && skjermingService.getSkjermingForIdent(gjelderId, saksbehandler)) {
-                throw AttestasjonException("Mangler rettigheter til å se informasjon!")
+    ): Pair<List<Oppdrag>, Int> =
+        coroutineScope {
+            if (!gjelderId.isNullOrBlank()) {
+                secureLogger.info { "Henter attestasjonsdata for gjelderId: $gjelderId" }
+                auditLogger.auditLog(
+                    AuditLogg(
+                        navIdent = saksbehandler.ident,
+                        gjelderId = gjelderId,
+                        brukerBehandlingTekst = "NAV-ansatt har gjort et oppslag på navn",
+                    ),
+                )
+                if ((gjelderId.toLong() in 1_000_000_001..79_999_999_999) && skjermingService.getSkjermingForIdent(gjelderId, saksbehandler)) {
+                    throw AttestasjonException("Mangler rettigheter til å se informasjon!")
+                }
             }
+
+            val fagomraader =
+                when {
+                    !kodeFagOmraade.isNullOrBlank() -> listOf(kodeFagOmraade)
+                    !kodeFagGruppe.isNullOrBlank() -> attestasjonRepository.getFagomraaderForFaggruppe(kodeFagGruppe)
+                    else -> emptyList()
+                }
+
+            val totalCountDeferred =
+                async {
+                    oppdragCountCache.getAsync("$gjelderId-${fagomraader.joinToString()}-$fagSystemId-$attestert") {
+                        attestasjonRepository.getOppdragCount(attestert, fagSystemId, gjelderId, fagomraader)
+                    }
+                }
+
+            val oppdragListeDeferred =
+                async {
+                    oppdragCache.getAsync("$gjelderId-${fagomraader.joinToString()}-$fagSystemId-$attestert-$page-$rows") {
+                        attestasjonRepository.getOppdrag(attestert, fagSystemId, gjelderId, fagomraader, page, rows)
+                    }
+                }
+
+            val totalCount = totalCountDeferred.await()
+            val oppdragListe = oppdragListeDeferred.await()
+            val skjermingMap = skjermingService.getSkjermingForIdentListe(oppdragListe.map { it.gjelderId }, saksbehandler)
+            val data = oppdragListe.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.gjelderId] == true) }
+            Pair(data, if (data.size > totalCount) data.size else totalCount)
         }
-
-        val fagomraader =
-            when {
-                !kodeFagOmraade.isNullOrBlank() -> listOf(kodeFagOmraade)
-                !kodeFagGruppe.isNullOrBlank() -> attestasjonRepository.getFagomraaderForFaggruppe(kodeFagGruppe)
-                else -> emptyList()
-            }
-
-        val totalCount =
-            oppdragCountCache.getAsync("$gjelderId-${fagomraader.joinToString()}-$fagSystemId-$attestert") {
-                attestasjonRepository.getOppdragCount(attestert, fagSystemId, gjelderId, fagomraader)
-            }
-
-        val oppdragListe =
-            oppdragCache.getAsync("$gjelderId-${fagomraader.joinToString()}-$fagSystemId-$attestert-$page-$rows") {
-                attestasjonRepository.getOppdrag(attestert, fagSystemId, gjelderId, fagomraader, page, rows)
-            }
-        val skjermingMap = skjermingService.getSkjermingForIdentListe(oppdragListe.map { it.gjelderId }, saksbehandler)
-        val data = oppdragListe.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.gjelderId] == true) }
-
-        return Pair(data, if (data.size > totalCount) data.size else totalCount)
-    }
 
     fun getFagOmraade(): List<FagOmraade> = attestasjonRepository.getFagOmraader()
 
