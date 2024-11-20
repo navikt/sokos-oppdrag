@@ -57,10 +57,13 @@ val caffeineVersion = "3.1.8"
 
 // Test
 val kotestVersion = "6.0.0.M1"
-val wiremockVersion = "3.0.1"
+val wiremockVersion = "3.9.2"
 val mockOAuth2ServerVersion = "2.1.10"
 val mockkVersion = "1.13.13"
 val swaggerRequestValidatorVersion = "2.43.0"
+
+// Due to vulnerabilities
+val nettyCommonVersion = "4.1.115.Final"
 
 dependencies {
 
@@ -68,6 +71,11 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-call-id-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    constraints {
+        implementation("io.netty:netty-common:$nettyCommonVersion") {
+            because("override transient from io.ktor:ktor-server-netty-jvm")
+        }
+    }
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-swagger:$ktorVersion")
     implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
@@ -119,8 +127,13 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
     testImplementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
-    testImplementation("com.github.tomakehurst:wiremock:$wiremockVersion")
+    testImplementation("org.wiremock:wiremock:$wiremockVersion")
     testImplementation("com.atlassian.oai:swagger-request-validator-restassured:$swaggerRequestValidatorVersion")
+}
+
+// Vulnerability fix because of id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+configurations.ktlint {
+    resolutionStrategy.force("ch.qos.logback:logback-classic:$logbackVersion")
 }
 
 sourceSets {
