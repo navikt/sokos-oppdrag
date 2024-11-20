@@ -1,10 +1,13 @@
 package no.nav.sokos.oppdrag.attestasjon.service
 
+import com.github.benmanes.caffeine.cache.Caffeine
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.datetime.LocalDate
@@ -15,54 +18,162 @@ import no.nav.sokos.oppdrag.attestasjon.api.model.ZOsResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
+import no.nav.sokos.oppdrag.attestasjon.domain.toDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
+import no.nav.sokos.oppdrag.attestasjon.utils.GJELDER_ID
+import no.nav.sokos.oppdrag.attestasjon.utils.KODE_FAGGRUPPE
+import no.nav.sokos.oppdrag.attestasjon.utils.KODE_FAGOMRAADE
+import no.nav.sokos.oppdrag.attestasjon.utils.Testdata.oppdragMockdata
+import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ
+import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE
+import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_READ
+import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_WRITE
+import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_READ
+import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_WRITE
+import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
+import java.time.Duration
 
 private val attestasjonRepository = mockk<AttestasjonRepository>()
 private val zosConnectService: ZOSConnectService = mockk<ZOSConnectService>()
 private val skjermingService = mockk<SkjermingService>()
-private val attestasjonService =
+private val oppdragCache =
+    Caffeine.newBuilder()
+        .expireAfterWrite(Duration.ofMinutes(60))
+        .maximumSize(10_000)
+        .buildAsync<String, List<Oppdrag>>()
+val attestasjonService =
     AttestasjonService(
         attestasjonRepository = attestasjonRepository,
         zosConnectService = zosConnectService,
         skjermingService = skjermingService,
+        oppdragCache = oppdragCache,
     )
 
 internal class AttestasjonServiceTest :
     FunSpec({
 
-        test("hent oppdrag for en gjelderId når saksbehandler har tilgang til personen") {
-            val gjelderId = "12345678900"
-
-            val oppdragList =
-                listOf(
-                    Oppdrag(
-                        antallAttestanter = 1,
-                        fagGruppe = "fagGruppe",
-                        fagOmraade = "fagOmraade",
-                        fagSystemId = "fagSystemId",
-                        gjelderId = gjelderId,
-                        kodeFagGruppe = "kodeFagGruppe",
-                        kodeFagOmraade = "kodeFagOmraade",
-                        kostnadsSted = "kostnadsSted",
-                        oppdragsId = 1,
-                        erSkjermetForSaksbehandler = false,
-                    ),
-                )
-
-            coEvery { attestasjonRepository.getOppdrag(any(), any(), gjelderId, any()) } returns oppdragList
-            coEvery { skjermingService.getSkjermingForIdent(gjelderId, navIdent) } returns false
-            coEvery { skjermingService.getSkjermingForIdentListe(listOf(gjelderId), any()) } returns mapOf(gjelderId to false)
-
-            val result = attestasjonService.getOppdrag(gjelderId, null, null, null, null, 0, 10, navIdent)
-            result.first shouldBe oppdragList
-            result.second shouldBe oppdragList.size
+        afterEach {
+            clearAllMocks()
+            oppdragCache.synchronous().invalidateAll()
         }
 
-        test("hent oppdrag for en gjelderId kaster exception når saksbehandler ikke har tilgang til personen") {
+        test("hent oppdrag for en gjelderId når saksbehandler har skjermingtilgang til personen") {
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ, GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE))
+            val oppdragList = listOf(oppdragMockdata)
+
+            verifyHentOppdrag(oppdragList, navIdent, hasWriteAccess = true)
+        }
+
+        test("hent oppdrag for faggruppe som ikke attestert når saksbehandler har skjermingtilgang") {
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ, GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE))
+            val oppdragList = listOf(oppdragMockdata)
+
+            coEvery { attestasjonRepository.getFagomraaderForFaggruppe(KODE_FAGGRUPPE) } returns listOf(KODE_FAGOMRAADE)
+            coEvery { attestasjonRepository.getOppdrag(any(), any(), any(), listOf(KODE_FAGOMRAADE)) } returns oppdragList
+            coEvery { skjermingService.getSkjermingForIdentListe(listOf(GJELDER_ID), any()) } returns mapOf(GJELDER_ID to false)
+
+            val result = attestasjonService.getOppdrag(null, null, null, KODE_FAGOMRAADE, null, 1, 10, navIdent)
+            result.first shouldBe oppdragList.map { it.toDTO(hasWriteAccess = true) }
+            result.second shouldBe oppdragList.size
+
+            coVerify(exactly = 0) { skjermingService.getSkjermingForIdent(any(), any()) }
+        }
+
+        test("hent opopdrag for en gjelderId når saksbehandler har bare lesetilgang til NOS") {
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOS_READ))
+            val oppdragList = listOf(oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOS))
+
+            verifyHentOppdrag(oppdragList, navIdent, hasWriteAccess = false)
+        }
+
+        test("hent opopdrag for en gjelderId når saksbehandler har både lesetilgang og skrivetilgang til NOS") {
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOS_READ, GRUPPE_ATTESTASJON_NOS_WRITE))
+            val oppdragList = listOf(oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOS))
+
+            verifyHentOppdrag(oppdragList, navIdent, hasWriteAccess = true)
+        }
+
+        test("hent opopdrag for en gjelderId når saksbehandler har bare lesetilgang til NOP") {
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOP_READ))
+            val oppdragList = listOf(oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOP))
+
+            verifyHentOppdrag(oppdragList, navIdent, hasWriteAccess = false)
+        }
+
+        test("hent opopdrag for en gjelderId når saksbehandler har både lesetilgang og skrivetilgang til NOP") {
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOP_READ, GRUPPE_ATTESTASJON_NOP_WRITE))
+            val oppdragList = listOf(oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOP))
+
+            verifyHentOppdrag(oppdragList, navIdent, hasWriteAccess = true)
+        }
+
+        test("hent opopdrag for en gjelderId når saksbehandler har bare lesetilgang til Landsdekkende") {
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ))
+            val oppdragList = listOf(oppdragMockdata)
+
+            verifyHentOppdrag(oppdragList, navIdent, hasWriteAccess = false)
+        }
+
+        test("hent opopdrag for en gjelderId når saksbehandler har bare lesetilgang og skrivetilgang til Landsdekkende") {
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ, GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE))
+            val oppdragList = listOf(oppdragMockdata)
+
+            verifyHentOppdrag(oppdragList, navIdent, hasWriteAccess = true)
+        }
+
+        test("hent opopdrag for en gjelderId når saksbehandler har både lesetilgang til NOS og NOP") {
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOS_READ, GRUPPE_ATTESTASJON_NOP_READ))
+            val oppdragList =
+                listOf(
+                    oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOS),
+                    oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOP),
+                )
+            verifyHentOppdrag(oppdragList, navIdent, hasWriteAccess = false)
+        }
+
+        test("hent opopdrag for en gjelderId når saksbehandler har både lesetilgang og skrivetilgang til NOS og NOP") {
+            val navIdent =
+                navIdent.copy(
+                    roller =
+                        listOf(
+                            GRUPPE_ATTESTASJON_NOS_READ,
+                            GRUPPE_ATTESTASJON_NOS_WRITE,
+                            GRUPPE_ATTESTASJON_NOP_READ,
+                            GRUPPE_ATTESTASJON_NOP_WRITE,
+                        ),
+                )
+            val oppdragList =
+                listOf(
+                    oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOS),
+                    oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOP),
+                )
+            verifyHentOppdrag(oppdragList, navIdent, hasWriteAccess = true)
+        }
+
+        test("hent opopdrag for en gjelderId når saksbehandler har bare lesetilgang til NOS og både lesetilgang og skrivetilgang til NOP") {
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOS_READ, GRUPPE_ATTESTASJON_NOP_READ, GRUPPE_ATTESTASJON_NOP_WRITE))
+            val oppdragList =
+                listOf(
+                    oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOS),
+                    oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOP),
+                )
+
+            coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any()) } returns oppdragList
+            coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
+
+            val result = attestasjonService.getOppdrag(GJELDER_ID, null, null, null, null, 1, 10, navIdent)
+            result.first[0] shouldBe oppdragList[0].toDTO(hasWriteAccess = false)
+            result.first[1] shouldBe oppdragList[1].toDTO(hasWriteAccess = true)
+            result.second shouldBe oppdragList.size
+
+            coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
+        }
+
+        test("hent oppdrag for en gjelderId kaster exception når saksbehandler ikke har tilgang til personen pga. skjerming") {
             val gjelderId = "12345678900"
 
             coEvery { skjermingService.getSkjermingForIdent(gjelderId, navIdent) } returns true
@@ -282,6 +393,21 @@ internal class AttestasjonServiceTest :
             attestasjonService.attestereOppdrag(request, navIdent) shouldBe response
         }
     })
+
+private suspend fun verifyHentOppdrag(
+    oppdragList: List<Oppdrag>,
+    navIdent: NavIdent,
+    hasWriteAccess: Boolean,
+) {
+    coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any()) } returns oppdragList
+    coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
+
+    val result = attestasjonService.getOppdrag(GJELDER_ID, null, null, null, null, 1, 10, navIdent)
+    result.first shouldBe oppdragList.map { it.toDTO(hasWriteAccess = hasWriteAccess) }
+    result.second shouldBe oppdragList.size
+
+    coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
+}
 
 private fun oppdragslinjer(pretty: String): List<Oppdragslinje> =
     pretty

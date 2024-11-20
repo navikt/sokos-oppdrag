@@ -298,8 +298,9 @@ class AttestasjonRepository(
                                                                        AND ANDRESTATUSER.OPPDRAGS_ID = T_LINJE_STATUS.OPPDRAGS_ID
                                                                        AND ANDRESTATUSER.KODE_STATUS IN ('IKAT', 'ATTE', 'HVIL', 'REAK', 'FBER', 'LOPE')
                                                                        AND ANDRESTATUSER.DATO_FOM >= T_LINJE_STATUS.DATO_FOM
-                                                                       AND ANDRESTATUSER.TIDSPKT_REG > KORRANNUOPPH.TIDSPKT_REG))),   
-            DistinctRows AS (SELECT DISTINCT OS.KODE_STATUS,
+                                                                       AND ANDRESTATUSER.TIDSPKT_REG > KORRANNUOPPH.TIDSPKT_REG)))
+                                                                       
+            SELECT DISTINCT OS.KODE_STATUS,
                     TRIM(O.OPPDRAGS_ID)                                AS OPPDRAGS_ID,
                     TRIM(O.FAGSYSTEM_ID)                               AS FAGSYSTEM_ID,
                     TRIM(O.OPPDRAG_GJELDER_ID)                         AS OPPDRAG_GJELDER_ID,
@@ -339,15 +340,6 @@ class AttestasjonRepository(
                 ${attestert?.let { " WHERE L.ATTESTERT = '${if (it) "J" else "N"}'" } ?: ""}    
             """.trimIndent(),
         )
-        sqlBuilder.append(")").appendLine()
-
-        sqlBuilder.append(
-            """
-            SELECT *
-            FROM DistinctRows
-            """.trimIndent(),
-        )
-
         return Pair(sqlBuilder.toString(), parameterMap)
     }
 }

@@ -3,36 +3,51 @@ package no.nav.sokos.oppdrag.common
 const val GRUPPE_FORTROLIG = "0000-GA-okonomi-fortrolig"
 const val GRUPPE_STRENGT_FORTROLIG = "0000-GA-okonomi-strengt_fortrolig"
 const val GRUPPE_EGNE_ANSATTE = "0000-GA-okonomi-egne_ansatte"
-const val GRUPPE_ATTESTASJON_SKRIV = "0000-GA-SOKOS-MF-Attestasjon-WRITE"
-const val GRUPPE_NOS = "0000-GA-SOKOS-MF-Attestasjon-NOS-READ"
-const val GRUPPE_TOS = "0000-GA-SOKOS-MF-Attestasjon-TOS-READ"
-const val GRUPPE_LANDSDEKKENDE = "0000-GA-SOKOS-MF-Attestasjon-Landsdekkende-READ"
+
+const val GRUPPE_ATTESTASJON_NOS_READ = "0000-GA-SOKOS-MF-Attestasjon-NOS-READ"
+const val GRUPPE_ATTESTASJON_NOS_WRITE = "0000-GA-SOKOS-MF-Attestasjon-NOS-WRITE"
+const val GRUPPE_ATTESTASJON_NOP_READ = "0000-GA-SOKOS-MF-Attestasjon-NOP-READ"
+const val GRUPPE_ATTESTASJON_NOP_WRITE = "0000-GA-SOKOS-MF-Attestasjon-NOP-WRITE"
+const val GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ = "0000-GA-SOKOS-MF-Attestasjon-Landsdekkende-READ"
+const val GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE = "0000-GA-SOKOS-MF-Attestasjon-Landsdekkende-WRITE"
 
 data class NavIdent(
     val ident: String,
     val roller: List<String> = emptyList(),
 ) {
-    fun harTilgangTilFortrolig(): Boolean {
+    fun hasAccessFortrolig(): Boolean {
         return roller.contains(GRUPPE_FORTROLIG)
     }
 
-    fun harTilgangTilStrengtFortrolig(): Boolean {
+    fun hasAccessStrengtFortrolig(): Boolean {
         return roller.contains(GRUPPE_STRENGT_FORTROLIG)
     }
 
-    fun harTilgangTilEgneAnsatte(): Boolean {
+    fun hasAccessEgneAnsatte(): Boolean {
         return roller.contains(GRUPPE_EGNE_ANSATTE)
     }
 
-    fun harTilgangTilNos(): Boolean {
-        return roller.contains(GRUPPE_NOS)
+    fun hasReadAccessNOS(): Boolean {
+        return roller.contains(GRUPPE_ATTESTASJON_NOS_READ)
     }
 
-    fun harTilgangTilNop(): Boolean {
-        return roller.contains(GRUPPE_TOS)
+    fun hasWriteAccessNOS(): Boolean {
+        return roller.contains(GRUPPE_ATTESTASJON_NOS_WRITE)
     }
 
-    fun harTilgangTilLandsdekkende(): Boolean {
-        return roller.contains(GRUPPE_LANDSDEKKENDE)
+    fun hasReadAccessNOP(): Boolean {
+        return roller.contains(GRUPPE_ATTESTASJON_NOP_READ)
+    }
+
+    fun hasWriteAccessNOP(): Boolean {
+        return roller.contains(GRUPPE_ATTESTASJON_NOP_WRITE)
+    }
+
+    fun hasReadAccessLandsdekkende(): Boolean {
+        return roller.contains(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ)
+    }
+
+    fun hasWriteAccessLandsdekkende(): Boolean {
+        return roller.contains(GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE)
     }
 }

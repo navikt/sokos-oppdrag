@@ -42,7 +42,7 @@ class SkjermingService(
             bolkEgneAnsatteCache
                 .getAsync(personIdenter.joinToString()) {
                     skjermetClientService.isSkjermedePersonerInSkjermingslosningen(personIdenter)
-                }.mapValues { (_, skjermet) -> !saksbehandler.harTilgangTilEgneAnsatte() && skjermet }
+                }.mapValues { (_, skjermet) -> !saksbehandler.hasAccessEgneAnsatte() && skjermet }
 
         val adressebeskyttelseMap =
             bolkPdlCache
@@ -50,9 +50,9 @@ class SkjermingService(
                     pdlClientService.getPerson(identer = personIdenter)
                 }.mapValues { (_, person) ->
                     val graderinger = person.adressebeskyttelse.map { it.gradering }
-                    !saksbehandler.harTilgangTilFortrolig() &&
+                    !saksbehandler.hasAccessFortrolig() &&
                         AdressebeskyttelseGradering.FORTROLIG in graderinger ||
-                        !saksbehandler.harTilgangTilStrengtFortrolig() &&
+                        !saksbehandler.hasAccessStrengtFortrolig() &&
                         graderinger.any {
                             it == AdressebeskyttelseGradering.STRENGT_FORTROLIG || it == AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND
                         }
