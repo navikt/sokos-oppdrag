@@ -18,35 +18,14 @@ import no.nav.sokos.oppdrag.config.DatabaseConfig
 class AttestasjonRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource(),
 ) {
-    suspend fun getOppdragCount(
-        attestert: Boolean?,
-        fagSystemId: String?,
-        gjelderId: String?,
-        kodeFagOmraader: List<String>,
-    ): Int =
-        withContext(Dispatchers.IO) {
-            buildOppdragSqlQuery(attestert, fagSystemId, gjelderId, kodeFagOmraader).let { (sql, parameterMap) ->
-                using(sessionOf(dataSource)) { session ->
-                    session.single(
-                        queryOf(
-                            sql,
-                            parameterMap,
-                        ),
-                    ) { row -> row.int("ANTALL") } ?: 0
-                }
-            }
-        }
-
     suspend fun getOppdrag(
         attestert: Boolean?,
         fagSystemId: String?,
         gjelderId: String?,
         kodeFagOmraader: List<String>,
-        page: Int?,
-        rows: Int?,
     ): List<Oppdrag> =
         withContext(Dispatchers.IO) {
-            buildOppdragSqlQuery(attestert, fagSystemId, gjelderId, kodeFagOmraader, page, rows).let { (sql, parameterMap) ->
+            buildOppdragSqlQuery(attestert, fagSystemId, gjelderId, kodeFagOmraader).let { (sql, parameterMap) ->
                 using(sessionOf(dataSource)) { session ->
                     session.list(
                         queryOf(
@@ -258,8 +237,6 @@ class AttestasjonRepository(
         fagSystemId: String?,
         gjelderId: String?,
         kodeFagOmraader: List<String>,
-        page: Int? = null,
-        rows: Int? = null,
     ): Pair<String, Map<String, String>> {
         val parameterMap = mutableMapOf<String, String>()
         val sqlBuilder = StringBuilder()
@@ -364,24 +341,13 @@ class AttestasjonRepository(
         )
         sqlBuilder.append(")").appendLine()
 
-        if (page != null && rows != null) {
-            sqlBuilder.append(
-                """
-                SELECT *
-                FROM DistinctRows
-                OFFSET :OFFSET ROWS FETCH NEXT :ROWS ROWS ONLY
-                """.trimIndent(),
-            )
-            parameterMap["OFFSET"] = "${(page - 1) * rows}"
-            parameterMap["ROWS"] = "$rows"
-        } else {
-            sqlBuilder.append(
-                """
-                SELECT count(*) AS ANTALL 
-                FROM DistinctRows   
-                """.trimIndent(),
-            )
-        }
+        sqlBuilder.append(
+            """
+            SELECT *
+            FROM DistinctRows
+            """.trimIndent(),
+        )
+
         return Pair(sqlBuilder.toString(), parameterMap)
     }
 }

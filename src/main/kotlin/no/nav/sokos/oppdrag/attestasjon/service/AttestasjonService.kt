@@ -24,6 +24,8 @@ import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import java.time.Duration
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
+    private val ENHETSNUMMER_NOS = "8020"
+    private val ENHETSNUMMER_NOP = "4819"
 
 class AttestasjonService(
     private val attestasjonRepository: AttestasjonRepository = AttestasjonRepository(),
@@ -38,21 +40,14 @@ class AttestasjonService(
             .maximumSize(10_000)
             .buildAsync<String, List<Oppdrag>>()
 
-    private val oppdragCountCache =
-        Caffeine
-            .newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(60))
-            .maximumSize(10_000)
-            .buildAsync<String, Int>()
-
     suspend fun getOppdrag(
         gjelderId: String? = null,
         fagSystemId: String? = null,
         kodeFagGruppe: String? = null,
         kodeFagOmraade: String? = null,
         attestert: Boolean? = null,
-        page: Int? = null,
-        rows: Int? = null,
+        page: Int,
+        rows: Int,
         saksbehandler: NavIdent,
     ): Pair<List<Oppdrag>, Int> =
         coroutineScope {
@@ -77,26 +72,31 @@ class AttestasjonService(
                     else -> emptyList()
                 }
 
-            val totalCountDeferred =
-                async {
-                    oppdragCountCache.getAsync("$gjelderId-${fagomraader.joinToString()}-$fagSystemId-$attestert") {
-                        attestasjonRepository.getOppdragCount(attestert, fagSystemId, gjelderId, fagomraader)
-                    }
-                }
-
             val oppdragListeDeferred =
                 async {
-                    oppdragCache.getAsync("$gjelderId-${fagomraader.joinToString()}-$fagSystemId-$attestert-$page-$rows") {
-                        attestasjonRepository.getOppdrag(attestert, fagSystemId, gjelderId, fagomraader, page, rows)
+                    oppdragCache.getAsync("$gjelderId-${fagomraader.joinToString()}-$fagSystemId-$attestert") {
+                        attestasjonRepository.getOppdrag(attestert, fagSystemId, gjelderId, fagomraader)
                     }
                 }
 
-            val totalCount = totalCountDeferred.await()
-            val oppdragListe = oppdragListeDeferred.await()
+            val oppdragListe = oppdragListeDeferred.await().filter { harEnhetstilgang(it, saksbehandler) }
+            val totalCount = oppdragListe.size
+
             val skjermingMap = skjermingService.getSkjermingForIdentListe(oppdragListe.map { it.gjelderId }, saksbehandler)
-            val data = oppdragListe.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.gjelderId] == true) }
+            val data = oppdragListe
+                .subList((page - 1) * rows, Math.min(page * rows, totalCount))
+                .map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.gjelderId] == true) }
             Pair(data, if (data.size > totalCount) data.size else totalCount)
         }
+
+    private fun harEnhetstilgang(oppdrag:Oppdrag, saksbehandler: NavIdent): Boolean {
+                return when {
+                    saksbehandler.harTilgangTilLandsdekkende() -> true
+                    saksbehandler.harTilgangTilNos() && (ENHETSNUMMER_NOS == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOS == oppdrag.kostnadsSted) -> true
+                    saksbehandler.harTilgangTilNop() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
+                    else -> false
+                }
+    }
 
     fun getFagOmraade(): List<FagOmraade> = attestasjonRepository.getFagOmraader()
 
