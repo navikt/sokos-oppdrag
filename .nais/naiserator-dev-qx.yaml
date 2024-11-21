@@ -108,7 +108,7 @@ spec:
     - name: PDL_URL
       value: "https://pdl-api-q2.dev.intern.nav.no"
     - name: PDL_SCOPE
-      value: "api://dev-fss.pdl.pdl-api-q2/.default"
+      value: "api://dev-fss.pdl.pdl-api/.default"
     - name: GA_OKONOMI_FORTROLIG
       value: a0a00387-1830-47f6-af7e-3122c5940437
     - name: GA_OKONOMI_STRENGT_FORTROLIG
