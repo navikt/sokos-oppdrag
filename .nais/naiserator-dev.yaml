@@ -73,7 +73,7 @@ spec:
     - secret: db2license
       mountPath: /var/run/secrets/db2license
   envFrom:
-    - secret: oppdrag-credentials
+    - secret: oppdrag-q1-credentials
   env:
     - name: USE_AUTHENTICATION
       value: "true"
