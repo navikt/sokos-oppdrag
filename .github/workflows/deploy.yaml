@@ -42,8 +42,17 @@ jobs:
       resource: .nais/naiserator-dev.yaml
       image: ${{ needs.build.outputs.image }}
 
+  deploy-dev-qx:
+    needs: [build, deploy-dev]
+    name: Deploy to dev-fss-qx
+    uses: navikt/moby-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
+    with:
+      cluster: dev-fss
+      resource: .nais/naiserator-dev-qx.yaml
+      image: ${{ needs.build.outputs.image }}
+
 #  deploy-prod:
-#    needs: [build, deploy-dev]
+#    needs: [build, deploy-dev, deploy-dev-qx]
 #    name: Deploy to prod-fss
 #    uses: navikt/moby-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
 #    with:

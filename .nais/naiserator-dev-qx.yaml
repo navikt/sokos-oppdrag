@@ -1,0 +1,123 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: sokos-oppdrag-qx
+  namespace: okonomi
+  labels:
+    team: okonomi
+spec:
+  image: "{{{ image }}}"
+  port: 8080
+  replicas:
+    min: 1
+    max: 2
+    cpuThresholdPercentage: 75
+  liveness:
+    path: /internal/isAlive
+    initialDelay: 5
+    timeout: 5
+    periodSeconds: 5
+    failureThreshold: 30
+  readiness:
+    path: /internal/isReady
+    initialDelay: 5
+    periodSeconds: 5
+    timeout: 5
+  resources:
+    limits:
+      memory: 4096Mi
+    requests:
+      cpu: 2000m
+      memory: 4096Mi
+  ingresses:
+    - https://sokos-oppdrag-qx.intern.dev.nav.no
+    - https://sokos-oppdrag-qx.dev-fss-pub.nais.io
+  prometheus:
+    enabled: true
+    path: /internal/metrics
+  secureLogs:
+    enabled: true
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
+  azure:
+    application:
+      enabled: true
+      tenant: trygdeetaten.no
+      allowAllUsers: true
+      claims:
+        extra:
+          - NAVident
+        groups:
+          - id: a0a00387-1830-47f6-af7e-3122c5940437 # 0000-GA-okonomi-fortrolig
+          - id: 9d135c69-105c-4364-86f4-e22916758e93 # 0000-GA-okonomi-strengt_fortrolig
+          - id: 1c7eec30-e0b3-4374-a175-13692bd299a3 # 0000-GA-okonomi-egne_ansatte
+          - id: ae748b4f-90d8-4635-afb6-60c24122a640 # 0000-GA-SOKOS-MF-Attestasjon-Landsdekkende-READ
+          - id: c641ea06-9d84-4320-9f77-4df2ab8042c3 # 0000-GA-SOKOS-MF-Attestasjon-Landsdekkende-WRITE
+          - id: 5785b537-7a62-4c81-bb09-27e42e8146cd # 0000-GA-SOKOS-MF-Attestasjon-NOP-READ
+          - id: c67369c0-9918-4f31-a952-121fc9d6d9e3 # 0000-GA-SOKOS-MF-Attestasjon-NOP-WRITE
+          - id: c8b782d6-12fd-4e1b-abed-04c6b09ad4e8 # 0000-GA-SOKOS-MF-Attestasjon-NOS-READ
+          - id: b02c819d-91e5-4cac-baf5-3d2411869adf # 0000-GA-SOKOS-MF-Attestasjon-NOS-WRITE
+  accessPolicy:
+    inbound:
+      rules:
+        - application: azure-token-generator
+          namespace: aura
+          cluster: dev-gcp
+        - application: sokos-utbetalingsportalen
+          namespace: okonomi
+          cluster: dev-gcp
+  webproxy: true
+  filesFrom:
+    - secret: db2license
+      mountPath: /var/run/secrets/db2license
+  envFrom:
+    - secret: oppdrag-credentials
+  env:
+    - name: USE_AUTHENTICATION
+      value: "true"
+
+    # Db2
+    - name: DATABASE_HOST
+      value: "155.55.1.82"
+    - name: DATABASE_PORT
+      value: "5025"
+    - name: DATABASE_NAME
+      value: "QDB2"
+    - name: DATABASE_SCHEMA
+      value: "OS231QX"
+
+    # Ereg
+    - name: EREG_URL
+      value: "https://ereg-services-q2.dev.intern.nav.no"
+
+    # Nom
+    - name: SKJERMING_URL
+      value: "https://skjermede-personer-pip.intern.dev.nav.no"
+    - name: SKJERMING_CLIENT_ID
+      value: "api://dev-gcp.nom.skjermede-personer-pip/.default"
+    - name: GA_OKONOMI_EGNE_ANSATTE
+      value: 1c7eec30-e0b3-4374-a175-13692bd299a3
+
+    # Tp
+    - name: TP_URL
+      value: "https://tp-q2.dev.intern.nav.no"
+
+    # Pdl
+    - name: PDL_URL
+      value: "https://pdl-api-q2.dev.intern.nav.no"
+    - name: PDL_SCOPE
+      value: "api://dev-fss.pdl.pdl-api-q2/.default"
+    - name: GA_OKONOMI_FORTROLIG
+      value: a0a00387-1830-47f6-af7e-3122c5940437
+    - name: GA_OKONOMI_STRENGT_FORTROLIG
+      value: 9d135c69-105c-4364-86f4-e22916758e93
+
+    # ZOS-Connect
+    - name: ZOS_URL
+      value: "https://155.55.1.82:9080/osattestasjonapi"
+
+    # Utbetalingsportalen
+    - name: GA_SOKOS_MF_Attestasjon_WRITE
+      value: e1e9c6ba-114f-4b71-adf1-3db2f1608759
