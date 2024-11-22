@@ -18,35 +18,14 @@ import no.nav.sokos.oppdrag.config.DatabaseConfig
 class AttestasjonRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource(),
 ) {
-    suspend fun getOppdragCount(
-        attestert: Boolean?,
-        fagSystemId: String?,
-        gjelderId: String?,
-        kodeFagOmraader: List<String>,
-    ): Int =
-        withContext(Dispatchers.IO) {
-            buildOppdragSqlQuery(attestert, fagSystemId, gjelderId, kodeFagOmraader).let { (sql, parameterMap) ->
-                using(sessionOf(dataSource)) { session ->
-                    session.single(
-                        queryOf(
-                            sql,
-                            parameterMap,
-                        ),
-                    ) { row -> row.int("ANTALL") } ?: 0
-                }
-            }
-        }
-
     suspend fun getOppdrag(
         attestert: Boolean?,
         fagSystemId: String?,
         gjelderId: String?,
         kodeFagOmraader: List<String>,
-        page: Int?,
-        rows: Int?,
     ): List<Oppdrag> =
         withContext(Dispatchers.IO) {
-            buildOppdragSqlQuery(attestert, fagSystemId, gjelderId, kodeFagOmraader, page, rows).let { (sql, parameterMap) ->
+            buildOppdragSqlQuery(attestert, fagSystemId, gjelderId, kodeFagOmraader).let { (sql, parameterMap) ->
                 using(sessionOf(dataSource)) { session ->
                     session.list(
                         queryOf(
@@ -258,8 +237,6 @@ class AttestasjonRepository(
         fagSystemId: String?,
         gjelderId: String?,
         kodeFagOmraader: List<String>,
-        page: Int? = null,
-        rows: Int? = null,
     ): Pair<String, Map<String, String>> {
         val parameterMap = mutableMapOf<String, String>()
         val sqlBuilder = StringBuilder()
@@ -321,8 +298,9 @@ class AttestasjonRepository(
                                                                        AND ANDRESTATUSER.OPPDRAGS_ID = T_LINJE_STATUS.OPPDRAGS_ID
                                                                        AND ANDRESTATUSER.KODE_STATUS IN ('IKAT', 'ATTE', 'HVIL', 'REAK', 'FBER', 'LOPE')
                                                                        AND ANDRESTATUSER.DATO_FOM >= T_LINJE_STATUS.DATO_FOM
-                                                                       AND ANDRESTATUSER.TIDSPKT_REG > KORRANNUOPPH.TIDSPKT_REG))),   
-            DistinctRows AS (SELECT DISTINCT OS.KODE_STATUS,
+                                                                       AND ANDRESTATUSER.TIDSPKT_REG > KORRANNUOPPH.TIDSPKT_REG)))
+                                                                       
+            SELECT DISTINCT OS.KODE_STATUS,
                     TRIM(O.OPPDRAGS_ID)                                AS OPPDRAGS_ID,
                     TRIM(O.FAGSYSTEM_ID)                               AS FAGSYSTEM_ID,
                     TRIM(O.OPPDRAG_GJELDER_ID)                         AS OPPDRAG_GJELDER_ID,
@@ -362,26 +340,6 @@ class AttestasjonRepository(
                 ${attestert?.let { " WHERE L.ATTESTERT = '${if (it) "J" else "N"}'" } ?: ""}    
             """.trimIndent(),
         )
-        sqlBuilder.append(")").appendLine()
-
-        if (page != null && rows != null) {
-            sqlBuilder.append(
-                """
-                SELECT *
-                FROM DistinctRows
-                OFFSET :OFFSET ROWS FETCH NEXT :ROWS ROWS ONLY
-                """.trimIndent(),
-            )
-            parameterMap["OFFSET"] = "${(page - 1) * rows}"
-            parameterMap["ROWS"] = "$rows"
-        } else {
-            sqlBuilder.append(
-                """
-                SELECT count(*) AS ANTALL 
-                FROM DistinctRows   
-                """.trimIndent(),
-            )
-        }
         return Pair(sqlBuilder.toString(), parameterMap)
     }
 }

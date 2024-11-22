@@ -201,7 +201,7 @@ components:
         data:
           type: array
           items:
-            type: object
+            $ref: "#/components/schemas/OppdragDTO"
         page:
           type: integer
           example: 0
@@ -255,7 +255,7 @@ components:
         kode:
           type: string
 
-    Oppdrag:
+    OppdragDTO:
       type: object
       properties:
         ansvarsSted:
@@ -279,6 +279,8 @@ components:
         oppdragsId:
           type: integer
         erSkjermetForSaksbehandler:
+          type: boolean
+        hasWriteAccess:
           type: boolean
 
     OppdragsdetaljerDTO:

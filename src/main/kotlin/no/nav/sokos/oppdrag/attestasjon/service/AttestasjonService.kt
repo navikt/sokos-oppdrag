@@ -1,5 +1,6 @@
 package no.nav.sokos.oppdrag.attestasjon.service
 
+import com.github.benmanes.caffeine.cache.AsyncCache
 import com.github.benmanes.caffeine.cache.Caffeine
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -10,6 +11,8 @@ import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.ZOsResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
+import no.nav.sokos.oppdrag.attestasjon.domain.toDTO
+import no.nav.sokos.oppdrag.attestasjon.dto.OppdragDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
@@ -24,38 +27,32 @@ import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import java.time.Duration
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
+const val ENHETSNUMMER_NOS = "8020"
+const val ENHETSNUMMER_NOP = "4819"
 
 class AttestasjonService(
     private val attestasjonRepository: AttestasjonRepository = AttestasjonRepository(),
     private val auditLogger: AuditLogger = AuditLogger(),
     private val zosConnectService: ZOSConnectService = ZOSConnectService(),
     private val skjermingService: SkjermingService = SkjermingService(),
+    private val oppdragCache: AsyncCache<String, List<Oppdrag>> =
+        Caffeine.newBuilder()
+            .expireAfterWrite(Duration.ofMinutes(60))
+            .maximumSize(10_000)
+            .buildAsync(),
 ) {
-    private val oppdragCache =
-        Caffeine
-            .newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(60))
-            .maximumSize(10_000)
-            .buildAsync<String, List<Oppdrag>>()
-
-    private val oppdragCountCache =
-        Caffeine
-            .newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(60))
-            .maximumSize(10_000)
-            .buildAsync<String, Int>()
-
     suspend fun getOppdrag(
         gjelderId: String? = null,
         fagSystemId: String? = null,
         kodeFagGruppe: String? = null,
         kodeFagOmraade: String? = null,
         attestert: Boolean? = null,
-        page: Int? = null,
-        rows: Int? = null,
+        page: Int,
+        rows: Int,
         saksbehandler: NavIdent,
-    ): Pair<List<Oppdrag>, Int> =
+    ): Pair<List<OppdragDTO>, Int> =
         coroutineScope {
+            var verifiedSkjermingForGjelderId = false
             if (!gjelderId.isNullOrBlank()) {
                 secureLogger.info { "Henter attestasjonsdata for gjelderId: $gjelderId" }
                 auditLogger.auditLog(
@@ -68,6 +65,7 @@ class AttestasjonService(
                 if ((gjelderId.toLong() in 1_000_000_001..79_999_999_999) && skjermingService.getSkjermingForIdent(gjelderId, saksbehandler)) {
                     throw AttestasjonException("Mangler rettigheter til å se informasjon!")
                 }
+                verifiedSkjermingForGjelderId = true
             }
 
             val fagomraader =
@@ -77,25 +75,53 @@ class AttestasjonService(
                     else -> emptyList()
                 }
 
-            val totalCountDeferred =
-                async {
-                    oppdragCountCache.getAsync("$gjelderId-${fagomraader.joinToString()}-$fagSystemId-$attestert") {
-                        attestasjonRepository.getOppdragCount(attestert, fagSystemId, gjelderId, fagomraader)
-                    }
-                }
-
             val oppdragListeDeferred =
                 async {
-                    oppdragCache.getAsync("$gjelderId-${fagomraader.joinToString()}-$fagSystemId-$attestert-$page-$rows") {
-                        attestasjonRepository.getOppdrag(attestert, fagSystemId, gjelderId, fagomraader, page, rows)
+                    oppdragCache.getAsync("$gjelderId-${fagomraader.joinToString()}-$fagSystemId-$attestert") {
+                        attestasjonRepository.getOppdrag(attestert, fagSystemId, gjelderId, fagomraader)
                     }
                 }
 
-            val totalCount = totalCountDeferred.await()
-            val oppdragListe = oppdragListeDeferred.await()
-            val skjermingMap = skjermingService.getSkjermingForIdentListe(oppdragListe.map { it.gjelderId }, saksbehandler)
-            val data = oppdragListe.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.gjelderId] == true) }
+            val temp = oppdragListeDeferred.await()
+            val oppdragListe = temp.filter { hasSaksbehandlerReadAccess(it, saksbehandler) }
+            val totalCount = oppdragListe.size
+
+            val data =
+                oppdragListe
+                    .subList((page - 1) * rows, Math.min(page * rows, totalCount))
+                    .map { it.toDTO() }
+                    .let { list ->
+                        if (verifiedSkjermingForGjelderId) {
+                            list.map { it.copy(erSkjermetForSaksbehandler = false) }
+                        } else {
+                            val skjermingMap = skjermingService.getSkjermingForIdentListe(list.map { it.gjelderId }, saksbehandler)
+                            list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.gjelderId] == true) }
+                        }
+                    }
+                    .map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, saksbehandler)) }
             Pair(data, if (data.size > totalCount) data.size else totalCount)
+        }
+
+    private fun hasSaksbehandlerReadAccess(
+        oppdrag: Oppdrag,
+        saksbehandler: NavIdent,
+    ): Boolean =
+        when {
+            saksbehandler.hasReadAccessLandsdekkende() -> true
+            saksbehandler.hasReadAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOS == oppdrag.kostnadsSted) -> true
+            saksbehandler.hasReadAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
+            else -> false
+        }
+
+    private fun hasSaksbehandlerWriteAccess(
+        oppdrag: OppdragDTO,
+        saksbehandler: NavIdent,
+    ): Boolean =
+        when {
+            saksbehandler.hasWriteAccessLandsdekkende() -> true
+            saksbehandler.hasWriteAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOS == oppdrag.kostnadsSted) -> true
+            saksbehandler.hasWriteAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
+            else -> false
         }
 
     fun getFagOmraade(): List<FagOmraade> = attestasjonRepository.getFagOmraader()

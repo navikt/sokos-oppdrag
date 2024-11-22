@@ -27,11 +27,13 @@ import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.ZOsResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
-import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
+import no.nav.sokos.oppdrag.attestasjon.dto.OppdragDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
+import no.nav.sokos.oppdrag.attestasjon.utils.GJELDER_ID
+import no.nav.sokos.oppdrag.attestasjon.utils.Testdata.oppdragDTOMockdata
 import no.nav.sokos.oppdrag.common.dto.PaginatedDTO
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.ApiError
@@ -58,23 +60,7 @@ internal class AttestasjonApiTest :
         }
 
         test("søk etter oppdrag med gyldig gjelderId returnerer 200 OK") {
-            val oppdragsListe =
-                List(11) {
-                    Oppdrag(
-                        "1337",
-                        1,
-                        "navnFaggruppe",
-                        "navnFagomraade",
-                        "123456789",
-                        "12345678901",
-                        "kodeFaggruppe",
-                        "kodeFagomraade",
-                        "8128",
-                        987654,
-                        erSkjermetForSaksbehandler = true,
-                    )
-                }
-
+            val oppdragsListe = List(11) { oppdragDTOMockdata }
             coEvery { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any(), any(), any()) } returns Pair(oppdragsListe, oppdragsListe.size)
 
             val response =
@@ -83,7 +69,7 @@ internal class AttestasjonApiTest :
                     .filter(validationFilter)
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                    .body(OppdragsRequest(gjelderId = "123456789"))
+                    .body(OppdragsRequest(gjelderId = GJELDER_ID))
                     .port(PORT)
                     .post("$ATTESTASJON_BASE_API_PATH/sok")
                     .then()
@@ -92,7 +78,7 @@ internal class AttestasjonApiTest :
                     .extract()
                     .response()
 
-            val paginateResponse = Json.decodeFromString<PaginatedDTO<Oppdrag>>(response.body.asString())
+            val paginateResponse = Json.decodeFromString<PaginatedDTO<OppdragDTO>>(response.body.asString())
             paginateResponse.data shouldBe oppdragsListe
             paginateResponse.page shouldBe 1
             paginateResponse.rows shouldBe 10
