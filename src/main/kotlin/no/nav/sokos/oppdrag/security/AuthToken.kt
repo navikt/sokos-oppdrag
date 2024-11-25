@@ -20,6 +20,11 @@ object AuthToken {
         val groupAccess = PropertiesConfig.AzureAdProperties().groupAccess
         val groups = groupsFromOboToken.mapNotNull { groupAccess[it] }
 
+        println("navIdent: $navIdent")
+        println("groupsFromOboToken: $groupsFromOboToken")
+        println("groupAccess: $groupAccess")
+        println("groups: $groups")
+
         return NavIdent(navIdent, groups)
     }
 

@@ -2,6 +2,7 @@ package no.nav.sokos.oppdrag.attestasjon.service
 
 import com.github.benmanes.caffeine.cache.AsyncCache
 import com.github.benmanes.caffeine.cache.Caffeine
+import java.time.Duration
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.datetime.DateTimeUnit
@@ -24,7 +25,6 @@ import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.common.util.getAsync
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
-import java.time.Duration
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 const val ENHETSNUMMER_NOS = "8020"
@@ -102,28 +102,6 @@ class AttestasjonService(
             Pair(data, if (data.size > totalCount) data.size else totalCount)
         }
 
-    private fun hasSaksbehandlerReadAccess(
-        oppdrag: Oppdrag,
-        saksbehandler: NavIdent,
-    ): Boolean =
-        when {
-            saksbehandler.hasReadAccessLandsdekkende() -> true
-            saksbehandler.hasReadAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOS == oppdrag.kostnadsSted) -> true
-            saksbehandler.hasReadAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
-            else -> false
-        }
-
-    private fun hasSaksbehandlerWriteAccess(
-        oppdrag: OppdragDTO,
-        saksbehandler: NavIdent,
-    ): Boolean =
-        when {
-            saksbehandler.hasWriteAccessLandsdekkende() -> true
-            saksbehandler.hasWriteAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOS == oppdrag.kostnadsSted) -> true
-            saksbehandler.hasWriteAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
-            else -> false
-        }
-
     fun getFagOmraade(): List<FagOmraade> = attestasjonRepository.getFagOmraader()
 
     fun getOppdragsdetaljer(
@@ -173,4 +151,38 @@ class AttestasjonService(
         attestasjonRequest: AttestasjonRequest,
         saksbehandler: NavIdent,
     ): ZOsResponse = zosConnectService.attestereOppdrag(attestasjonRequest, saksbehandler.ident)
+
+    private fun hasSaksbehandlerReadAccess(
+        oppdrag: Oppdrag,
+        saksbehandler: NavIdent,
+    ): Boolean {
+        println("READ ACCESS")
+        println("Rollene: ${saksbehandler.roller.joinToString()}")
+        println(" saksbehandler.hasReadAccessLandsdekkende(): ${saksbehandler.hasReadAccessLandsdekkende()}")
+        println(" saksbehandler.hasReadAccessNOS(): ${saksbehandler.hasReadAccessNOS()}")
+        println(" saksbehandler.hasReadAccessNOP(): ${saksbehandler.hasReadAccessNOP()}")
+        return when {
+            saksbehandler.hasReadAccessLandsdekkende() -> true
+            saksbehandler.hasReadAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOS == oppdrag.kostnadsSted) -> true
+            saksbehandler.hasReadAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
+            else -> true // TODO: skal være false
+        }
+    }
+
+    private fun hasSaksbehandlerWriteAccess(
+        oppdrag: OppdragDTO,
+        saksbehandler: NavIdent,
+    ): Boolean {
+        println("WRITE ACCESS")
+        println("Rollene: ${saksbehandler.roller.joinToString()}")
+        println(" saksbehandler.hasReadAccessLandsdekkende(): ${saksbehandler.hasReadAccessLandsdekkende()}")
+        println(" saksbehandler.hasReadAccessNOS(): ${saksbehandler.hasReadAccessNOS()}")
+        println(" saksbehandler.hasReadAccessNOP(): ${saksbehandler.hasReadAccessNOP()}")
+        return when {
+            saksbehandler.hasWriteAccessLandsdekkende() -> true
+            saksbehandler.hasWriteAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOS == oppdrag.kostnadsSted) -> true
+            saksbehandler.hasWriteAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
+            else -> false
+        }
+    }
 }
