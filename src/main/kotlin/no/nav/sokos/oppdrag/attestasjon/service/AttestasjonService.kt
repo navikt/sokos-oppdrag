@@ -2,7 +2,6 @@ package no.nav.sokos.oppdrag.attestasjon.service
 
 import com.github.benmanes.caffeine.cache.AsyncCache
 import com.github.benmanes.caffeine.cache.Caffeine
-import java.time.Duration
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.datetime.DateTimeUnit
@@ -25,6 +24,7 @@ import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.common.util.getAsync
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
+import java.time.Duration
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 const val ENHETSNUMMER_NOS = "8020"
