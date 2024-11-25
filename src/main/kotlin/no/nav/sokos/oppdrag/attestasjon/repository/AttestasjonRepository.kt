@@ -91,9 +91,12 @@ class AttestasjonRepository(
                     TRIM(L.KID)                  AS KID,
                     TRIM(L.UTBETALES_TIL_ID)     AS UTBETALES_TIL_ID,
                     TRIM(L.SKYLDNER_ID)          AS SKYLDNER_ID,
-                    TRIM(L.REFUNDERES_ID)        AS REFUNDERES_ID
+                    TRIM(L.REFUNDERES_ID)        AS REFUNDERES_ID,
+                    TRIM(kr.hovedkontonr)        AS HOVEDKONTONUMMER,
+                    TRIM(kr.underkontonr)        AS UNDERKONTONUMMER
             FROM T_OPPDRAGSLINJE L
                      JOIN T_LINJE_STATUS STATUSNY ON STATUSNY.LINJE_ID = L.LINJE_ID AND STATUSNY.OPPDRAGS_ID = L.OPPDRAGS_ID
+                     JOIN t_kontoregel kr ON kr.KODE_KLASSE = L.kode_klasse and kr.DATO_FOM <= current_date and kr.DATO_TOM >= current_date
             WHERE STATUSNY.KODE_STATUS = 'NY'
                AND NOT EXISTS(SELECT 1
                              FROM T_LINJE_STATUS KORRANNUOPPH
@@ -226,7 +229,7 @@ class AttestasjonRepository(
             sats = row.double("SATS"),
             typeSats = row.string("TYPE_SATS"),
             delytelseId = row.string("DELYTELSE_ID"),
-            kontonummer = "ikke_implementert",
+            kontonummer = row.string("HOVEDKONTONUMMER") + row.string("UNDERKONTONUMMER"),
             kid = row.stringOrNull("KID") ?: "null",
             skyldner = row.stringOrNull("SKYLDNER_ID") ?: "null",
             refusjonsid = row.stringOrNull("REFUNDERES_ID") ?: "null",
