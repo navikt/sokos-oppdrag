@@ -27,6 +27,7 @@ import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import java.time.Duration
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
+private val logger = KotlinLogging.logger {}
 const val ENHETSNUMMER_NOS = "8020"
 const val ENHETSNUMMER_NOP = "4819"
 
@@ -105,13 +106,19 @@ class AttestasjonService(
     private fun hasSaksbehandlerReadAccess(
         oppdrag: Oppdrag,
         saksbehandler: NavIdent,
-    ): Boolean =
-        when {
+    ): Boolean {
+        logger.info { "Rollene: ${saksbehandler.roller.joinToString()}" }
+        logger.info { " saksbehandler.hasReadAccessLandsdekkende(): ${saksbehandler.hasReadAccessLandsdekkende()}" }
+        logger.info { " saksbehandler.hasReadAccessNOS(): ${saksbehandler.hasReadAccessNOS()}" }
+        logger.info { " saksbehandler.hasReadAccessNOP(): ${saksbehandler.hasReadAccessNOP()}" }
+
+        return when {
             saksbehandler.hasReadAccessLandsdekkende() -> true
             saksbehandler.hasReadAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOS == oppdrag.kostnadsSted) -> true
             saksbehandler.hasReadAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
-            else -> false
+            else -> true
         }
+    }
 
     private fun hasSaksbehandlerWriteAccess(
         oppdrag: OppdragDTO,
