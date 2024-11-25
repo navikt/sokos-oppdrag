@@ -79,12 +79,12 @@ object PropertiesConfig {
                 getOrEmpty("GA_OKONOMI_EGNE_ANSATTE") to GRUPPE_EGNE_ANSATTE,
                 getOrEmpty("GA_OKONOMI_FORTROLIG") to GRUPPE_FORTROLIG,
                 getOrEmpty("GA_OKONOMI_STRENGT_FORTROLIG") to GRUPPE_STRENGT_FORTROLIG,
-                getOrEmpty("GA_SOKOS_MF_Attestasjon_Landsdekkende_READ") to GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ,
-                getOrEmpty("GA_SOKOS_MF_Attestasjon_Landsdekkende_WRITE") to GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE,
-                getOrEmpty("GA_SOKOS_MF_Attestasjon_NOP_READ") to GRUPPE_ATTESTASJON_NOP_READ,
-                getOrEmpty("GA_SOKOS_MF_Attestasjon_NOP_WRITE") to GRUPPE_ATTESTASJON_NOP_WRITE,
-                getOrEmpty("GA_SOKOS_MF_Attestasjon_NOS_READ") to GRUPPE_ATTESTASJON_NOS_READ,
-                getOrEmpty("GA_SOKOS_MF_Attestasjon_NOS_WRITE") to GRUPPE_ATTESTASJON_NOS_WRITE,
+                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_LANDSDEKKENDE_READ") to GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ,
+                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_LANDSDEKKENDE_WRITE") to GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE,
+                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NOP_READ") to GRUPPE_ATTESTASJON_NOP_READ,
+                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NOP_WRITE") to GRUPPE_ATTESTASJON_NOP_WRITE,
+                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NOS_READ") to GRUPPE_ATTESTASJON_NOS_READ,
+                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NOS_WRITE") to GRUPPE_ATTESTASJON_NOS_WRITE,
             ),
     )
 

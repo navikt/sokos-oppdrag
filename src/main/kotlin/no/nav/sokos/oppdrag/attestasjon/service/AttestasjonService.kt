@@ -102,28 +102,6 @@ class AttestasjonService(
             Pair(data, if (data.size > totalCount) data.size else totalCount)
         }
 
-    private fun hasSaksbehandlerReadAccess(
-        oppdrag: Oppdrag,
-        saksbehandler: NavIdent,
-    ): Boolean =
-        when {
-            saksbehandler.hasReadAccessLandsdekkende() -> true
-            saksbehandler.hasReadAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOS == oppdrag.kostnadsSted) -> true
-            saksbehandler.hasReadAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
-            else -> false
-        }
-
-    private fun hasSaksbehandlerWriteAccess(
-        oppdrag: OppdragDTO,
-        saksbehandler: NavIdent,
-    ): Boolean =
-        when {
-            saksbehandler.hasWriteAccessLandsdekkende() -> true
-            saksbehandler.hasWriteAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOS == oppdrag.kostnadsSted) -> true
-            saksbehandler.hasWriteAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
-            else -> false
-        }
-
     fun getFagOmraade(): List<FagOmraade> = attestasjonRepository.getFagOmraader()
 
     fun getOppdragsdetaljer(
@@ -173,4 +151,26 @@ class AttestasjonService(
         attestasjonRequest: AttestasjonRequest,
         saksbehandler: NavIdent,
     ): ZOsResponse = zosConnectService.attestereOppdrag(attestasjonRequest, saksbehandler.ident)
+
+    private fun hasSaksbehandlerReadAccess(
+        oppdrag: Oppdrag,
+        saksbehandler: NavIdent,
+    ): Boolean =
+        when {
+            saksbehandler.hasReadAccessLandsdekkende() -> true
+            saksbehandler.hasReadAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOS == oppdrag.kostnadsSted) -> true
+            saksbehandler.hasReadAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
+            else -> false
+        }
+
+    private fun hasSaksbehandlerWriteAccess(
+        oppdrag: OppdragDTO,
+        saksbehandler: NavIdent,
+    ): Boolean =
+        when {
+            saksbehandler.hasWriteAccessLandsdekkende() -> true
+            saksbehandler.hasWriteAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOS == oppdrag.kostnadsSted) -> true
+            saksbehandler.hasWriteAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
+            else -> false
+        }
 }
