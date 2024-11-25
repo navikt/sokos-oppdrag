@@ -14,4 +14,9 @@ data class Oppdragslinje(
     val oppdragsId: Int,
     val sats: Double,
     val typeSats: String,
+    val kontonummer: String,
+    val kid: String,
+    val skyldner: String,
+    val refusjonsid: String,
+    val utbetalesTil: String,
 )

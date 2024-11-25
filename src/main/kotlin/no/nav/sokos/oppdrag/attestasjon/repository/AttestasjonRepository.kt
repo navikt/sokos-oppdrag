@@ -79,15 +79,19 @@ class AttestasjonRepository(
     fun getOppdragslinjer(oppdragsId: Int): List<Oppdragslinje> {
         val query =
             """
-            SELECT  L.OPPDRAGS_ID          AS OPPDRAGS_ID,
-                    L.LINJE_ID             AS LINJE_ID,
-                    TRIM(L.KODE_KLASSE)    AS KODE_KLASSE,
-                    L.DATO_VEDTAK_FOM      AS DATO_VEDTAK_FOM,
-                    L.DATO_VEDTAK_TOM      AS DATO_VEDTAK_TOM,
-                    L.ATTESTERT            AS ATTESTERT,
-                    L.SATS                 AS SATS,
-                    TRIM(L.TYPE_SATS)      AS TYPE_SATS,
-                    TRIM(L.DELYTELSE_ID)   AS DELYTELSE_ID
+            SELECT  L.OPPDRAGS_ID                AS OPPDRAGS_ID,
+                    L.LINJE_ID                   AS LINJE_ID,
+                    TRIM(L.KODE_KLASSE)          AS KODE_KLASSE,
+                    L.DATO_VEDTAK_FOM            AS DATO_VEDTAK_FOM,
+                    L.DATO_VEDTAK_TOM            AS DATO_VEDTAK_TOM,
+                    L.ATTESTERT                  AS ATTESTERT,
+                    L.SATS                       AS SATS,
+                    TRIM(L.TYPE_SATS)            AS TYPE_SATS,
+                    TRIM(L.DELYTELSE_ID)         AS DELYTELSE_ID,
+                    TRIM(L.KID)                  AS KID,
+                    TRIM(L.UTBETALES_TIL_ID)     AS UTBETALES_TIL_ID,
+                    TRIM(L.SKYLDNER_ID)          AS SKYLDNER_ID,
+                    TRIM(L.REFUNDERES_ID)        AS REFUNDERES_ID
             FROM T_OPPDRAGSLINJE L
                      JOIN T_LINJE_STATUS STATUSNY ON STATUSNY.LINJE_ID = L.LINJE_ID AND STATUSNY.OPPDRAGS_ID = L.OPPDRAGS_ID
             WHERE STATUSNY.KODE_STATUS = 'NY'
@@ -222,6 +226,11 @@ class AttestasjonRepository(
             sats = row.double("SATS"),
             typeSats = row.string("TYPE_SATS"),
             delytelseId = row.string("DELYTELSE_ID"),
+            kontonummer = "ikke_implementert",
+            kid = row.stringOrNull("KID") ?: "null",
+            skyldner = row.stringOrNull("SKYLDNER_ID") ?: "null",
+            refusjonsid = row.stringOrNull("REFUNDERES_ID") ?: "null",
+            utbetalesTil = row.stringOrNull("UTBETALES_TIL_ID") ?: "null",
         )
     }
 
