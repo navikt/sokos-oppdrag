@@ -232,12 +232,12 @@ class AttestasjonRepository(
             sats = row.double("SATS"),
             typeSats = row.string("TYPE_SATS"),
             delytelseId = row.string("DELYTELSE_ID"),
-            kontonummer = row.string("HOVEDKONTONUMMER") + row.string("UNDERKONTONUMMER"),
-            kid = row.stringOrNull("KID") ?: "null",
-            skyldner = row.stringOrNull("SKYLDNER_ID") ?: "null",
-            refusjonsid = row.stringOrNull("REFUNDERES_ID") ?: "null",
-            utbetalesTil = row.stringOrNull("UTBETALES_TIL_ID") ?: "null",
-            grad = row.intOrNull("grad") ?: 100,
+            grad = row.intOrNull("grad"),
+            kid = row.stringOrNull("KID"),
+            kontonummer = (row.stringOrNull("HOVEDKONTONUMMER") ?: "") + (row.stringOrNull("UNDERKONTONUMMER") ?: ""),
+            refusjonsid = row.stringOrNull("REFUNDERES_ID"),
+            skyldner = row.stringOrNull("SKYLDNER_ID"),
+            utbetalesTil = row.stringOrNull("UTBETALES_TIL_ID"),
         )
     }
 

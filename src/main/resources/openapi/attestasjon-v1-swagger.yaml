@@ -331,6 +331,25 @@ components:
           type: number
         typeSats:
           type: string
+        grad:
+            type: number
+            nullable: true
+        kid:
+            type: string
+            nullable: true
+        kontonummer:
+            type: string
+            nullable: true
+        utbetalesTil:
+            type: string
+            nullable: true
+        skyldner:
+            type: string
+            nullable: true
+        refusjonsid:
+            type: string
+            nullable: true
+
 
     ApiError:
       type: object
