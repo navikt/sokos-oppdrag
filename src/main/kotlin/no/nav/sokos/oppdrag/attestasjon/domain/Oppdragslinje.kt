@@ -19,4 +19,5 @@ data class Oppdragslinje(
     val skyldner: String,
     val refusjonsid: String,
     val utbetalesTil: String,
+    val grad: Int,
 )

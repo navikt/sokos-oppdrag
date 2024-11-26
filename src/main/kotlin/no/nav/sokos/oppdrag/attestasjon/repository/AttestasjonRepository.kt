@@ -93,11 +93,14 @@ class AttestasjonRepository(
                     TRIM(L.SKYLDNER_ID)          AS SKYLDNER_ID,
                     TRIM(L.REFUNDERES_ID)        AS REFUNDERES_ID,
                     TRIM(kr.hovedkontonr)        AS HOVEDKONTONUMMER,
-                    TRIM(kr.underkontonr)        AS UNDERKONTONUMMER
+                    TRIM(kr.underkontonr)        AS UNDERKONTONUMMER,
+                    g.grad                       as grad
             FROM T_OPPDRAGSLINJE L
                      JOIN T_LINJE_STATUS STATUSNY ON STATUSNY.LINJE_ID = L.LINJE_ID AND STATUSNY.OPPDRAGS_ID = L.OPPDRAGS_ID
                      JOIN t_kontoregel kr ON kr.KODE_KLASSE = L.kode_klasse and kr.DATO_FOM <= current_date and kr.DATO_TOM >= current_date
+                     LEFT JOIN T_GRAD g on g.linje_id = l.linje_id and g.oppdrags_id = l.oppdrags_id
             WHERE STATUSNY.KODE_STATUS = 'NY'
+               and (g.tidspkt_reg is null or g.tidspkt_reg = (select max(tidspkt_reg) from t_grad where linje_id = l.linje_id and oppdrags_id = l.oppdrags_id))              
                AND NOT EXISTS(SELECT 1
                              FROM T_LINJE_STATUS KORRANNUOPPH
                              WHERE KORRANNUOPPH.LINJE_ID = L.LINJE_ID
@@ -234,6 +237,7 @@ class AttestasjonRepository(
             skyldner = row.stringOrNull("SKYLDNER_ID") ?: "null",
             refusjonsid = row.stringOrNull("REFUNDERES_ID") ?: "null",
             utbetalesTil = row.stringOrNull("UTBETALES_TIL_ID") ?: "null",
+            grad = row.intOrNull("grad") ?: 100,
         )
     }
 
