@@ -94,7 +94,7 @@ class AttestasjonRepository(
                     TRIM(L.REFUNDERES_ID)        AS REFUNDERES_ID,
                     TRIM(kr.hovedkontonr)        AS HOVEDKONTONUMMER,
                     TRIM(kr.underkontonr)        AS UNDERKONTONUMMER,
-                    g.grad                       as grad
+                    G.GRAD                       as GRAD
             FROM T_OPPDRAGSLINJE L
                      JOIN T_LINJE_STATUS STATUSNY ON STATUSNY.LINJE_ID = L.LINJE_ID AND STATUSNY.OPPDRAGS_ID = L.OPPDRAGS_ID
                      JOIN t_kontoregel kr ON kr.KODE_KLASSE = L.kode_klasse and kr.DATO_FOM <= current_date and kr.DATO_TOM >= current_date
@@ -232,7 +232,7 @@ class AttestasjonRepository(
             sats = row.double("SATS"),
             typeSats = row.string("TYPE_SATS"),
             delytelseId = row.string("DELYTELSE_ID"),
-            grad = row.intOrNull("grad"),
+            grad = row.intOrNull("GRAD"),
             kid = row.stringOrNull("KID"),
             kontonummer = (row.stringOrNull("HOVEDKONTONUMMER") ?: "") + (row.stringOrNull("UNDERKONTONUMMER") ?: ""),
             refusjonsid = row.stringOrNull("REFUNDERES_ID"),
