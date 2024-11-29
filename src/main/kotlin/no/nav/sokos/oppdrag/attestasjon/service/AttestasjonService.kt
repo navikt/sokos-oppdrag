@@ -37,7 +37,7 @@ class AttestasjonService(
     private val skjermingService: SkjermingService = SkjermingService(),
     private val oppdragCache: AsyncCache<String, List<Oppdrag>> =
         Caffeine.newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(60))
+            .expireAfterWrite(Duration.ofMinutes(5))
             .maximumSize(10_000)
             .buildAsync(),
 ) {
