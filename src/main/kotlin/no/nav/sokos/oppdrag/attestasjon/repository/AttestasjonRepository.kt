@@ -79,18 +79,28 @@ class AttestasjonRepository(
     fun getOppdragslinjer(oppdragsId: Int): List<Oppdragslinje> {
         val query =
             """
-            SELECT  L.OPPDRAGS_ID          AS OPPDRAGS_ID,
-                    L.LINJE_ID             AS LINJE_ID,
-                    TRIM(L.KODE_KLASSE)    AS KODE_KLASSE,
-                    L.DATO_VEDTAK_FOM      AS DATO_VEDTAK_FOM,
-                    L.DATO_VEDTAK_TOM      AS DATO_VEDTAK_TOM,
-                    L.ATTESTERT            AS ATTESTERT,
-                    L.SATS                 AS SATS,
-                    TRIM(L.TYPE_SATS)      AS TYPE_SATS,
-                    TRIM(L.DELYTELSE_ID)   AS DELYTELSE_ID
+            SELECT  L.OPPDRAGS_ID                AS OPPDRAGS_ID,
+                    L.LINJE_ID                   AS LINJE_ID,
+                    TRIM(L.KODE_KLASSE)          AS KODE_KLASSE,
+                    L.DATO_VEDTAK_FOM            AS DATO_VEDTAK_FOM,
+                    L.DATO_VEDTAK_TOM            AS DATO_VEDTAK_TOM,
+                    L.ATTESTERT                  AS ATTESTERT,
+                    L.SATS                       AS SATS,
+                    TRIM(L.TYPE_SATS)            AS TYPE_SATS,
+                    TRIM(L.DELYTELSE_ID)         AS DELYTELSE_ID,
+                    TRIM(L.KID)                  AS KID,
+                    TRIM(L.UTBETALES_TIL_ID)     AS UTBETALES_TIL_ID,
+                    TRIM(L.SKYLDNER_ID)          AS SKYLDNER_ID,
+                    TRIM(L.REFUNDERES_ID)        AS REFUNDERES_ID,
+                    TRIM(kr.hovedkontonr)        AS HOVEDKONTONUMMER,
+                    TRIM(kr.underkontonr)        AS UNDERKONTONUMMER,
+                    G.GRAD                       as GRAD
             FROM T_OPPDRAGSLINJE L
                      JOIN T_LINJE_STATUS STATUSNY ON STATUSNY.LINJE_ID = L.LINJE_ID AND STATUSNY.OPPDRAGS_ID = L.OPPDRAGS_ID
+                     JOIN t_kontoregel kr ON kr.KODE_KLASSE = L.kode_klasse and kr.DATO_FOM <= current_date and kr.DATO_TOM >= current_date
+                     LEFT JOIN T_GRAD g on g.linje_id = l.linje_id and g.oppdrags_id = l.oppdrags_id
             WHERE STATUSNY.KODE_STATUS = 'NY'
+               and (g.tidspkt_reg is null or g.tidspkt_reg = (select max(tidspkt_reg) from t_grad where linje_id = l.linje_id and oppdrags_id = l.oppdrags_id))              
                AND NOT EXISTS(SELECT 1
                              FROM T_LINJE_STATUS KORRANNUOPPH
                              WHERE KORRANNUOPPH.LINJE_ID = L.LINJE_ID
@@ -222,6 +232,12 @@ class AttestasjonRepository(
             sats = row.double("SATS"),
             typeSats = row.string("TYPE_SATS"),
             delytelseId = row.string("DELYTELSE_ID"),
+            grad = row.intOrNull("GRAD"),
+            kid = row.stringOrNull("KID"),
+            kontonummer = (row.stringOrNull("HOVEDKONTONUMMER") ?: "") + (row.stringOrNull("UNDERKONTONUMMER") ?: ""),
+            refusjonsid = row.stringOrNull("REFUNDERES_ID"),
+            skyldner = row.stringOrNull("SKYLDNER_ID"),
+            utbetalesTil = row.stringOrNull("UTBETALES_TIL_ID"),
         )
     }
 
