@@ -46,7 +46,7 @@ val natpryceVersion = "1.6.10.0"
 
 // Database
 val hikariVersion = "6.2.1"
-val db2JccVersion = "12.1.0.0"
+val db2JccVersion = "11.5.9.0"
 val kotliqueryVersion = "1.9.0"
 
 // GraphQL
