@@ -47,6 +47,7 @@ class AttestasjonService(
         kodeFagGruppe: String? = null,
         kodeFagOmraade: String? = null,
         attestert: Boolean? = null,
+        sortKey: String? = null,
         page: Int,
         rows: Int,
         saksbehandler: NavIdent,
@@ -99,8 +100,19 @@ class AttestasjonService(
                         }
                     }
                     .map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, saksbehandler)) }
+                    .sortedWith(sortOppdrag(sortKey))
             Pair(data, if (data.size > totalCount) data.size else totalCount)
         }
+
+    private fun sortOppdrag(sortKey: String?): Comparator<in OppdragDTO> {
+        return when (sortKey) {
+            "gjelderId" -> compareBy { it.gjelderId }
+            "fagGruppe" -> compareBy { it.fagGruppe }
+            "fagSystemId" -> compareBy { it.fagSystemId }
+            "fagOmraade" -> compareBy { it.fagOmraade }
+            else -> Comparator { _, _ -> 0 }
+        }
+    }
 
     fun getFagOmraade(): List<FagOmraade> = attestasjonRepository.getFagOmraader()
 
@@ -173,4 +185,9 @@ class AttestasjonService(
             saksbehandler.hasWriteAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
             else -> false
         }
+
+    /*private fun sortData(
+        data: List<OppdragDTO>,
+        sortKey: String?
+    )*/
 }

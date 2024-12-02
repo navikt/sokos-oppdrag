@@ -24,11 +24,12 @@ fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonSer
 
             val oppdragPair =
                 attestasjonService.getOppdrag(
-                    request.gjelderId,
-                    request.fagSystemId,
-                    request.kodeFagGruppe,
-                    request.kodeFagOmraade,
-                    request.attestert,
+                    gjelderId = request.gjelderId,
+                    fagSystemId = request.fagSystemId,
+                    kodeFagGruppe = request.kodeFagGruppe,
+                    kodeFagOmraade = request.kodeFagOmraade,
+                    attestert = request.attestert,
+                    sortKey = request.sortKey,
                     page,
                     rows,
                     saksbehandler,

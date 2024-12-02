@@ -9,4 +9,5 @@ data class OppdragsRequest(
     val kodeFagGruppe: String? = null,
     val kodeFagOmraade: String? = null,
     val attestert: Boolean? = null,
+    val sortKey: String? = null,
 )
