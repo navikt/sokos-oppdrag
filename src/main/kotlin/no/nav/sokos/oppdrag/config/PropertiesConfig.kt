@@ -32,6 +32,7 @@ object PropertiesConfig {
             mapOf(
                 "APPLICATION_PROFILE" to Profile.LOCAL.toString(),
                 "USE_AUTHENTICATION" to "false",
+                "ZOS_URL" to "http://155.55.1.82:9080/osattestasjonapi",
             ),
         )
 

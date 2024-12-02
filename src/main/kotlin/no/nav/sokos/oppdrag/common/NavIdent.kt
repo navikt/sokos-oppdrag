@@ -15,39 +15,21 @@ data class NavIdent(
     val ident: String,
     val roller: List<String> = emptyList(),
 ) {
-    fun hasAccessFortrolig(): Boolean {
-        return roller.contains(GRUPPE_FORTROLIG)
-    }
+    fun hasAccessFortrolig(): Boolean = roller.contains(GRUPPE_FORTROLIG)
 
-    fun hasAccessStrengtFortrolig(): Boolean {
-        return roller.contains(GRUPPE_STRENGT_FORTROLIG)
-    }
+    fun hasAccessStrengtFortrolig(): Boolean = roller.contains(GRUPPE_STRENGT_FORTROLIG)
 
-    fun hasAccessEgneAnsatte(): Boolean {
-        return roller.contains(GRUPPE_EGNE_ANSATTE)
-    }
+    fun hasAccessEgneAnsatte(): Boolean = roller.contains(GRUPPE_EGNE_ANSATTE)
 
-    fun hasReadAccessNOS(): Boolean {
-        return roller.contains(GRUPPE_ATTESTASJON_NOS_READ)
-    }
+    fun hasReadAccessNOS(): Boolean = roller.contains(GRUPPE_ATTESTASJON_NOS_READ)
 
-    fun hasWriteAccessNOS(): Boolean {
-        return roller.contains(GRUPPE_ATTESTASJON_NOS_WRITE)
-    }
+    fun hasWriteAccessNOS(): Boolean = roller.contains(GRUPPE_ATTESTASJON_NOS_WRITE)
 
-    fun hasReadAccessNOP(): Boolean {
-        return roller.contains(GRUPPE_ATTESTASJON_NOP_READ)
-    }
+    fun hasReadAccessNOP(): Boolean = roller.contains(GRUPPE_ATTESTASJON_NOP_READ)
 
-    fun hasWriteAccessNOP(): Boolean {
-        return roller.contains(GRUPPE_ATTESTASJON_NOP_WRITE)
-    }
+    fun hasWriteAccessNOP(): Boolean = roller.contains(GRUPPE_ATTESTASJON_NOP_WRITE)
 
-    fun hasReadAccessLandsdekkende(): Boolean {
-        return roller.contains(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ)
-    }
+    fun hasReadAccessLandsdekkende(): Boolean = roller.contains(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ)
 
-    fun hasWriteAccessLandsdekkende(): Boolean {
-        return roller.contains(GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE)
-    }
+    fun hasWriteAccessLandsdekkende(): Boolean = roller.contains(GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE)
 }

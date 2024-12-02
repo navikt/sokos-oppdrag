@@ -41,7 +41,8 @@ private val attestasjonRepository = mockk<AttestasjonRepository>()
 private val zosConnectService: ZOSConnectService = mockk<ZOSConnectService>()
 private val skjermingService = mockk<SkjermingService>()
 private val oppdragCache =
-    Caffeine.newBuilder()
+    Caffeine
+        .newBuilder()
         .expireAfterWrite(Duration.ofMinutes(60))
         .maximumSize(10_000)
         .buildAsync<String, List<Oppdrag>>()
