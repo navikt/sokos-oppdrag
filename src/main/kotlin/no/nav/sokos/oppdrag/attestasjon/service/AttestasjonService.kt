@@ -21,7 +21,8 @@ import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
-import no.nav.sokos.oppdrag.common.util.getAsync
+import no.nav.sokos.oppdrag.common.util.CacheUtil
+import no.nav.sokos.oppdrag.common.util.CacheUtil.getAsync
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import java.time.Duration
@@ -36,7 +37,8 @@ class AttestasjonService(
     private val zosConnectService: ZOSConnectService = ZOSConnectService(),
     private val skjermingService: SkjermingService = SkjermingService(),
     private val oppdragCache: AsyncCache<String, List<Oppdrag>> =
-        Caffeine.newBuilder()
+        Caffeine
+            .newBuilder()
             .expireAfterWrite(Duration.ofMinutes(60))
             .maximumSize(10_000)
             .buildAsync(),
@@ -97,8 +99,7 @@ class AttestasjonService(
                             val skjermingMap = skjermingService.getSkjermingForIdentListe(list.map { it.gjelderId }, saksbehandler)
                             list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.gjelderId] == true) }
                         }
-                    }
-                    .map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, saksbehandler)) }
+                    }.map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, saksbehandler)) }
             Pair(data, if (data.size > totalCount) data.size else totalCount)
         }
 
@@ -148,9 +149,25 @@ class AttestasjonService(
     }
 
     suspend fun attestereOppdrag(
-        attestasjonRequest: AttestasjonRequest,
+        request: AttestasjonRequest,
         saksbehandler: NavIdent,
-    ): ZOsResponse = zosConnectService.attestereOppdrag(attestasjonRequest, saksbehandler.ident)
+    ): ZOsResponse {
+        val response = zosConnectService.attestereOppdrag(request, saksbehandler.ident)
+        removeOppdragCache(request.gjelderId, request.fagSystemId, request.kodeFagOmraade)
+        return response
+    }
+
+    fun removeOppdragCache(
+        gjelderId: String? = null,
+        fagSystemId: String? = null,
+        fagOmraade: String? = null,
+    ) {
+        oppdragCache.asMap().keys.forEach { key ->
+            if (key.contains(gjelderId.orEmpty()) || CacheUtil.isFagSystemIdPartOfCacheKey(key, fagSystemId.orEmpty()) || key.contains(fagOmraade.orEmpty())) {
+                oppdragCache.asMap().remove(key)
+            }
+        }
+    }
 
     private fun hasSaksbehandlerReadAccess(
         oppdrag: Oppdrag,
