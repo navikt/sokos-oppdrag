@@ -89,6 +89,7 @@ class AttestasjonService(
 
             val data =
                 oppdragListe
+                    .sortedWith(sortOppdrag(sortKey))
                     .subList((page - 1) * rows, Math.min(page * rows, totalCount))
                     .map { it.toDTO() }
                     .let { list ->
@@ -100,11 +101,10 @@ class AttestasjonService(
                         }
                     }
                     .map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, saksbehandler)) }
-                    .sortedWith(sortOppdrag(sortKey))
             Pair(data, if (data.size > totalCount) data.size else totalCount)
         }
 
-    private fun sortOppdrag(sortKey: String?): Comparator<in OppdragDTO> {
+    private fun sortOppdrag(sortKey: String?): Comparator<in Oppdrag> {
         return when (sortKey) {
             "gjelderId" -> compareBy { it.gjelderId }
             "fagGruppe" -> compareBy { it.fagGruppe }
@@ -185,9 +185,4 @@ class AttestasjonService(
             saksbehandler.hasWriteAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
             else -> false
         }
-
-    /*private fun sortData(
-        data: List<OppdragDTO>,
-        sortKey: String?
-    )*/
 }
