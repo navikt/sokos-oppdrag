@@ -21,6 +21,7 @@ fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonSer
             val saksbehandler = getSaksbehandler(call)
             val page = call.parameters["page"]?.toInt() ?: 1
             val rows = call.parameters["rows"]?.toInt() ?: 10
+            val sortKey = call.parameters["sortKey"]
 
             val oppdragPair =
                 attestasjonService.getOppdrag(
@@ -29,7 +30,7 @@ fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonSer
                     kodeFagGruppe = request.kodeFagGruppe,
                     kodeFagOmraade = request.kodeFagOmraade,
                     attestert = request.attestert,
-                    sortKey = request.sortKey,
+                    sortKey = sortKey,
                     page,
                     rows,
                     saksbehandler,
