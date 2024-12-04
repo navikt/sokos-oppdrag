@@ -8,13 +8,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    kotlin("jvm") version "2.0.21"
-    kotlin("plugin.serialization") version "2.0.21"
+    kotlin("jvm") version "2.1.0"
+    kotlin("plugin.serialization") version "2.1.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.expediagroup.graphql") version "8.2.1"
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
     id("org.jetbrains.kotlinx.kover") version "0.8.3"
-    id("org.openapi.generator") version "7.9.0"
+    id("org.openapi.generator") version "7.10.0"
 }
 
 group = "no.nav.sokos"
@@ -45,7 +45,7 @@ val papertrailappVersion = "1.0.0"
 val natpryceVersion = "1.6.10.0"
 
 // Database
-val hikariVersion = "6.2.0"
+val hikariVersion = "6.2.1"
 val db2JccVersion = "11.5.9.0"
 val kotliqueryVersion = "1.9.0"
 
@@ -57,7 +57,7 @@ val caffeineVersion = "3.1.8"
 
 // Test
 val kotestVersion = "6.0.0.M1"
-val wiremockVersion = "3.9.2"
+val wiremockVersion = "3.10.0"
 val mockOAuth2ServerVersion = "2.1.10"
 val mockkVersion = "1.13.13"
 val swaggerRequestValidatorVersion = "2.43.0"

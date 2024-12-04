@@ -445,4 +445,10 @@ private fun mapToOppdragslinje(params: List<String>): Oppdragslinje =
         oppdragsId = params[1].toInt(),
         sats = params[7].toDouble(),
         typeSats = params[8],
+        grad = 100,
+        kid = "5678901234567890",
+        kontonummer = "12345678901",
+        refusjonsid = null,
+        skyldner = "98765432100",
+        utbetalesTil = "12345678900",
     )
