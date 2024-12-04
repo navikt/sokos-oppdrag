@@ -22,12 +22,11 @@ object CacheUtil {
         key: String,
         fagSystemId: String,
     ): Boolean {
-        val regex = """(?:[^-]+-){2}([^-]+)""".toRegex()
+        val regex = """^(?:[^-]*-){2}([^-]+(?:-[^-]+)*)-.*$""".toRegex()
         val match = regex.find(key)
         return match
             ?.groupValues
             ?.get(1)
-            ?.removeSuffix("%")
             ?.let { fagSystemId.startsWith(it) } ?: false
     }
 }
