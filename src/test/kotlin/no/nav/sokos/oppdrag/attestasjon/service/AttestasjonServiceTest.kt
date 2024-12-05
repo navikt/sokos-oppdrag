@@ -14,7 +14,7 @@ import kotlinx.datetime.LocalDate
 import no.nav.sokos.oppdrag.TestUtil.navIdent
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
-import no.nav.sokos.oppdrag.attestasjon.api.model.ZOsResponse
+import no.nav.sokos.oppdrag.attestasjon.api.model.ZosResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
@@ -369,7 +369,6 @@ internal class AttestasjonServiceTest :
         }
 
         test("attestasjon av oppdrag") {
-
             val request =
                 AttestasjonRequest(
                     "12345678900",
@@ -386,12 +385,41 @@ internal class AttestasjonServiceTest :
                 )
 
             val response =
-                ZOsResponse(
+                ZosResponse(
                     "Oppdatering vellykket. 1 linjer oppdatert",
                 )
 
             coEvery { zosConnectService.attestereOppdrag(any(), any()) } returns response
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE))
+
             attestasjonService.attestereOppdrag(request, navIdent) shouldBe response
+        }
+
+        test("attestasjon av oppdrag kaster exception når saksbehandler ikke har tilgang til personen pga. skjerming") {
+            val request =
+                AttestasjonRequest(
+                    "12345678900",
+                    "98765432100",
+                    "BEH",
+                    999999999,
+                    listOf(
+                        AttestasjonLinje(
+                            99999,
+                            "Z999999",
+                            "2021-01-01",
+                        ),
+                    ),
+                )
+
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ))
+            coEvery { skjermingService.getSkjermingForIdent(request.gjelderId, navIdent) } returns true
+
+            val exception =
+                shouldThrow<AttestasjonException> {
+                    attestasjonService.attestereOppdrag(request, navIdent)
+                }
+
+            exception.message shouldBe "Mangler rettigheter til å attestere oppdrag!"
         }
     })
 

@@ -24,7 +24,7 @@ import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
-import no.nav.sokos.oppdrag.attestasjon.api.model.ZOsResponse
+import no.nav.sokos.oppdrag.attestasjon.api.model.ZosResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
@@ -334,7 +334,7 @@ internal class AttestasjonApiTest :
                 )
 
             val zOsResponse =
-                ZOsResponse(
+                ZosResponse(
                     "Oppdatering vellykket. 99999 linjer oppdatert",
                 )
 
@@ -355,7 +355,7 @@ internal class AttestasjonApiTest :
                     .extract()
                     .response()
 
-            Json.decodeFromString<ZOsResponse>(response.body.asString()) shouldBe zOsResponse
+            Json.decodeFromString<ZosResponse>(response.body.asString()) shouldBe zOsResponse
         }
 
         test("attestering av oppdrag returnerer 500 Internal Server Error") {

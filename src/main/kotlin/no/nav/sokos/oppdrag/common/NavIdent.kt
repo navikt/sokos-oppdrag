@@ -32,4 +32,6 @@ data class NavIdent(
     fun hasReadAccessLandsdekkende(): Boolean = roller.contains(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ)
 
     fun hasWriteAccessLandsdekkende(): Boolean = roller.contains(GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE)
+
+    fun hasWriteAccessAttestasjon(): Boolean = hasWriteAccessLandsdekkende() || hasWriteAccessNOS() || hasWriteAccessNOP()
 }
