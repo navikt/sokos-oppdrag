@@ -77,9 +77,9 @@ internal class AttestasjonServiceTest :
             coEvery { attestasjonRepository.getOppdrag(any(), any(), any(), listOf(KODE_FAGOMRAADE)) } returns oppdragList
             coEvery { skjermingService.getSkjermingForIdentListe(listOf(GJELDER_ID), any()) } returns mapOf(GJELDER_ID to false)
 
-            val result = attestasjonService.getOppdrag(null, null, null, KODE_FAGOMRAADE, null, 1, 10, navIdent)
-            result.first shouldBe oppdragList.map { it.toDTO(hasWriteAccess = true) }
-            result.second shouldBe oppdragList.size
+            val result = attestasjonService.getOppdrag(null, null, null, KODE_FAGOMRAADE, null, navIdent)
+            result shouldBe oppdragList.map { it.toDTO(hasWriteAccess = true) }
+            result.size shouldBe oppdragList.size
 
             coVerify(exactly = 0) { skjermingService.getSkjermingForIdent(any(), any()) }
         }
@@ -166,10 +166,10 @@ internal class AttestasjonServiceTest :
             coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any()) } returns oppdragList
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
-            val result = attestasjonService.getOppdrag(GJELDER_ID, null, null, null, null, 1, 10, navIdent)
-            result.first[0] shouldBe oppdragList[0].toDTO(hasWriteAccess = false)
-            result.first[1] shouldBe oppdragList[1].toDTO(hasWriteAccess = true)
-            result.second shouldBe oppdragList.size
+            val result = attestasjonService.getOppdrag(GJELDER_ID, null, null, null, null, navIdent)
+            result[0] shouldBe oppdragList[0].toDTO(hasWriteAccess = false)
+            result[1] shouldBe oppdragList[1].toDTO(hasWriteAccess = true)
+            result.size shouldBe oppdragList.size
 
             coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
         }
@@ -181,7 +181,7 @@ internal class AttestasjonServiceTest :
 
             val exception =
                 shouldThrow<AttestasjonException> {
-                    attestasjonService.getOppdrag(gjelderId, null, null, null, null, 0, 10, navIdent)
+                    attestasjonService.getOppdrag(gjelderId, null, null, null, null, navIdent)
                 }
 
             exception.message shouldBe "Mangler rettigheter til å se informasjon!"
@@ -403,9 +403,9 @@ private suspend fun verifyHentOppdrag(
     coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any()) } returns oppdragList
     coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
-    val result = attestasjonService.getOppdrag(GJELDER_ID, null, null, null, null, 1, 10, navIdent)
-    result.first shouldBe oppdragList.map { it.toDTO(hasWriteAccess = hasWriteAccess) }
-    result.second shouldBe oppdragList.size
+    val result = attestasjonService.getOppdrag(GJELDER_ID, null, null, null, null, navIdent)
+    result shouldBe oppdragList.map { it.toDTO(hasWriteAccess = hasWriteAccess) }
+    result.size shouldBe oppdragList.size
 
     coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
 }

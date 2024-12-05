@@ -34,7 +34,6 @@ import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
 import no.nav.sokos.oppdrag.attestasjon.utils.GJELDER_ID
 import no.nav.sokos.oppdrag.attestasjon.utils.Testdata.oppdragDTOMockdata
-import no.nav.sokos.oppdrag.common.dto.PaginatedDTO
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.authenticate
@@ -61,7 +60,7 @@ internal class AttestasjonApiTest :
 
         test("søk etter oppdrag med gyldig gjelderId returnerer 200 OK") {
             val oppdragsListe = List(11) { oppdragDTOMockdata }
-            coEvery { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any(), any(), any()) } returns Pair(oppdragsListe, oppdragsListe.size)
+            coEvery { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any()) } returns oppdragsListe
 
             val response =
                 RestAssured
@@ -78,11 +77,9 @@ internal class AttestasjonApiTest :
                     .extract()
                     .response()
 
-            val paginateResponse = Json.decodeFromString<PaginatedDTO<OppdragDTO>>(response.body.asString())
-            paginateResponse.data shouldBe oppdragsListe
-            paginateResponse.page shouldBe 1
-            paginateResponse.rows shouldBe 10
-            paginateResponse.total shouldBe oppdragsListe.size
+            val oppdragDTOList = Json.decodeFromString<List<OppdragDTO>>(response.body.asString())
+            oppdragDTOList shouldBe oppdragsListe
+            oppdragDTOList.size shouldBe oppdragsListe.size
         }
 
         test("sok etter oppdrag med ugyldig gjelderId returnerer 400 Bad Request") {
@@ -141,7 +138,7 @@ internal class AttestasjonApiTest :
 
         test("sok etter oppdrag med gyldig søkeparametere returnerer 200 OK") {
 
-            coEvery { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any(), any(), any()) } returns Pair(emptyList(), 0)
+            coEvery { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any()) } returns emptyList()
 
             RestAssured
                 .given()
@@ -248,7 +245,7 @@ internal class AttestasjonApiTest :
                         OppdragslinjeDTO(
                             Oppdragslinje(
                                 false,
-                                kotlinx.datetime.LocalDate.parse("2000-01-01"),
+                                LocalDate.parse("2000-01-01"),
                                 null,
                                 "FYL20170501007247481 79947001",
                                 "FUBAR",

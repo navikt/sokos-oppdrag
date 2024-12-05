@@ -9,7 +9,6 @@ import io.ktor.server.routing.route
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
-import no.nav.sokos.oppdrag.common.dto.toPaginatedDTO
 import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler
 
 private const val BASE_PATH = "/api/v1/attestasjon"
@@ -19,22 +18,17 @@ fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonSer
         post("sok") {
             val request = call.receive<OppdragsRequest>()
             val saksbehandler = getSaksbehandler(call)
-            val page = call.parameters["page"]?.toInt() ?: 1
-            val rows = call.parameters["rows"]?.toInt() ?: 10
 
-            val oppdragPair =
+            val oppdragsListe =
                 attestasjonService.getOppdrag(
                     request.gjelderId,
                     request.fagSystemId,
                     request.kodeFagGruppe,
                     request.kodeFagOmraade,
                     request.attestert,
-                    page,
-                    rows,
                     saksbehandler,
                 )
-
-            call.respond(oppdragPair.first.toPaginatedDTO(page, rows, oppdragPair.second))
+            call.respond(oppdragsListe)
         }
 
         get("fagomraader") {
