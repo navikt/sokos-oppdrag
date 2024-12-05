@@ -12,7 +12,7 @@ import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import kotlinx.datetime.Clock
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
-import no.nav.sokos.oppdrag.attestasjon.api.model.ZOsResponse
+import no.nav.sokos.oppdrag.attestasjon.api.model.ZosResponse
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.createHttpClient
@@ -27,7 +27,7 @@ class ZOSConnectService(
     suspend fun attestereOppdrag(
         attestasjonRequest: AttestasjonRequest,
         navIdent: String,
-    ): ZOsResponse {
+    ): ZosResponse {
         val response: HttpResponse =
             client.post("$zOsUrl/oppdaterAttestasjon") {
                 header("Nav-Call-Id", MDC.get("x-correlation-id"))
@@ -40,7 +40,7 @@ class ZOSConnectService(
                 val result = response.body<PostOSAttestasjonResponse200>()
                 val attestasjonskvittering = result.osAttestasjonOperationResponse?.attestasjonskvittering?.responsAttestasjon
                 val zOsResponse =
-                    ZOsResponse(
+                    ZosResponse(
                         "Oppdatering vellykket. ${attestasjonskvittering?.antLinjerMottatt} linjer oppdatert",
                     )
                 if (attestasjonskvittering?.statuskode != 0) {
@@ -69,8 +69,8 @@ class ZOSConnectService(
         }
     }
 
-    private fun AttestasjonRequest.mapToZosRequest(navIdent: String): PostOSAttestasjonRequest {
-        return PostOSAttestasjonRequest(
+    private fun AttestasjonRequest.mapToZosRequest(navIdent: String): PostOSAttestasjonRequest =
+        PostOSAttestasjonRequest(
             PostOSAttestasjonRequestOSAttestasjonOperation(
                 PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdata(
                     PostOSAttestasjonRequestOSAttestasjonOperationAttestasjonsdataRequestAttestasjon(
@@ -90,7 +90,8 @@ class ZOSConnectService(
                 ),
             ),
         )
-    }
 }
 
-data class ZOSException(val apiError: ApiError) : Exception(apiError.error)
+data class ZOSException(
+    val apiError: ApiError,
+) : Exception(apiError.error)

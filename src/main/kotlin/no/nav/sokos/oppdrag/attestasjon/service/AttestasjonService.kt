@@ -8,7 +8,7 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
-import no.nav.sokos.oppdrag.attestasjon.api.model.ZOsResponse
+import no.nav.sokos.oppdrag.attestasjon.api.model.ZosResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.toDTO
@@ -145,7 +145,18 @@ class AttestasjonService(
     suspend fun attestereOppdrag(
         request: AttestasjonRequest,
         saksbehandler: NavIdent,
-    ): ZOsResponse {
+    ): ZosResponse {
+        auditLogger.auditLog(
+            AuditLogg(
+                navIdent = saksbehandler.ident,
+                gjelderId = request.gjelderId,
+                brukerBehandlingTekst = "NAV-ansatt har gjort en oppdatering på oppdragsId: ${request.oppdragsId}, linjeIder: ${request.linjer.joinToString { it.linjeId.toString() }}",
+            ),
+        )
+
+        if (!saksbehandler.hasWriteAccessAttestasjon()) {
+            throw AttestasjonException("Mangler rettigheter til å attestere oppdrag!")
+        }
         val response = zosConnectService.attestereOppdrag(request, saksbehandler.ident)
         removeOppdragCache(request.gjelderId, request.fagSystemId, request.kodeFagOmraade)
         return response
