@@ -37,7 +37,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedDTO'
+                type: array
+                items:
+                  $ref: '#/components/schemas/OppdragDTO'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
@@ -194,23 +196,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AttestasjonLinje'
-
-    PaginatedDTO:
-      type: object
-      properties:
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/OppdragDTO"
-        page:
-          type: integer
-          example: 0
-        rows:
-          type: integer
-          example: 10
-        total:
-          type: integer
-          example: 100
 
     ZOsResponse:
       type: object

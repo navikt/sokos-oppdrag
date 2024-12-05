@@ -49,10 +49,8 @@ class AttestasjonService(
         kodeFagGruppe: String? = null,
         kodeFagOmraade: String? = null,
         attestert: Boolean? = null,
-        page: Int,
-        rows: Int,
         saksbehandler: NavIdent,
-    ): Pair<List<OppdragDTO>, Int> =
+    ): List<OppdragDTO> =
         coroutineScope {
             var verifiedSkjermingForGjelderId = false
             if (!gjelderId.isNullOrBlank()) {
@@ -84,23 +82,19 @@ class AttestasjonService(
                     }
                 }
 
-            val temp = oppdragListeDeferred.await()
-            val oppdragListe = temp.filter { hasSaksbehandlerReadAccess(it, saksbehandler) }
-            val totalCount = oppdragListe.size
+            val oppdragsListe = oppdragListeDeferred.await()
 
-            val data =
-                oppdragListe
-                    .subList((page - 1) * rows, Math.min(page * rows, totalCount))
-                    .map { it.toDTO() }
-                    .let { list ->
-                        if (verifiedSkjermingForGjelderId) {
-                            list.map { it.copy(erSkjermetForSaksbehandler = false) }
-                        } else {
-                            val skjermingMap = skjermingService.getSkjermingForIdentListe(list.map { it.gjelderId }, saksbehandler)
-                            list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.gjelderId] == true) }
-                        }
-                    }.map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, saksbehandler)) }
-            Pair(data, if (data.size > totalCount) data.size else totalCount)
+            oppdragsListe
+                .filter { hasSaksbehandlerReadAccess(it, saksbehandler) }
+                .map { it.toDTO() }
+                .let { list ->
+                    if (verifiedSkjermingForGjelderId) {
+                        list.map { it.copy(erSkjermetForSaksbehandler = false) }
+                    } else {
+                        val skjermingMap = skjermingService.getSkjermingForIdentListe(list.map { it.gjelderId }, saksbehandler)
+                        list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.gjelderId] == true) }
+                    }
+                }.map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, saksbehandler)) }
         }
 
     fun getFagOmraade(): List<FagOmraade> = attestasjonRepository.getFagOmraader()
