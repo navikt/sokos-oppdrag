@@ -5,6 +5,8 @@ metadata:
   namespace: okonomi
   labels:
     team: okonomi
+  annotations:
+    texas.nais.io/enabled: "true"
 spec:
   image: "{{{ image }}}"
   port: 8080

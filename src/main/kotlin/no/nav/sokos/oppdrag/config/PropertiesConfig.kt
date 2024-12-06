@@ -71,6 +71,7 @@ object PropertiesConfig {
     )
 
     data class AzureAdProperties(
+        val naisTokenEndpoint: String = getOrEmpty("NAIS_TOKEN_ENDPOINT"),
         val clientId: String = getOrEmpty("AZURE_APP_CLIENT_ID"),
         val wellKnownUrl: String = getOrEmpty("AZURE_APP_WELL_KNOWN_URL"),
         val tenantId: String = getOrEmpty("AZURE_APP_TENANT_ID"),
