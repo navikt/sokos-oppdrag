@@ -25,7 +25,7 @@ repositories {
 }
 
 // Ktor
-val ktorVersion = "3.0.1"
+val ktorVersion = "3.0.2"
 
 // Serialization
 val kotlinxSerializationVersion = "1.7.3"
@@ -46,7 +46,7 @@ val natpryceVersion = "1.6.10.0"
 
 // Database
 val hikariVersion = "6.2.1"
-val db2JccVersion = "11.5.9.0"
+val db2JccVersion = "12.1.0.0"
 val kotliqueryVersion = "1.9.0"
 
 // GraphQL
@@ -60,7 +60,7 @@ val kotestVersion = "6.0.0.M1"
 val wiremockVersion = "3.10.0"
 val mockOAuth2ServerVersion = "2.1.10"
 val mockkVersion = "1.13.13"
-val swaggerRequestValidatorVersion = "2.43.0"
+val swaggerRequestValidatorVersion = "2.44.1"
 
 // Due to vulnerabilities
 val nettyCommonVersion = "4.1.115.Final"
