@@ -19,15 +19,7 @@ fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonSer
             val request = call.receive<OppdragsRequest>()
             val saksbehandler = getSaksbehandler(call)
 
-            val oppdragsListe =
-                attestasjonService.getOppdrag(
-                    request.gjelderId,
-                    request.fagSystemId,
-                    request.kodeFagGruppe,
-                    request.kodeFagOmraade,
-                    request.attestert,
-                    saksbehandler,
-                )
+            val oppdragsListe = attestasjonService.getOppdrag(request, saksbehandler)
             call.respond(oppdragsListe)
         }
 

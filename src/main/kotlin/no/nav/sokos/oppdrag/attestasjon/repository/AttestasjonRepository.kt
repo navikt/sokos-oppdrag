@@ -23,9 +23,10 @@ class AttestasjonRepository(
         fagSystemId: String?,
         gjelderId: String?,
         kodeFagOmraader: List<String>,
+        ident: String,
     ): List<Oppdrag> =
         withContext(Dispatchers.IO) {
-            buildOppdragSqlQuery(attestert, fagSystemId, gjelderId, kodeFagOmraader).let { (sql, parameterMap) ->
+            buildOppdragSqlQuery(attestert, fagSystemId, gjelderId, kodeFagOmraader, ident).let { (sql, parameterMap) ->
                 using(sessionOf(dataSource)) { session ->
                     session.list(
                         queryOf(
@@ -218,6 +219,12 @@ class AttestasjonRepository(
             oppdragsId = row.int("OPPDRAGS_ID"),
             kodeFagOmraade = row.string("KODE_FAGOMRAADE"),
             kodeFagGruppe = row.string("KODE_FAGGRUPPE"),
+            attestanter =
+                row
+                    .string("ATTESTANT_IDS")
+                    .split(",")
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() },
         )
     }
 
@@ -253,6 +260,7 @@ class AttestasjonRepository(
         fagSystemId: String?,
         gjelderId: String?,
         kodeFagOmraader: List<String>,
+        ident: String,
     ): Pair<String, Map<String, String>> {
         val parameterMap = mutableMapOf<String, String>()
         val sqlBuilder = StringBuilder()
@@ -346,7 +354,11 @@ class AttestasjonRepository(
                                  FROM T_OPPDRAGSENHET OA2
                                  WHERE OA2.OPPDRAGS_ID = OA.OPPDRAGS_ID
                                    AND OA2.TYPE_ENHET = OA.TYPE_ENHET
-                                   AND OA2.DATO_FOM <= CURRENT DATE))) AS ANSVARSSTED
+                                   AND OA2.DATO_FOM <= CURRENT DATE))) AS ANSVARSSTED,
+                    TRIM((SELECT RTRIM(CAST(XMLSERIALIZE(XMLAGG(XMLTEXT(TRIM(ATTESTANT_ID) || ',')) AS CLOB) AS VARCHAR(1000))) AS ATTESTANT_IDS
+                         FROM (SELECT DISTINCT ATTESTANT_ID
+                               FROM T_ATTESTASJON
+                               WHERE OPPDRAGS_ID = O.OPPDRAGS_ID))) AS ATTESTANT_IDS
                 FROM T_OPPDRAGSLINJE L
                 JOIN FilteredOppdrag O ON L.OPPDRAGS_ID = O.OPPDRAGS_ID
                 JOIN T_FAGOMRAADE FO ON FO.KODE_FAGOMRAADE = O.KODE_FAGOMRAADE

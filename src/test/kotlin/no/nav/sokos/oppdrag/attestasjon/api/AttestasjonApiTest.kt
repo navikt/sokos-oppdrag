@@ -60,7 +60,7 @@ internal class AttestasjonApiTest :
 
         test("søk etter oppdrag med gyldig gjelderId returnerer 200 OK") {
             val oppdragsListe = List(11) { oppdragDTOMockdata }
-            coEvery { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any()) } returns oppdragsListe
+            coEvery { attestasjonService.getOppdrag(any(), any()) } returns oppdragsListe
 
             val response =
                 RestAssured
@@ -138,7 +138,7 @@ internal class AttestasjonApiTest :
 
         test("sok etter oppdrag med gyldig søkeparametere returnerer 200 OK") {
 
-            coEvery { attestasjonService.getOppdrag(any(), any(), any(), any(), any(), any()) } returns emptyList()
+            coEvery { attestasjonService.getOppdrag(any(), any()) } returns emptyList()
 
             RestAssured
                 .given()
