@@ -29,7 +29,7 @@ class SkjermingService(
 
     suspend fun getSkjermingForIdentListe(
         identer: List<String>,
-        saksbehandler: NavIdent,
+        navIdent: NavIdent,
     ): Map<String, Boolean> {
         val deduplicatedIdenter = identer.distinct()
         val personIdenter = deduplicatedIdenter.filter { it.toLong() in 1_000_000_001..79_999_999_999 }
@@ -42,7 +42,7 @@ class SkjermingService(
             bolkEgneAnsatteCache
                 .getAsync(personIdenter.joinToString()) {
                     skjermetClientService.isSkjermedePersonerInSkjermingslosningen(personIdenter)
-                }.mapValues { (_, skjermet) -> !saksbehandler.hasAccessEgneAnsatte() && skjermet }
+                }.mapValues { (_, skjermet) -> !navIdent.hasAccessEgneAnsatte() && skjermet }
 
         val adressebeskyttelseMap =
             bolkPdlCache
@@ -50,9 +50,9 @@ class SkjermingService(
                     pdlClientService.getPerson(identer = personIdenter)
                 }.mapValues { (_, person) ->
                     val graderinger = person.adressebeskyttelse.map { it.gradering }
-                    !saksbehandler.hasAccessFortrolig() &&
+                    !navIdent.hasAccessFortrolig() &&
                         AdressebeskyttelseGradering.FORTROLIG in graderinger ||
-                        !saksbehandler.hasAccessStrengtFortrolig() &&
+                        !navIdent.hasAccessStrengtFortrolig() &&
                         graderinger.any {
                             it == AdressebeskyttelseGradering.STRENGT_FORTROLIG || it == AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND
                         }
@@ -65,6 +65,6 @@ class SkjermingService(
 
     suspend fun getSkjermingForIdent(
         gjelderId: String,
-        saksbehandler: NavIdent,
-    ): Boolean = getSkjermingForIdentListe(listOf(gjelderId), saksbehandler)[gjelderId] ?: false
+        navIdent: NavIdent,
+    ): Boolean = getSkjermingForIdentListe(listOf(gjelderId), navIdent)[gjelderId] ?: false
 }

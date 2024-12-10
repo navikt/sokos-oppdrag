@@ -1,5 +1,6 @@
 package no.nav.sokos.oppdrag.attestasjon.utils
 
+import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.toDTO
 
@@ -20,7 +21,18 @@ object Testdata {
             kostnadsSted = "kostnadsSted",
             ansvarsSted = "ansvarsSted",
             oppdragsId = 1,
+            attestanter = listOf("attestant1"),
         )
 
     val oppdragDTOMockdata = oppdragMockdata.toDTO(hasWriteAccess = true)
+
+    val oppdragRequestMockdata =
+        OppdragsRequest(
+            gjelderId = GJELDER_ID,
+            fagSystemId = "fagSystemId",
+            kodeFagGruppe = KODE_FAGGRUPPE,
+            kodeFagOmraade = KODE_FAGOMRAADE,
+            attestert = false,
+            visEgenAttestertOppdrag = false,
+        )
 }

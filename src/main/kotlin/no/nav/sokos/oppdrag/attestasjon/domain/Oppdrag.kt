@@ -13,6 +13,7 @@ data class Oppdrag(
     val kodeFagOmraade: String,
     val kostnadsSted: String,
     val oppdragsId: Int,
+    val attestanter: List<String>,
 )
 
 fun Oppdrag.toDTO(

@@ -2,12 +2,11 @@ package no.nav.sokos.oppdrag.attestasjon.service
 
 import com.github.benmanes.caffeine.cache.AsyncCache
 import com.github.benmanes.caffeine.cache.Caffeine
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
+import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.ZosResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
@@ -44,58 +43,51 @@ class AttestasjonService(
             .buildAsync(),
 ) {
     suspend fun getOppdrag(
-        gjelderId: String? = null,
-        fagSystemId: String? = null,
-        kodeFagGruppe: String? = null,
-        kodeFagOmraade: String? = null,
-        attestert: Boolean? = null,
-        saksbehandler: NavIdent,
-    ): List<OppdragDTO> =
-        coroutineScope {
-            var verifiedSkjermingForGjelderId = false
-            if (!gjelderId.isNullOrBlank()) {
-                secureLogger.info { "Henter attestasjonsdata for gjelderId: $gjelderId" }
-                auditLogger.auditLog(
-                    AuditLogg(
-                        navIdent = saksbehandler.ident,
-                        gjelderId = gjelderId,
-                        brukerBehandlingTekst = "NAV-ansatt har gjort et oppslag på navn",
-                    ),
-                )
-                if ((gjelderId.toLong() in 1_000_000_001..79_999_999_999) && skjermingService.getSkjermingForIdent(gjelderId, saksbehandler)) {
-                    throw AttestasjonException("Mangler rettigheter til å se informasjon!")
-                }
-                verifiedSkjermingForGjelderId = true
+        request: OppdragsRequest,
+        navIdent: NavIdent,
+    ): List<OppdragDTO> {
+        val gjelderId = request.gjelderId
+        var verifiedSkjermingForGjelderId = false
+        if (!gjelderId.isNullOrBlank()) {
+            secureLogger.info { "Henter attestasjonsdata for gjelderId: $gjelderId" }
+            auditLogger.auditLog(
+                AuditLogg(
+                    navIdent = navIdent.ident,
+                    gjelderId = gjelderId,
+                    brukerBehandlingTekst = "NAV-ansatt har gjort et oppslag på navn",
+                ),
+            )
+            if ((gjelderId.toLong() in 1_000_000_001..79_999_999_999) && skjermingService.getSkjermingForIdent(gjelderId, navIdent)) {
+                throw AttestasjonException("Mangler rettigheter til å se informasjon!")
+            }
+            verifiedSkjermingForGjelderId = true
+        }
+
+        val fagomraader =
+            when {
+                !request.kodeFagOmraade.isNullOrBlank() -> listOf(request.kodeFagOmraade)
+                !request.kodeFagGruppe.isNullOrBlank() -> attestasjonRepository.getFagomraaderForFaggruppe(request.kodeFagGruppe)
+                else -> emptyList()
             }
 
-            val fagomraader =
-                when {
-                    !kodeFagOmraade.isNullOrBlank() -> listOf(kodeFagOmraade)
-                    !kodeFagGruppe.isNullOrBlank() -> attestasjonRepository.getFagomraaderForFaggruppe(kodeFagGruppe)
-                    else -> emptyList()
+        val oppdragsListe =
+            oppdragCache.getAsync("$gjelderId-${fagomraader.joinToString()}-${request.fagSystemId}-${request.attestert}-${navIdent.ident}") {
+                attestasjonRepository.getOppdrag(request.attestert, request.fagSystemId, gjelderId, fagomraader, navIdent.ident)
+            }
+
+        return oppdragsListe
+            .filter { filterEgenAttestertOppdrag(it, request.visEgenAttestertOppdrag ?: false, navIdent) }
+            .filter { hasSaksbehandlerReadAccess(it, navIdent) }
+            .map { it.toDTO() }
+            .let { list ->
+                if (verifiedSkjermingForGjelderId) {
+                    list.map { it.copy(erSkjermetForSaksbehandler = false) }
+                } else {
+                    val skjermingMap = skjermingService.getSkjermingForIdentListe(list.map { it.gjelderId }, navIdent)
+                    list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.gjelderId] == true) }
                 }
-
-            val oppdragListeDeferred =
-                async {
-                    oppdragCache.getAsync("$gjelderId-${fagomraader.joinToString()}-$fagSystemId-$attestert") {
-                        attestasjonRepository.getOppdrag(attestert, fagSystemId, gjelderId, fagomraader)
-                    }
-                }
-
-            val oppdragsListe = oppdragListeDeferred.await()
-
-            oppdragsListe
-                .filter { hasSaksbehandlerReadAccess(it, saksbehandler) }
-                .map { it.toDTO() }
-                .let { list ->
-                    if (verifiedSkjermingForGjelderId) {
-                        list.map { it.copy(erSkjermetForSaksbehandler = false) }
-                    } else {
-                        val skjermingMap = skjermingService.getSkjermingForIdentListe(list.map { it.gjelderId }, saksbehandler)
-                        list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.gjelderId] == true) }
-                    }
-                }.map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, saksbehandler)) }
-        }
+            }.map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, navIdent)) }
+    }
 
     fun getFagOmraade(): List<FagOmraade> = attestasjonRepository.getFagOmraader()
 
@@ -195,4 +187,15 @@ class AttestasjonService(
             saksbehandler.hasWriteAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
             else -> false
         }
+
+    private fun filterEgenAttestertOppdrag(
+        oppdrag: Oppdrag,
+        visEgenAttestertOppdrag: Boolean,
+        saksbehandler: NavIdent,
+    ): Boolean {
+        if (!visEgenAttestertOppdrag) {
+            return true
+        }
+        return oppdrag.attestanter.contains(saksbehandler.ident)
+    }
 }

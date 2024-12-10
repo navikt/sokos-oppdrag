@@ -27,6 +27,7 @@ import no.nav.sokos.oppdrag.attestasjon.utils.GJELDER_ID
 import no.nav.sokos.oppdrag.attestasjon.utils.KODE_FAGGRUPPE
 import no.nav.sokos.oppdrag.attestasjon.utils.KODE_FAGOMRAADE
 import no.nav.sokos.oppdrag.attestasjon.utils.Testdata.oppdragMockdata
+import no.nav.sokos.oppdrag.attestasjon.utils.Testdata.oppdragRequestMockdata
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_READ
@@ -74,14 +75,30 @@ internal class AttestasjonServiceTest :
             val oppdragList = listOf(oppdragMockdata)
 
             coEvery { attestasjonRepository.getFagomraaderForFaggruppe(KODE_FAGGRUPPE) } returns listOf(KODE_FAGOMRAADE)
-            coEvery { attestasjonRepository.getOppdrag(any(), any(), any(), listOf(KODE_FAGOMRAADE)) } returns oppdragList
+            coEvery { attestasjonRepository.getOppdrag(any(), any(), any(), listOf(KODE_FAGOMRAADE), navIdent.ident) } returns oppdragList
             coEvery { skjermingService.getSkjermingForIdentListe(listOf(GJELDER_ID), any()) } returns mapOf(GJELDER_ID to false)
 
-            val result = attestasjonService.getOppdrag(null, null, null, KODE_FAGOMRAADE, null, navIdent)
+            val result = attestasjonService.getOppdrag(oppdragRequestMockdata.copy(gjelderId = null, fagSystemId = null, kodeFagGruppe = null, attestert = null), navIdent)
             result shouldBe oppdragList.map { it.toDTO(hasWriteAccess = true) }
             result.size shouldBe oppdragList.size
 
             coVerify(exactly = 0) { skjermingService.getSkjermingForIdent(any(), any()) }
+        }
+
+        test("hent oppdrag som innholder kun egen attestert oppdragslinjer") {
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ, GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE))
+            val oppdragList =
+                listOf(
+                    oppdragMockdata.copy(attestanter = listOf(navIdent.ident)),
+                    oppdragMockdata,
+                )
+
+            coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any(), navIdent.ident) } returns oppdragList
+            coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
+
+            val result = attestasjonService.getOppdrag(oppdragRequestMockdata.copy(visEgenAttestertOppdrag = true), navIdent)
+            result.size shouldBe 1
+            result.first() shouldBe oppdragList.first().toDTO(hasWriteAccess = true)
         }
 
         test("hent opopdrag for en gjelderId når saksbehandler har bare lesetilgang til NOS") {
@@ -163,10 +180,10 @@ internal class AttestasjonServiceTest :
                     oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOP),
                 )
 
-            coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any()) } returns oppdragList
+            coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any(), navIdent.ident) } returns oppdragList
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
-            val result = attestasjonService.getOppdrag(GJELDER_ID, null, null, null, null, navIdent)
+            val result = attestasjonService.getOppdrag(oppdragRequestMockdata, navIdent)
             result[0] shouldBe oppdragList[0].toDTO(hasWriteAccess = false)
             result[1] shouldBe oppdragList[1].toDTO(hasWriteAccess = true)
             result.size shouldBe oppdragList.size
@@ -175,13 +192,11 @@ internal class AttestasjonServiceTest :
         }
 
         test("hent oppdrag for en gjelderId kaster exception når saksbehandler ikke har tilgang til personen pga. skjerming") {
-            val gjelderId = "12345678900"
-
-            coEvery { skjermingService.getSkjermingForIdent(gjelderId, navIdent) } returns true
+            coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, navIdent) } returns true
 
             val exception =
                 shouldThrow<AttestasjonException> {
-                    attestasjonService.getOppdrag(gjelderId, null, null, null, null, navIdent)
+                    attestasjonService.getOppdrag(oppdragRequestMockdata, navIdent)
                 }
 
             exception.message shouldBe "Mangler rettigheter til å se informasjon!"
@@ -428,10 +443,10 @@ private suspend fun verifyHentOppdrag(
     navIdent: NavIdent,
     hasWriteAccess: Boolean,
 ) {
-    coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any()) } returns oppdragList
+    coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any(), navIdent.ident) } returns oppdragList
     coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
-    val result = attestasjonService.getOppdrag(GJELDER_ID, null, null, null, null, navIdent)
+    val result = attestasjonService.getOppdrag(oppdragRequestMockdata, navIdent)
     result shouldBe oppdragList.map { it.toDTO(hasWriteAccess = hasWriteAccess) }
     result.size shouldBe oppdragList.size
 
