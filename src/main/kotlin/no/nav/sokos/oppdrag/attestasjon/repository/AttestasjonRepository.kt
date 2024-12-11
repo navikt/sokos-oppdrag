@@ -221,10 +221,11 @@ class AttestasjonRepository(
             kodeFagGruppe = row.string("KODE_FAGGRUPPE"),
             attestanter =
                 row
-                    .string("ATTESTANT_IDS")
-                    .split(",")
-                    .map { it.trim() }
-                    .filter { it.isNotEmpty() },
+                    .stringOrNull("ATTESTANT_IDS")
+                    ?.split(",")
+                    ?.map { it.trim() }
+                    ?.filter { it.isNotEmpty() }
+                    .orEmpty(),
         )
     }
 
@@ -356,9 +357,15 @@ class AttestasjonRepository(
                                    AND OA2.TYPE_ENHET = OA.TYPE_ENHET
                                    AND OA2.DATO_FOM <= CURRENT DATE))) AS ANSVARSSTED,
                     TRIM((SELECT RTRIM(CAST(XMLSERIALIZE(XMLAGG(XMLTEXT(TRIM(ATTESTANT_ID) || ',')) AS CLOB) AS VARCHAR(1000))) AS ATTESTANT_IDS
-                         FROM (SELECT DISTINCT ATTESTANT_ID
-                               FROM T_ATTESTASJON
-                               WHERE OPPDRAGS_ID = O.OPPDRAGS_ID))) AS ATTESTANT_IDS
+                         FROM (SELECT DISTINCT A.ATTESTANT_ID
+                               FROM T_ATTESTASJON A
+                               WHERE A.OPPDRAGS_ID = O.OPPDRAGS_ID
+                                  AND A.LOPENR = (SELECT MAX(A2.LOPENR)
+                                                  FROM T_ATTESTASJON A2
+                                                  WHERE A2.OPPDRAGS_ID = A.OPPDRAGS_ID
+                                                    AND A2.LINJE_ID = A.LINJE_ID
+                                                    AND A2.ATTESTANT_ID = A.ATTESTANT_ID)
+                                  AND A.DATO_UGYLDIG_FOM > CURRENT DATE))) AS ATTESTANT_IDS
                 FROM T_OPPDRAGSLINJE L
                 JOIN FilteredOppdrag O ON L.OPPDRAGS_ID = O.OPPDRAGS_ID
                 JOIN T_FAGOMRAADE FO ON FO.KODE_FAGOMRAADE = O.KODE_FAGOMRAADE
