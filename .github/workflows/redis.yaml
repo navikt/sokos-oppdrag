@@ -1,0 +1,42 @@
+name: Auto-deploy redis
+
+on:
+  push: # Deploys automatically to dev-fss og prod-fss if there is a change in redis file.
+    paths:
+      - '../../.nais/redis-config.yaml'
+      - '.github/workflows/redis.yaml'
+
+env:
+  TZ: Europe/Oslo
+
+permissions:
+  contents: "write"
+  id-token: "write"
+
+jobs:
+  deploy-dev:
+    name: 'Deploy Redis to dev-fss'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 'Deploy to dev-fss'
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLUSTER: dev-fss
+          TEAM: okonomi
+          RESOURCE: "nais/redis-config.yaml"
+
+#  deploy-prod:
+#    name: 'Deploy Redis to dev-fss'
+#    needs: deploy-dev
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#      - name: 'Deploy to prod-fss'
+#        uses: nais/deploy/actions/deploy@v2
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          CLUSTER: prod-fss
+#          TEAM: okonomi
+#          RESOURCE: "nais/redis-config.yaml"
