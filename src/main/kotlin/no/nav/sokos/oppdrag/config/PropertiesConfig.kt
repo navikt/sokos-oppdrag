@@ -89,6 +89,12 @@ object PropertiesConfig {
             ),
     )
 
+    data class RedisProperties(
+        val host: String = getOrEmpty("REDIS_HOST"),
+        val port: String = getOrEmpty("REDIS_PORT"),
+        val password: String = getOrEmpty("REDIS_PASSWORD"),
+    )
+
     data class EksterneHostProperties(
         val eregUrl: String = getOrEmpty("EREG_URL"),
         val skjermetScope: String = getOrEmpty("SKJERMING_CLIENT_ID"),

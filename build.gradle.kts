@@ -55,6 +55,9 @@ val graphqlClientVersion = "8.2.1"
 // Cache
 val caffeineVersion = "3.1.8"
 
+// Redis
+val redisVersion = "6.5.1.RELEASE"
+
 // Test
 val kotestVersion = "6.0.0.M1"
 val wiremockVersion = "3.10.0"
@@ -120,6 +123,9 @@ dependencies {
 
     // Cache
     implementation("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
+
+    // Redis
+    implementation("io.lettuce:lettuce-core:$redisVersion")
 
     // Test
     testImplementation("io.ktor:ktor-server-test-host-jvm:$ktorVersion")

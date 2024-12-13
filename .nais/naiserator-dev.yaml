@@ -82,6 +82,8 @@ spec:
     # Redis
     - name: REDIS_HOST
       value: "sokos-oppdrag-redis.okonomi.svc.nais.local"
+    - name: REDIS_PORT
+      value: "6379"
 
     # Db2
     - name: DATABASE_HOST
