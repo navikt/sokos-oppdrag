@@ -2,10 +2,24 @@ name: Build/test PR
 
 on:
   pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'LICENCE'
+      - 'CODEOWNERS'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'setupLocalEnvironment.sh'
+      - 'dokumentasjon/**'
+      - '.github/workflows/deploy.yaml'
+      - '.github/workflows/manual-deploy-dev.yaml'
+      - '.github/workflows/security.yaml'
+      - '.github/workflows/alerts.yaml'
+      - '.nais/alerts-dev.yaml'
+      - '.nais/alerts-prod.yaml'
+      - '.github/dependabot.yaml'
 
 jobs:
   build-pr:
     name: Build and test
-    if: "!contains(github.event.pull_request.changed_files, 'LICENSE') && !contains(github.event.pull_request.changed_files, 'CODEOWNERS') && !contains(github.event.pull_request.changed_files, '.gitignore') && !contains(github.event.pull_request.changed_files, '.editorconfig') && !contains(github.event.pull_request.changed_files, 'setupLocalEnvironment.sh') && !contains(github.event.pull_request.changed_files, 'dokumentasjon/**') && !contains(github.event.pull_request.changed_files, '.nais/**') && !contains(github.event.pull_request.changed_files, '.github/workflows/deploy.yaml') && !contains(github.event.pull_request.changed_files, '.github/workflows/manual-deploy-dev.yaml') && !contains(github.event.pull_request.changed_files, '.github/workflows/security.yaml') && !contains(github.event.pull_request.changed_files, '.github/workflows/alerts.yaml')"
     uses: navikt/monster-gha-workflows/.github/workflows/gradle-build-pr.yaml@main
 
