@@ -3,7 +3,7 @@ name: Auto-deploy redis
 on:
   push: # Deploys automatically to dev-fss og prod-fss if there is a change in redis file.
     paths:
-      - '../../.nais/redis-config.yaml'
+      - '.nais/redis-config.yaml'
       - '.github/workflows/redis.yaml'
 
 env:
