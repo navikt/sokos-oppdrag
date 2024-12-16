@@ -13,7 +13,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.expediagroup.graphql") version "8.2.1"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
-    id("org.jetbrains.kotlinx.kover") version "0.8.3"
+    id("org.jetbrains.kotlinx.kover") version "0.9.0"
     id("org.openapi.generator") version "7.10.0"
 }
 
@@ -32,7 +32,7 @@ val kotlinxSerializationVersion = "1.7.3"
 val kotlinxDatetimeVersion = "0.6.1"
 
 // Monitorering
-val micrometerVersion = "1.14.1"
+val micrometerVersion = "1.14.2"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
@@ -46,7 +46,7 @@ val natpryceVersion = "1.6.10.0"
 
 // Database
 val hikariVersion = "6.2.1"
-val db2JccVersion = "11.5.9.0"
+val db2JccVersion = "12.1.0.0"
 val kotliqueryVersion = "1.9.0"
 
 // GraphQL
