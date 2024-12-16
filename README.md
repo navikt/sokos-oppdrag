@@ -12,7 +12,7 @@
 ---
 
 # 1. Funksjonelle Krav
-Applikasjon er en proxy mellom OppdragZ og Utbetalingsportalen (intern arbeidsflate).
+Applikasjon er et API-proxy mellom OppdragZ og Utbetalingsportalen (intern arbeidsflate).
 
 # 2. Utviklingsmiljø
 ### Forutsetninger
@@ -27,7 +27,7 @@ Kjør `./setupLocalEnvironment.sh` for å sette opp prosjektet lokalt.
 Applikasjonen trenger en db2 lisens fil for å koble til DB2 lokalt. Kontakt en utvikler fra Team MOBY for å få denne filen.
 
 # 3. Programvarearkitektur
-Legg ved skissediagram for hvordan arkitekturen er bygget
+TODO
 
 # 4. Deployment
 Distribusjon av tjenesten er gjort med bruk av Github Actions.
@@ -39,7 +39,7 @@ Har også mulighet for å deploye manuelt til testmiljø ved å deploye PR.
 
 # 5. Autentisering
 Applikasjonen bruker [AzureAD](https://docs.nais.io/security/auth/azure-ad/) autentisering.
-Applikasjonen brukes mest av [Utbetalingsportalen](https://github.com/navikt/sokos-utbetalingsportalen) og derfor brukes det OBO-token
+Applikasjonen brukes av [Utbetalingsportalen](https://github.com/navikt/sokos-utbetalingsportalen) og derfor brukes det OBO-token
 som må genereres for å teste mot dev-miljøet.
 
 # 6. Drift og støtte
@@ -70,7 +70,7 @@ kubectl logs -f sokos-oppdrag-<POD-ID> --namespace okonomi -c sokos-oppdrag
 ### Alarmer
 Vi bruker [nais-alerts](https://doc.nais.io/observability/alerts) for å sette opp alarmer. 
 Disse finner man konfigurert i [.nais/alerts-dev.yaml](.nais/alerts-dev.yaml) filen og [.nais/alerts-prod.yaml](.nais/alerts-prod.yaml)
-Alarmene blir publisert i Slack kanalen #team-moby-alerts-dev og #team-moby-alerts-prod.
+Alarmene blir publisert i Slack kanalen [#team-moby-alerts-dev](https://nav-it.slack.com/archives/C0707TP7JEN) og [#team-moby-alerts-prod](https://nav-it.slack.com/archives/C0707TQQT0S).
 
 ### Grafana
 - [sokos-oppdrag](https://grafana.nav.cloud.nais.io/d/fds82z8c0pq0wf/sokos-oppdrag?orgId=1)
