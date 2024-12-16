@@ -30,6 +30,7 @@ val ktorVersion = "3.0.2"
 // Serialization
 val kotlinxSerializationVersion = "1.7.3"
 val kotlinxDatetimeVersion = "0.6.1"
+val kotlinxCoroutinesVersion = "1.9.0"
 
 // Monitorering
 val micrometerVersion = "1.14.1"

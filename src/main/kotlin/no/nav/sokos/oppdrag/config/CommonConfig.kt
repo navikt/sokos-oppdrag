@@ -22,13 +22,13 @@ import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.core.instrument.binder.system.UptimeMetrics
-import java.util.UUID
 import kotlinx.serialization.json.Json
 import no.nav.sokos.oppdrag.attestasjon.config.requestValidationAttestasjonConfig
 import no.nav.sokos.oppdrag.integration.config.requestValidationIntegrationConfig
 import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import no.nav.sokos.oppdrag.oppdragsinfo.config.requestValidationOppdragsInfoConfig
 import org.slf4j.event.Level
+import java.util.UUID
 import no.nav.sokos.oppdrag.attestasjon.metrics.Metrics as AttestasjonMetrics
 import no.nav.sokos.oppdrag.common.redis.Metrics as RedisMetrics
 import no.nav.sokos.oppdrag.integration.metrics.Metrics as IntegrationMetrics
@@ -109,9 +109,9 @@ fun Routing.internalNaisRoutes(
         get("metrics") {
             call.respondText(
                 RedisMetrics.prometheusMeterRegistryRedis.scrape() +
-                        IntegrationMetrics.prometheusMeterRegistry.scrape() +
-                        OppdragsInfoMetrics.prometheusMeterRegistryOppdragsInfo.scrape() +
-                        AttestasjonMetrics.prometheusMeterRegistryAttestasjon.scrape(),
+                    IntegrationMetrics.prometheusMeterRegistry.scrape() +
+                    OppdragsInfoMetrics.prometheusMeterRegistryOppdragsInfo.scrape() +
+                    AttestasjonMetrics.prometheusMeterRegistryAttestasjon.scrape(),
             )
         }
     }

@@ -1,7 +1,9 @@
 package no.nav.sokos.oppdrag.attestasjon.domain
 
+import kotlinx.serialization.Serializable
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragDTO
 
+@Serializable // Serializes to JSON because of Redis cache as a string instead of an object
 data class Oppdrag(
     val ansvarsSted: String? = null,
     val antallAttestanter: Int,
