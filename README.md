@@ -10,7 +10,6 @@
 * [6. Drift og støtte](#6-drift-og-støtte)
 * [7. Swagger](#7-swagger)
 * [8. Henvendelser](#8-henvendelser)
-
 ---
 
 # 1. Funksjonelle Krav
@@ -22,7 +21,7 @@ Applikasjon er en proxy mellom OppdragZ og Utbetalingsportalen (intern arbeidsfl
 ### Forutsetninger
 
 * Java 21
-* Gradle
+* Gradle 8
 * [Kotest](https://plugins.jetbrains.com/plugin/14080-kotest) plugin for å kjøre tester
 * [Docker](https://www.docker.com/)
     * for å starte opp en Redis server lokalt
@@ -90,7 +89,7 @@ kubectl logs -f sokos-oppdrag-<POD-ID> --namespace okonomi -c sokos-oppdrag
 
 Vi bruker [nais-alerts](https://doc.nais.io/observability/alerts) for å sette opp alarmer.
 Disse finner man konfigurert i [.nais/alerts-dev.yaml](.nais/alerts-dev.yaml) filen og [.nais/alerts-prod.yaml](.nais/alerts-prod.yaml)
-Alarmene blir publisert i Slack kanalen #team-moby-alerts-dev og #team-moby-alerts-prod.
+Alarmene blir publisert i Slack kanalen [#team-moby-alerts-dev](https://nav-it.slack.com/archives/C0707TP7JEN) og [#team-moby-alerts-prod](https://nav-it.slack.com/archives/C0707TQQT0S).
 
 ### Grafana
 
@@ -119,7 +118,6 @@ Attestasjon:
 - [Lokalt](http://0.0.0.0:8080/api/v1/attestasjon/docs)
 
 # 8. Henvendelser
-
-Spørsmål knyttet til koden eller prosjektet kan stilles som issues her på Github.
-Interne henvendelser kan sendes via Slack i kanalen #po-utbetaling
+   Spørsmål knyttet til koden eller prosjektet kan stilles som issues her på Github.
+   Interne henvendelser kan sendes via Slack i kanalen [#po-utbetaling](https://nav-it.slack.com/archives/CKZADNFBP)
 
