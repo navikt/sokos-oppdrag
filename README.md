@@ -40,8 +40,7 @@ Kjør `docker-compose up -d` for å starte opp en Redis server lokalt.
 Applikasjonen trenger en db2 lisens fil for å koble til DB2 lokalt. Kontakt en utvikler fra Team MOBY for å få denne filen.
 
 # 3. Programvarearkitektur
-
-Legg ved skissediagram for hvordan arkitekturen er bygget
+TODO
 
 # 4. Deployment
 
@@ -55,7 +54,7 @@ Har også mulighet for å deploye manuelt til testmiljø ved å deploye PR.
 # 5. Autentisering
 
 Applikasjonen bruker [AzureAD](https://docs.nais.io/security/auth/azure-ad/) autentisering.
-Applikasjonen brukes mest av [Utbetalingsportalen](https://github.com/navikt/sokos-utbetalingsportalen) og derfor brukes det OBO-token
+Applikasjonen brukes av [Utbetalingsportalen](https://github.com/navikt/sokos-utbetalingsportalen) og derfor brukes det OBO-token
 som må genereres for å teste mot dev-miljøet.
 
 # 6. Drift og støtte
