@@ -11,12 +11,11 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import mu.KotlinLogging
 import java.nio.ByteBuffer
-import java.security.MessageDigest
 
 private val logger = KotlinLogging.logger {}
 
 object RedisConfig {
-    private fun redisConfig(): RedisURI {
+    private fun getRedisURI(): RedisURI {
         val redisProperties: PropertiesConfig.RedisProperties = PropertiesConfig.RedisProperties()
 
         val redisURI =
@@ -30,11 +29,11 @@ object RedisConfig {
         return redisURI
     }
 
-    fun getRedisClient(): RedisClient {
-        val client = RedisClient.create(redisConfig())
-        val result = client.connect().sync().ping()
-        logger.info { "Connected to Redis: $result" }
-
+    fun getRedisClient(redisURI: RedisURI = getRedisURI()): RedisClient {
+        val client = RedisClient.create(redisURI)
+        client.connect().use { connection ->
+            logger.info { "Connected to Redis: ${connection.sync().ping()}" }
+        }
         return client
     }
 
@@ -68,5 +67,3 @@ object RedisConfig {
             body(api)
         }
 }
-
-fun String.hashed() = String(MessageDigest.getInstance("SHA-256").digest(this.toByteArray()), charset("UTF-8"))

@@ -12,15 +12,43 @@ import no.nav.sokos.oppdrag.common.GRUPPE_EGNE_ANSATTE
 import no.nav.sokos.oppdrag.common.GRUPPE_FORTROLIG
 import no.nav.sokos.oppdrag.common.GRUPPE_STRENGT_FORTROLIG
 import no.nav.sokos.oppdrag.common.NavIdent
+import no.nav.sokos.oppdrag.common.redis.RedisCache
+import no.nav.sokos.oppdrag.config.RedisConfig.createCodec
 import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
 import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetClientService
-
-private val pdlClientService = mockk<PdlClientService>()
-private val skjermingClientService = mockk<SkjermetClientService>()
-val skjermingService = SkjermingService(pdlClientService, skjermingClientService)
+import no.nav.sokos.oppdrag.listener.RedisListener
 
 internal class SkjermingServiceTest :
     FunSpec({
+        extensions(RedisListener)
+
+        val pdlClientService = mockk<PdlClientService>()
+        val skjermetClientService = mockk<SkjermetClientService>()
+
+        val bolkPdlCache: RedisCache<Map<String, Person>> by lazy {
+            RedisCache(
+                name = "bolkPdl",
+                codec = createCodec<Map<String, Person>>("hent-pdl"),
+                redisClient = RedisListener.redisClient,
+            )
+        }
+
+        val bolkEgneAnsatteCache: RedisCache<Map<String, Boolean>> by lazy {
+            RedisCache(
+                name = "bolkEgneAnsatte",
+                codec = createCodec<Map<String, Boolean>>("hent-egne-ansatte"),
+                redisClient = RedisListener.redisClient,
+            )
+        }
+
+        val skjermingService: SkjermingService by lazy {
+            SkjermingService(
+                pdlClientService = pdlClientService,
+                skjermetClientService = skjermetClientService,
+                bolkPdlCache = bolkPdlCache,
+                bolkEgneAnsatteCache = bolkEgneAnsatteCache,
+            )
+        }
 
         test("saksbehandler med tilgang til egne ansatte skal kunne se person som er skjermet") {
 
@@ -36,7 +64,7 @@ internal class SkjermingServiceTest :
                         ),
                 )
 
-            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+            coEvery { skjermetClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
                 mapOf(
                     ident to true,
                 )
@@ -62,7 +90,7 @@ internal class SkjermingServiceTest :
                         ),
                 )
 
-            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+            coEvery { skjermetClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
                 mapOf(
                     ident to false,
                 )
@@ -88,7 +116,7 @@ internal class SkjermingServiceTest :
                         ),
                 )
 
-            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+            coEvery { skjermetClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
                 mapOf(
                     ident to false,
                 )
@@ -114,7 +142,7 @@ internal class SkjermingServiceTest :
                         ),
                 )
 
-            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+            coEvery { skjermetClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
                 mapOf(
                     ident to false,
                 )
@@ -140,7 +168,7 @@ internal class SkjermingServiceTest :
                         ),
                 )
 
-            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+            coEvery { skjermetClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
                 mapOf(
                     ident to false,
                 )
@@ -164,7 +192,7 @@ internal class SkjermingServiceTest :
                         ),
                 )
 
-            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+            coEvery { skjermetClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
                 mapOf(
                     ident to true,
                 )
@@ -190,7 +218,7 @@ internal class SkjermingServiceTest :
                         ),
                 )
 
-            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+            coEvery { skjermetClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
                 mapOf(
                     ident to false,
                 )
@@ -216,7 +244,7 @@ internal class SkjermingServiceTest :
                         ),
                 )
 
-            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+            coEvery { skjermetClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
                 mapOf(
                     ident to false,
                 )
@@ -246,7 +274,7 @@ internal class SkjermingServiceTest :
                         ),
                 )
 
-            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+            coEvery { skjermetClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
                 mapOf(
                     ident1 to false,
                     ident2 to true,
@@ -282,7 +310,7 @@ internal class SkjermingServiceTest :
                         ),
                 )
 
-            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+            coEvery { skjermetClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
                 mapOf(
                     ident1 to false,
                     ident2 to false,
@@ -318,7 +346,7 @@ internal class SkjermingServiceTest :
                         ),
                 )
 
-            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+            coEvery { skjermetClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
                 mapOf(
                     ident1 to false,
                     ident2 to false,
@@ -350,7 +378,7 @@ internal class SkjermingServiceTest :
                         ),
                 )
 
-            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+            coEvery { skjermetClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
                 mapOf(
                     ident to false,
                     ident2 to false,
@@ -379,7 +407,7 @@ internal class SkjermingServiceTest :
                         ),
                 )
 
-            coEvery { skjermingClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
+            coEvery { skjermetClientService.isSkjermedePersonerInSkjermingslosningen(any()) } returns
                 mapOf(
                     ident1 to false,
                 )

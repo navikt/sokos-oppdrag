@@ -20,21 +20,20 @@ class RedisCache<T : Any>(
     private val name: String,
     private val cacheTTL: Duration = 10.minutes,
     private val redisClient: RedisClient = RedisConfig.getRedisClient(),
+    private val codec: RedisCodec<String, T>,
 ) {
     private val cacheHit = Counter.builder("sokos_oppdrag_redis_$name").tag("result", "hit").register(Metrics.prometheusMeterRegistryRedis)
     private val cacheError = Counter.builder("sokos_oppdrag_redis_$name").tag("result", "error").register(Metrics.prometheusMeterRegistryRedis)
     private val cacheMiss = Counter.builder("sokos_oppdrag_redis_$name").tag("result", "miss").register(Metrics.prometheusMeterRegistryRedis)
 
     @OptIn(ExperimentalLettuceCoroutinesApi::class)
-    suspend fun get(
+    suspend fun getAsync(
         key: String,
-        codec: RedisCodec<String, T>,
         loader: suspend () -> T,
     ): T =
         redisClient.useConnection(codec) { connection ->
             try {
-                val cache = connection.get(key)
-                cache
+                connection.get(key)
             } catch (e: SerializationException) {
                 cacheError.increment()
                 logger.error("Deserialisering av cache entry feilet. Entry vil bli reloadet", e)
@@ -46,16 +45,6 @@ class RedisCache<T : Any>(
                 loader().also { connection.set(key, it, SetArgs.Builder.ex(cacheTTL.inWholeSeconds)) }
             }
         } ?: throw IllegalStateException("Failed to get value from cache")
-
-    @OptIn(ExperimentalLettuceCoroutinesApi::class)
-    suspend fun update(
-        key: String,
-        codec: RedisCodec<String, T>,
-        loader: suspend () -> T,
-    ): T =
-        redisClient.useConnection(codec) { connection ->
-            loader().also { connection.set(key, it, SetArgs.Builder.ex(cacheTTL.inWholeSeconds)) }
-        } ?: throw IllegalStateException("Failed to update value from loader")
 
     @OptIn(ExperimentalLettuceCoroutinesApi::class)
     suspend fun delete(key: String) {

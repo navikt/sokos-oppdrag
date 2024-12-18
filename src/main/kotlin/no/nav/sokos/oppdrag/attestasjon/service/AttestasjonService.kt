@@ -33,7 +33,7 @@ class AttestasjonService(
     private val auditLogger: AuditLogger = AuditLogger(),
     private val zosConnectService: ZOSConnectService = ZOSConnectService(),
     private val skjermingService: SkjermingService = SkjermingService(),
-    private val oppdragCache: RedisCache<List<Oppdrag>> = RedisCache("oppdrag"),
+    private val oppdragCache: RedisCache<List<Oppdrag>> = RedisCache(name = "oppdrag", codec = createCodec<List<Oppdrag>>("hent-oppdrag")),
 ) {
     suspend fun getOppdrag(
         request: OppdragsRequest,
@@ -64,11 +64,9 @@ class AttestasjonService(
             }
 
         val oppdragsListe =
-            oppdragCache.get(
-                key = "$gjelderId-${fagomraader.joinToString()}-${request.fagSystemId}-${request.attestert}",
-                codec = createCodec<List<Oppdrag>>("hent-oppdrag"),
-                loader = { attestasjonRepository.getOppdrag(request.attestert, request.fagSystemId, gjelderId, fagomraader, navIdent.ident) },
-            )
+            oppdragCache.getAsync(key = "$gjelderId-${fagomraader.joinToString()}-${request.fagSystemId}-${request.attestert}") {
+                attestasjonRepository.getOppdrag(request.attestert, request.fagSystemId, gjelderId, fagomraader, navIdent.ident)
+            }
 
         return oppdragsListe
             .filter { filterEgenAttestertOppdrag(it, request.visEgenAttestertOppdrag ?: false, navIdent) }
