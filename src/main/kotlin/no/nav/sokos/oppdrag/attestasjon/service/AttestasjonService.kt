@@ -1,7 +1,5 @@
 package no.nav.sokos.oppdrag.attestasjon.service
 
-import com.github.benmanes.caffeine.cache.AsyncCache
-import com.github.benmanes.caffeine.cache.Caffeine
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import mu.KotlinLogging
@@ -20,11 +18,10 @@ import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
+import no.nav.sokos.oppdrag.common.redis.RedisCache
 import no.nav.sokos.oppdrag.common.util.CacheUtil
-import no.nav.sokos.oppdrag.common.util.CacheUtil.getAsync
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
-import java.time.Duration
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 const val ENHETSNUMMER_NOS = "8020"
@@ -35,12 +32,7 @@ class AttestasjonService(
     private val auditLogger: AuditLogger = AuditLogger(),
     private val zosConnectService: ZOSConnectService = ZOSConnectService(),
     private val skjermingService: SkjermingService = SkjermingService(),
-    private val oppdragCache: AsyncCache<String, List<Oppdrag>> =
-        Caffeine
-            .newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(60))
-            .maximumSize(10_000)
-            .buildAsync(),
+    private val redisCache: RedisCache = RedisCache("attestasjonService"),
 ) {
     suspend fun getOppdrag(
         request: OppdragsRequest,
@@ -70,10 +62,7 @@ class AttestasjonService(
                 else -> emptyList()
             }
 
-        val oppdragsListe =
-            oppdragCache.getAsync("$gjelderId-${fagomraader.joinToString()}-${request.fagSystemId}-${request.attestert}-${navIdent.ident}") {
-                attestasjonRepository.getOppdrag(request.attestert, request.fagSystemId, gjelderId, fagomraader, navIdent.ident)
-            }
+        val oppdragsListe = attestasjonRepository.getOppdrag(request.attestert, request.fagSystemId, gjelderId, fagomraader, navIdent.ident)
 
         return oppdragsListe
             .filter { filterEgenAttestertOppdrag(it, request.visEgenAttestertOppdrag ?: false, navIdent) }
@@ -154,14 +143,14 @@ class AttestasjonService(
         return response
     }
 
-    fun removeOppdragCache(
+    suspend fun removeOppdragCache(
         gjelderId: String? = null,
         fagSystemId: String? = null,
         fagOmraade: String? = null,
     ) {
-        oppdragCache.asMap().keys.forEach { key ->
+        redisCache.getAllKeys().forEach { key ->
             if (key.contains(gjelderId.orEmpty()) || CacheUtil.isFagSystemIdPartOfCacheKey(key, fagSystemId.orEmpty()) || key.contains(fagOmraade.orEmpty())) {
-                oppdragCache.asMap().remove(key)
+                redisCache.delete(key)
             }
         }
     }

@@ -30,6 +30,7 @@ val ktorVersion = "3.0.2"
 // Serialization
 val kotlinxSerializationVersion = "1.7.3"
 val kotlinxDatetimeVersion = "0.6.1"
+val kotlinxCoroutinesVersion = "1.9.0"
 
 // Monitorering
 val micrometerVersion = "1.14.2"
@@ -55,12 +56,16 @@ val graphqlClientVersion = "8.2.1"
 // Cache
 val caffeineVersion = "3.1.8"
 
+// Redis
+val redisVersion = "6.5.1.RELEASE"
+
 // Test
 val kotestVersion = "6.0.0.M1"
 val wiremockVersion = "3.10.0"
 val mockOAuth2ServerVersion = "2.1.10"
 val mockkVersion = "1.13.13"
 val swaggerRequestValidatorVersion = "2.44.1"
+val testcontainersVersion = "1.20.4"
 
 // Due to vulnerabilities
 val nettyCommonVersion = "4.1.115.Final"
@@ -91,6 +96,7 @@ dependencies {
 
     // Serialization
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:$kotlinxCoroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:$kotlinxSerializationVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
 
@@ -121,6 +127,9 @@ dependencies {
     // Cache
     implementation("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
 
+    // Redis
+    implementation("io.lettuce:lettuce-core:$redisVersion")
+
     // Test
     testImplementation("io.ktor:ktor-server-test-host-jvm:$ktorVersion")
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
@@ -129,6 +138,7 @@ dependencies {
     testImplementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
     testImplementation("org.wiremock:wiremock:$wiremockVersion")
     testImplementation("com.atlassian.oai:swagger-request-validator-restassured:$swaggerRequestValidatorVersion")
+    testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
 }
 
 // Vulnerability fix because of id("org.jlleitschuh.gradle.ktlint") version "12.1.1"

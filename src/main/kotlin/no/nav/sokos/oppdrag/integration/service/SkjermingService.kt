@@ -1,32 +1,18 @@
 package no.nav.sokos.oppdrag.integration.service
 
-import com.github.benmanes.caffeine.cache.Caffeine
 import no.nav.pdl.enums.AdressebeskyttelseGradering
 import no.nav.pdl.hentpersonbolk.Person
 import no.nav.sokos.oppdrag.common.NavIdent
-import no.nav.sokos.oppdrag.common.util.CacheUtil.getAsync
+import no.nav.sokos.oppdrag.common.redis.RedisCache
+import no.nav.sokos.oppdrag.config.RedisConfig.createCodec
 import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
 import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetClientService
-import java.time.Duration
 
 class SkjermingService(
     private val pdlClientService: PdlClientService = PdlClientService(),
     private val skjermetClientService: SkjermetClientService = SkjermetClientService(),
+    private val redisCache: RedisCache = RedisCache(name = "skjermingService"),
 ) {
-    private val bolkPdlCache =
-        Caffeine
-            .newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(15))
-            .maximumSize(10_000)
-            .buildAsync<String, Map<String, Person>>()
-
-    private val bolkEgneAnsatteCache =
-        Caffeine
-            .newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(15))
-            .maximumSize(10_000)
-            .buildAsync<String, Map<String, Boolean>>()
-
     suspend fun getSkjermingForIdentListe(
         identer: List<String>,
         navIdent: NavIdent,
@@ -39,14 +25,14 @@ class SkjermingService(
         }
 
         val egenAnsattMap =
-            bolkEgneAnsatteCache
-                .getAsync(personIdenter.joinToString()) {
+            redisCache
+                .getAsync(key = personIdenter.joinToString(), codec = createCodec<Map<String, Boolean>>("hent-egne-ansatte")) {
                     skjermetClientService.isSkjermedePersonerInSkjermingslosningen(personIdenter)
                 }.mapValues { (_, skjermet) -> !navIdent.hasAccessEgneAnsatte() && skjermet }
 
         val adressebeskyttelseMap =
-            bolkPdlCache
-                .getAsync(personIdenter.joinToString()) {
+            redisCache
+                .getAsync(key = personIdenter.joinToString(), codec = createCodec<Map<String, Person>>("hent-pdl")) {
                     pdlClientService.getPerson(identer = personIdenter)
                 }.mapValues { (_, person) ->
                     val graderinger = person.adressebeskyttelse.map { it.gradering }

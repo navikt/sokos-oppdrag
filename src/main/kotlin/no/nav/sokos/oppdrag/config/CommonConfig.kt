@@ -30,6 +30,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.config.requestValidationOppdragsInfoCon
 import org.slf4j.event.Level
 import java.util.UUID
 import no.nav.sokos.oppdrag.attestasjon.metrics.Metrics as AttestasjonMetrics
+import no.nav.sokos.oppdrag.common.redis.Metrics as RedisMetrics
 import no.nav.sokos.oppdrag.integration.metrics.Metrics as IntegrationMetrics
 import no.nav.sokos.oppdrag.oppdragsinfo.metrics.Metrics as OppdragsInfoMetrics
 
@@ -107,7 +108,8 @@ fun Routing.internalNaisRoutes(
         }
         get("metrics") {
             call.respondText(
-                IntegrationMetrics.prometheusMeterRegistry.scrape() +
+                RedisMetrics.prometheusMeterRegistryRedis.scrape() +
+                    IntegrationMetrics.prometheusMeterRegistry.scrape() +
                     OppdragsInfoMetrics.prometheusMeterRegistryOppdragsInfo.scrape() +
                     AttestasjonMetrics.prometheusMeterRegistryAttestasjon.scrape(),
             )
