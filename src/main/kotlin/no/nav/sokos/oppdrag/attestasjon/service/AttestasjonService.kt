@@ -62,10 +62,13 @@ class AttestasjonService(
                 else -> emptyList()
             }
 
-        val oppdragsListe = attestasjonRepository.getOppdrag(request.attestert, request.fagSystemId, gjelderId, fagomraader, navIdent.ident)
+        val oppdragsListe = attestasjonRepository.getOppdrag(gjelderId, request.fagSystemId, fagomraader, request.attestertStatus.attestert, request.attestertStatus.filterEgenAttestert)
+        val statusFilterOppdragList =
+            oppdragsListe
+                .takeIf { request.attestertStatus.filterEgenAttestert != null }
+                ?.filter { filterEgenAttestertOppdrag(it, request.attestertStatus.filterEgenAttestert!!, navIdent) } ?: oppdragsListe
 
-        return oppdragsListe
-            .filter { filterEgenAttestertOppdrag(it, request.visEgenAttestertOppdrag ?: false, navIdent) }
+        return statusFilterOppdragList
             .filter { hasSaksbehandlerReadAccess(it, navIdent) }
             .map { it.toDTO() }
             .let { list ->
@@ -179,12 +182,12 @@ class AttestasjonService(
 
     private fun filterEgenAttestertOppdrag(
         oppdrag: Oppdrag,
-        visEgenAttestertOppdrag: Boolean,
+        egenAttestertOppdrag: Boolean?,
         saksbehandler: NavIdent,
-    ): Boolean {
-        if (!visEgenAttestertOppdrag) {
-            return true
+    ): Boolean =
+        when (egenAttestertOppdrag) {
+            true -> oppdrag.attestanter.any { it.value.contains(saksbehandler.ident) }
+            false -> oppdrag.attestanter.filter { !it.value.contains(saksbehandler.ident) }.isNotEmpty()
+            else -> false
         }
-        return oppdrag.attestanter.contains(saksbehandler.ident)
-    }
 }

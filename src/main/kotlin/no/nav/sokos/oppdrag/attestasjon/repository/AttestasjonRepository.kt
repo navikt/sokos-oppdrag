@@ -19,22 +19,33 @@ class AttestasjonRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource(),
 ) {
     suspend fun getOppdrag(
-        attestert: Boolean?,
-        fagSystemId: String?,
         gjelderId: String?,
+        fagSystemId: String?,
         kodeFagOmraader: List<String>,
-        ident: String,
+        attestert: Boolean?,
+        filterEgenAttestert: Boolean?,
     ): List<Oppdrag> =
         withContext(Dispatchers.IO) {
-            buildOppdragSqlQuery(attestert, fagSystemId, gjelderId, kodeFagOmraader, ident).let { (sql, parameterMap) ->
+            buildOppdragSqlQuery(fagSystemId, gjelderId, kodeFagOmraader, attestert).let { (sql, parameterMap) ->
                 using(sessionOf(dataSource)) { session ->
-                    session.list(
-                        queryOf(
-                            sql,
-                            parameterMap,
-                        ),
-                        mapToOppdrag,
-                    )
+                    val oppdragList =
+                        session.list(
+                            queryOf(
+                                sql,
+                                parameterMap,
+                            ),
+                            mapToOppdrag,
+                        )
+                    when (filterEgenAttestert) {
+                        true, false ->
+                            oppdragList.map { oppdrag ->
+                                oppdrag.apply {
+                                    attestanter.putAll(getAttestanterWithOppdragsId(oppdragsId))
+                                }
+                            }
+
+                        else -> oppdragList
+                    }
                 }
             }
         }
@@ -181,7 +192,7 @@ class AttestasjonRepository(
                    A.DATO_UGYLDIG_FOM   AS DATO_UGYLDIG_FOM
             FROM T_ATTESTASJON A
             WHERE 1 = 1
-              AND A.LINJE_ID IN (${linjeIder.joinToString(",")})
+              ${if (linjeIder.isNotEmpty()) " AND A.LINJE_ID IN (${linjeIder.joinToString(",")})" else ""}
               AND A.OPPDRAGS_ID = :OPPDRAGSID
               AND (A.LOPENR =
                    (SELECT MAX(A2.LOPENR)
@@ -207,6 +218,36 @@ class AttestasjonRepository(
         }
     }
 
+    private fun getAttestanterWithOppdragsId(oppdragsId: Int): Map<Int, List<String>> =
+        using(sessionOf(dataSource)) { session ->
+            session
+                .list(
+                    queryOf(
+                        """
+                        SELECT L.LINJE_ID, TRIM(A.ATTESTANT_ID) AS ATTESTANT_ID, A.DATO_UGYLDIG_FOM
+                        FROM T_OPPDRAGSLINJE L LEFT OUTER JOIN (
+                            SELECT A.ATTESTANT_ID, A.LINJE_ID, A.OPPDRAGS_ID, A.DATO_UGYLDIG_FOM
+                            FROM T_ATTESTASJON A
+                            WHERE A.LOPENR = (SELECT MAX(A2.LOPENR)
+                                              FROM T_ATTESTASJON A2
+                                              WHERE A2.OPPDRAGS_ID = A.OPPDRAGS_ID
+                                                AND A2.LINJE_ID = A.LINJE_ID
+                                                AND A2.ATTESTANT_ID = A.ATTESTANT_ID)
+                             AND A.DATO_UGYLDIG_FOM > CURRENT DATE
+                        ) A ON (L.OPPDRAGS_ID = A.OPPDRAGS_ID AND L.LINJE_ID = A.LINJE_ID)
+                        WHERE L.OPPDRAGS_ID = :OPPDRAGSID
+                        """.trimIndent(),
+                        mapOf(
+                            "OPPDRAGSID" to oppdragsId,
+                        ),
+                    ),
+                ) { row -> row.int("LINJE_ID") to row.stringOrNull("ATTESTANT_ID") }
+                .groupBy({ it.first }, { it.second })
+                .mapValues { (_, attestanter) ->
+                    attestanter.filterNotNull().takeIf { it.isNotEmpty() } ?: emptyList()
+                }
+        }
+
     private val mapToOppdrag: (Row) -> Oppdrag = { row ->
         Oppdrag(
             ansvarsSted = row.stringOrNull("ANSVARSSTED"),
@@ -219,13 +260,6 @@ class AttestasjonRepository(
             oppdragsId = row.int("OPPDRAGS_ID"),
             kodeFagOmraade = row.string("KODE_FAGOMRAADE"),
             kodeFagGruppe = row.string("KODE_FAGGRUPPE"),
-            attestanter =
-                row
-                    .stringOrNull("ATTESTANT_IDS")
-                    ?.split(",")
-                    ?.map { it.trim() }
-                    ?.filter { it.isNotEmpty() }
-                    .orEmpty(),
         )
     }
 
@@ -257,15 +291,14 @@ class AttestasjonRepository(
     }
 
     private fun buildOppdragSqlQuery(
-        attestert: Boolean?,
         fagSystemId: String?,
         gjelderId: String?,
         kodeFagOmraader: List<String>,
-        ident: String,
+        attestert: Boolean?,
     ): Pair<String, Map<String, String>> {
         val parameterMap = mutableMapOf<String, String>()
+
         val sqlBuilder = StringBuilder()
-        sqlBuilder.appendLine()
         sqlBuilder.append(
             """                         
             WITH 
@@ -355,17 +388,7 @@ class AttestasjonRepository(
                                  FROM T_OPPDRAGSENHET OA2
                                  WHERE OA2.OPPDRAGS_ID = OA.OPPDRAGS_ID
                                    AND OA2.TYPE_ENHET = OA.TYPE_ENHET
-                                   AND OA2.DATO_FOM <= CURRENT DATE))) AS ANSVARSSTED,
-                    TRIM((SELECT RTRIM(CAST(XMLSERIALIZE(XMLAGG(XMLTEXT(TRIM(ATTESTANT_ID) || ',')) AS CLOB) AS VARCHAR(1000))) AS ATTESTANT_IDS
-                         FROM (SELECT DISTINCT A.ATTESTANT_ID
-                               FROM T_ATTESTASJON A
-                               WHERE A.OPPDRAGS_ID = O.OPPDRAGS_ID
-                                  AND A.LOPENR = (SELECT MAX(A2.LOPENR)
-                                                  FROM T_ATTESTASJON A2
-                                                  WHERE A2.OPPDRAGS_ID = A.OPPDRAGS_ID
-                                                    AND A2.LINJE_ID = A.LINJE_ID
-                                                    AND A2.ATTESTANT_ID = A.ATTESTANT_ID)
-                                  AND A.DATO_UGYLDIG_FOM > CURRENT DATE))) AS ATTESTANT_IDS
+                                   AND OA2.DATO_FOM <= CURRENT DATE))) AS ANSVARSSTED
                 FROM T_OPPDRAGSLINJE L
                 JOIN FilteredOppdrag O ON L.OPPDRAGS_ID = O.OPPDRAGS_ID
                 JOIN T_FAGOMRAADE FO ON FO.KODE_FAGOMRAADE = O.KODE_FAGOMRAADE

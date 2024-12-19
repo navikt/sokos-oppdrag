@@ -15,7 +15,7 @@ data class Oppdrag(
     val kodeFagOmraade: String,
     val kostnadsSted: String,
     val oppdragsId: Int,
-    val attestanter: List<String>,
+    val attestanter: MutableMap<Int, List<String>> = mutableMapOf(),
 )
 
 fun Oppdrag.toDTO(
