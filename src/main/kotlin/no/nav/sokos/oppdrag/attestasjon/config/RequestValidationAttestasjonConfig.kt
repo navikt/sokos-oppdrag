@@ -25,8 +25,8 @@ fun RequestValidationConfig.requestValidationAttestasjonConfig() {
 private fun validateSearchParams(oppdragsRequest: OppdragsRequest): Boolean {
     var valid = false
 
-    oppdragsRequest.kodeFagGruppe?.takeIf { oppdragsRequest.attestert == false }?.let { valid = true }
-    oppdragsRequest.kodeFagOmraade?.takeIf { oppdragsRequest.attestert == false }?.let { valid = true }
+    oppdragsRequest.kodeFagGruppe?.takeIf { oppdragsRequest.attestertStatus.attestert == false }?.let { valid = true }
+    oppdragsRequest.kodeFagOmraade?.takeIf { oppdragsRequest.attestertStatus.attestert == false }?.let { valid = true }
     oppdragsRequest.gjelderId?.let { valid = true }
     oppdragsRequest.fagSystemId?.let { oppdragsRequest.kodeFagOmraade?.let { valid = true } }
 

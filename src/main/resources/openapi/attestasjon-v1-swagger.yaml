@@ -170,14 +170,16 @@ components:
           type: string
           example: "MBA"
           nullable: true
-        attestert:
-          type: boolean
-          example: true
-          nullable: true
-        visEgenAttestertOppdrag:
-          type: boolean
-          example: true
-          nullable: true
+        attestertStatus:
+          type: string
+          enum:
+            - IKKE_FERDIG_ATTESTERT_EKSL_EGNE
+            - IKKE_FERDIG_ATTESTERT_INKL_EGNE
+            - ATTESTERT
+            - ALLE
+            - EGEN_ATTESTERTE
+          example: "ALLE"
+          nullable: false
 
     AttestasjonRequest:
       type: object

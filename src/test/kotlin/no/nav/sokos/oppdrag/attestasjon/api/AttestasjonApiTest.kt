@@ -23,6 +23,8 @@ import no.nav.sokos.oppdrag.ATTESTASJON_BASE_API_PATH
 import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
+import no.nav.sokos.oppdrag.attestasjon.api.model.AttestertStatus.ATTESTERT
+import no.nav.sokos.oppdrag.attestasjon.api.model.AttestertStatus.IKKE_FERDIG_ATTESTERT_INKL_EGNE
 import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.ZosResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
@@ -117,7 +119,7 @@ internal class AttestasjonApiTest :
                     .filter(validationFilter)
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                    .body(OppdragsRequest(kodeFagGruppe = "BP", attestert = true))
+                    .body(OppdragsRequest(kodeFagGruppe = "BP", attestertStatus = ATTESTERT))
                     .port(PORT)
                     .post("$ATTESTASJON_BASE_API_PATH/sok")
                     .then()
@@ -145,7 +147,7 @@ internal class AttestasjonApiTest :
                 .filter(validationFilter)
                 .header(HttpHeaders.ContentType, APPLICATION_JSON)
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(OppdragsRequest(kodeFagOmraade = "BP", attestert = false))
+                .body(OppdragsRequest(kodeFagOmraade = "BP", attestertStatus = IKKE_FERDIG_ATTESTERT_INKL_EGNE))
                 .port(PORT)
                 .post("$ATTESTASJON_BASE_API_PATH/sok")
                 .then()

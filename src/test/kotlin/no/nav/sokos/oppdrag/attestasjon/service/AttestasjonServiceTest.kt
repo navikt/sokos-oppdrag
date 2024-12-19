@@ -13,6 +13,8 @@ import kotlinx.datetime.LocalDate
 import no.nav.sokos.oppdrag.TestUtil.navIdent
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
+import no.nav.sokos.oppdrag.attestasjon.api.model.AttestertStatus.ALLE
+import no.nav.sokos.oppdrag.attestasjon.api.model.AttestertStatus.EGEN_ATTESTERTE
 import no.nav.sokos.oppdrag.attestasjon.api.model.ZosResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
@@ -65,7 +67,7 @@ internal class AttestasjonServiceTest :
             val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ, GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE))
             val oppdragList = listOf(oppdragMockdata)
 
-            coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any(), navIdent.ident) } returns oppdragList
+            coEvery { attestasjonRepository.getOppdrag(GJELDER_ID, any(), any(), any(), any()) } returns oppdragList
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestMockdata, navIdent)
@@ -80,10 +82,10 @@ internal class AttestasjonServiceTest :
             val oppdragList = listOf(oppdragMockdata)
 
             coEvery { attestasjonRepository.getFagomraaderForFaggruppe(KODE_FAGGRUPPE) } returns listOf(KODE_FAGOMRAADE)
-            coEvery { attestasjonRepository.getOppdrag(any(), any(), any(), listOf(KODE_FAGOMRAADE), navIdent.ident) } returns oppdragList
+            coEvery { attestasjonRepository.getOppdrag(any(), any(), listOf(KODE_FAGOMRAADE), any(), any()) } returns oppdragList
             coEvery { skjermingService.getSkjermingForIdentListe(listOf(GJELDER_ID), any()) } returns mapOf(GJELDER_ID to false)
 
-            val result = attestasjonService.getOppdrag(oppdragRequestMockdata.copy(gjelderId = null, fagSystemId = null, kodeFagGruppe = null, attestert = null), navIdent)
+            val result = attestasjonService.getOppdrag(oppdragRequestMockdata.copy(gjelderId = null, fagSystemId = null, kodeFagGruppe = null, attestertStatus = ALLE), navIdent)
             result shouldBe oppdragList.map { it.toDTO(hasWriteAccess = true) }
             result.size shouldBe oppdragList.size
 
@@ -94,14 +96,14 @@ internal class AttestasjonServiceTest :
             val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ, GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE))
             val oppdragList =
                 listOf(
-                    oppdragMockdata.copy(attestanter = listOf(navIdent.ident)),
+                    oppdragMockdata.copy(attestanter = mutableMapOf(1 to listOf(navIdent.ident))),
                     oppdragMockdata,
                 )
 
-            coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any(), navIdent.ident) } returns oppdragList
+            coEvery { attestasjonRepository.getOppdrag(GJELDER_ID, any(), any(), any(), any()) } returns oppdragList
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
-            val result = attestasjonService.getOppdrag(oppdragRequestMockdata.copy(visEgenAttestertOppdrag = true), navIdent)
+            val result = attestasjonService.getOppdrag(oppdragRequestMockdata.copy(attestertStatus = EGEN_ATTESTERTE), navIdent)
             result.size shouldBe 1
             result.first() shouldBe oppdragList.first().toDTO(hasWriteAccess = true)
         }
@@ -110,7 +112,7 @@ internal class AttestasjonServiceTest :
             val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOS_READ))
             val oppdragList = listOf(oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOS))
 
-            coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any(), navIdent.ident) } returns oppdragList
+            coEvery { attestasjonRepository.getOppdrag(GJELDER_ID, any(), any(), any(), any()) } returns oppdragList
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestMockdata, navIdent)
@@ -124,7 +126,7 @@ internal class AttestasjonServiceTest :
             val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOS_READ, GRUPPE_ATTESTASJON_NOS_WRITE))
             val oppdragList = listOf(oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOS))
 
-            coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any(), navIdent.ident) } returns oppdragList
+            coEvery { attestasjonRepository.getOppdrag(GJELDER_ID, any(), any(), any(), any()) } returns oppdragList
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestMockdata, navIdent)
@@ -138,7 +140,7 @@ internal class AttestasjonServiceTest :
             val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOP_READ))
             val oppdragList = listOf(oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOP))
 
-            coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any(), navIdent.ident) } returns oppdragList
+            coEvery { attestasjonRepository.getOppdrag(GJELDER_ID, any(), any(), any(), any()) } returns oppdragList
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestMockdata, navIdent)
@@ -152,7 +154,7 @@ internal class AttestasjonServiceTest :
             val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOP_READ, GRUPPE_ATTESTASJON_NOP_WRITE))
             val oppdragList = listOf(oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOP))
 
-            coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any(), navIdent.ident) } returns oppdragList
+            coEvery { attestasjonRepository.getOppdrag(GJELDER_ID, any(), any(), any(), any()) } returns oppdragList
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestMockdata, navIdent)
@@ -166,7 +168,7 @@ internal class AttestasjonServiceTest :
             val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ))
             val oppdragList = listOf(oppdragMockdata)
 
-            coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any(), navIdent.ident) } returns oppdragList
+            coEvery { attestasjonRepository.getOppdrag(GJELDER_ID, any(), any(), any(), any()) } returns oppdragList
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestMockdata, navIdent)
@@ -180,7 +182,7 @@ internal class AttestasjonServiceTest :
             val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ, GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE))
             val oppdragList = listOf(oppdragMockdata)
 
-            coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any(), navIdent.ident) } returns oppdragList
+            coEvery { attestasjonRepository.getOppdrag(GJELDER_ID, any(), any(), any(), any()) } returns oppdragList
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestMockdata, navIdent)
@@ -197,7 +199,7 @@ internal class AttestasjonServiceTest :
                     oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOS),
                     oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOP),
                 )
-            coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any(), navIdent.ident) } returns oppdragList
+            coEvery { attestasjonRepository.getOppdrag(GJELDER_ID, any(), any(), any(), any()) } returns oppdragList
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestMockdata, navIdent)
@@ -223,7 +225,7 @@ internal class AttestasjonServiceTest :
                     oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOS),
                     oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOP),
                 )
-            coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any(), navIdent.ident) } returns oppdragList
+            coEvery { attestasjonRepository.getOppdrag(GJELDER_ID, any(), any(), any(), any()) } returns oppdragList
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestMockdata, navIdent)
@@ -241,7 +243,7 @@ internal class AttestasjonServiceTest :
                     oppdragMockdata.copy(ansvarsSted = ENHETSNUMMER_NOP),
                 )
 
-            coEvery { attestasjonRepository.getOppdrag(any(), any(), GJELDER_ID, any(), navIdent.ident) } returns oppdragList
+            coEvery { attestasjonRepository.getOppdrag(GJELDER_ID, any(), any(), any(), any()) } returns oppdragList
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestMockdata, navIdent)

@@ -1,5 +1,6 @@
 package no.nav.sokos.oppdrag.attestasjon.utils
 
+import no.nav.sokos.oppdrag.attestasjon.api.model.AttestertStatus.ALLE
 import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.toDTO
@@ -21,7 +22,7 @@ object Testdata {
             kostnadsSted = "kostnadsSted",
             ansvarsSted = "ansvarsSted",
             oppdragsId = 1,
-            attestanter = listOf("attestant1"),
+            attestanter = mutableMapOf(1 to listOf("attestant1")),
         )
 
     val oppdragDTOMockdata = oppdragMockdata.toDTO(hasWriteAccess = true)
@@ -32,7 +33,6 @@ object Testdata {
             fagSystemId = "fagSystemId",
             kodeFagGruppe = KODE_FAGGRUPPE,
             kodeFagOmraade = KODE_FAGOMRAADE,
-            attestert = false,
-            visEgenAttestertOppdrag = false,
+            attestertStatus = ALLE,
         )
 }
