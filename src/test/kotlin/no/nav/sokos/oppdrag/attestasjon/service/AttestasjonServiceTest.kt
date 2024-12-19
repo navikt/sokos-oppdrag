@@ -15,7 +15,6 @@ import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.ZosResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
-import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
 import no.nav.sokos.oppdrag.attestasjon.domain.toDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
@@ -34,7 +33,6 @@ import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_WRITE
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_READ
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_WRITE
 import no.nav.sokos.oppdrag.common.redis.RedisCache
-import no.nav.sokos.oppdrag.config.RedisConfig.createCodec
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import no.nav.sokos.oppdrag.listener.RedisListener
 
@@ -45,12 +43,8 @@ internal class AttestasjonServiceTest :
         val attestasjonRepository = mockk<AttestasjonRepository>()
         val zosConnectService: ZOSConnectService = mockk<ZOSConnectService>()
         val skjermingService = mockk<SkjermingService>()
-        val oppdragCache: RedisCache<List<Oppdrag>> by lazy {
-            RedisCache(
-                name = "oppdrag",
-                codec = createCodec<List<Oppdrag>>("hent-oppdrag"),
-                redisClient = RedisListener.redisClient,
-            )
+        val redisCache: RedisCache by lazy {
+            RedisCache(name = "oppdrag", redisClient = RedisListener.redisClient)
         }
 
         val attestasjonService: AttestasjonService by lazy {
@@ -58,13 +52,13 @@ internal class AttestasjonServiceTest :
                 attestasjonRepository = attestasjonRepository,
                 zosConnectService = zosConnectService,
                 skjermingService = skjermingService,
-                oppdragCache = oppdragCache,
+                redisCache = redisCache,
             )
         }
 
         afterEach {
             clearAllMocks()
-            oppdragCache.getAllKeys().forEach { oppdragCache.delete(it) }
+            redisCache.getAllKeys().forEach { redisCache.delete(it) }
         }
 
         test("hent oppdrag for en gjelderId når saksbehandler har skjermingtilgang til personen") {

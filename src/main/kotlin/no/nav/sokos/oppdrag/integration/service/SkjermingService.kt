@@ -11,8 +11,7 @@ import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetClientService
 class SkjermingService(
     private val pdlClientService: PdlClientService = PdlClientService(),
     private val skjermetClientService: SkjermetClientService = SkjermetClientService(),
-    private val bolkPdlCache: RedisCache<Map<String, Person>> = RedisCache(name = "bolkPdl", codec = createCodec<Map<String, Person>>("hent-pdl")),
-    private val bolkEgneAnsatteCache: RedisCache<Map<String, Boolean>> = RedisCache(name = "bolkEgneAnsatte", codec = createCodec<Map<String, Boolean>>("hent-egne-ansatte")),
+    private val redisCache: RedisCache = RedisCache(name = "skjermingService"),
 ) {
     suspend fun getSkjermingForIdentListe(
         identer: List<String>,
@@ -26,14 +25,14 @@ class SkjermingService(
         }
 
         val egenAnsattMap =
-            bolkEgneAnsatteCache
-                .getAsync(personIdenter.joinToString()) {
+            redisCache
+                .getAsync(key = personIdenter.joinToString(), codec = createCodec<Map<String, Boolean>>("hent-egne-ansatte")) {
                     skjermetClientService.isSkjermedePersonerInSkjermingslosningen(personIdenter)
                 }.mapValues { (_, skjermet) -> !navIdent.hasAccessEgneAnsatte() && skjermet }
 
         val adressebeskyttelseMap =
-            bolkPdlCache
-                .getAsync(personIdenter.joinToString()) {
+            redisCache
+                .getAsync(key = personIdenter.joinToString(), codec = createCodec<Map<String, Person>>("hent-pdl")) {
                     pdlClientService.getPerson(identer = personIdenter)
                 }.mapValues { (_, person) ->
                     val graderinger = person.adressebeskyttelse.map { it.gradering }

@@ -20,7 +20,6 @@ import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.common.redis.RedisCache
 import no.nav.sokos.oppdrag.common.util.CacheUtil
-import no.nav.sokos.oppdrag.config.RedisConfig.createCodec
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 
@@ -33,7 +32,7 @@ class AttestasjonService(
     private val auditLogger: AuditLogger = AuditLogger(),
     private val zosConnectService: ZOSConnectService = ZOSConnectService(),
     private val skjermingService: SkjermingService = SkjermingService(),
-    private val oppdragCache: RedisCache<List<Oppdrag>> = RedisCache(name = "oppdrag", codec = createCodec<List<Oppdrag>>("hent-oppdrag")),
+    private val redisCache: RedisCache = RedisCache("attestasjonService"),
 ) {
     suspend fun getOppdrag(
         request: OppdragsRequest,
@@ -63,10 +62,7 @@ class AttestasjonService(
                 else -> emptyList()
             }
 
-        val oppdragsListe =
-            oppdragCache.getAsync(key = "$gjelderId-${fagomraader.joinToString()}-${request.fagSystemId}-${request.attestert}") {
-                attestasjonRepository.getOppdrag(request.attestert, request.fagSystemId, gjelderId, fagomraader, navIdent.ident)
-            }
+        val oppdragsListe = attestasjonRepository.getOppdrag(request.attestert, request.fagSystemId, gjelderId, fagomraader, navIdent.ident)
 
         return oppdragsListe
             .filter { filterEgenAttestertOppdrag(it, request.visEgenAttestertOppdrag ?: false, navIdent) }
@@ -152,9 +148,9 @@ class AttestasjonService(
         fagSystemId: String? = null,
         fagOmraade: String? = null,
     ) {
-        oppdragCache.getAllKeys().forEach { key ->
+        redisCache.getAllKeys().forEach { key ->
             if (key.contains(gjelderId.orEmpty()) || CacheUtil.isFagSystemIdPartOfCacheKey(key, fagSystemId.orEmpty()) || key.contains(fagOmraade.orEmpty())) {
-                oppdragCache.delete(key)
+                redisCache.delete(key)
             }
         }
     }

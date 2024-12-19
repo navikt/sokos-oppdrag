@@ -13,7 +13,6 @@ import no.nav.sokos.oppdrag.common.GRUPPE_FORTROLIG
 import no.nav.sokos.oppdrag.common.GRUPPE_STRENGT_FORTROLIG
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.redis.RedisCache
-import no.nav.sokos.oppdrag.config.RedisConfig.createCodec
 import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
 import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetClientService
 import no.nav.sokos.oppdrag.listener.RedisListener
@@ -25,18 +24,9 @@ internal class SkjermingServiceTest :
         val pdlClientService = mockk<PdlClientService>()
         val skjermetClientService = mockk<SkjermetClientService>()
 
-        val bolkPdlCache: RedisCache<Map<String, Person>> by lazy {
+        val redisCache: RedisCache by lazy {
             RedisCache(
-                name = "bolkPdl",
-                codec = createCodec<Map<String, Person>>("hent-pdl"),
-                redisClient = RedisListener.redisClient,
-            )
-        }
-
-        val bolkEgneAnsatteCache: RedisCache<Map<String, Boolean>> by lazy {
-            RedisCache(
-                name = "bolkEgneAnsatte",
-                codec = createCodec<Map<String, Boolean>>("hent-egne-ansatte"),
+                name = "skjermingService",
                 redisClient = RedisListener.redisClient,
             )
         }
@@ -45,8 +35,7 @@ internal class SkjermingServiceTest :
             SkjermingService(
                 pdlClientService = pdlClientService,
                 skjermetClientService = skjermetClientService,
-                bolkPdlCache = bolkPdlCache,
-                bolkEgneAnsatteCache = bolkEgneAnsatteCache,
+                redisCache = redisCache,
             )
         }
 

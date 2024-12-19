@@ -16,19 +16,19 @@ import kotlin.time.Duration.Companion.minutes
 
 private val logger = KotlinLogging.logger {}
 
-class RedisCache<T : Any>(
+class RedisCache(
     private val name: String,
     private val cacheTTL: Duration = 10.minutes,
     private val redisClient: RedisClient = RedisConfig.getRedisClient(),
-    private val codec: RedisCodec<String, T>,
 ) {
     private val cacheHit = Counter.builder("sokos_oppdrag_redis_$name").tag("result", "hit").register(Metrics.prometheusMeterRegistryRedis)
     private val cacheError = Counter.builder("sokos_oppdrag_redis_$name").tag("result", "error").register(Metrics.prometheusMeterRegistryRedis)
     private val cacheMiss = Counter.builder("sokos_oppdrag_redis_$name").tag("result", "miss").register(Metrics.prometheusMeterRegistryRedis)
 
     @OptIn(ExperimentalLettuceCoroutinesApi::class)
-    suspend fun getAsync(
+    suspend fun <T : Any> getAsync(
         key: String,
+        codec: RedisCodec<String, T>,
         loader: suspend () -> T,
     ): T =
         redisClient.useConnection(codec) { connection ->
