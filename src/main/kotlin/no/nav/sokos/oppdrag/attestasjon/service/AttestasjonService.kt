@@ -146,7 +146,7 @@ class AttestasjonService(
         return response
     }
 
-    suspend fun removeOppdragCache(
+    private suspend fun removeOppdragCache(
         gjelderId: String? = null,
         fagSystemId: String? = null,
         fagOmraade: String? = null,

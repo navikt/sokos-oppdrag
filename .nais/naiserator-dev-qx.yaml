@@ -74,9 +74,16 @@ spec:
       mountPath: /var/run/secrets/db2license
   envFrom:
     - secret: oppdrag-qx-credentials
+    - secret: sokos-oppdrag-qx-redis-password
   env:
     - name: USE_AUTHENTICATION
       value: "true"
+
+    # Redis
+    - name: REDIS_HOST
+      value: "sokos-oppdrag-qx-redis.okonomi.svc.nais.local"
+    - name: REDIS_PORT
+      value: "6379"
 
     # Db2
     - name: DATABASE_HOST
