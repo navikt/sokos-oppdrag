@@ -67,20 +67,12 @@ val mockkVersion = "1.13.14"
 val swaggerRequestValidatorVersion = "2.44.1"
 val testcontainersVersion = "1.20.4"
 
-// Due to vulnerabilities
-val nettyCommonVersion = "4.1.116.Final"
-
 dependencies {
 
     // Ktor server
     implementation("io.ktor:ktor-server-call-logging-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-call-id-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
-    constraints {
-        implementation("io.netty:netty-common:$nettyCommonVersion") {
-            because("override transient from io.ktor:ktor-server-netty-jvm")
-        }
-    }
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-swagger:$ktorVersion")
     implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
