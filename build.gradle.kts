@@ -25,12 +25,12 @@ repositories {
 }
 
 // Ktor
-val ktorVersion = "3.0.2"
+val ktorVersion = "3.0.3"
 
 // Serialization
 val kotlinxSerializationVersion = "1.7.3"
 val kotlinxDatetimeVersion = "0.6.1"
-val kotlinxCoroutinesVersion = "1.9.0"
+val kotlinxCoroutinesVersion = "1.10.1"
 
 // Monitorering
 val micrometerVersion = "1.14.2"
@@ -38,7 +38,7 @@ val micrometerVersion = "1.14.2"
 // Logging
 val kotlinLoggingVersion = "3.0.5"
 val janionVersion = "3.1.12"
-val logbackVersion = "1.5.12"
+val logbackVersion = "1.5.15"
 val logstashVersion = "8.0"
 val papertrailappVersion = "1.0.0"
 
@@ -47,7 +47,7 @@ val natpryceVersion = "1.6.10.0"
 
 // Database
 val hikariVersion = "6.2.1"
-val db2JccVersion = "11.5.9.0"
+val db2JccVersion = "12.1.0.0"
 val kotliqueryVersion = "1.9.0"
 
 // GraphQL
@@ -63,12 +63,12 @@ val redisVersion = "6.5.1.RELEASE"
 val kotestVersion = "6.0.0.M1"
 val wiremockVersion = "3.10.0"
 val mockOAuth2ServerVersion = "2.1.10"
-val mockkVersion = "1.13.13"
+val mockkVersion = "1.13.14"
 val swaggerRequestValidatorVersion = "2.44.1"
 val testcontainersVersion = "1.20.4"
 
 // Due to vulnerabilities
-val nettyCommonVersion = "4.1.115.Final"
+val nettyCommonVersion = "4.1.116.Final"
 
 dependencies {
 
