@@ -14,6 +14,7 @@ import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
+import no.nav.sokos.oppdrag.attestasjon.repository.FagomraadeRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
@@ -29,6 +30,7 @@ const val ENHETSNUMMER_NOP = "4819"
 
 class AttestasjonService(
     private val attestasjonRepository: AttestasjonRepository = AttestasjonRepository(),
+    private val fagomraadeRepository: FagomraadeRepository = FagomraadeRepository(),
     private val auditLogger: AuditLogger = AuditLogger(),
     private val zosConnectService: ZOSConnectService = ZOSConnectService(),
     private val skjermingService: SkjermingService = SkjermingService(),
@@ -58,7 +60,7 @@ class AttestasjonService(
         val fagomraader =
             when {
                 !request.kodeFagOmraade.isNullOrBlank() -> listOf(request.kodeFagOmraade)
-                !request.kodeFagGruppe.isNullOrBlank() -> attestasjonRepository.getFagomraaderForFaggruppe(request.kodeFagGruppe)
+                !request.kodeFagGruppe.isNullOrBlank() -> fagomraadeRepository.getFagomraaderForFaggruppe(request.kodeFagGruppe)
                 else -> emptyList()
             }
 
@@ -75,13 +77,13 @@ class AttestasjonService(
                 if (verifiedSkjermingForGjelderId) {
                     list.map { it.copy(erSkjermetForSaksbehandler = false) }
                 } else {
-                    val skjermingMap = skjermingService.getSkjermingForIdentListe(list.map { it.gjelderId }, navIdent)
+                    val skjermingMap = skjermingService.getSkjermingForIdentListe(list.map { it.gjelderId }.distinct(), navIdent)
                     list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.gjelderId] == true) }
                 }
             }.map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, navIdent)) }
     }
 
-    fun getFagOmraade(): List<FagOmraade> = attestasjonRepository.getFagOmraader()
+    fun getFagOmraader(): List<FagOmraade> = fagomraadeRepository.getFagOmraader()
 
     fun getOppdragsdetaljer(
         oppdragsId: Int,

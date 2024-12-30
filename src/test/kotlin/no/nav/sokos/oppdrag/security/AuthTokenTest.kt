@@ -6,44 +6,45 @@ import io.ktor.http.HttpHeaders
 import io.ktor.server.application.ApplicationCall
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
-import no.nav.sokos.oppdrag.TestUtil.tokenWithoutNavIdent
+import no.nav.sokos.oppdrag.attestasjon.Testdata.tokenWithNavIdent
+import no.nav.sokos.oppdrag.attestasjon.Testdata.tokenWithoutNavIdent
 import org.junit.jupiter.api.assertThrows
 
-internal class AuthTokenTest : FunSpec({
+internal class AuthTokenTest :
+    FunSpec({
 
-    test("token bør returnere NAVident") {
+        test("token bør returnere NAVident") {
 
-        val call = mockk<ApplicationCall>(relaxed = true)
-        every { call.request.headers[HttpHeaders.Authorization] } returns "Bearer $tokenWithNavIdent"
+            val call = mockk<ApplicationCall>(relaxed = true)
+            every { call.request.headers[HttpHeaders.Authorization] } returns "Bearer $tokenWithNavIdent"
 
-        val result = AuthToken.getSaksbehandler(call)
-        result.ident shouldBe "Z123456"
-    }
+            val result = AuthToken.getSaksbehandler(call)
+            result.ident shouldBe "Z123456"
+        }
 
-    test("token uten NAVident kaster en RuntimeException") {
+        test("token uten NAVident kaster en RuntimeException") {
 
-        val call = mockk<ApplicationCall>(relaxed = true)
-        every { call.request.headers[HttpHeaders.Authorization] } returns "Bearer $tokenWithoutNavIdent"
+            val call = mockk<ApplicationCall>(relaxed = true)
+            every { call.request.headers[HttpHeaders.Authorization] } returns "Bearer $tokenWithoutNavIdent"
 
-        val result =
-            assertThrows<RuntimeException> {
-                AuthToken.getSaksbehandler(call)
-            }
+            val result =
+                assertThrows<RuntimeException> {
+                    AuthToken.getSaksbehandler(call)
+                }
 
-        result.message shouldBe "Missing NAVident in private claims"
-    }
+            result.message shouldBe "Missing NAVident in private claims"
+        }
 
-    test("mangler token i header kaster en Error") {
+        test("mangler token i header kaster en Error") {
 
-        val call = mockk<ApplicationCall>(relaxed = true)
-        every { call.request.headers[HttpHeaders.Authorization] } returns null
+            val call = mockk<ApplicationCall>(relaxed = true)
+            every { call.request.headers[HttpHeaders.Authorization] } returns null
 
-        val exception =
-            assertThrows<Error> {
-                AuthToken.getSaksbehandler(call)
-            }
+            val exception =
+                assertThrows<Error> {
+                    AuthToken.getSaksbehandler(call)
+                }
 
-        exception.message shouldBe "Could not get token from request header"
-    }
-})
+            exception.message shouldBe "Could not get token from request header"
+        }
+    })

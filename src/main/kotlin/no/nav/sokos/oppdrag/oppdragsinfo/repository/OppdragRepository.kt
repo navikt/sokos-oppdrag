@@ -7,88 +7,51 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.sokos.oppdrag.config.DatabaseConfig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kid
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Korreksjon
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kravhaver
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.LinjeStatus
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Maksdato
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ompostering
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Oppdrag
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsStatus
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Ovrig
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Skyldner
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 
-class OppdragsInfoRepository(
+class OppdragRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource(),
 ) {
-    fun getOppdragId(gjelderId: String): String? {
-        return using(sessionOf(dataSource)) { session ->
-            session.single(
-                queryOf(
-                    """
-                    SELECT OPPDRAG_GJELDER_ID FROM T_OPPDRAG WHERE OPPDRAG_GJELDER_ID = :gjelderId
-                    """.trimIndent(),
-                    mapOf(
-                        "gjelderId" to gjelderId,
-                    ),
-                ),
-            ) { row -> row.string("OPPDRAG_GJELDER_ID") }
-        }
-    }
-
-    fun getFagGrupper(): List<FagGruppe> {
-        return using(sessionOf(dataSource)) { session ->
-            session.list(
-                queryOf(
-                    """
-                    SELECT TRIM(NAVN_FAGGRUPPE) AS NAVN_FAGGRUPPE, 
-                           TRIM(KODE_FAGGRUPPE) AS KODE_FAGGRUPPE 
-                    FROM T_FAGGRUPPE ORDER BY NAVN_FAGGRUPPE
-                    """.trimIndent(),
-                ),
-                mapToFagGruppe,
-            )
-        }
-    }
-
     fun getOppdrag(
         gjelderId: String,
         fagGruppeKode: String?,
-    ): List<Oppdrag> {
-        return using(sessionOf(dataSource)) { session ->
+    ): List<Oppdrag> =
+        using(sessionOf(dataSource)) { session ->
+            val sql =
+                """
+                SELECT OP.OPPDRAGS_ID,
+                    TRIM(OP.FAGSYSTEM_ID) AS FAGSYSTEM_ID,
+                    TRIM(FO.NAVN_FAGOMRAADE) AS NAVN_FAGOMRAADE,
+                    OP.OPPDRAG_GJELDER_ID,
+                    OP.KJOR_IDAG,
+                    TRIM(OP.TYPE_BILAG) AS TYPE_BILAG,
+                    TRIM(FG.NAVN_FAGGRUPPE) AS NAVN_FAGGRUPPE,
+                    OS.KODE_STATUS
+                FROM T_OPPDRAG OP,
+                    T_FAGOMRAADE FO, 
+                    T_FAGGRUPPE FG,
+                    T_OPPDRAG_STATUS OS
+                WHERE OP.OPPDRAG_GJELDER_ID = :gjelderId
+                    ${if (fagGruppeKode?.isEmpty() == false) " AND FG.KODE_FAGGRUPPE = :fagGruppeKode" else ""}
+                AND FO.KODE_FAGOMRAADE = OP.KODE_FAGOMRAADE
+                AND FG.KODE_FAGGRUPPE = FO.KODE_FAGGRUPPE
+                AND OS.OPPDRAGS_ID = OP.OPPDRAGS_ID
+                AND OS.TIDSPKT_REG = (
+                SELECT MAX(OS2.TIDSPKT_REG)
+                FROM T_OPPDRAG_STATUS OS2
+                WHERE OS2.OPPDRAGS_ID = OS.OPPDRAGS_ID)
+                ORDER BY OS.KODE_STATUS
+                """.trimIndent()
+
             session.list(
                 queryOf(
-                    """
-                    SELECT OP.OPPDRAGS_ID,
-                        TRIM(OP.FAGSYSTEM_ID) AS FAGSYSTEM_ID,
-                        TRIM(FO.NAVN_FAGOMRAADE) AS NAVN_FAGOMRAADE,
-                        OP.OPPDRAG_GJELDER_ID,
-                        OP.KJOR_IDAG,
-                        TRIM(OP.TYPE_BILAG) AS TYPE_BILAG,
-                        TRIM(FG.NAVN_FAGGRUPPE) AS NAVN_FAGGRUPPE,
-                        OS.KODE_STATUS
-                    FROM T_OPPDRAG OP,
-                        T_FAGOMRAADE FO, 
-                        T_FAGGRUPPE FG,
-                        T_OPPDRAG_STATUS OS
-                    WHERE OP.OPPDRAG_GJELDER_ID = :gjelderId
-                        ${if (fagGruppeKode != null) " AND FG.KODE_FAGGRUPPE = :fagGruppeKode" else ""}
-                    AND FO.KODE_FAGOMRAADE = OP.KODE_FAGOMRAADE
-                    AND FG.KODE_FAGGRUPPE = FO.KODE_FAGGRUPPE
-                    AND OS.OPPDRAGS_ID = OP.OPPDRAGS_ID
-                    AND OS.TIDSPKT_REG = (
-                    SELECT MAX(OS2.TIDSPKT_REG)
-                    FROM T_OPPDRAG_STATUS OS2
-                    WHERE OS2.OPPDRAGS_ID = OS.OPPDRAGS_ID)
-                    ORDER BY OS.KODE_STATUS
-                    """.trimIndent(),
+                    sql,
                     mapOf(
                         "gjelderId" to gjelderId,
                         "fagGruppeKode" to fagGruppeKode,
@@ -97,13 +60,12 @@ class OppdragsInfoRepository(
                 mapToOppdrag,
             )
         }
-    }
 
     fun getOppdragsEnhet(
         typeEnhet: String? = null,
         oppdragsId: Int,
-    ): List<OppdragsEnhet> {
-        return using(sessionOf(dataSource)) { session ->
+    ): List<OppdragsEnhet> =
+        using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
                     """
@@ -124,10 +86,9 @@ class OppdragsInfoRepository(
                 mapToOppdragsEnhet,
             )
         }
-    }
 
-    fun getOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> {
-        return using(sessionOf(dataSource)) { session ->
+    fun getOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> =
+        using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
                     """
@@ -143,7 +104,7 @@ class OppdragsInfoRepository(
                         KORR.LINJE_ID_KORR,
                         TRIM(OPLI.DELYTELSE_ID) AS DELYTELSE_ID,
                         OPLI.UTBETALES_TIL_ID,
-                        OPLI.REFUNDERES_ID,
+                        TRIM(OPLI.REFUNDERES_ID) AS REFUNDERES_ID,
                         TRIM(OPLI.BRUKERID) AS BRUKERID,
                         OPLI.TIDSPKT_REG
                     FROM T_KJOREDATO KJDA, T_OPPDRAGSLINJE OPLI, T_LINJE_STATUS LIST
@@ -180,15 +141,14 @@ class OppdragsInfoRepository(
                 mapToOppdragsLinje,
             )
         }
-    }
 
-    fun getOppdragsOmposteringer(oppdragsId: Int): List<Ompostering> {
-        return using(sessionOf(dataSource)) { session ->
+    fun getOppdragsOmposteringer(oppdragsId: Int): List<Ompostering> =
+        using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
                     """
                     SELECT OM.GJELDER_ID,
-                        OM.KODE_FAGGRUPPE,
+                        TRIM(OM.KODE_FAGGRUPPE) AS KODE_FAGGRUPPE,
                         OM.LOPENR,
                         OM.OMPOSTERING,
                         OM.DATO_OMPOSTER_FOM,
@@ -213,10 +173,9 @@ class OppdragsInfoRepository(
                 mapToOppdragsOmpostering,
             )
         }
-    }
 
-    fun getOppdragsEnhetsHistorikk(oppdragsId: Int): List<OppdragsEnhet> {
-        return using(sessionOf(dataSource)) { session ->
+    fun getOppdragsEnhetsHistorikk(oppdragsId: Int): List<OppdragsEnhet> =
+        using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
                     """
@@ -232,10 +191,9 @@ class OppdragsInfoRepository(
                 mapToOppdragsEnhet,
             )
         }
-    }
 
-    fun getOppdragsStatusHistorikk(oppdragsId: Int): List<OppdragsStatus> {
-        return using(sessionOf(dataSource)) { session ->
+    fun getOppdragsStatusHistorikk(oppdragsId: Int): List<OppdragsStatus> =
+        using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
                     """
@@ -251,13 +209,12 @@ class OppdragsInfoRepository(
                 mapToOppdragsStatusHistorikk,
             )
         }
-    }
 
     fun getOppdragsLinjeStatuser(
         oppdragsId: Int,
         linjeId: Int,
-    ): List<LinjeStatus> {
-        return using(sessionOf(dataSource)) { session ->
+    ): List<LinjeStatus> =
+        using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
                     """
@@ -275,13 +232,12 @@ class OppdragsInfoRepository(
                 mapToOppdragsLinjeStatus,
             )
         }
-    }
 
     fun getOppdragsLinjeAttestanter(
         oppdragsId: Int,
         linjeId: Int,
-    ): List<Attestant> {
-        return using(sessionOf(dataSource)) { session ->
+    ): List<Attestant> =
+        using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
                     """
@@ -299,10 +255,9 @@ class OppdragsInfoRepository(
                 mapToOppdragsLinjeAttestant,
             )
         }
-    }
 
-    fun getKorreksjoner(oppdragsId: String): List<Korreksjon> {
-        return using(sessionOf(dataSource)) { session ->
+    fun getKorreksjoner(oppdragsId: String): List<Korreksjon> =
+        using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
                     """
@@ -317,7 +272,6 @@ class OppdragsInfoRepository(
                 mapToOppdragsKorreksjon,
             )
         }
-    }
 
     fun existsValutaSkyldnerKravhaverLinjeenhetGradTekstKidMaksDato(
         oppdragsId: Int,
@@ -378,204 +332,6 @@ class OppdragsInfoRepository(
         }
     }
 
-    fun getValutaer(
-        oppdragsId: Int,
-        linjeIder: List<Int>,
-    ): List<Valuta> {
-        return using(sessionOf(dataSource)) { session ->
-            session.list(
-                queryOf(
-                    """
-                    SELECT LINJE_ID, TRIM(TYPE_VALUTA) AS TYPE_VALUTA, DATO_FOM, NOKKEL_ID, VALUTA, FEILREG, TIDSPKT_REG, TRIM(BRUKERID) AS BRUKERID
-                    FROM T_VALUTA 
-                    WHERE OPPDRAGS_ID = :oppdragsId
-                    AND LINJE_ID IN (${linjeIder.joinToString()})
-                    """.trimIndent(),
-                    mapOf(
-                        "oppdragsId" to oppdragsId,
-                    ),
-                ),
-                mapToValuta,
-            )
-        }
-    }
-
-    fun getSkyldnere(
-        oppdragsId: Int,
-        linjeIder: List<Int>,
-    ): List<Skyldner> {
-        return using(sessionOf(dataSource)) { session ->
-            session.list(
-                queryOf(
-                    """
-                    SELECT LINJE_ID, TRIM(SKYLDNER_ID) AS SKYLDNER_ID, DATO_FOM, TIDSPKT_REG, TRIM(BRUKERID) AS BRUKERID
-                    FROM T_SKYLDNER 
-                    WHERE OPPDRAGS_ID = :oppdragsId
-                    AND LINJE_ID IN (${linjeIder.joinToString()})
-                    """.trimIndent(),
-                    mapOf(
-                        "oppdragsId" to oppdragsId,
-                    ),
-                ),
-                mapToSkyldner,
-            )
-        }
-    }
-
-    fun getKravhavere(
-        oppdragsId: Int,
-        linjeIder: List<Int>,
-    ): List<Kravhaver> {
-        return using(sessionOf(dataSource)) { session ->
-            session.list(
-                queryOf(
-                    """
-                    SELECT LINJE_ID, TRIM(KRAVHAVER_ID) AS KRAVHAVER_ID, DATO_FOM, TIDSPKT_REG, TRIM(BRUKERID) AS BRUKERID
-                    FROM T_KRAVHAVER 
-                    WHERE OPPDRAGS_ID = :oppdragsId
-                    AND LINJE_ID IN (${linjeIder.joinToString()})
-                    """.trimIndent(),
-                    mapOf(
-                        "oppdragsId" to oppdragsId,
-                    ),
-                ),
-                mapToKravhaver,
-            )
-        }
-    }
-
-    fun getEnheter(
-        oppdragsId: Int,
-        linjeIder: List<Int>,
-    ): List<LinjeEnhet> {
-        return using(sessionOf(dataSource)) { session ->
-            session.list(
-                queryOf(
-                    """
-                    SELECT LINJE_ID, TRIM(TYPE_ENHET) AS TYPE_ENHET, TRIM(ENHET) ENHET, DATO_FOM, NOKKEL_ID, TIDSPKT_REG, TRIM(BRUKERID) AS BRUKERID
-                    FROM T_LINJEENHET
-                    WHERE OPPDRAGS_ID = :oppdragsId
-                    AND LINJE_ID IN (${linjeIder.joinToString()})
-                    """.trimIndent(),
-                    mapOf(
-                        "oppdragsId" to oppdragsId,
-                    ),
-                ),
-                mapToLinjeEnhet,
-            )
-        }
-    }
-
-    fun getGrader(
-        oppdragsId: Int,
-        linjeIder: List<Int>,
-    ): List<Grad> {
-        return using(sessionOf(dataSource)) { session ->
-            session.list(
-                queryOf(
-                    """
-                    SELECT LINJE_ID, TRIM(TYPE_GRAD) AS TYPE_GRAD, GRAD, TIDSPKT_REG, TRIM(BRUKERID) AS BRUKERID
-                    FROM T_GRAD
-                    WHERE OPPDRAGS_ID = :oppdragsId
-                    AND LINJE_ID IN (${linjeIder.joinToString()})
-                    """.trimIndent(),
-                    mapOf(
-                        "oppdragsId" to oppdragsId,
-                    ),
-                ),
-                mapToGrad,
-            )
-        }
-    }
-
-    fun getTekster(
-        oppdragsId: Int,
-        linjeIder: List<Int>,
-    ): List<Tekst> {
-        return using(sessionOf(dataSource)) { session ->
-            session.list(
-                queryOf(
-                    """
-                    SELECT  LINJE_ID, TEKST
-                    FROM T_TEKST
-                    WHERE OPPDRAGS_ID = :oppdragsId
-                    AND LINJE_ID IN (${linjeIder.joinToString()})
-                    """.trimIndent(),
-                    mapOf(
-                        "oppdragsId" to oppdragsId,
-                    ),
-                ),
-                mapToTekst,
-            )
-        }
-    }
-
-    fun getKid(
-        oppdragsId: Int,
-        linjeIder: List<Int>,
-    ): List<Kid> {
-        return using(sessionOf(dataSource)) { session ->
-            session.list(
-                queryOf(
-                    """
-                    SELECT LINJE_ID, KID, DATO_FOM, TIDSPKT_REG, TRIM(BRUKERID) AS BRUKERID
-                    FROM T_KID
-                    WHERE OPPDRAGS_ID = :oppdragsId
-                    AND LINJE_ID IN (${linjeIder.joinToString()})
-                    """.trimIndent(),
-                    mapOf(
-                        "oppdragsId" to oppdragsId,
-                    ),
-                ),
-                mapToKid,
-            )
-        }
-    }
-
-    fun getMaksDatoer(
-        oppdragsId: Int,
-        linjeIder: List<Int>,
-    ): List<Maksdato> {
-        return using(sessionOf(dataSource)) { session ->
-            session.list(
-                queryOf(
-                    """
-                    SELECT LINJE_ID, MAKS_DATO, DATO_FOM, TIDSPKT_REG, TRIM(BRUKERID) AS BRUKERID
-                    FROM T_MAKS_DATO
-                    WHERE OPPDRAGS_ID = :oppdragsId
-                    AND LINJE_ID IN (${linjeIder.joinToString()})
-                    """.trimIndent(),
-                    mapOf(
-                        "oppdragsId" to oppdragsId,
-                    ),
-                ),
-                mapToMaksDato,
-            )
-        }
-    }
-
-    fun getOvriger(
-        oppdragsId: Int,
-        linjeIder: List<Int>,
-    ): List<Ovrig> {
-        return using(sessionOf(dataSource)) { session ->
-            session.list(
-                queryOf(
-                    """
-                    SELECT LINJE_ID, TRIM(VEDTAK_ID) AS VEDTAK_ID, TRIM(HENVISNING) AS HENVISNING, TRIM(TYPE_SOKNAD) AS TYPE_SOKNAD
-                    FROM T_OPPDRAGSLINJE
-                    WHERE OPPDRAGS_ID = :oppdragsId
-                    AND LINJE_ID IN (${linjeIder.joinToString()})
-                    """.trimIndent(),
-                    mapOf(
-                        "oppdragsId" to oppdragsId,
-                    ),
-                ),
-                mapToOvrig,
-            )
-        }
-    }
-
     private val mapToOppdrag: (Row) -> Oppdrag = { row ->
         Oppdrag(
             fagSystemId = row.string("FAGSYSTEM_ID"),
@@ -585,13 +341,6 @@ class OppdragsInfoRepository(
             kjorIdag = row.string("KJOR_IDAG"),
             typeBilag = row.string("TYPE_BILAG"),
             kodeStatus = row.string("KODE_STATUS"),
-        )
-    }
-
-    private val mapToFagGruppe: (Row) -> FagGruppe = { row ->
-        FagGruppe(
-            navn = row.string("NAVN_FAGGRUPPE").trimIndent(),
-            type = row.string("KODE_FAGGRUPPE").trimIndent(),
         )
     }
 
@@ -666,97 +415,6 @@ class OppdragsInfoRepository(
         Korreksjon(
             linje = row.int("LINJE_ID"),
             korrigertLinje = row.int("LINJE_ID_KORR"),
-        )
-    }
-
-    private val mapToValuta: (Row) -> Valuta = { row ->
-        Valuta(
-            linjeId = row.int("LINJE_ID"),
-            type = row.string("TYPE_VALUTA"),
-            datoFom = row.string("DATO_FOM"),
-            nokkelId = row.int("NOKKEL_ID"),
-            valuta = row.string("VALUTA"),
-            feilreg = row.stringOrNull("FEILREG"),
-            tidspktReg = row.string("TIDSPKT_REG"),
-            brukerid = row.string("BRUKERID"),
-        )
-    }
-
-    private val mapToSkyldner: (Row) -> Skyldner = { row ->
-        Skyldner(
-            linjeId = row.int("LINJE_ID"),
-            skyldnerId = row.string("SKYLDNER_ID"),
-            datoFom = row.string("DATO_FOM"),
-            tidspktReg = row.string("TIDSPKT_REG"),
-            brukerid = row.string("BRUKERID"),
-        )
-    }
-
-    private val mapToKravhaver: (Row) -> Kravhaver = { row ->
-        Kravhaver(
-            linjeId = row.int("LINJE_ID"),
-            kravhaverId = row.string("KRAVHAVER_ID"),
-            datoFom = row.string("DATO_FOM"),
-            tidspktReg = row.string("TIDSPKT_REG"),
-            brukerid = row.string("BRUKERID"),
-        )
-    }
-
-    private val mapToLinjeEnhet: (Row) -> LinjeEnhet = { row ->
-        LinjeEnhet(
-            linjeId = row.int("LINJE_ID"),
-            typeEnhet = row.string("TYPE_ENHET"),
-            enhet = row.stringOrNull("ENHET"),
-            datoFom = row.string("DATO_FOM"),
-            nokkelId = row.int("NOKKEL_ID"),
-            tidspktReg = row.string("TIDSPKT_REG"),
-            brukerid = row.string("BRUKERID"),
-        )
-    }
-
-    private val mapToGrad: (Row) -> Grad = { row ->
-        Grad(
-            linjeId = row.int("LINJE_ID"),
-            typeGrad = row.string("TYPE_GRAD"),
-            grad = row.int("GRAD"),
-            tidspktReg = row.string("TIDSPKT_REG"),
-            brukerid = row.string("BRUKERID"),
-        )
-    }
-
-    private val mapToTekst: (Row) -> Tekst = { row ->
-        Tekst(
-            linjeId = row.int("LINJE_ID"),
-            tekst = row.string("TEKST"),
-        )
-    }
-
-    private val mapToKid: (Row) -> Kid = { row ->
-        Kid(
-            linjeId = row.int("LINJE_ID"),
-            kid = row.string("KID"),
-            datoFom = row.string("DATO_FOM"),
-            tidspktReg = row.string("TIDSPKT_REG"),
-            brukerid = row.string("BRUKERID"),
-        )
-    }
-
-    private val mapToMaksDato: (Row) -> Maksdato = { row ->
-        Maksdato(
-            linjeId = row.int("LINJE_ID"),
-            maksdato = row.string("MAKS_DATO"),
-            datoFom = row.string("DATO_FOM"),
-            tidspktReg = row.string("TIDSPKT_REG"),
-            brukerid = row.string("BRUKERID"),
-        )
-    }
-
-    private val mapToOvrig: (Row) -> Ovrig = { row ->
-        Ovrig(
-            linjeId = row.int("LINJE_ID"),
-            vedtaksId = row.string("VEDTAK_ID"),
-            henvisning = row.string("HENVISNING"),
-            soknadsType = row.string("TYPE_SOKNAD"),
         )
     }
 }

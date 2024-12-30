@@ -18,9 +18,11 @@ import io.restassured.RestAssured
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.json.Json
-import no.nav.sokos.oppdrag.APPLICATION_JSON
-import no.nav.sokos.oppdrag.ATTESTASJON_BASE_API_PATH
-import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
+import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
+import no.nav.sokos.oppdrag.attestasjon.ATTESTASJON_BASE_API_PATH
+import no.nav.sokos.oppdrag.attestasjon.GJELDER_ID
+import no.nav.sokos.oppdrag.attestasjon.Testdata.oppdragDTOTestdata
+import no.nav.sokos.oppdrag.attestasjon.Testdata.tokenWithNavIdent
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestertStatus.ATTESTERT
@@ -34,8 +36,6 @@ import no.nav.sokos.oppdrag.attestasjon.dto.OppdragDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
-import no.nav.sokos.oppdrag.attestasjon.utils.GJELDER_ID
-import no.nav.sokos.oppdrag.attestasjon.utils.Testdata.oppdragDTOMockdata
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.authenticate
@@ -61,7 +61,7 @@ internal class AttestasjonApiTest :
         }
 
         test("søk etter oppdrag med gyldig gjelderId returnerer 200 OK") {
-            val oppdragsListe = List(11) { oppdragDTOMockdata }
+            val oppdragsListe = List(11) { oppdragDTOTestdata }
             coEvery { attestasjonService.getOppdrag(any(), any()) } returns oppdragsListe
 
             val response =
@@ -192,7 +192,7 @@ internal class AttestasjonApiTest :
                     ),
                 )
 
-            every { attestasjonService.getFagOmraade() } returns fagOmraadeList
+            every { attestasjonService.getFagOmraader() } returns fagOmraadeList
 
             val response =
                 RestAssured
@@ -213,7 +213,7 @@ internal class AttestasjonApiTest :
 
         test("hent alle fagområder returnerer 500 Internal Server Error") {
 
-            every { attestasjonService.getFagOmraade() } throws RuntimeException("Noe gikk galt")
+            every { attestasjonService.getFagOmraader() } throws RuntimeException("Noe gikk galt")
 
             val response =
                 RestAssured

@@ -1,0 +1,2 @@
+insert into T_TEKST (OPPDRAGS_ID, LINJE_ID, TEKST_LNR, NOKKEL_ID, TEKSTKODE, TEKST, DATO_FOM, DATO_TOM, FEILREG, TIDSPKT_REG, BRUKERID)
+values (964801, 1, 1, 1, '    ', 'null null                               ', '2006-01-24', null, ' ', '2006-01-24 17:03:31.159310', 'AUTO    ');

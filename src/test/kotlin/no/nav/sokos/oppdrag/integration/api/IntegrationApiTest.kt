@@ -16,9 +16,9 @@ import io.mockk.mockk
 import io.restassured.RestAssured
 import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
-import no.nav.sokos.oppdrag.APPLICATION_JSON
-import no.nav.sokos.oppdrag.INTEGRATION_BASE_API_PATH
-import no.nav.sokos.oppdrag.TestUtil.tokenWithNavIdent
+import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
+import no.nav.sokos.oppdrag.attestasjon.INTEGRATION_BASE_API_PATH
+import no.nav.sokos.oppdrag.attestasjon.Testdata.tokenWithNavIdent
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.authenticate
@@ -34,84 +34,95 @@ private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplica
 private val validationFilter = OpenApiValidationFilter("openapi/integration-v1-swagger.yaml")
 private val nameService = mockk<NameService>()
 
-internal class IntegrationApiTest : FunSpec({
+internal class IntegrationApiTest :
+    FunSpec({
 
-    beforeTest {
-        server = embeddedServer(Netty, PORT, module = Application::applicationTestModule).start()
-    }
+        beforeTest {
+            server = embeddedServer(Netty, PORT, module = Application::applicationTestModule).start()
+        }
 
-    afterTest {
-        server.stop(5, 5)
-    }
+        afterTest {
+            server.stop(5, 5)
+        }
 
-    test("søk navn for gjelderId returnerer 200 OK") {
+        test("søk navn for gjelderId returnerer 200 OK") {
 
-        val nameResponse = NameResponse("Test Testesen")
+            val nameResponse = NameResponse("Test Testesen")
 
-        coEvery { nameService.getNavn(any(), any()) } returns nameResponse
+            coEvery { nameService.getNavn(any(), any()) } returns nameResponse
 
-        val response =
-            RestAssured.given().filter(validationFilter)
-                .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(GjelderIdRequest(gjelderId = "12345678901"))
-                .port(PORT)
-                .post("$INTEGRATION_BASE_API_PATH/hentnavn")
-                .then().assertThat()
-                .statusCode(HttpStatusCode.OK.value)
-                .extract().response()
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .body(GjelderIdRequest(gjelderId = "12345678901"))
+                    .port(PORT)
+                    .post("$INTEGRATION_BASE_API_PATH/hentnavn")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.OK.value)
+                    .extract()
+                    .response()
 
-        Json.decodeFromString<NameResponse>(response.asString()) shouldBe nameResponse
-    }
+            Json.decodeFromString<NameResponse>(response.asString()) shouldBe nameResponse
+        }
 
-    test("sok navn med ugyldig gjelderId returnerer 400 Bad Request") {
+        test("sok navn med ugyldig gjelderId returnerer 400 Bad Request") {
 
-        val response =
-            RestAssured.given().filter(validationFilter)
-                .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .body(GjelderIdRequest(gjelderId = "1234567"))
-                .port(PORT)
-                .post("$INTEGRATION_BASE_API_PATH/hentnavn")
-                .then().assertThat()
-                .statusCode(HttpStatusCode.BadRequest.value)
-                .extract()
-                .response()
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .body(GjelderIdRequest(gjelderId = "1234567"))
+                    .port(PORT)
+                    .post("$INTEGRATION_BASE_API_PATH/hentnavn")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.BadRequest.value)
+                    .extract()
+                    .response()
 
-        Json.decodeFromString<ApiError>(response.asString()) shouldBe
-            ApiError(
-                status = HttpStatusCode.BadRequest.value,
-                error = HttpStatusCode.BadRequest.description,
-                message = "gjelderId er ugyldig. Tillatt format er 9 eller 11 siffer",
-                path = "$INTEGRATION_BASE_API_PATH/hentnavn",
-                timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
-            )
-    }
+            Json.decodeFromString<ApiError>(response.asString()) shouldBe
+                ApiError(
+                    status = HttpStatusCode.BadRequest.value,
+                    error = HttpStatusCode.BadRequest.description,
+                    message = "gjelderId er ugyldig. Tillatt format er 9 eller 11 siffer",
+                    path = "$INTEGRATION_BASE_API_PATH/hentnavn",
+                    timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
+                )
+        }
 
-    test("sok navn med dummy token returnerer 500 Internal Server Error") {
+        test("sok navn med dummy token returnerer 500 Internal Server Error") {
 
-        val response =
-            RestAssured.given().filter(validationFilter)
-                .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "dummytoken")
-                .body(GjelderIdRequest(gjelderId = "123456789"))
-                .port(PORT)
-                .post("$INTEGRATION_BASE_API_PATH/hentnavn")
-                .then().assertThat()
-                .statusCode(HttpStatusCode.InternalServerError.value)
-                .extract()
-                .response()
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "dummytoken")
+                    .body(GjelderIdRequest(gjelderId = "123456789"))
+                    .port(PORT)
+                    .post("$INTEGRATION_BASE_API_PATH/hentnavn")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
 
-        Json.decodeFromString<ApiError>(response.asString()) shouldBe
-            ApiError(
-                status = HttpStatusCode.InternalServerError.value,
-                error = HttpStatusCode.InternalServerError.description,
-                message = "The token was expected to have 3 parts, but got 0.",
-                path = "$INTEGRATION_BASE_API_PATH/hentnavn",
-                timestamp = Instant.parse(response.jsonPath().getString("timestamp")),
-            )
-    }
-})
+            Json.decodeFromString<ApiError>(response.asString()) shouldBe
+                ApiError(
+                    status = HttpStatusCode.InternalServerError.value,
+                    error = HttpStatusCode.InternalServerError.description,
+                    message = "The token was expected to have 3 parts, but got 0.",
+                    path = "$INTEGRATION_BASE_API_PATH/hentnavn",
+                    timestamp = Instant.parse(response.jsonPath().getString("timestamp")),
+                )
+        }
+    })
 
 private fun Application.applicationTestModule() {
     commonConfig()

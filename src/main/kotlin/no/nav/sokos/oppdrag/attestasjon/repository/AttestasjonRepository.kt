@@ -9,7 +9,6 @@ import kotliquery.Row
 import kotliquery.queryOf
 import kotliquery.sessionOf
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
-import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
 import no.nav.sokos.oppdrag.common.util.SqlUtil.sanitizeForSql
@@ -49,44 +48,6 @@ class AttestasjonRepository(
                 }
             }
         }
-
-    fun getFagOmraader(): List<FagOmraade> =
-        using(sessionOf(dataSource)) { session ->
-            session.list(
-                queryOf(
-                    """
-                    SELECT TRIM(NAVN_FAGOMRAADE) AS NAVN_FAGOMRAADE, 
-                           TRIM(KODE_FAGOMRAADE) AS KODE_FAGOMRAADE 
-                    FROM T_FAGOMRAADE ORDER BY NAVN_FAGOMRAADE
-                    """.trimIndent(),
-                ),
-            ) { row ->
-                FagOmraade(
-                    navn = row.string("NAVN_FAGOMRAADE"),
-                    kode = row.string("KODE_FAGOMRAADE"),
-                )
-            }
-        }
-
-    fun getFagomraaderForFaggruppe(kodeFaggruppe: String): List<String> {
-        val query =
-            """
-            SELECT TRIM(FO.KODE_FAGOMRAADE) AS KODE_FAGOMRAADE                               
-            FROM T_FAGOMRAADE FO 
-            JOIN T_FAGGRUPPE FG ON FG.KODE_FAGGRUPPE = FO.KODE_FAGGRUPPE
-            and fg.KODE_FAGGRUPPE = :KODEFAGGRUPPE
-            """.trimIndent()
-        return using(sessionOf(dataSource)) { session ->
-            session.list(
-                queryOf(
-                    query,
-                    mapOf(
-                        "KODEFAGGRUPPE" to kodeFaggruppe,
-                    ),
-                ),
-            ) { row -> row.string("KODE_FAGOMRAADE") }
-        }
-    }
 
     fun getOppdragslinjer(oppdragsId: Int): List<Oppdragslinje> {
         val query =
@@ -218,7 +179,7 @@ class AttestasjonRepository(
         }
     }
 
-    private fun getAttestanterWithOppdragsId(oppdragsId: Int): Map<Int, List<String>> =
+    fun getAttestanterWithOppdragsId(oppdragsId: Int): Map<Int, List<String>> =
         using(sessionOf(dataSource)) { session ->
             session
                 .list(

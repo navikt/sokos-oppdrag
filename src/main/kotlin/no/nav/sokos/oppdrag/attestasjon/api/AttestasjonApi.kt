@@ -25,7 +25,7 @@ fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonSer
 
         get("fagomraader") {
             call.respond(
-                attestasjonService.getFagOmraade(),
+                attestasjonService.getFagOmraader(),
             )
         }
 
