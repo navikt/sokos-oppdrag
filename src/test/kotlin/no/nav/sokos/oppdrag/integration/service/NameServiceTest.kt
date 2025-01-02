@@ -5,7 +5,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.mockk
 import no.nav.pdl.hentpersonbolk.Person
-import no.nav.sokos.oppdrag.TestUtil.navIdent
+import no.nav.sokos.oppdrag.attestasjon.Testdata.navIdent
 import no.nav.sokos.oppdrag.integration.client.ereg.EregClientService
 import no.nav.sokos.oppdrag.integration.client.ereg.Organisasjon
 import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
@@ -18,64 +18,65 @@ private val tpClientService = mockk<TpClientService>()
 private val eregClientService = mockk<EregClientService>()
 private val nameService = NameService(pdlClientService, tpClientService, eregClientService)
 
-internal class NameServiceTest : FunSpec({
+internal class NameServiceTest :
+    FunSpec({
 
-    test("hent navn for gjelderId som er fnr uten mellomnavn") {
+        test("hent navn for gjelderId som er fnr uten mellomnavn") {
 
-        val fnr = "12345678912"
+            val fnr = "12345678912"
 
-        coEvery { pdlClientService.getPerson(any()) } returns
-            mapOf(
-                fnr to
-                    Person(
-                        listOf(PdlNavn("Ola", null, "Nordmann")),
-                        listOf(),
-                    ),
-            )
+            coEvery { pdlClientService.getPerson(any()) } returns
+                mapOf(
+                    fnr to
+                        Person(
+                            listOf(PdlNavn("Ola", null, "Nordmann")),
+                            listOf(),
+                        ),
+                )
 
-        val name = nameService.getNavn(fnr, navIdent)
+            val name = nameService.getNavn(fnr, navIdent)
 
-        name shouldBe NameResponse("Ola Nordmann")
-    }
+            name shouldBe NameResponse("Ola Nordmann")
+        }
 
-    test("hent navn for gjelderId som er fnr med mellomnavn") {
+        test("hent navn for gjelderId som er fnr med mellomnavn") {
 
-        val fnr = "12345678912"
+            val fnr = "12345678912"
 
-        coEvery { pdlClientService.getPerson(any()) } returns
-            mapOf(
-                fnr to
-                    Person(
-                        listOf(PdlNavn("Kari", "Hermegåsa", "Nordmann")),
-                        listOf(),
-                    ),
-            )
+            coEvery { pdlClientService.getPerson(any()) } returns
+                mapOf(
+                    fnr to
+                        Person(
+                            listOf(PdlNavn("Kari", "Hermegåsa", "Nordmann")),
+                            listOf(),
+                        ),
+                )
 
-        val name = nameService.getNavn(fnr, navIdent)
+            val name = nameService.getNavn(fnr, navIdent)
 
-        name shouldBe NameResponse("Kari Hermegåsa Nordmann")
-    }
+            name shouldBe NameResponse("Kari Hermegåsa Nordmann")
+        }
 
-    test("hent navn for gjelderId som er orgnr") {
+        test("hent navn for gjelderId som er orgnr") {
 
-        val orgnr = "123456789"
+            val orgnr = "123456789"
 
-        coEvery { eregClientService.getOrganisasjonsNavn(any()) } returns
-            Organisasjon(EregNavn("NAV Arbeid og ytelser"))
+            coEvery { eregClientService.getOrganisasjonsNavn(any()) } returns
+                Organisasjon(EregNavn("NAV Arbeid og ytelser"))
 
-        val name = nameService.getNavn(orgnr, navIdent)
+            val name = nameService.getNavn(orgnr, navIdent)
 
-        name shouldBe NameResponse("NAV Arbeid og ytelser")
-    }
+            name shouldBe NameResponse("NAV Arbeid og ytelser")
+        }
 
-    test("hent navn for gjelderId som er leverandørId") {
+        test("hent navn for gjelderId som er leverandørId") {
 
-        val leverandorId = "1234567890123"
+            val leverandorId = "1234567890123"
 
-        coEvery { tpClientService.getLeverandorNavn(any()) } returns "NAV Arbeid og ytelser"
+            coEvery { tpClientService.getLeverandorNavn(any()) } returns "NAV Arbeid og ytelser"
 
-        val name = nameService.getNavn(leverandorId, navIdent)
+            val name = nameService.getNavn(leverandorId, navIdent)
 
-        name shouldBe NameResponse("NAV Arbeid og ytelser")
-    }
-})
+            name shouldBe NameResponse("NAV Arbeid og ytelser")
+        }
+    })

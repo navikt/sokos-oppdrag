@@ -8,8 +8,8 @@ import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import no.nav.pdl.enums.AdressebeskyttelseGradering
-import no.nav.sokos.oppdrag.APPLICATION_JSON
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
+import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 import org.junit.jupiter.api.assertThrows

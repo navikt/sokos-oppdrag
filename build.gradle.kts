@@ -66,6 +66,7 @@ val mockOAuth2ServerVersion = "2.1.10"
 val mockkVersion = "1.13.14"
 val swaggerRequestValidatorVersion = "2.44.1"
 val testcontainersVersion = "1.20.4"
+val h2Version = "2.3.232"
 
 dependencies {
 
@@ -131,6 +132,7 @@ dependencies {
     testImplementation("org.wiremock:wiremock:$wiremockVersion")
     testImplementation("com.atlassian.oai:swagger-request-validator-restassured:$swaggerRequestValidatorVersion")
     testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
+    testImplementation("com.h2database:h2:$h2Version")
 }
 
 // Vulnerability fix because of id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
