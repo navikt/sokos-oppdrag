@@ -38,7 +38,7 @@ val micrometerVersion = "1.14.2"
 // Logging
 val kotlinLoggingVersion = "3.0.5"
 val janionVersion = "3.1.12"
-val logbackVersion = "1.5.15"
+val logbackVersion = "1.5.16"
 val logstashVersion = "8.0"
 val papertrailappVersion = "1.0.0"
 
@@ -57,7 +57,7 @@ val graphqlClientVersion = "8.2.1"
 val caffeineVersion = "3.1.8"
 
 // Redis
-val redisVersion = "6.5.1.RELEASE"
+val redisVersion = "6.5.2.RELEASE"
 
 // Test
 val kotestVersion = "6.0.0.M1"
