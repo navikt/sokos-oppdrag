@@ -106,7 +106,7 @@ spec:
 
     # Tp
     - name: TP_URL
-      value: "https://tp.nais.adeo.no" # Sjekk om man må be om tilgang og at det er riktig ingress
+      value: "https://tp.nais.adeo.no"
 
     # PDL
     - name: PDL_URL
