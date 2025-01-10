@@ -43,7 +43,7 @@ jobs:
           RESOURCE: ".nais/redis-config-qx.yaml"
 
 #  deploy-prod:
-#    name: 'Deploy Redis to dev-fss'
+#    name: 'Deploy Redis to prod-fss'
 #    needs: [deploy-dev, deploy-dev-qx]
 #    runs-on: ubuntu-latest
 #    steps:
