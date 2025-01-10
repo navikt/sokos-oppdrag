@@ -94,7 +94,7 @@ spec:
 
     # Ereg
     - name: EREG_URL
-      value: "https://ereg-services.intern.nav.no" # Sjekk om man må be om tilgang
+      value: "https://ereg-services.intern.nav.no"
 
     # Nom
     - name: SKJERMING_URL
