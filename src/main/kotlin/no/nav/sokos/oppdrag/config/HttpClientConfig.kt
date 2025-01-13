@@ -7,13 +7,13 @@ import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.statement.HttpResponse
 import io.ktor.serialization.kotlinx.json.json
+import java.net.ProxySelector
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import mu.KotlinLogging
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner
-import java.net.ProxySelector
 
 private val logger = KotlinLogging.logger {}
 
