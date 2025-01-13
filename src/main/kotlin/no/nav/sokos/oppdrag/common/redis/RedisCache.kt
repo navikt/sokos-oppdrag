@@ -6,13 +6,13 @@ import io.lettuce.core.SetArgs
 import io.lettuce.core.api.coroutines
 import io.lettuce.core.codec.RedisCodec
 import io.micrometer.core.instrument.Counter
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.toList
 import kotlinx.serialization.SerializationException
 import mu.KotlinLogging
 import no.nav.sokos.oppdrag.config.RedisConfig
 import no.nav.sokos.oppdrag.config.RedisConfig.useConnection
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
 
 private val logger = KotlinLogging.logger {}
 

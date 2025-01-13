@@ -15,6 +15,8 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.restassured.RestAssured
+import java.lang.Boolean.FALSE
+import java.lang.Boolean.TRUE
 import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
@@ -45,8 +47,6 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsEnhetDTO
 import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsLinjeDetaljerDTO
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
-import java.lang.Boolean.FALSE
-import java.lang.Boolean.TRUE
 
 private const val PORT = 9090
 private const val OPPDRAGS_ID = "123"
