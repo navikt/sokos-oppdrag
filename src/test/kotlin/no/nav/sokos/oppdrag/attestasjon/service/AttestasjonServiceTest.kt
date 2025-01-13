@@ -27,8 +27,8 @@ import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
-import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ
-import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE
+import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NASJONALT_READ
+import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NASJONALT_WRITE
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_READ
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_WRITE
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_READ
@@ -80,7 +80,7 @@ internal class AttestasjonServiceTest :
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
 
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ, GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE))
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NASJONALT_READ, GRUPPE_ATTESTASJON_NASJONALT_WRITE))
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
@@ -107,7 +107,7 @@ internal class AttestasjonServiceTest :
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
 
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ, GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE))
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NASJONALT_READ, GRUPPE_ATTESTASJON_NASJONALT_WRITE))
             coEvery { skjermingService.getSkjermingForIdentListe(listOf(GJELDER_ID), any()) } returns mapOf(GJELDER_ID to false)
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata.copy(gjelderId = null, kodeFagOmraade = "FRIKORT1"), navIdent)
@@ -131,7 +131,7 @@ internal class AttestasjonServiceTest :
             val navIdent =
                 navIdent.copy(
                     ident = ident,
-                    roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ, GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE),
+                    roller = listOf(GRUPPE_ATTESTASJON_NASJONALT_READ, GRUPPE_ATTESTASJON_NASJONALT_WRITE),
                 )
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
@@ -226,11 +226,11 @@ internal class AttestasjonServiceTest :
             coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
         }
 
-        test("hent opopdrag for en gjelderId når saksbehandler har bare lesetilgang til Landsdekkende") {
+        test("hent opopdrag for en gjelderId når saksbehandler har bare lesetilgang til Nasjonalt") {
             Db2Listener.dataSource.transaction { session ->
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ))
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NASJONALT_READ))
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
@@ -244,11 +244,11 @@ internal class AttestasjonServiceTest :
             coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
         }
 
-        test("hent opopdrag for en gjelderId når saksbehandler har bare lesetilgang og skrivetilgang til Landsdekkende") {
+        test("hent opopdrag for en gjelderId når saksbehandler har bare lesetilgang og skrivetilgang til Nasjonalt") {
             Db2Listener.dataSource.transaction { session ->
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ, GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE))
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NASJONALT_READ, GRUPPE_ATTESTASJON_NASJONALT_WRITE))
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
@@ -333,7 +333,7 @@ internal class AttestasjonServiceTest :
                 )
 
             coEvery { zosConnectService.attestereOppdrag(any(), any()) } returns response
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE))
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NASJONALT_WRITE))
 
             attestasjonService.attestereOppdrag(request, navIdent) shouldBe response
         }
@@ -354,7 +354,7 @@ internal class AttestasjonServiceTest :
                     ),
                 )
 
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ))
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NASJONALT_READ))
             coEvery { skjermingService.getSkjermingForIdent(request.gjelderId, navIdent) } returns true
 
             val exception =

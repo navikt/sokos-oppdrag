@@ -8,9 +8,9 @@ import com.natpryce.konfig.EnvironmentVariables
 import com.natpryce.konfig.Key
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
-
-import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ
-import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE
+import java.io.File
+import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NASJONALT_READ
+import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NASJONALT_WRITE
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_READ
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_WRITE
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_READ
@@ -85,8 +85,8 @@ object PropertiesConfig {
                 getOrEmpty("GA_OKONOMI_EGNE_ANSATTE") to GRUPPE_EGNE_ANSATTE,
                 getOrEmpty("GA_OKONOMI_FORTROLIG") to GRUPPE_FORTROLIG,
                 getOrEmpty("GA_OKONOMI_STRENGT_FORTROLIG") to GRUPPE_STRENGT_FORTROLIG,
-                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_LANDSDEKKENDE_READ") to GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ,
-                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_LANDSDEKKENDE_WRITE") to GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE,
+                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NASJONALT_READ") to GRUPPE_ATTESTASJON_NASJONALT_READ,
+                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NASJONALT_WRITE") to GRUPPE_ATTESTASJON_NASJONALT_WRITE,
                 getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NOP_READ") to GRUPPE_ATTESTASJON_NOP_READ,
                 getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NOP_WRITE") to GRUPPE_ATTESTASJON_NOP_WRITE,
                 getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NOS_READ") to GRUPPE_ATTESTASJON_NOS_READ,
