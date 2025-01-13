@@ -17,7 +17,7 @@ spec:
             summary: "{{ $labels.deployment }} er nede i namespace {{ $labels.namespace }}"
           labels:
             namespace: okonomi
-            severity: danger
+            severity: critical
             sokos_oppdrag_type: sokos-oppdrag
             alert_type: custom
 
@@ -29,7 +29,7 @@ spec:
             summary: "{{ $labels.container }} restarter mange ganger"
           labels:
             namespace: okonomi
-            severity: danger
+            severity: critical
             sokos_oppdrag_type: sokos-oppdrag
             alert_type: custom
 
@@ -41,8 +41,8 @@ spec:
               offset 15m) or vector(0)) > 5'
           for: 5m
           annotations:
-            action: "Sjekk error loggene i sokos-oppdrag"
-            summary: "`kubectl logs <podname> -n okonomi`"
+            action: "<https://logs.adeo.no/app/discover#/?_g=(time:(from:now-1d,to:now))&_a=(filters:!((query:(match_phrase:(application:'sokos-oppdrag'))),(query:(match_phrase:(cluster:'dev-fss'))),(query:(match_phrase:(level:'Error')))))|Sjekk loggene>"
+            summary: "`kubectl logs -l app=sokos-oppdrag -n okonomi` for logger"
           labels:
             namespace: okonomi
             severity: danger
@@ -57,8 +57,8 @@ spec:
               offset 15m) or vector(0)) > 5'
           for: 5m
           annotations:
-            action: "Sjekk warning loggene i sokos-oppdrag"
-            summary: "`kubectl logs <podname> -n okonomi`"
+            action: "<https://logs.adeo.no/app/discover#/?_g=(time:(from:now-1d,to:now))&_a=(filters:!((query:(match_phrase:(application:'sokos-oppdrag'))),(query:(match_phrase:(cluster:'dev-fss'))),(query:(match_phrase:(level:'Warning')))))|Sjekk loggene>"
+            summary: "`kubectl logs -l app=sokos-oppdrag -n okonomi` for logger"
           labels:
             namespace: okonomi
             severity: warning
@@ -74,7 +74,7 @@ spec:
                       Sjekk loggene for å se hvorfor dette feiler."
           labels:
             namespace: okonomi
-            severity: danger
+            severity: critical
             sokos_oppdrag_type: sokos-oppdrag
             alert_type: custom
 
@@ -87,7 +87,7 @@ spec:
                       Sjekk loggene for å se hvorfor dette feiler"
           labels:
             namespace: okonomi
-            severity: danger
+            severity: critical
             sokos_oppdrag_type: sokos-oppdrag
             alert_type: custom
 
@@ -109,7 +109,7 @@ spec:
             name: slack-webhook
           channel: '#team-moby-alerts-dev'
           iconEmoji: ':alert:'
-          username: 'Alert dev-fss'
+          username: 'Alert dev-fss (sokos-oppdrag)'
           sendResolved: true
           title: |-
             [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }}
