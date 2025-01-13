@@ -28,7 +28,7 @@ repositories {
 val ktorVersion = "3.0.3"
 
 // Serialization
-val kotlinxSerializationVersion = "1.7.3"
+val kotlinxSerializationVersion = "1.8.0"
 val kotlinxDatetimeVersion = "0.6.1"
 val kotlinxCoroutinesVersion = "1.10.1"
 
@@ -48,7 +48,7 @@ val natpryceVersion = "1.6.10.0"
 // Database
 val hikariVersion = "6.2.1"
 val db2JccVersion = "12.1.0.0"
-val kotliqueryVersion = "1.9.0"
+val kotliqueryVersion = "1.9.1"
 
 // GraphQL
 val graphqlClientVersion = "8.2.1"
@@ -63,7 +63,7 @@ val redisVersion = "6.5.2.RELEASE"
 val kotestVersion = "6.0.0.M1"
 val wiremockVersion = "3.10.0"
 val mockOAuth2ServerVersion = "2.1.10"
-val mockkVersion = "1.13.14"
+val mockkVersion = "1.13.16"
 val swaggerRequestValidatorVersion = "2.44.1"
 val testcontainersVersion = "1.20.4"
 val h2Version = "2.3.232"
