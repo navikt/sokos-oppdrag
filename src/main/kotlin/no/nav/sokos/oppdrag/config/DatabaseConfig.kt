@@ -6,14 +6,14 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 
 object DatabaseConfig {
-    private val db2UserDataSource: HikariDataSource by lazy {
+    val db2DataSource: HikariDataSource by lazy {
         HikariDataSource(db2HikariConfig())
     }
 
     init {
         Runtime.getRuntime().addShutdownHook(
             Thread {
-                db2UserDataSource.close()
+                db2DataSource.close()
             },
         )
     }
@@ -39,6 +39,4 @@ object DatabaseConfig {
                 }
         }
     }
-
-    fun db2DataSource(): HikariDataSource = db2UserDataSource
 }

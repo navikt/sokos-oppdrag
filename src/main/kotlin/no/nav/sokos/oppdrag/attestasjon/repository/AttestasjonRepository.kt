@@ -15,7 +15,7 @@ import no.nav.sokos.oppdrag.common.util.SqlUtil.sanitizeForSql
 import no.nav.sokos.oppdrag.config.DatabaseConfig
 
 class AttestasjonRepository(
-    private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource(),
+    private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource,
 ) {
     suspend fun getOppdrag(
         gjelderId: String?,
