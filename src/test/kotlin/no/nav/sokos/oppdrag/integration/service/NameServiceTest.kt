@@ -1,11 +1,12 @@
 package no.nav.sokos.oppdrag.integration.service
 
-import no.nav.pdl.hentpersonbolk.Navn as PdlNavn
-import no.nav.sokos.oppdrag.integration.client.ereg.Navn as EregNavn
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.mockk
+
+import no.nav.pdl.hentpersonbolk.Navn as PdlNavn
+import no.nav.sokos.oppdrag.integration.client.ereg.Navn as EregNavn
 import no.nav.pdl.hentpersonbolk.Person
 import no.nav.sokos.oppdrag.attestasjon.Testdata.navIdent
 import no.nav.sokos.oppdrag.integration.client.ereg.EregClientService

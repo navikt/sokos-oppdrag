@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.oppdragsinfo.service
 
 import mu.KotlinLogging
+
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger

@@ -2,6 +2,7 @@ package no.nav.sokos.oppdrag.common.util
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+
 import no.nav.sokos.oppdrag.common.util.GjelderIdValidator.isValidGjelderId
 
 internal class InputValidatorTest : FunSpec({

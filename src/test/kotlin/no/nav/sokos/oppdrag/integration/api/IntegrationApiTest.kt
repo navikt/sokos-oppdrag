@@ -1,5 +1,8 @@
 package no.nav.sokos.oppdrag.integration.api
 
+import kotlinx.datetime.Instant
+import kotlinx.serialization.json.Json
+
 import com.atlassian.oai.validator.restassured.OpenApiValidationFilter
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -14,8 +17,7 @@ import io.ktor.server.routing.routing
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.restassured.RestAssured
-import kotlinx.datetime.Instant
-import kotlinx.serialization.json.Json
+
 import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.attestasjon.INTEGRATION_BASE_API_PATH
 import no.nav.sokos.oppdrag.attestasjon.Testdata.tokenWithNavIdent

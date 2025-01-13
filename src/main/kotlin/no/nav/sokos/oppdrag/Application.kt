@@ -3,6 +3,7 @@ package no.nav.sokos.oppdrag
 import io.ktor.server.application.Application
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+
 import no.nav.sokos.oppdrag.config.ApplicationState
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.applicationLifeCycleConfig

@@ -5,6 +5,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
+
 import no.nav.sokos.oppdrag.integration.api.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.integration.service.NameService
 import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler

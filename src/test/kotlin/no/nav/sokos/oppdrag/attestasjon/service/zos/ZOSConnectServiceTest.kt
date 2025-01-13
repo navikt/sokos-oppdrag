@@ -1,5 +1,8 @@
 package no.nav.sokos.oppdrag.attestasjon.service.zos
 
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
@@ -7,14 +10,13 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import org.junit.jupiter.api.assertThrows
+
 import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
-import org.junit.jupiter.api.assertThrows
 
 internal class ZOSConnectServiceTest :
     FunSpec({

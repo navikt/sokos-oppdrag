@@ -1,7 +1,9 @@
 package no.nav.sokos.oppdrag.integration.service
 
 import kotlinx.serialization.Serializable
+
 import mu.KotlinLogging
+
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger

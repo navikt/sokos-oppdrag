@@ -1,5 +1,7 @@
 package no.nav.sokos.oppdrag.attestasjon.service.zos
 
+import kotlinx.datetime.Clock
+
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.header
@@ -10,7 +12,8 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
-import kotlinx.datetime.Clock
+import org.slf4j.MDC
+
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.ZosResponse
 import no.nav.sokos.oppdrag.config.ApiError
@@ -18,7 +21,6 @@ import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.createHttpClient
 import no.nav.sokos.oppdrag.config.errorDetails
 import no.nav.sokos.oppdrag.config.errorMessage
-import org.slf4j.MDC
 
 class ZOSConnectService(
     private val zOsUrl: String = PropertiesConfig.EksterneHostProperties().zosUrl,

@@ -2,6 +2,7 @@ package no.nav.sokos.oppdrag.common.util
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+
 import no.nav.sokos.oppdrag.common.util.SqlUtil.sanitizeForSql
 
 class SqlUtilTest :

@@ -8,10 +8,11 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import org.junit.jupiter.api.assertThrows
+
 import no.nav.sokos.oppdrag.integration.exception.IntegrationException
 import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
-import org.junit.jupiter.api.assertThrows
 
 private const val TSS_ID = "12345678912"
 

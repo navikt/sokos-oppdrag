@@ -1,5 +1,11 @@
 package no.nav.sokos.oppdrag.oppdragsinfo.api
 
+import java.lang.Boolean.FALSE
+import java.lang.Boolean.TRUE
+
+import kotlinx.datetime.Instant
+import kotlinx.serialization.json.Json
+
 import com.atlassian.oai.validator.restassured.OpenApiValidationFilter
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -15,10 +21,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.restassured.RestAssured
-import java.lang.Boolean.FALSE
-import java.lang.Boolean.TRUE
-import kotlinx.datetime.Instant
-import kotlinx.serialization.json.Json
+
 import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.attestasjon.OPPDRAGSINFO_BASE_API_PATH
 import no.nav.sokos.oppdrag.attestasjon.Testdata.tokenWithNavIdent

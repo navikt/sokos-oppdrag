@@ -1,13 +1,15 @@
 package no.nav.sokos.oppdrag.attestasjon.repository
 
-import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.toKotlinLocalDate
+
+import com.zaxxer.hikari.HikariDataSource
 import kotliquery.LoanPattern.using
 import kotliquery.Row
 import kotliquery.queryOf
 import kotliquery.sessionOf
+
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje

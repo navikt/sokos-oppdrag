@@ -1,5 +1,12 @@
 package no.nav.sokos.oppdrag.config
 
+import java.net.URI
+import java.util.concurrent.TimeUnit
+
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
 import com.auth0.jwk.JwkProvider
 import com.auth0.jwk.JwkProviderBuilder
 import io.ktor.client.call.body
@@ -8,11 +15,6 @@ import io.ktor.server.application.Application
 import io.ktor.server.auth.authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
-import java.net.URI
-import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
