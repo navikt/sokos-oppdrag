@@ -224,7 +224,7 @@ internal class AttestasjonServiceTest :
             coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
         }
 
-        test("hent opopdrag for en gjelderId når saksbehandler har bare lesetilgang til Landsdekkende") {
+        test("hent opopdrag for en gjelderId når saksbehandler har bare lesetilgang til Nasjonalt") {
             Db2Listener.dataSource.transaction { session ->
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
@@ -242,7 +242,7 @@ internal class AttestasjonServiceTest :
             coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
         }
 
-        test("hent opopdrag for en gjelderId når saksbehandler har bare lesetilgang og skrivetilgang til Landsdekkende") {
+        test("hent opopdrag for en gjelderId når saksbehandler har bare lesetilgang og skrivetilgang til Nasjonalt") {
             Db2Listener.dataSource.transaction { session ->
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }

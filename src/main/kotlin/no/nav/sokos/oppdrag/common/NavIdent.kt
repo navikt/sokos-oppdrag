@@ -29,9 +29,9 @@ data class NavIdent(
 
     fun hasWriteAccessNOP(): Boolean = roller.contains(GRUPPE_ATTESTASJON_NOP_WRITE)
 
-    fun hasReadAccessLandsdekkende(): Boolean = roller.contains(GRUPPE_ATTESTASJON_NASJONALT_READ)
+    fun hasReadAccessNasjonalt(): Boolean = roller.contains(GRUPPE_ATTESTASJON_NASJONALT_READ)
 
-    fun hasWriteAccessLandsdekkende(): Boolean = roller.contains(GRUPPE_ATTESTASJON_NASJONALT_WRITE)
+    fun hasWriteAccessNasjonalt(): Boolean = roller.contains(GRUPPE_ATTESTASJON_NASJONALT_WRITE)
 
-    fun hasWriteAccessAttestasjon(): Boolean = hasWriteAccessLandsdekkende() || hasWriteAccessNOS() || hasWriteAccessNOP()
+    fun hasWriteAccessAttestasjon(): Boolean = hasWriteAccessNasjonalt() || hasWriteAccessNOS() || hasWriteAccessNOP()
 }
