@@ -10,6 +10,8 @@ import io.kotest.matchers.string.shouldBeEmpty
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotliquery.queryOf
+import org.junit.jupiter.api.assertThrows
+
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.attestasjon.Testdata.navIdent
 import no.nav.sokos.oppdrag.config.transaction
@@ -19,7 +21,6 @@ import no.nav.sokos.oppdrag.listener.Db2Listener.faggruppeRepository
 import no.nav.sokos.oppdrag.listener.Db2Listener.oppdragRepository
 import no.nav.sokos.oppdrag.listener.Db2Listener.oppdragsdetaljerRepository
 import no.nav.sokos.oppdrag.oppdragsinfo.exception.OppdragsinfoException
-import org.junit.jupiter.api.assertThrows
 
 private const val GJELDER_ID = "24029428499"
 private const val OPPDRAGSID = 964801

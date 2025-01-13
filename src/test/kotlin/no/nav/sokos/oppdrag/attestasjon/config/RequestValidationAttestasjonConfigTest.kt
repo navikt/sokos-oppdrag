@@ -1,10 +1,12 @@
 package no.nav.sokos.oppdrag.attestasjon.config
 
+import kotlinx.coroutines.runBlocking
+
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.server.plugins.requestvalidation.RequestValidationConfig
 import io.ktor.server.plugins.requestvalidation.ValidationResult
-import kotlinx.coroutines.runBlocking
+
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestertStatus.ALLE
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestertStatus.ATTESTERT
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestertStatus.IKKE_FERDIG_ATTESTERT_INKL_EGNE

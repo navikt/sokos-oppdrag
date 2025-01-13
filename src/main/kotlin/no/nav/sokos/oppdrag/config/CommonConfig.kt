@@ -1,5 +1,9 @@
 package no.nav.sokos.oppdrag.config
 
+import java.util.UUID
+
+import kotlinx.serialization.json.Json
+
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
@@ -22,17 +26,16 @@ import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.core.instrument.binder.system.UptimeMetrics
-import kotlinx.serialization.json.Json
-import no.nav.sokos.oppdrag.attestasjon.config.requestValidationAttestasjonConfig
-import no.nav.sokos.oppdrag.integration.config.requestValidationIntegrationConfig
-import no.nav.sokos.oppdrag.integration.metrics.Metrics
-import no.nav.sokos.oppdrag.oppdragsinfo.config.requestValidationOppdragsInfoConfig
 import org.slf4j.event.Level
-import java.util.UUID
+
 import no.nav.sokos.oppdrag.attestasjon.metrics.Metrics as AttestasjonMetrics
 import no.nav.sokos.oppdrag.common.redis.Metrics as RedisMetrics
 import no.nav.sokos.oppdrag.integration.metrics.Metrics as IntegrationMetrics
 import no.nav.sokos.oppdrag.oppdragsinfo.metrics.Metrics as OppdragsInfoMetrics
+import no.nav.sokos.oppdrag.attestasjon.config.requestValidationAttestasjonConfig
+import no.nav.sokos.oppdrag.integration.config.requestValidationIntegrationConfig
+import no.nav.sokos.oppdrag.integration.metrics.Metrics
+import no.nav.sokos.oppdrag.oppdragsinfo.config.requestValidationOppdragsInfoConfig
 
 const val SECURE_LOGGER = "secureLogger"
 const val AUDIT_LOGGER = "auditLogger"

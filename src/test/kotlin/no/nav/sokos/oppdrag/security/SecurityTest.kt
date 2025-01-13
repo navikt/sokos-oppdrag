@@ -1,5 +1,7 @@
 package no.nav.sokos.oppdrag.security
 
+import kotlinx.serialization.json.Json
+
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -14,7 +16,7 @@ import io.ktor.server.routing.routing
 import io.ktor.server.testing.testApplication
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.serialization.json.Json
+
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import no.nav.security.mock.oauth2.withMockOAuth2Server

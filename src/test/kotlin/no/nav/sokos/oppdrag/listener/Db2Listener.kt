@@ -8,6 +8,7 @@ import io.kotest.core.test.TestResult
 import io.kotest.matchers.shouldNotBe
 import io.mockk.spyk
 import kotliquery.queryOf
+
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.repository.FagomraadeRepository

@@ -2,6 +2,7 @@ package no.nav.sokos.oppdrag.oppdragsinfo.config
 
 import io.ktor.server.plugins.requestvalidation.RequestValidationConfig
 import io.ktor.server.plugins.requestvalidation.ValidationResult
+
 import no.nav.sokos.oppdrag.common.util.GjelderIdValidator.isValidGjelderId
 import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsRequest
 

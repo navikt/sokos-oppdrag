@@ -1,11 +1,14 @@
 package no.nav.sokos.oppdrag.config
 
+import java.io.File
+
 import com.natpryce.konfig.ConfigurationMap
 import com.natpryce.konfig.ConfigurationProperties
 import com.natpryce.konfig.EnvironmentVariables
 import com.natpryce.konfig.Key
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
+
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_READ
@@ -15,7 +18,6 @@ import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_WRITE
 import no.nav.sokos.oppdrag.common.GRUPPE_EGNE_ANSATTE
 import no.nav.sokos.oppdrag.common.GRUPPE_FORTROLIG
 import no.nav.sokos.oppdrag.common.GRUPPE_STRENGT_FORTROLIG
-import java.io.File
 
 object PropertiesConfig {
     private val defaultProperties =

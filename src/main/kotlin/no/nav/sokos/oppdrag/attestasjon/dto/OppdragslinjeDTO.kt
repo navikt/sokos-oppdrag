@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.attestasjon.dto
 
 import kotlinx.serialization.Serializable
+
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
 

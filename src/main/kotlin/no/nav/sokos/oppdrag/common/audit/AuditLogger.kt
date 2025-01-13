@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.common.audit
 
 import mu.KotlinLogging
+
 import no.nav.sokos.oppdrag.config.AUDIT_LOGGER
 
 private val auditLogger = KotlinLogging.logger(AUDIT_LOGGER)

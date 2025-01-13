@@ -4,11 +4,12 @@ import com.zaxxer.hikari.HikariDataSource
 import kotliquery.LoanPattern.using
 import kotliquery.queryOf
 import kotliquery.sessionOf
+
 import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.config.DatabaseConfig
 
 class FagomraadeRepository(
-    private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource(),
+    private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource,
 ) {
     fun getFagOmraader(): List<FagOmraade> =
         using(sessionOf(dataSource)) { session ->

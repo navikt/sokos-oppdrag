@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource
 import kotliquery.LoanPattern.using
 import kotliquery.queryOf
 import kotliquery.sessionOf
+
 import no.nav.sokos.oppdrag.config.DatabaseConfig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kid
@@ -16,7 +17,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 
 class OppdragsdetaljerRepository(
-    private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource(),
+    private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource,
 ) {
     fun getGrader(
         oppdragsId: Int,

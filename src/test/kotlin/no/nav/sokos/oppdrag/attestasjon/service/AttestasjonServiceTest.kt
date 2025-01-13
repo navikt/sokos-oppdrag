@@ -1,5 +1,7 @@
 package no.nav.sokos.oppdrag.attestasjon.service
 
+import kotlinx.serialization.json.Json
+
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain
@@ -11,8 +13,8 @@ import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.serialization.json.Json
 import kotliquery.queryOf
+
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.attestasjon.GJELDER_ID
 import no.nav.sokos.oppdrag.attestasjon.Testdata.navIdent

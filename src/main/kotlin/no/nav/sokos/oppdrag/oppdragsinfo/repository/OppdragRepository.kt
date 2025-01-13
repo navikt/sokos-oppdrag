@@ -5,6 +5,7 @@ import kotliquery.LoanPattern.using
 import kotliquery.Row
 import kotliquery.queryOf
 import kotliquery.sessionOf
+
 import no.nav.sokos.oppdrag.config.DatabaseConfig
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Korreksjon
@@ -16,7 +17,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsLinje
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsStatus
 
 class OppdragRepository(
-    private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource(),
+    private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource,
 ) {
     fun getOppdrag(
         gjelderId: String,

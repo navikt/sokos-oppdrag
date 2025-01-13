@@ -4,6 +4,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.mockk
+
 import no.nav.pdl.enums.AdressebeskyttelseGradering
 import no.nav.pdl.hentpersonbolk.Adressebeskyttelse
 import no.nav.pdl.hentpersonbolk.Navn

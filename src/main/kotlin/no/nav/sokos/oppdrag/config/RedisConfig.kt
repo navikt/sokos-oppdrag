@@ -1,5 +1,10 @@
 package no.nav.sokos.oppdrag.config
 
+import java.nio.ByteBuffer
+
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+
 import io.lettuce.core.ExperimentalLettuceCoroutinesApi
 import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisURI
@@ -7,10 +12,7 @@ import io.lettuce.core.api.coroutines
 import io.lettuce.core.api.coroutines.RedisCoroutinesCommands
 import io.lettuce.core.codec.RedisCodec
 import io.lettuce.core.codec.StringCodec
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import mu.KotlinLogging
-import java.nio.ByteBuffer
 
 private val logger = KotlinLogging.logger {}
 

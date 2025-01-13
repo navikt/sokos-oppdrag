@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.attestasjon.api.model
 
 import kotlinx.serialization.Serializable
+
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestertStatus.ALLE
 
 @Serializable

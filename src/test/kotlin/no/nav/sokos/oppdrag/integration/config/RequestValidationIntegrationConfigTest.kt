@@ -4,6 +4,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.server.plugins.requestvalidation.RequestValidationConfig
 import io.ktor.server.plugins.requestvalidation.ValidationResult
+
 import no.nav.sokos.oppdrag.integration.api.model.GjelderIdRequest
 import no.nav.sokos.oppdrag.listener.RequestValidationListener
 

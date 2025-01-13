@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.venteregister.service
 
 import mu.KotlinLogging
+
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.venteregister.dto.AnsatteDTO
 
