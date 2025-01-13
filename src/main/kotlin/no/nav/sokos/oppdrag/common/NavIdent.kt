@@ -8,8 +8,8 @@ const val GRUPPE_ATTESTASJON_NOS_READ = "0000-GA-SOKOS-MF-Attestasjon-NOS-READ"
 const val GRUPPE_ATTESTASJON_NOS_WRITE = "0000-GA-SOKOS-MF-Attestasjon-NOS-WRITE"
 const val GRUPPE_ATTESTASJON_NOP_READ = "0000-GA-SOKOS-MF-Attestasjon-NOP-READ"
 const val GRUPPE_ATTESTASJON_NOP_WRITE = "0000-GA-SOKOS-MF-Attestasjon-NOP-WRITE"
-const val GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ = "0000-GA-SOKOS-MF-Attestasjon-Landsdekkende-READ"
-const val GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE = "0000-GA-SOKOS-MF-Attestasjon-Landsdekkende-WRITE"
+const val GRUPPE_ATTESTASJON_NASJONALT_READ = "0000-GA-SOKOS-MF-Attestasjon-Nasjonalt-READ"
+const val GRUPPE_ATTESTASJON_NASJONALT_WRITE = "0000-GA-SOKOS-MF-Attestasjon-Nasjonalt-WRITE"
 
 data class NavIdent(
     val ident: String,
@@ -29,9 +29,9 @@ data class NavIdent(
 
     fun hasWriteAccessNOP(): Boolean = roller.contains(GRUPPE_ATTESTASJON_NOP_WRITE)
 
-    fun hasReadAccessLandsdekkende(): Boolean = roller.contains(GRUPPE_ATTESTASJON_LANDSDEKKENDE_READ)
+    fun hasReadAccessLandsdekkende(): Boolean = roller.contains(GRUPPE_ATTESTASJON_NASJONALT_READ)
 
-    fun hasWriteAccessLandsdekkende(): Boolean = roller.contains(GRUPPE_ATTESTASJON_LANDSDEKKENDE_WRITE)
+    fun hasWriteAccessLandsdekkende(): Boolean = roller.contains(GRUPPE_ATTESTASJON_NASJONALT_WRITE)
 
     fun hasWriteAccessAttestasjon(): Boolean = hasWriteAccessLandsdekkende() || hasWriteAccessNOS() || hasWriteAccessNOP()
 }

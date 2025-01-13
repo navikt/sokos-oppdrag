@@ -53,12 +53,12 @@ spec:
           - id: 420124f2-7456-4e3e-b035-7283bdabd51a # 0000-GA-okonomi-fortrolig
           - id: 22806019-fb74-41a5-a3cd-302624299935 # 0000-GA-okonomi-strengt_fortrolig
           - id: a3866f87-9b10-4b99-b4e9-a8c736d13b5b # 0000-GA-okonomi-egne_ansatte
-          - id: ae748b4f-90d8-4635-afb6-60c24122a640 # 0000-GA-SOKOS-MF-Attestasjon-nasjonalt-READ Må oppdateres
-          - id: c641ea06-9d84-4320-9f77-4df2ab8042c3 # 0000-GA-SOKOS-MF-Attestasjon-nasjonalt-WRITE Må oppdateres
-          - id: 5785b537-7a62-4c81-bb09-27e42e8146cd # 0000-GA-SOKOS-MF-Attestasjon-NOP-READ Må oppdateres
-          - id: c67369c0-9918-4f31-a952-121fc9d6d9e3 # 0000-GA-SOKOS-MF-Attestasjon-NOP-WRITE Må oppdateres
-          - id: c8b782d6-12fd-4e1b-abed-04c6b09ad4e8 # 0000-GA-SOKOS-MF-Attestasjon-NOS-READ Må oppdateres
-          - id: b02c819d-91e5-4cac-baf5-3d2411869adf # 0000-GA-SOKOS-MF-Attestasjon-NOS-WRITE Må oppdateres
+          - id: 726bdce4-c2ff-4b63-9047-cb524a4663a1 # 0000-GA-SOKOS-MF-Attestasjon-nasjonalt-READ
+          - id: bc45e68e-1497-43e9-a069-a5e2ab3eb964 # 0000-GA-SOKOS-MF-Attestasjon-nasjonalt-WRITE
+          - id: dcb37007-aeff-4e1c-bc10-7ddc00b37b27 # 0000-GA-SOKOS-MF-Attestasjon-NOP-READ
+          - id: 93ab2dc2-50a6-4dfc-aaff-a7fae9afe6bd # 0000-GA-SOKOS-MF-Attestasjon-NOP-WRITE
+          - id: 02606272-3cb4-49b8-b1f7-cb9b3b8f9b0e # 0000-GA-SOKOS-MF-Attestasjon-NOS-READ
+          - id: 38cbf869-d707-45a7-998c-81cb245bebdf # 0000-GA-SOKOS-MF-Attestasjon-NOS-WRITE
   accessPolicy:
     inbound:
       rules:
@@ -118,18 +118,18 @@ spec:
     - name: GA_OKONOMI_STRENGT_FORTROLIG
       value: 22806019-fb74-41a5-a3cd-302624299935
 
-    - name: GA_SOKOS_MF_ATTESTASJON_LANDSDEKKENDE_READ
-      value: ae748b4f-90d8-4635-afb6-60c24122a640 # Må oppdateres
-    - name: GA_SOKOS_MF_ATTESTASJON_LANDSDEKKENDE_WRITE
-      value: c641ea06-9d84-4320-9f77-4df2ab8042c3 # Må oppdateres
+    - name: GA_SOKOS_MF_ATTESTASJON_NASJONALT_READ
+      value: 726bdce4-c2ff-4b63-9047-cb524a4663a1
+    - name: GA_SOKOS_MF_ATTESTASJON_NASJONALT_WRITE
+      value: bc45e68e-1497-43e9-a069-a5e2ab3eb964
     - name: GA_SOKOS_MF_ATTESTASJON_NOP_READ
-      value: 5785b537-7a62-4c81-bb09-27e42e8146cd # Må oppdateres
+      value: dcb37007-aeff-4e1c-bc10-7ddc00b37b27
     - name: GA_SOKOS_MF_ATTESTASJON_NOP_WRITE
-      value: c67369c0-9918-4f31-a952-121fc9d6d9e3 # Må oppdateres
+      value: 93ab2dc2-50a6-4dfc-aaff-a7fae9afe6bd
     - name: GA_SOKOS_MF_ATTESTASJON_NOS_READ
-      value: c8b782d6-12fd-4e1b-abed-04c6b09ad4e8 # Må oppdateres
+      value: 02606272-3cb4-49b8-b1f7-cb9b3b8f9b0e
     - name: GA_SOKOS_MF_ATTESTASJON_NOS_WRITE
-      value: b02c819d-91e5-4cac-baf5-3d2411869adf # Må oppdateres
+      value: 38cbf869-d707-45a7-998c-81cb245bebdf
 
     # ZOS-Connect
     - name: ZOS_URL
