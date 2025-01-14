@@ -8,7 +8,7 @@ import com.natpryce.konfig.EnvironmentVariables
 import com.natpryce.konfig.Key
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
-import java.io.File
+
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NASJONALT_READ
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NASJONALT_WRITE
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_READ
