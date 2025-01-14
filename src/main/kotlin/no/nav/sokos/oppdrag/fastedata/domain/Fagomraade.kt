@@ -6,4 +6,5 @@ import kotlinx.serialization.Serializable
 data class Fagomraade(
     val navn: String,
     val kode: String,
+    val kodeMotregningsgruppe: String,
 )

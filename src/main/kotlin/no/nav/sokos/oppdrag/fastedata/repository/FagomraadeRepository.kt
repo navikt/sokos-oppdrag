@@ -9,7 +9,7 @@ import no.nav.sokos.oppdrag.config.DatabaseConfig
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 
-class FasteDataRepository(
+class FagomraadeRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource,
 ) {
     fun getFagOmraader(): List<Fagomraade> =
@@ -19,6 +19,7 @@ class FasteDataRepository(
                     """
                     SELECT TRIM(NAVN_FAGOMRAADE) AS NAVN_FAGOMRAADE, 
                            TRIM(KODE_FAGOMRAADE) AS KODE_FAGOMRAADE 
+                           TRIM(KODE_MOTREGNGRUPPE) AS KODE_MOTREGNGRUPPE
                     FROM T_FAGOMRAADE ORDER BY NAVN_FAGOMRAADE
                     """.trimIndent(),
                 ),
@@ -26,6 +27,7 @@ class FasteDataRepository(
                 Fagomraade(
                     navn = row.string("NAVN_FAGOMRAADE"),
                     kode = row.string("KODE_FAGOMRAADE"),
+                    kodeMotregningsgruppe = row.string("KODE_MOTREGNGRUPPE"),
                 )
             }
         }
