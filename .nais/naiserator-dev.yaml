@@ -109,7 +109,7 @@ spec:
 
     # Tp
     - name: TP_URL
-      value: "https://tp-q1.dev.intern.nav.no"
+      value: "https://tp-q1.dev.intern.nav.no" # Denne skal byttes ut mot TSS-proxy
 
     # Pdl
     - name: PDL_URL

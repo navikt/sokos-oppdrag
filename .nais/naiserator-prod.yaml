@@ -106,7 +106,7 @@ spec:
 
     # Tp
     - name: TP_URL
-      value: "https://tp.nais.adeo.no"
+      value: "https://tp.nais.adeo.no" # Denne skal byttes ut mot TSS-proxy
 
     # PDL
     - name: PDL_URL
