@@ -2,10 +2,12 @@ package no.nav.sokos.oppdrag.fastedata.repository
 
 import com.zaxxer.hikari.HikariDataSource
 import kotliquery.LoanPattern.using
+import kotliquery.Session
 import kotliquery.queryOf
 import kotliquery.sessionOf
 
 import no.nav.sokos.oppdrag.config.DatabaseConfig
+import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 
@@ -83,6 +85,34 @@ class FagomraadeRepository(
                     navn = row.string("NAVN_KORRIGERINGSAARSAK"),
                     kode = row.string("KODE_KORRIGERINGSAARSAK"),
                     medforerKorrigering = row.string("MEDFORER_KORR") == "J",
+                )
+            }
+        }
+
+    fun getBilagstype(kodeFagomraade: String): List<Bilagstype> =
+        using(sessionOf(dataSource)) { session: Session ->
+            session.list(
+                queryOf(
+                    """
+                    select KODE_FAGOMRAADE,
+                           TYPE_BILAG,
+                           DATO_FOM,
+                           DATO_TOM,
+                           AUTO_FAGSYSTEMID
+                     from T_FAGO_BILAGSTYPE
+                           WHERE FK.KODE_FAGOMRAADE = :KODE_FAGOMRAADE   
+                    """.trimIndent(),
+                    mapOf(
+                        "KODE_FAGOMRAADE" to kodeFagomraade,
+                    ),
+                ),
+            ) { row ->
+                Bilagstype(
+                    kode = row.string("KODE_FAGOMRAADE"),
+                    type = row.string("TYPE_BILAG"),
+                    datoFom = row.string("DATO_FOM"),
+                    datoTom = row.string("DATO_TOM"),
+                    autoFagsystem = row.string("AUTO_FAGSYSTEMID"),
                 )
             }
         }
