@@ -16,8 +16,8 @@ class FasteDataService(
         return fagomraadeRepository.getFagOmraader()
     }
 
-    fun getKorrigeringsaarsakForFagomraade(kodeFagomraade: String): List<Korrigeringsaarsak> {
+    fun getKorrigeringsaarsak(kodeFagomraade: String): List<Korrigeringsaarsak> {
         logger.info { "Henter korrigeringsårsaker for fagområde" }
-        return fagomraadeRepository.getKorrigeringsaarsakForFagomraade(kodeFagomraade)
+        return fagomraadeRepository.getKorrigeringsaarsak(kodeFagomraade)
     }
 }

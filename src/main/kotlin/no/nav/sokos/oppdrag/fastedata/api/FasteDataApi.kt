@@ -18,7 +18,7 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
         }
         get("{kodeFagomraade}/korrigeringsaarsak") {
             call.respond(
-                fasteDataService.getKorrigeringsaarsakForFagomraade(
+                fasteDataService.getKorrigeringsaarsak(
                     call.parameters["kodeFagomraade"].orEmpty(),
                 ),
             )

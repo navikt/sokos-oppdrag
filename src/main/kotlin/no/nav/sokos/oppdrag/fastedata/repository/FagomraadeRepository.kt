@@ -17,22 +17,51 @@ class FagomraadeRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT TRIM(NAVN_FAGOMRAADE) AS NAVN_FAGOMRAADE, 
-                           TRIM(KODE_FAGOMRAADE) AS KODE_FAGOMRAADE 
-                           TRIM(KODE_MOTREGNGRUPPE) AS KODE_MOTREGNGRUPPE
-                    FROM T_FAGOMRAADE ORDER BY NAVN_FAGOMRAADE
-                    """.trimIndent(),
+                SELECT TRIM(F.KODE_FAGOMRAADE)                     AS KODE_FAGOMRAADE,
+                       TRIM(F.NAVN_FAGOMRAADE)                     AS NAVN_FAGOMRAADE,
+                       TRIM(F.KODE_MOTREGNGRUPPE)                  AS KODE_MOTREGNGRUPPE,
+                       (SELECT DISTINCT 1 FROM T_FAGOMR_KORRARSAK
+                        WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS KORRAARSAK_FINNES,
+                       (SELECT DISTINCT 1 FROM T_FAGO_BILAGSTYPE
+                        WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS BILAGSTYPE_FINNES,
+                       (SELECT DISTINCT 1 FROM T_FAGO_KLASSEKODE
+                        WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS KLASSEKODE_FINNES,
+                       (SELECT DISTINCT 1 FROM T_FAGOMR_REGEL
+                        WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS REGEL_FINNES,
+                         TRIM(F.KODE_FAGGRUPPE)                    AS KODE_FAGGRUPPE,
+                         TRIM(F.ANT_ATTESTANTER)                   AS ANT_ATTESTANTER,
+                         TRIM(F.MAKS_AKT_OPPDRAG)                  AS MAKS_AKT_OPPDRAG,
+                         TRIM(F.TPS_DISTRIBUSJON)                  AS TPS_DISTRIBUSJON,
+                         TRIM(F.SJEKK_OFFID)                       AS SJEKK_OFFID,
+                         TRIM(F.ANVISER)                           AS ANVISER,
+                         TRIM(F.SJEKK_MOT_TPS)                     AS SJEKK_MOT_TPS,
+                         TRIM(F.BRUKERID)                          AS BRUKERID,
+                         TRIM(F.TIDSPKT_REG)                       AS TIDSPKT_REG
+                FROM T_FAGOMRAADE F
+                ORDER BY KODE_FAGOMRAADE ;
+                """.trimIndent(),
                 ),
             ) { row ->
                 Fagomraade(
-                    navn = row.string("NAVN_FAGOMRAADE"),
+                    antallAttestanter = row.int("ANT_ATTESTANTER"),
+                    anviser = row.string("ANVISER"),
+                    bilagstypeFinnes = row.byteOrNull("BILAGSTYPE_FINNES") != null,
+                    klassekodeFinnes = row.byteOrNull("KLASSEKODE_FINNES") != null,
                     kode = row.string("KODE_FAGOMRAADE"),
+                    kodeFaggruppe = row.string("KODE_FAGGRUPPE"),
                     kodeMotregningsgruppe = row.string("KODE_MOTREGNGRUPPE"),
+                    korraarsakFinnes = row.byteOrNull("KORRAARSAK_FINNES") != null,
+                    maksAktiveOppdrag = row.int("MAKS_AKT_OPPDRAG"),
+                    navn = row.string("NAVN_FAGOMRAADE"),
+                    regelFinnes = row.byteOrNull("REGEL_FINNES") != null,
+                    sjekkMotTps = row.string("SJEKK_MOT_TPS"),
+                    sjekkOffnrID = row.string("SJEKK_OFFID"),
+                    tpsDistribusjon = row.string("TPS_DISTRIBUSJON"),
                 )
             }
         }
 
-    fun getKorrigeringsaarsakForFagomraade(kodeFagomraade: String): List<Korrigeringsaarsak> =
+    fun getKorrigeringsaarsak(kodeFagomraade: String): List<Korrigeringsaarsak> =
         using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
