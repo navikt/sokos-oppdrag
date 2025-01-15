@@ -17,29 +17,29 @@ class FagomraadeRepository(
             session.list(
                 queryOf(
                     """
-                SELECT TRIM(F.KODE_FAGOMRAADE)                     AS KODE_FAGOMRAADE,
-                       TRIM(F.NAVN_FAGOMRAADE)                     AS NAVN_FAGOMRAADE,
-                       TRIM(F.KODE_MOTREGNGRUPPE)                  AS KODE_MOTREGNGRUPPE,
-                       (SELECT DISTINCT 1 FROM T_FAGOMR_KORRARSAK
-                        WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS KORRAARSAK_FINNES,
-                       (SELECT DISTINCT 1 FROM T_FAGO_BILAGSTYPE
-                        WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS BILAGSTYPE_FINNES,
-                       (SELECT DISTINCT 1 FROM T_FAGO_KLASSEKODE
-                        WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS KLASSEKODE_FINNES,
-                       (SELECT DISTINCT 1 FROM T_FAGOMR_REGEL
-                        WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS REGEL_FINNES,
-                         TRIM(F.KODE_FAGGRUPPE)                    AS KODE_FAGGRUPPE,
-                         TRIM(F.ANT_ATTESTANTER)                   AS ANT_ATTESTANTER,
-                         TRIM(F.MAKS_AKT_OPPDRAG)                  AS MAKS_AKT_OPPDRAG,
-                         TRIM(F.TPS_DISTRIBUSJON)                  AS TPS_DISTRIBUSJON,
-                         TRIM(F.SJEKK_OFFID)                       AS SJEKK_OFFID,
-                         TRIM(F.ANVISER)                           AS ANVISER,
-                         TRIM(F.SJEKK_MOT_TPS)                     AS SJEKK_MOT_TPS,
-                         TRIM(F.BRUKERID)                          AS BRUKERID,
-                         TRIM(F.TIDSPKT_REG)                       AS TIDSPKT_REG
-                FROM T_FAGOMRAADE F
-                ORDER BY KODE_FAGOMRAADE ;
-                """.trimIndent(),
+                    SELECT TRIM(F.KODE_FAGOMRAADE)                     AS KODE_FAGOMRAADE,
+                           TRIM(F.NAVN_FAGOMRAADE)                     AS NAVN_FAGOMRAADE,
+                           TRIM(F.KODE_MOTREGNGRUPPE)                  AS KODE_MOTREGNGRUPPE,
+                           (SELECT DISTINCT 1 FROM T_FAGOMR_KORRARSAK
+                            WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS KORRAARSAK_FINNES,
+                           (SELECT DISTINCT 1 FROM T_FAGO_BILAGSTYPE
+                            WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS BILAGSTYPE_FINNES,
+                           (SELECT DISTINCT 1 FROM T_FAGO_KLASSEKODE
+                            WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS KLASSEKODE_FINNES,
+                           (SELECT DISTINCT 1 FROM T_FAGOMR_REGEL
+                            WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS REGEL_FINNES,
+                             TRIM(F.KODE_FAGGRUPPE)                    AS KODE_FAGGRUPPE,
+                             TRIM(F.ANT_ATTESTANTER)                   AS ANT_ATTESTANTER,
+                             TRIM(F.MAKS_AKT_OPPDRAG)                  AS MAKS_AKT_OPPDRAG,
+                             TRIM(F.TPS_DISTRIBUSJON)                  AS TPS_DISTRIBUSJON,
+                             TRIM(F.SJEKK_OFFID)                       AS SJEKK_OFFID,
+                             TRIM(F.ANVISER)                           AS ANVISER,
+                             TRIM(F.SJEKK_MOT_TPS)                     AS SJEKK_MOT_TPS,
+                             TRIM(F.BRUKERID)                          AS BRUKERID,
+                             TRIM(F.TIDSPKT_REG)                       AS TIDSPKT_REG
+                    FROM T_FAGOMRAADE F
+                    ORDER BY KODE_FAGOMRAADE ;
+                    """.trimIndent(),
                 ),
             ) { row ->
                 Fagomraade(

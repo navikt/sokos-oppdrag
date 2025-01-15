@@ -85,17 +85,35 @@ components:
   schemas:
     Fagomraade:
       type: object
-      required:
-        - navn
-        - kode
-        - kodeMotregningsgruppe
       properties:
-        navn:
-          type: string
-        kode:
-          type: string
-        kodeMotregningsgruppe:
-          type: string
+         antallAttestanter:
+           type: number
+         anviser:
+           type: string
+         bilagstypeFinnes:
+           type: boolean
+         klassekodeFinnes:
+           type: boolean
+         kode:
+           type: string
+         kodeFaggruppe:
+           type: string
+         korraarsakFinnes:
+           type: boolean
+         kodeMotregningsgruppe:
+           type: string
+         maksAktiveOppdrag:
+           type: number
+         navn:
+           type: string
+         regelFinnes:
+           type: boolean
+         sjekkMotTps:
+           type: string
+         sjekkOffnrID:
+           type: string
+         tpsDistribusjon:
+           type: string
 
     Korrigeringsaarsak:
       type: object
