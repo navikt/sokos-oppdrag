@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.oppdragsinfo.dto
 
 import kotlinx.serialization.Serializable
+
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.OppdragsEnhet
 
 @Serializable

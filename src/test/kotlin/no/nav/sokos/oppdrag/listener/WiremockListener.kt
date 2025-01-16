@@ -6,6 +6,7 @@ import io.kotest.core.listeners.TestListener
 import io.kotest.core.spec.Spec
 import io.mockk.coEvery
 import io.mockk.mockk
+
 import no.nav.sokos.oppdrag.security.AccessTokenClient
 
 private const val WIREMOCK_SERVER_PORT = 9001

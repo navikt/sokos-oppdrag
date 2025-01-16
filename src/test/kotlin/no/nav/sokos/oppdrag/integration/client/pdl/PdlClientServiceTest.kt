@@ -7,12 +7,13 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import org.junit.jupiter.api.assertThrows
+
 import no.nav.pdl.enums.AdressebeskyttelseGradering
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
-import org.junit.jupiter.api.assertThrows
 
 private const val FNR = "12345678912"
 private val FNR_LIST =

@@ -1,10 +1,11 @@
 package no.nav.sokos.oppdrag.config
 
-import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoSwaggerApi as oppdragsinfoSwaggerApi
 import io.ktor.server.application.Application
 import io.ktor.server.auth.authenticate
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.routing
+
+import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoSwaggerApi as oppdragsinfoSwaggerApi
 import no.nav.sokos.oppdrag.attestasjon.api.attestasjonApi
 import no.nav.sokos.oppdrag.attestasjon.api.attestasjonSwaggerApi
 import no.nav.sokos.oppdrag.integration.api.integrationApi

@@ -1,19 +1,21 @@
 package no.nav.sokos.oppdrag.integration.client.tp
 
+import kotlinx.datetime.Clock
+
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
-import kotlinx.datetime.Clock
 import mu.KotlinLogging
+import org.slf4j.MDC
+
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.createHttpClient
 import no.nav.sokos.oppdrag.integration.exception.IntegrationException
 import no.nav.sokos.oppdrag.integration.metrics.Metrics
-import org.slf4j.MDC
 
 private val logger = KotlinLogging.logger {}
 

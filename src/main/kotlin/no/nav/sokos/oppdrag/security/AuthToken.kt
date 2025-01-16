@@ -3,6 +3,7 @@ package no.nav.sokos.oppdrag.security
 import com.auth0.jwt.JWT
 import io.ktor.http.HttpHeaders
 import io.ktor.server.application.ApplicationCall
+
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 

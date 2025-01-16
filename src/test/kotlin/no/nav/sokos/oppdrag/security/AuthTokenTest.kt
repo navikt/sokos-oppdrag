@@ -6,9 +6,10 @@ import io.ktor.http.HttpHeaders
 import io.ktor.server.application.ApplicationCall
 import io.mockk.every
 import io.mockk.mockk
+import org.junit.jupiter.api.assertThrows
+
 import no.nav.sokos.oppdrag.attestasjon.Testdata.tokenWithNavIdent
 import no.nav.sokos.oppdrag.attestasjon.Testdata.tokenWithoutNavIdent
-import org.junit.jupiter.api.assertThrows
 
 internal class AuthTokenTest :
     FunSpec({

@@ -12,6 +12,8 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import mu.KotlinLogging
+import org.slf4j.MDC
+
 import no.nav.pdl.HentPersonBolk
 import no.nav.pdl.hentpersonbolk.Person
 import no.nav.sokos.oppdrag.config.PropertiesConfig
@@ -19,7 +21,6 @@ import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.config.createHttpClient
 import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import no.nav.sokos.oppdrag.security.AccessTokenClient
-import org.slf4j.MDC
 
 private val logger = KotlinLogging.logger {}
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)

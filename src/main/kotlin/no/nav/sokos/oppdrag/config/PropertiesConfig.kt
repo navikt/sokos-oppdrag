@@ -1,5 +1,7 @@
 package no.nav.sokos.oppdrag.config
 
+import java.io.File
+
 import com.natpryce.konfig.ConfigurationMap
 import com.natpryce.konfig.ConfigurationProperties
 import com.natpryce.konfig.EnvironmentVariables
