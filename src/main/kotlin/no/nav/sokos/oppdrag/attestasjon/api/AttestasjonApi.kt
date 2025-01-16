@@ -14,6 +14,8 @@ import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler
 
 private const val BASE_PATH = "/api/v1/attestasjon"
 
+// En kommentar
+
 fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonService()) {
     route(BASE_PATH) {
         post("sok") {
