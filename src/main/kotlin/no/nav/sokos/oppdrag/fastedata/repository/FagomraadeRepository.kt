@@ -122,7 +122,7 @@ class FagomraadeRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT TRIM(KODE_KLASSE)
+                    SELECT TRIM(KODE_KLASSE) AS KODE_KLASSE
                     FROM T_FAGO_KLASSEKODE
                     WHERE KODE_FAGOMRAADE = :KODE_FAGOMRAADE;
                     """.trimIndent(),
