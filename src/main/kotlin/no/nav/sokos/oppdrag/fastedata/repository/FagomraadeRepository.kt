@@ -38,7 +38,7 @@ class FagomraadeRepository(
                              TRIM(F.ANVISER)                           AS ANVISER,
                              TRIM(F.SJEKK_MOT_TPS)                     AS SJEKK_MOT_TPS,
                              TRIM(F.BRUKERID)                          AS BRUKERID,
-                             TRIM(F.TIDSPKT_REG)                       AS TIDSPKT_REG
+                             F.TIDSPKT_REG                             AS TIDSPKT_REG
                     FROM T_FAGOMRAADE F
                     ORDER BY KODE_FAGOMRAADE ;
                     """.trimIndent(),
