@@ -68,10 +68,9 @@ class FagomraadeRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT  TRIM(FK.KODE_FAGOMRAADE) AS FAGOMRAADE,
-                            TRIM(K.BESKRIVELSE) AS BESKRIVELSE,
-                            TRIM(K.KODE_AARSAK_KORR) AS KODE_KORRIGERINGSAARSAK, 
-                            TRIM(FK.MEDFORER_KORR) AS MEDFORER_KORR    
+                    SELECT  TRIM(K.BESKRIVELSE)      AS NAVN,
+                            TRIM(K.KODE_AARSAK_KORR) AS KODE, 
+                            TRIM(FK.MEDFORER_KORR)   AS MEDFORER_KORR    
                     FROM T_FAGOMR_KORRARSAK FK
                     JOIN T_KORR_AARSAK K ON K.KODE_AARSAK_KORR = FK.KODE_AARSAK_KORR 
                     WHERE FK.KODE_FAGOMRAADE = :KODE_FAGOMRAADE   
@@ -82,8 +81,8 @@ class FagomraadeRepository(
                 ),
             ) { row ->
                 Korrigeringsaarsak(
-                    navn = row.string("NAVN_KORRIGERINGSAARSAK"),
-                    kode = row.string("KODE_KORRIGERINGSAARSAK"),
+                    navn = row.string("NAVN"),
+                    kode = row.string("KODE"),
                     medforerKorrigering = row.string("MEDFORER_KORR") == "J",
                 )
             }
