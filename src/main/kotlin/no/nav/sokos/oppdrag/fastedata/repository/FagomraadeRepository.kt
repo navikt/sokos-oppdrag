@@ -63,7 +63,7 @@ class FagomraadeRepository(
             }
         }
 
-    fun getKorrigeringsaarsak(kodeFagomraade: String): List<Korrigeringsaarsak> =
+    fun getKorrigeringsaarsaker(kodeFagomraade: String): List<Korrigeringsaarsak> =
         using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
@@ -88,7 +88,7 @@ class FagomraadeRepository(
             }
         }
 
-    fun getBilagstype(kodeFagomraade: String): List<Bilagstype> =
+    fun getBilagstyper(kodeFagomraade: String): List<Bilagstype> =
         using(sessionOf(dataSource)) { session: Session ->
             session.list(
                 queryOf(

@@ -2,6 +2,7 @@ package no.nav.sokos.oppdrag.fastedata.service
 
 import mu.KotlinLogging
 
+import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository
@@ -16,8 +17,13 @@ class FasteDataService(
         return fagomraadeRepository.getFagOmraader()
     }
 
-    fun getKorrigeringsaarsak(kodeFagomraade: String): List<Korrigeringsaarsak> {
+    fun getKorrigeringsaarsaker(kodeFagomraade: String): List<Korrigeringsaarsak> {
         logger.info { "Henter korrigeringsårsaker for fagområde" }
-        return fagomraadeRepository.getKorrigeringsaarsak(kodeFagomraade)
+        return fagomraadeRepository.getKorrigeringsaarsaker(kodeFagomraade)
+    }
+
+    fun getBilagstyper(kodeFagomraade: String): List<Bilagstype> {
+        logger.info { "Henter bilagstyper for fagområde" }
+        return fagomraadeRepository.getBilagstyper(kodeFagomraade)
     }
 }

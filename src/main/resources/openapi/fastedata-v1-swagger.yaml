@@ -43,13 +43,13 @@ paths:
         - Bearer: [ ]
 
 
-  /{kodeFagomraade}/korrigeringsaarsak:
+  /{kodeFagomraade}/korrigeringsaarsaker:
     get:
       tags:
         - fastedata
       summary: Søk med fagområde kode
       description: Returnerer korrigeringsårsaker for fagområde.
-      operationId: getKorrigeringsaarsakForFagomraade
+      operationId: getKorrigeringsaarsaker
       parameters:
         - name: kodeFagomraade
           in: path
@@ -79,7 +79,41 @@ paths:
       security:
         - Bearer: [ ]
 
-
+  /{kodeFagomraade}/bilagstyper:
+    get:
+      tags:
+        - fastedata
+      summary: Søk med fagområde kode
+      description: Returnerer bilagstyper for fagområde.
+      operationId: getBilagstyper
+      parameters:
+        - name: kodeFagomraade
+          in: path
+          description: Fagområdets kode
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK - Hvis oppdragene ikke finnes, returneres tom liste
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bilagstype'
+        400:
+          description: Ugyldig request, oppfyller ikke swagger-kontrakt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
 
 components:
   schemas:
@@ -117,10 +151,6 @@ components:
 
     Korrigeringsaarsak:
       type: object
-      required:
-        - navn
-        - kode
-        - medforerKorrigering
       properties:
         navn:
           type: string
@@ -129,7 +159,19 @@ components:
         medforerKorrigering:
           type: boolean
 
-
+    Bilagstype:
+        type: object
+        properties:
+          kode:
+            type: string
+          type:
+            type: string
+          datoFom:
+            type: string
+          datoTom:
+            type: string
+          autoFagsystem:
+            type: string
     ApiError:
       type: object
       required:
