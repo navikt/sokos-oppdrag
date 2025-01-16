@@ -9,6 +9,7 @@ import kotliquery.sessionOf
 import no.nav.sokos.oppdrag.config.DatabaseConfig
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
+import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 
 class FagomraadeRepository(
@@ -112,6 +113,26 @@ class FagomraadeRepository(
                     datoFom = row.string("DATO_FOM"),
                     datoTom = row.string("DATO_TOM"),
                     autoFagsystem = row.string("AUTO_FAGSYSTEMID"),
+                )
+            }
+        }
+
+    fun getKlassekoder(kodeFagomraade: String): List<Klassekode> =
+        using(sessionOf(dataSource)) { session: Session ->
+            session.list(
+                queryOf(
+                    """
+                    SELECT TRIM(KODE_KLASSE)
+                    FROM T_FAGO_KLASSEKODE
+                    WHERE KODE_FAGOMRAADE = :KODE_FAGOMRAADE;
+                    """.trimIndent(),
+                    mapOf(
+                        "KODE_FAGOMRAADE" to kodeFagomraade,
+                    ),
+                ),
+            ) { row ->
+                Klassekode(
+                    klassekode = row.string("KODE_KLASSE"),
                 )
             }
         }

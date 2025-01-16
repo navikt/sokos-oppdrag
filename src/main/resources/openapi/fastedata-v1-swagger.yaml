@@ -115,6 +115,42 @@ paths:
       security:
         - Bearer: [ ]
 
+  /{kodeFagomraade}/klassekoder:
+    get:
+      tags:
+        - fastedata
+      summary: Søk med fagområde kode
+      description: Returnerer klassekoder for fagområde.
+      operationId: getKlassekoder
+      parameters:
+        - name: kodeFagomraade
+          in: path
+          description: Fagområdets kode
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK - Hvis oppdragene ikke finnes, returneres tom liste
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Klassekode'
+        400:
+          description: Ugyldig request, oppfyller ikke swagger-kontrakt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
 components:
   schemas:
     Fagomraade:
@@ -172,6 +208,14 @@ components:
             type: string
           autoFagsystem:
             type: string
+
+    Klassekode:
+      type: object
+      properties:
+        klassekode:
+          type: string
+
+
     ApiError:
       type: object
       required:

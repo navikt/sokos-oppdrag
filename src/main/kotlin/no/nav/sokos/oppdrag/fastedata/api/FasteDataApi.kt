@@ -30,5 +30,12 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
                 ),
             )
         }
+        get("{kodeFagomraade}/klassekoder") {
+            call.respond(
+                fasteDataService.getKlassekoder(
+                    call.parameters["kodeFagomraade"].orEmpty(),
+                ),
+            )
+        }
     }
 }

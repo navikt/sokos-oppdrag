@@ -4,6 +4,7 @@ import mu.KotlinLogging
 
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
+import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository
 
@@ -25,5 +26,10 @@ class FasteDataService(
     fun getBilagstyper(kodeFagomraade: String): List<Bilagstype> {
         logger.info { "Henter bilagstyper for fagområde" }
         return fagomraadeRepository.getBilagstyper(kodeFagomraade)
+    }
+
+    fun getKlassekoder(kodeFagomraade: String): List<Klassekode> {
+        logger.info { "Henter klassekoder for fagområde" }
+        return fagomraadeRepository.getKlassekoder(kodeFagomraade)
     }
 }
