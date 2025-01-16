@@ -71,7 +71,7 @@ class FagomraadeRepository(
                     SELECT  TRIM(FK.KODE_FAGOMRAADE) AS FAGOMRAADE,
                             TRIM(K.BESKRIVELSE) AS BESKRIVELSE,
                             TRIM(K.KODE_AARSAK_KORR) AS KODE_KORRIGERINGSAARSAK, 
-                            TRIM(FK.MEDFORER_KORR) AS MEDFORER_KORR,    
+                            TRIM(FK.MEDFORER_KORR) AS MEDFORER_KORR    
                     FROM T_FAGOMR_KORRARSAK FK
                     JOIN T_KORR_AARSAK K ON K.KODE_AARSAK_KORR = FK.KODE_AARSAK_KORR 
                     WHERE FK.KODE_FAGOMRAADE = :KODE_FAGOMRAADE   
