@@ -1,15 +1,6 @@
 # Beskrivelse
 
-Dette er en sjekkliste for å holde konsistent kvalitet på main branchen.
-
-## Pull request type
-
-- [ ] Bugfix
-- [ ] Feature
-- [ ] Refactor
-- [ ] Chore
-- [ ] Documentation
-- [ ] Hotfix
+Gi en overordnet beskrivelse av denne pull requesten.
 
 # Sjekkliste:
 
