@@ -24,6 +24,7 @@ import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
+import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.service.FasteDataService
 
 private const val PORT = 9090
@@ -46,7 +47,7 @@ internal class FasteDataApiTest :
 
         test("fagområder returnerer 200 OK") {
 
-            coEvery { fasteDataService.getFagomraader() } returns fagomraadeResponse
+            coEvery { fasteDataService.getFagomraader() } returns fagomraader
 
             val response =
                 RestAssured
@@ -62,7 +63,47 @@ internal class FasteDataApiTest :
                     .extract()
                     .response()
 
-            Json.decodeFromString<List<Fagomraade>>(response.asString()) shouldBe fagomraadeResponse
+            Json.decodeFromString<List<Fagomraade>>(response.asString()) shouldBe fagomraader
+        }
+        test("korrigeringsårsaker returnerer 200 OK") {
+
+            coEvery { fasteDataService.getKorrigeringsaarsaker(any()) } returns korrigeringsaarsaker
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/MYSTB/korrigeringsaarsaker")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.OK.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<List<Korrigeringsaarsak>>(response.asString()) shouldBe korrigeringsaarsaker
+        }
+        test("korrigeringsårsaker validerer fagområde") {
+
+            coEvery { fasteDataService.getKorrigeringsaarsaker(any()) } returns korrigeringsaarsaker
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/burde være ugyldig verd\' or 1=1 or '' = \'/korrigeringsaarsaker")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.BadRequest.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<List<Korrigeringsaarsak>>(response.asString()) shouldBe korrigeringsaarsaker
         }
     })
 
@@ -75,7 +116,7 @@ private fun Application.applicationTestModule() {
     }
 }
 
-val fagomraadeResponse =
+val fagomraader =
     listOf(
         Fagomraade(
             antallAttestanter = 1,
@@ -124,5 +165,14 @@ val fagomraadeResponse =
             sjekkMotTps = "example",
             sjekkOffnrID = "example",
             tpsDistribusjon = "example",
+        ),
+    )
+
+val korrigeringsaarsaker =
+    listOf(
+        Korrigeringsaarsak(
+            kode = "lol",
+            navn = "lol",
+            medforerKorrigering = true,
         ),
     )

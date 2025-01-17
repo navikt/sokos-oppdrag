@@ -59,11 +59,13 @@ paths:
             type: string
       responses:
         200:
-          description: OK - Hvis oppdragene ikke finnes, returneres tom liste
+          description: OK - Hvis fagområder ikke finnes så returneres tom liste
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Korrigeringsaarsak'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Korrigeringsaarsak'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
@@ -95,11 +97,13 @@ paths:
             type: string
       responses:
         200:
-          description: OK - Hvis oppdragene ikke finnes, returneres tom liste
+          description: OK - Hvis fagområder ikke finnes så returneres tom liste
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Bilagstype'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bilagstype'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
@@ -131,11 +135,13 @@ paths:
             type: string
       responses:
         200:
-          description: OK - Hvis oppdragene ikke finnes, returneres tom liste
+          description: OK - Hvis fagområder ikke finnes så returneres tom liste
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Klassekode'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Klassekode'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
