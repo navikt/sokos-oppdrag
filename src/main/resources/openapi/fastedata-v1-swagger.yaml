@@ -20,9 +20,9 @@ paths:
   /fagomraader:
     get:
       tags:
-        - fastedata
+        - Faste data
       summary: Hent tilgjengelige fagområder
-      description: Returnerer en liste av tilgjengelige fagområder. Fagområde kan brukes til å filtrere søket i endepunktet -> /sok
+      description: Returnerer en liste av tilgjengelige fagområder.
       operationId: getFagomraader
       responses:
         200:
@@ -42,11 +42,10 @@ paths:
       security:
         - Bearer: [ ]
 
-
-  /{kodeFagomraade}/korrigeringsaarsaker:
+  /fagomraader/{kodeFagomraade}/korrigeringsaarsaker:
     get:
       tags:
-        - fastedata
+        - Fagområde
       summary: Søk med fagområde kode
       description: Returnerer korrigeringsårsaker for fagområde.
       operationId: getKorrigeringsaarsaker
@@ -68,10 +67,7 @@ paths:
                   $ref: '#/components/schemas/KorrigeringsaarsakDTO'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiError'
+
         500:
           description: Annen feil
           content:
@@ -81,10 +77,10 @@ paths:
       security:
         - Bearer: [ ]
 
-  /{kodeFagomraade}/bilagstyper:
+  /fagomraader/{kodeFagomraade}/bilagstyper:
     get:
       tags:
-        - fastedata
+        - Fagområde
       summary: Søk med fagområde kode
       description: Returnerer bilagstyper for fagområde.
       operationId: getBilagstyper
@@ -106,10 +102,6 @@ paths:
                   $ref: '#/components/schemas/Bilagstype'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiError'
         500:
           description: Annen feil
           content:
@@ -119,10 +111,10 @@ paths:
       security:
         - Bearer: [ ]
 
-  /{kodeFagomraade}/klassekoder:
+  /fagomraader/{kodeFagomraade}/klassekoder:
     get:
       tags:
-        - fastedata
+        - Fagområde
       summary: Søk med fagområde kode
       description: Returnerer klassekoder for fagområde.
       operationId: getKlassekoder
@@ -133,6 +125,8 @@ paths:
           required: true
           schema:
             type: string
+            maxLength: 8
+            pattern: '^[a-zA-Z0-9æøåÆØÅ]{0,8}$'
       responses:
         200:
           description: OK - Hvis fagområder ikke finnes så returneres tom liste
@@ -144,10 +138,6 @@ paths:
                   $ref: '#/components/schemas/Klassekode'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiError'
         500:
           description: Annen feil
           content:
@@ -156,6 +146,46 @@ paths:
                 $ref: '#/components/schemas/ApiError'
       security:
         - Bearer: [ ]
+
+  /faggrupper:
+    get:
+      tags:
+        - Faste data
+      summary: Hent tilgjengelige faggrupper
+      description: Returnerer en liste av tilgjengelige faggrupper.
+      responses:
+        400:
+          description: Ikke implementert ennå
+
+  /faggrupper/{kodeFaggruppe}/redusertSkatt:
+    get:
+      tags:
+        - Faggrupper
+      description: Returnerer redusert skatt for faggruppe.
+      summary: Hent redusert skatt for faggruppe
+      operationId: getFaggrupper
+      parameters:
+        - name: kodeFaggruppe
+          in: path
+          description: Fagområdets kode
+          required: true
+          schema:
+            type: string
+            maxLength: 8
+            pattern: '^[a-zA-Z0-9æøåÆØÅ]{0,8}$'
+      responses:
+        400:
+          description: Ikke implementert ennå
+
+  /klassekoder:
+    get:
+      tags:
+        - Faste data
+      summary: Hent tilgjengelige klassekoder
+      description: Returnerer en liste av tilgjengelige klassekoder.
+      responses:
+        400:
+          description: Ikke implementert ennå
 
 components:
   schemas:

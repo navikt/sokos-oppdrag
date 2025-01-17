@@ -65,6 +65,7 @@ internal class FasteDataApiTest :
 
             Json.decodeFromString<List<Fagomraade>>(response.asString()) shouldBe fagomraader
         }
+
         test("korrigeringsårsaker returnerer 200 OK") {
 
             coEvery { fasteDataService.getKorrigeringsaarsaker(any()) } returns korrigeringsaarsaker
@@ -76,7 +77,7 @@ internal class FasteDataApiTest :
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
-                    .get("$FASTEDATA_BASE_API_PATH/MYSTB/korrigeringsaarsaker")
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/MYSTB/korrigeringsaarsaker")
                     .then()
                     .assertThat()
                     .statusCode(HttpStatusCode.OK.value)
@@ -85,25 +86,21 @@ internal class FasteDataApiTest :
 
             Json.decodeFromString<List<KorrigeringsaarsakDTO>>(response.asString()) shouldBe korrigeringsaarsaker
         }
+
         test("korrigeringsårsaker validerer fagområde") {
 
             coEvery { fasteDataService.getKorrigeringsaarsaker(any()) } returns korrigeringsaarsaker
 
-            val response =
-                RestAssured
-                    .given()
-                    .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                    .port(PORT)
-                    .get("$FASTEDATA_BASE_API_PATH/burde være ugyldig verd\' or 1=1 or '' = \'/korrigeringsaarsaker")
-                    .then()
-                    .assertThat()
-                    .statusCode(HttpStatusCode.BadRequest.value)
-                    .extract()
-                    .response()
-
-            Json.decodeFromString<List<KorrigeringsaarsakDTO>>(response.asString()) shouldBe korrigeringsaarsaker
+            RestAssured
+                .given()
+                .filter(validationFilter)
+                .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                .port(PORT)
+                .get("$FASTEDATA_BASE_API_PATH/fagomraader/burde være ugyldig verd\' or 1=1 or '' = \'/korrigeringsaarsaker")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatusCode.BadRequest.value)
         }
     })
 
