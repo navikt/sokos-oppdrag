@@ -24,7 +24,7 @@ import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
-import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
+import no.nav.sokos.oppdrag.fastedata.dto.KorrigeringsaarsakDTO
 import no.nav.sokos.oppdrag.fastedata.service.FasteDataService
 
 private const val PORT = 9090
@@ -83,7 +83,7 @@ internal class FasteDataApiTest :
                     .extract()
                     .response()
 
-            Json.decodeFromString<List<Korrigeringsaarsak>>(response.asString()) shouldBe korrigeringsaarsaker
+            Json.decodeFromString<List<KorrigeringsaarsakDTO>>(response.asString()) shouldBe korrigeringsaarsaker
         }
         test("korrigeringsårsaker validerer fagområde") {
 
@@ -103,7 +103,7 @@ internal class FasteDataApiTest :
                     .extract()
                     .response()
 
-            Json.decodeFromString<List<Korrigeringsaarsak>>(response.asString()) shouldBe korrigeringsaarsaker
+            Json.decodeFromString<List<KorrigeringsaarsakDTO>>(response.asString()) shouldBe korrigeringsaarsaker
         }
     })
 
@@ -123,15 +123,15 @@ val fagomraader =
             anviser = "lol",
             bilagstypeFinnes = true,
             klassekodeFinnes = true,
-            kode = "lol",
+            kodeFagomraade = "lol",
             kodeFaggruppe = "lol",
             kodeMotregningsgruppe = "lol",
             korraarsakFinnes = true,
             maksAktiveOppdrag = 4,
-            navn = "lol",
+            navnFagomraade = "lol",
             regelFinnes = true,
             sjekkMotTps = "lol",
-            sjekkOffnrID = "lol",
+            sjekkOffId = "lol",
             tpsDistribusjon = "lol",
         ),
         Fagomraade(
@@ -139,15 +139,15 @@ val fagomraader =
             anviser = "test",
             bilagstypeFinnes = false,
             klassekodeFinnes = false,
-            kode = "test",
+            kodeFagomraade = "test",
             kodeFaggruppe = "test",
             kodeMotregningsgruppe = "test",
             korraarsakFinnes = false,
             maksAktiveOppdrag = 5,
-            navn = "test",
+            navnFagomraade = "test",
             regelFinnes = false,
             sjekkMotTps = "test",
-            sjekkOffnrID = "test",
+            sjekkOffId = "test",
             tpsDistribusjon = "test",
         ),
         Fagomraade(
@@ -155,24 +155,24 @@ val fagomraader =
             anviser = "example",
             bilagstypeFinnes = true,
             klassekodeFinnes = true,
-            kode = "example",
+            kodeFagomraade = "example",
             kodeFaggruppe = "example",
             kodeMotregningsgruppe = "example",
             korraarsakFinnes = true,
             maksAktiveOppdrag = 6,
-            navn = "example",
+            navnFagomraade = "example",
             regelFinnes = true,
             sjekkMotTps = "example",
-            sjekkOffnrID = "example",
+            sjekkOffId = "example",
             tpsDistribusjon = "example",
         ),
     )
 
 val korrigeringsaarsaker =
     listOf(
-        Korrigeringsaarsak(
-            kode = "lol",
-            navn = "lol",
+        KorrigeringsaarsakDTO(
+            navn = "Linjestatus endret",
+            kode = "0001",
             medforerKorrigering = true,
         ),
     )

@@ -65,7 +65,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Korrigeringsaarsak'
+                  $ref: '#/components/schemas/KorrigeringsaarsakDTO'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
@@ -170,7 +170,7 @@ components:
            type: boolean
          klassekodeFinnes:
            type: boolean
-         kode:
+         kodeFagomraade:
            type: string
          kodeFaggruppe:
            type: string
@@ -180,18 +180,18 @@ components:
            type: string
          maksAktiveOppdrag:
            type: number
-         navn:
+         navnFagomraade:
            type: string
          regelFinnes:
            type: boolean
          sjekkMotTps:
            type: string
-         sjekkOffnrID:
+         sjekkOffId:
            type: string
          tpsDistribusjon:
            type: string
 
-    Korrigeringsaarsak:
+    KorrigeringsaarsakDTO:
       type: object
       properties:
         navn:
@@ -204,21 +204,21 @@ components:
     Bilagstype:
         type: object
         properties:
-          kode:
+          kodeFagomraade:
             type: string
-          type:
+          typeBilag:
             type: string
           datoFom:
             type: string
           datoTom:
             type: string
-          autoFagsystem:
+          autoFagsystemId:
             type: string
 
     Klassekode:
       type: object
       properties:
-        klassekode:
+        kodeKlasse:
           type: string
 
 

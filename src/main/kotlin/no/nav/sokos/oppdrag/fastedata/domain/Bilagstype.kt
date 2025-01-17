@@ -4,9 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Bilagstype(
-    val kode: String,
-    val type: String,
+    val kodeFagomraade: String,
+    val typeBilag: String,
     val datoFom: String,
     val datoTom: String,
-    val autoFagsystem: String,
+    val autoFagsystemId: String,
 )

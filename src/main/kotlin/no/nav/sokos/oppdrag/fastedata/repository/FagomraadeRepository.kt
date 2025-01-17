@@ -50,15 +50,15 @@ class FagomraadeRepository(
                     anviser = row.string("ANVISER"),
                     bilagstypeFinnes = row.byteOrNull("BILAGSTYPE_FINNES") != null,
                     klassekodeFinnes = row.byteOrNull("KLASSEKODE_FINNES") != null,
-                    kode = row.string("KODE_FAGOMRAADE"),
+                    kodeFagomraade = row.string("KODE_FAGOMRAADE"),
                     kodeFaggruppe = row.string("KODE_FAGGRUPPE"),
                     kodeMotregningsgruppe = row.string("KODE_MOTREGNGRUPPE"),
                     korraarsakFinnes = row.byteOrNull("KORRAARSAK_FINNES") != null,
                     maksAktiveOppdrag = row.int("MAKS_AKT_OPPDRAG"),
-                    navn = row.string("NAVN_FAGOMRAADE"),
+                    navnFagomraade = row.string("NAVN_FAGOMRAADE"),
                     regelFinnes = row.byteOrNull("REGEL_FINNES") != null,
                     sjekkMotTps = row.string("SJEKK_MOT_TPS"),
-                    sjekkOffnrID = row.string("SJEKK_OFFID"),
+                    sjekkOffId = row.string("SJEKK_OFFID"),
                     tpsDistribusjon = row.string("TPS_DISTRIBUSJON"),
                 )
             }
@@ -69,8 +69,8 @@ class FagomraadeRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT  TRIM(K.BESKRIVELSE)      AS NAVN,
-                            TRIM(K.KODE_AARSAK_KORR) AS KODE, 
+                    SELECT  TRIM(K.BESKRIVELSE)      AS BESKRIVELSE,
+                            TRIM(K.KODE_AARSAK_KORR) AS KODE_AARSAK_KORR, 
                             TRIM(FK.MEDFORER_KORR)   AS MEDFORER_KORR    
                     FROM T_FAGOMR_KORRARSAK FK
                     JOIN T_KORR_AARSAK K ON K.KODE_AARSAK_KORR = FK.KODE_AARSAK_KORR 
@@ -82,8 +82,8 @@ class FagomraadeRepository(
                 ),
             ) { row ->
                 Korrigeringsaarsak(
-                    navn = row.string("NAVN"),
-                    kode = row.string("KODE"),
+                    beskrivelse = row.string("BESKRIVELSE"),
+                    kodeAarsakKorrigering = row.string("KODE_AARSAK_KORR"),
                     medforerKorrigering = row.string("MEDFORER_KORR") == "J",
                 )
             }
@@ -108,11 +108,11 @@ class FagomraadeRepository(
                 ),
             ) { row ->
                 Bilagstype(
-                    kode = row.string("KODE_FAGOMRAADE"),
-                    type = row.string("TYPE_BILAG"),
+                    kodeFagomraade = row.string("KODE_FAGOMRAADE"),
+                    typeBilag = row.string("TYPE_BILAG"),
                     datoFom = row.string("DATO_FOM"),
                     datoTom = row.string("DATO_TOM"),
-                    autoFagsystem = row.string("AUTO_FAGSYSTEMID"),
+                    autoFagsystemId = row.string("AUTO_FAGSYSTEMID"),
                 )
             }
         }
@@ -132,7 +132,7 @@ class FagomraadeRepository(
                 ),
             ) { row ->
                 Klassekode(
-                    klassekode = row.string("KODE_KLASSE"),
+                    kodeKlasse = row.string("KODE_KLASSE"),
                 )
             }
         }

@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Klassekode(
-    val klassekode: String,
+    val kodeKlasse: String,
 )
