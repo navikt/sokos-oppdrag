@@ -24,7 +24,7 @@ class FasteDataService(
         validateFagomraadeQueryParameter(kodeFagomraade)
         return fagomraadeRepository.getKorrigeringsaarsaker(
             kodeFagomraade,
-        ).map { KorrigeringsaarsakDTO(navn = it.beskrivelse, kode = it.kodeAarsakKorrigering, medforerKorrigering = it.medforerKorrigering) }
+        ).map { KorrigeringsaarsakDTO(it) }
     }
 
     fun getBilagstyper(kodeFagomraade: String): List<Bilagstype> {
