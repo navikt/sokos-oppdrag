@@ -66,7 +66,7 @@ internal class FasteDataApiTest :
             Json.decodeFromString<List<Fagomraade>>(response.asString()) shouldBe fagomraader
         }
 
-        test("korrigeringsårsaker returnerer 200 OK") {
+        test("korrigeringsårsaker tilhørende fagområde returnerer 200 OK") {
 
             coEvery { fasteDataService.getKorrigeringsaarsaker(any()) } returns korrigeringsaarsaker
 
@@ -87,9 +87,9 @@ internal class FasteDataApiTest :
             Json.decodeFromString<List<KorrigeringsaarsakDTO>>(response.asString()) shouldBe korrigeringsaarsaker
         }
 
-        test("korrigeringsårsaker validerer fagområde") {
+        test("korrigeringsårsaker tilhørende fagområde med ugyldig query parameter returnerer 500") {
 
-            coEvery { fasteDataService.getKorrigeringsaarsaker(any()) } returns korrigeringsaarsaker
+            coEvery { fasteDataService.getKorrigeringsaarsaker(any()) } throws IllegalArgumentException()
 
             RestAssured
                 .given()
@@ -100,7 +100,7 @@ internal class FasteDataApiTest :
                 .get("$FASTEDATA_BASE_API_PATH/fagomraader/burde være ugyldig verd\' or 1=1 or '' = \'/korrigeringsaarsaker")
                 .then()
                 .assertThat()
-                .statusCode(HttpStatusCode.BadRequest.value)
+                .statusCode(HttpStatusCode.InternalServerError.value)
         }
     })
 

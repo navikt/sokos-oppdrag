@@ -24,7 +24,7 @@ object Testdata {
     val tokenWithNavIdent = "tokenWithNavIdent.txt".readFromResource()
     val tokenWithoutNavIdent = "tokenWithoutNavIdent.txt".readFromResource()
 
-    val oppdragTestdata =
+    private val oppdragTestdata =
         Oppdrag(
             antallAttestanter = 1,
             fagGruppe = "fagGruppe",

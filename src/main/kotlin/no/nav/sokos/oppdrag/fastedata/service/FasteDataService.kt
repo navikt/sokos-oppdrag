@@ -7,6 +7,7 @@ import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.dto.KorrigeringsaarsakDTO
 import no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository
+import no.nav.sokos.oppdrag.fastedata.validator.validateFagomraadeQueryParameter
 
 private val logger = KotlinLogging.logger {}
 
@@ -20,6 +21,7 @@ class FasteDataService(
 
     fun getKorrigeringsaarsaker(kodeFagomraade: String): List<KorrigeringsaarsakDTO> {
         logger.info { "Henter korrigeringsårsaker for fagområde" }
+        validateFagomraadeQueryParameter(kodeFagomraade)
         return fagomraadeRepository.getKorrigeringsaarsaker(
             kodeFagomraade,
         ).map { KorrigeringsaarsakDTO(navn = it.beskrivelse, kode = it.kodeAarsakKorrigering, medforerKorrigering = it.medforerKorrigering) }
@@ -27,11 +29,13 @@ class FasteDataService(
 
     fun getBilagstyper(kodeFagomraade: String): List<Bilagstype> {
         logger.info { "Henter bilagstyper for fagområde" }
+        validateFagomraadeQueryParameter(kodeFagomraade)
         return fagomraadeRepository.getBilagstyper(kodeFagomraade)
     }
 
     fun getKlassekoder(kodeFagomraade: String): List<Klassekode> {
         logger.info { "Henter klassekoder for fagområde" }
+        validateFagomraadeQueryParameter(kodeFagomraade)
         return fagomraadeRepository.getKlassekoder(kodeFagomraade)
     }
 }

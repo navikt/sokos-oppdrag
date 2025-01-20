@@ -65,9 +65,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/KorrigeringsaarsakDTO'
-        400:
-          description: Ugyldig request, oppfyller ikke swagger-kontrakt
-
         500:
           description: Annen feil
           content:
@@ -100,8 +97,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Bilagstype'
-        400:
-          description: Ugyldig request, oppfyller ikke swagger-kontrakt
         500:
           description: Annen feil
           content:
@@ -136,8 +131,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Klassekode'
-        400:
-          description: Ugyldig request, oppfyller ikke swagger-kontrakt
         500:
           description: Annen feil
           content:
@@ -279,7 +272,7 @@ components:
           description: En lesbar forklaring som er spesifikk for denne forekomsten av problemet
         path:
           type: string
-          example: /api/v1/attestasjon/sok
+          example: /api/v1/fastedata/fagomraader
           description: Endepunktet hvor feilen oppstå
 
   securitySchemes:
