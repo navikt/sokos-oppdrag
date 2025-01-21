@@ -21,6 +21,7 @@ import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.attestasjon.FASTEDATA_BASE_API_PATH
 import no.nav.sokos.oppdrag.attestasjon.Testdata.tokenWithNavIdent
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
+import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
@@ -28,6 +29,7 @@ import no.nav.sokos.oppdrag.fastedata.dto.KorrigeringsaarsakDTO
 import no.nav.sokos.oppdrag.fastedata.fagomraader
 import no.nav.sokos.oppdrag.fastedata.korrigeringsaarsakDTOs
 import no.nav.sokos.oppdrag.fastedata.service.FasteDataService
+import no.nav.sokos.oppdrag.fastedata.validator.INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
 
 private const val PORT = 9090
 
@@ -91,18 +93,24 @@ internal class FasteDataApiTest :
 
         test("korrigeringsårsaker tilhørende fagområde med ugyldig query parameter returnerer 500") {
 
-            coEvery { fasteDataService.getKorrigeringsaarsaker(any()) } throws IllegalArgumentException()
+            coEvery { fasteDataService.getKorrigeringsaarsaker(any()) } throws IllegalArgumentException(INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE)
 
-            RestAssured
-                .given()
-                .filter(validationFilter)
-                .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                .port(PORT)
-                .get("$FASTEDATA_BASE_API_PATH/fagomraader/burde være ugyldig verd\' or 1=1 or '' = \'/korrigeringsaarsaker")
-                .then()
-                .assertThat()
-                .statusCode(HttpStatusCode.InternalServerError.value)
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/''!/korrigeringsaarsaker")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.BadRequest.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()).status shouldBe HttpStatusCode.BadRequest.value
+            Json.decodeFromString<ApiError>(response.asString()).message shouldBe INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
         }
     })
 

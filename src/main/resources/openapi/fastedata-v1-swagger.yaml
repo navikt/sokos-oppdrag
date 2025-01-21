@@ -65,6 +65,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/KorrigeringsaarsakDTO'
+        400:
+          description: Ugyldig input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
         500:
           description: Annen feil
           content:

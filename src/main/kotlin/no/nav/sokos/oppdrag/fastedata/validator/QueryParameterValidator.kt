@@ -1,7 +1,9 @@
 package no.nav.sokos.oppdrag.fastedata.validator
 
+const val INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE = "kodeFagomraade må være mellom 2 og 8 tegn og kan kun inneholde bokstaver og tall"
+
 fun validateFagomraadeQueryParameter(kodeFagomraade: String) {
     require(kodeFagomraade.matches(Regex("^[0-9a-zA-ZæøåÆØÅ]{2,8}$"))) {
-        "Kode for fagområde må være en streng på min 2 og maks 8 tegn"
+        INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
     }
 }
