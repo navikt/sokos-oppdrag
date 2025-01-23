@@ -8,6 +8,8 @@ import io.ktor.server.routing.routing
 import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoSwaggerApi as oppdragsinfoSwaggerApi
 import no.nav.sokos.oppdrag.attestasjon.api.attestasjonApi
 import no.nav.sokos.oppdrag.attestasjon.api.attestasjonSwaggerApi
+import no.nav.sokos.oppdrag.fastedata.api.fastedataApi
+import no.nav.sokos.oppdrag.fastedata.api.fastedataSwaggerApi
 import no.nav.sokos.oppdrag.integration.api.integrationApi
 import no.nav.sokos.oppdrag.integration.api.integrationSwaggerApi
 import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoApi
@@ -22,11 +24,13 @@ fun Application.routingConfig(
         oppdragsinfoSwaggerApi()
         integrationSwaggerApi()
         attestasjonSwaggerApi()
+        fastedataSwaggerApi()
         venteregisterApi()
         authenticate(useAuthentication, AUTHENTICATION_NAME) {
             integrationApi()
             oppdragsInfoApi()
             attestasjonApi()
+            fastedataApi()
         }
     }
 }

@@ -25,6 +25,7 @@ fun StatusPagesConfig.statusPageConfig() {
                 is RequestValidationException -> createApiError(HttpStatusCode.BadRequest, cause.reasons.joinToString(), call)
                 is AttestasjonException, is OppdragsinfoException, is IntegrationException -> createApiError(HttpStatusCode.BadRequest, cause.message, call)
                 is ZOSException -> Pair(HttpStatusCode.allStatusCodes.find { it.value == cause.apiError.status }!!, cause.apiError)
+                is IllegalArgumentException -> createApiError(HttpStatusCode.BadRequest, cause.message, call)
                 else -> createApiError(HttpStatusCode.InternalServerError, cause.message ?: "En teknisk feil har oppstått. Ta kontakt med utviklerne", call)
             }
 

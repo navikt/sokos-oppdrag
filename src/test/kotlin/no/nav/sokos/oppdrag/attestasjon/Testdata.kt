@@ -17,13 +17,14 @@ const val APPLICATION_JSON = "application/json"
 const val INTEGRATION_BASE_API_PATH = "/api/v1/integration"
 const val OPPDRAGSINFO_BASE_API_PATH = "/api/v1/oppdragsinfo"
 const val ATTESTASJON_BASE_API_PATH = "/api/v1/attestasjon"
+const val FASTEDATA_BASE_API_PATH = "/api/v1/fastedata"
 
 object Testdata {
     val navIdent = NavIdent("Z999999")
     val tokenWithNavIdent = "tokenWithNavIdent.txt".readFromResource()
     val tokenWithoutNavIdent = "tokenWithoutNavIdent.txt".readFromResource()
 
-    val oppdragTestdata =
+    private val oppdragTestdata =
         Oppdrag(
             antallAttestanter = 1,
             fagGruppe = "fagGruppe",
