@@ -7,6 +7,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 
 import no.nav.sokos.oppdrag.fastedata.service.FasteDataService
+import no.nav.sokos.oppdrag.fastedata.validator.validateFagomraadeQueryParameter
 
 private const val BASE_PATH = "/api/v1/fastedata"
 
@@ -20,21 +21,21 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
         get("{kodeFagomraade}/korrigeringsaarsaker") {
             call.respond(
                 fasteDataService.getKorrigeringsaarsaker(
-                    call.parameters["kodeFagomraade"].orEmpty(),
+                    call.parameters["kodeFagomraade"].orEmpty().validateFagomraadeQueryParameter(),
                 ),
             )
         }
         get("{kodeFagomraade}/bilagstyper") {
             call.respond(
                 fasteDataService.getBilagstyper(
-                    call.parameters["kodeFagomraade"].orEmpty(),
+                    call.parameters["kodeFagomraade"].orEmpty().validateFagomraadeQueryParameter(),
                 ),
             )
         }
         get("{kodeFagomraade}/klassekoder") {
             call.respond(
                 fasteDataService.getKlassekoder(
-                    call.parameters["kodeFagomraade"].orEmpty(),
+                    call.parameters["kodeFagomraade"].orEmpty().validateFagomraadeQueryParameter(),
                 ),
             )
         }

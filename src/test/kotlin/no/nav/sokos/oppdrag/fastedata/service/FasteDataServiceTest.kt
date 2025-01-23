@@ -1,6 +1,5 @@
 package no.nav.sokos.oppdrag.fastedata.service
 
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -28,13 +27,5 @@ internal class FasteDataServiceTest :
             coEvery { fagomraadeRepository.getKorrigeringsaarsaker(any()) } returns korrigeringsaarsaker
 
             fasteDataService.getKorrigeringsaarsaker("PEN") shouldBe korrigeringsaarsakDTOs
-        }
-
-        test("getKorrigeringsaarsaker should throw error when fagomraade is invalid") {
-            coEvery { fagomraadeRepository.getKorrigeringsaarsaker(any()) } returns korrigeringsaarsaker
-
-            shouldThrow<IllegalArgumentException> {
-                fasteDataService.getKorrigeringsaarsaker("ALDERSPENSJON")
-            }
         }
     })

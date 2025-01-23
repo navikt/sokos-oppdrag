@@ -93,8 +93,6 @@ internal class FasteDataApiTest :
 
         test("korrigeringsårsaker tilhørende fagområde med ugyldig query parameter returnerer 500") {
 
-            coEvery { fasteDataService.getKorrigeringsaarsaker(any()) } throws IllegalArgumentException(INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE)
-
             val response =
                 RestAssured
                     .given()
