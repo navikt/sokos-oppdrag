@@ -46,7 +46,7 @@ class FagomraadeRepository(
                 ),
             ) { row ->
                 Fagomraade(
-                    antallAttestanter = row.int("ANT_ATTESTANTER"),
+                    antAttestanter = row.int("ANT_ATTESTANTER"),
                     anviser = row.string("ANVISER"),
                     bilagstypeFinnes = row.byteOrNull("BILAGSTYPE_FINNES") != null,
                     klassekodeFinnes = row.byteOrNull("KLASSEKODE_FINNES") != null,
@@ -54,7 +54,7 @@ class FagomraadeRepository(
                     kodeFaggruppe = row.string("KODE_FAGGRUPPE"),
                     kodeMotregningsgruppe = row.string("KODE_MOTREGNGRUPPE"),
                     korraarsakFinnes = row.byteOrNull("KORRAARSAK_FINNES") != null,
-                    maksAktiveOppdrag = row.int("MAKS_AKT_OPPDRAG"),
+                    maksAktOppdrag = row.int("MAKS_AKT_OPPDRAG"),
                     navnFagomraade = row.string("NAVN_FAGOMRAADE"),
                     regelFinnes = row.byteOrNull("REGEL_FINNES") != null,
                     sjekkMotTps = row.string("SJEKK_MOT_TPS"),
@@ -83,8 +83,8 @@ class FagomraadeRepository(
             ) { row ->
                 Korrigeringsaarsak(
                     beskrivelse = row.string("BESKRIVELSE"),
-                    kodeAarsakKorrigering = row.string("KODE_AARSAK_KORR"),
-                    medforerKorrigering = row.string("MEDFORER_KORR") == "J",
+                    kodeAarsakKorr = row.string("KODE_AARSAK_KORR"),
+                    medforerKorr = row.string("MEDFORER_KORR") == "J",
                 )
             }
         }

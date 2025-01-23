@@ -1,7 +1,10 @@
 package no.nav.sokos.oppdrag.fastedata.domain
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Korrigeringsaarsak(
     val beskrivelse: String,
-    val kodeAarsakKorrigering: String,
-    val medforerKorrigering: Boolean,
+    val kodeAarsakKorr: String,
+    val medforerKorr: Boolean,
 )

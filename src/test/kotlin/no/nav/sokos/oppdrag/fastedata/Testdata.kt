@@ -2,7 +2,6 @@ package no.nav.sokos.oppdrag.fastedata
 
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
-import no.nav.sokos.oppdrag.fastedata.dto.KorrigeringsaarsakDTO
 
 val fagomraader =
     listOf(
@@ -10,8 +9,8 @@ val fagomraader =
             kodeFagomraade = "AAP",
             navnFagomraade = "Arbeidsavklaringspenger",
             kodeFaggruppe = "ARBYT",
-            antallAttestanter = 1,
-            maksAktiveOppdrag = 99,
+            antAttestanter = 1,
+            maksAktOppdrag = 99,
             tpsDistribusjon = "J",
             sjekkOffId = "J",
             anviser = "N  ",
@@ -26,8 +25,8 @@ val fagomraader =
             kodeFagomraade = "AAPARENA",
             navnFagomraade = "Arbeidsavklaringspenger",
             kodeFaggruppe = "ARBYT",
-            antallAttestanter = 1,
-            maksAktiveOppdrag = 99,
+            antAttestanter = 1,
+            maksAktOppdrag = 99,
             tpsDistribusjon = "J",
             sjekkOffId = "J",
             anviser = "N",
@@ -44,16 +43,7 @@ val korrigeringsaarsaker =
     listOf(
         Korrigeringsaarsak(
             beskrivelse = "Linjestatus endret",
-            kodeAarsakKorrigering = "0001",
-            medforerKorrigering = true,
-        ),
-    )
-
-val korrigeringsaarsakDTOs =
-    listOf(
-        KorrigeringsaarsakDTO(
-            navn = "Linjestatus endret",
-            kode = "0001",
-            medforerKorrigering = true,
+            kodeAarsakKorr = "0001",
+            medforerKorr = true,
         ),
     )

@@ -64,7 +64,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/KorrigeringsaarsakDTO'
+                  $ref: '#/components/schemas/Korrigeringsaarsak'
         400:
           description: Ugyldig input
           content:
@@ -190,62 +190,89 @@ components:
   schemas:
     Fagomraade:
       type: object
+      required:
+        - antAttestanter
+        - anviser
+        - bilagstypeFinnes
+        - klassekodeFinnes
+        - kodeFagomraade
+        - kodeFaggruppe
+        - korraarsakFinnes
+        - kodeMotregningsgruppe
+        - maksAktOppdrag
+        - navnFagomraade
+        - regelFinnes
+        - sjekkMotTps
+        - sjekkOffId
+        - tpsDistribusjon
       properties:
-         antallAttestanter:
-           type: number
-         anviser:
-           type: string
-         bilagstypeFinnes:
-           type: boolean
-         klassekodeFinnes:
-           type: boolean
-         kodeFagomraade:
-           type: string
-         kodeFaggruppe:
-           type: string
-         korraarsakFinnes:
-           type: boolean
-         kodeMotregningsgruppe:
-           type: string
-         maksAktiveOppdrag:
-           type: number
-         navnFagomraade:
-           type: string
-         regelFinnes:
-           type: boolean
-         sjekkMotTps:
-           type: string
-         sjekkOffId:
-           type: string
-         tpsDistribusjon:
-           type: string
+        antAttestanter:
+          type: number
+        anviser:
+          type: string
+        bilagstypeFinnes:
+          type: boolean
+        klassekodeFinnes:
+          type: boolean
+        kodeFagomraade:
+          type: string
+        kodeFaggruppe:
+          type: string
+        korraarsakFinnes:
+          type: boolean
+        kodeMotregningsgruppe:
+          type: string
+        maksAktOppdrag:
+          type: number
+        navnFagomraade:
+          type: string
+        regelFinnes:
+          type: boolean
+        sjekkMotTps:
+          type: string
+        sjekkOffId:
+          type: string
+        tpsDistribusjon:
+          type: string
 
-    KorrigeringsaarsakDTO:
+    Korrigeringsaarsak:
       type: object
+      required:
+        - beskrivelse
+        - kodeAarsakKorr
+        - medforerKorr
       properties:
-        navn:
+        beskrivelse:
           type: string
-        kode:
+        kodeAarsakKorr:
           type: string
-        medforerKorrigering:
+        medforerKorr:
           type: boolean
 
     Bilagstype:
-        type: object
-        properties:
-          kodeFagomraade:
-            type: string
-          typeBilag:
-            type: string
-          datoFom:
-            type: string
-          datoTom:
-            type: string
-          autoFagsystemId:
-            type: string
+      type: object
+      required:
+        - kodeFagomraade
+        - typeBilag
+        - datoFom
+        - datoTom
+        - autoFagsystemId
+      properties:
+        kodeFagomraade:
+          type: string
+        typeBilag:
+          type: string
+        datoFom:
+          type: string
+        datoTom:
+          type: string
+        autoFagsystemId:
+          type: string
 
     Klassekode:
       type: object
+      required:
+        - kodeKlasse
       properties:
         kodeKlasse:
           type: string
