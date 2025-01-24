@@ -16,11 +16,6 @@ import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 
 private const val TSS_ID = "12345678912"
 
-private val tpClientService =
-    TpClientService(
-        tpUrl = wiremock.baseUrl(),
-    )
-
 internal class TpClientServiceTest : FunSpec({
 
     extensions(listOf(WiremockListener))

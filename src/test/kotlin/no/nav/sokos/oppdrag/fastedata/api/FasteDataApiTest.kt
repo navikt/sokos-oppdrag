@@ -1,5 +1,6 @@
 package no.nav.sokos.oppdrag.fastedata.api
 
+import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 
 import com.atlassian.oai.validator.restassured.OpenApiValidationFilter
@@ -25,9 +26,9 @@ import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
-import no.nav.sokos.oppdrag.fastedata.dto.KorrigeringsaarsakDTO
+import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.fagomraader
-import no.nav.sokos.oppdrag.fastedata.korrigeringsaarsakDTOs
+import no.nav.sokos.oppdrag.fastedata.korrigeringsaarsaker
 import no.nav.sokos.oppdrag.fastedata.service.FasteDataService
 import no.nav.sokos.oppdrag.fastedata.validator.INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
 
@@ -49,7 +50,7 @@ internal class FasteDataApiTest :
             server.stop(5, 5)
         }
 
-        test("fagområder returnerer 200 OK") {
+        test("hent fagområder returnerer 200 OK") {
 
             coEvery { fasteDataService.getFagomraader() } returns fagomraader
 
@@ -70,9 +71,37 @@ internal class FasteDataApiTest :
             Json.decodeFromString<List<Fagomraade>>(response.asString()) shouldBe fagomraader
         }
 
+        test("hent fagområder returnerer 500 Internal Server Error") {
+
+            coEvery { fasteDataService.getFagomraader() } throws RuntimeException("En feil")
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()) shouldBe
+                ApiError(
+                    error = HttpStatusCode.InternalServerError.description,
+                    status = HttpStatusCode.InternalServerError.value,
+                    message = "En feil",
+                    path = "$FASTEDATA_BASE_API_PATH/fagomraader",
+                    timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
+                )
+        }
+
         test("korrigeringsårsaker tilhørende fagområde returnerer 200 OK") {
 
-            coEvery { fasteDataService.getKorrigeringsaarsaker(any()) } returns korrigeringsaarsakDTOs
+            coEvery { fasteDataService.getKorrigeringsaarsaker(any()) } returns korrigeringsaarsaker
 
             val response =
                 RestAssured
@@ -88,10 +117,10 @@ internal class FasteDataApiTest :
                     .extract()
                     .response()
 
-            Json.decodeFromString<List<KorrigeringsaarsakDTO>>(response.asString()) shouldBe korrigeringsaarsakDTOs
+            Json.decodeFromString<List<Korrigeringsaarsak>>(response.asString()) shouldBe korrigeringsaarsaker
         }
 
-        test("korrigeringsårsaker tilhørende fagområde med ugyldig query parameter returnerer 500") {
+        test("korrigeringsårsaker tilhørende fagområde med ugyldig query parameter returnerer 400 Bad Request") {
 
             val response =
                 RestAssured

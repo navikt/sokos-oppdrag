@@ -18,12 +18,12 @@ import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
 import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetClientService
 import no.nav.sokos.oppdrag.listener.RedisListener
 
+private val pdlClientService = mockk<PdlClientService>()
+private val skjermetClientService = mockk<SkjermetClientService>()
+
 internal class SkjermingServiceTest :
     FunSpec({
         extensions(RedisListener)
-
-        val pdlClientService = mockk<PdlClientService>()
-        val skjermetClientService = mockk<SkjermetClientService>()
 
         val redisCache: RedisCache by lazy {
             RedisCache(

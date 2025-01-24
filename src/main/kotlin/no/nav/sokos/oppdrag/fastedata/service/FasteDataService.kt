@@ -5,7 +5,7 @@ import mu.KotlinLogging
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
-import no.nav.sokos.oppdrag.fastedata.dto.KorrigeringsaarsakDTO
+import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository
 
 private val logger = KotlinLogging.logger {}
@@ -18,20 +18,20 @@ class FasteDataService(
         return fagomraadeRepository.getFagOmraader()
     }
 
-    fun getKorrigeringsaarsaker(kodeFagomraade: String): List<KorrigeringsaarsakDTO> {
-        logger.info { "Henter korrigeringsårsaker for fagområde" }
+    fun getKorrigeringsaarsaker(kodeFagomraade: String): List<Korrigeringsaarsak> {
+        logger.info { "Henter korrigeringsårsaker for fagområde $kodeFagomraade" }
         return fagomraadeRepository.getKorrigeringsaarsaker(
             kodeFagomraade,
-        ).map { KorrigeringsaarsakDTO(it) }
+        )
     }
 
     fun getBilagstyper(kodeFagomraade: String): List<Bilagstype> {
-        logger.info { "Henter bilagstyper for fagområde" }
+        logger.info { "Henter bilagstyper for fagområde $kodeFagomraade" }
         return fagomraadeRepository.getBilagstyper(kodeFagomraade)
     }
 
     fun getKlassekoder(kodeFagomraade: String): List<Klassekode> {
-        logger.info { "Henter klassekoder for fagområde" }
+        logger.info { "Henter klassekoder for fagområde $kodeFagomraade" }
         return fagomraadeRepository.getKlassekoder(kodeFagomraade)
     }
 }
