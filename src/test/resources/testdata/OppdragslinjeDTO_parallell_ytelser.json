@@ -10,19 +10,20 @@
       "oppdragsId": 1911991,
       "sats": 4976.0,
       "typeSats": "MND",
-      "kontonummer": "4001100",
+      "hovedkontonr": "400",
+      "underkontonr": "1100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "KONV",
+        "attestantId": "KONV",
         "datoUgyldigFom": "9999-12-31"
       },
       {
-        "attestant": "BPEN016",
+        "attestantId": "BPEN016",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -38,15 +39,16 @@
       "oppdragsId": 1911991,
       "sats": 4169.0,
       "typeSats": "MND",
-      "kontonummer": "4002100",
+      "hovedkontonr": "400",
+      "underkontonr": "2100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "KONV",
+        "attestantId": "KONV",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -62,15 +64,16 @@
       "oppdragsId": 1911991,
       "sats": 163.0,
       "typeSats": "MND",
-      "kontonummer": "4003100",
+      "hovedkontonr": "400",
+      "underkontonr": "3100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "KONV",
+        "attestantId": "KONV",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -86,15 +89,16 @@
       "oppdragsId": 1911991,
       "sats": 5162.0,
       "typeSats": "MND",
-      "kontonummer": "4001100",
+      "hovedkontonr": "400",
+      "underkontonr": "1100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN016",
+        "attestantId": "BPEN016",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -110,15 +114,16 @@
       "oppdragsId": 1911991,
       "sats": 4325.0,
       "typeSats": "MND",
-      "kontonummer": "4002100",
+      "hovedkontonr": "400",
+      "underkontonr": "2100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN016",
+        "attestantId": "BPEN016",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -134,15 +139,16 @@
       "oppdragsId": 1911991,
       "sats": 169.0,
       "typeSats": "MND",
-      "kontonummer": "4003100",
+      "hovedkontonr": "400",
+      "underkontonr": "3100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN016",
+        "attestantId": "BPEN016",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -158,15 +164,16 @@
       "oppdragsId": 1911991,
       "sats": 5358.0,
       "typeSats": "MND",
-      "kontonummer": "4001100",
+      "hovedkontonr": "400",
+      "underkontonr": "1100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN016",
+        "attestantId": "BPEN016",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -182,15 +189,16 @@
       "oppdragsId": 1911991,
       "sats": 4488.0,
       "typeSats": "MND",
-      "kontonummer": "4002100",
+      "hovedkontonr": "400",
+      "underkontonr": "2100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN016",
+        "attestantId": "BPEN016",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -206,15 +214,16 @@
       "oppdragsId": 1911991,
       "sats": 177.0,
       "typeSats": "MND",
-      "kontonummer": "4003100",
+      "hovedkontonr": "400",
+      "underkontonr": "3100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN016",
+        "attestantId": "BPEN016",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -230,15 +239,16 @@
       "oppdragsId": 1911991,
       "sats": 5611.0,
       "typeSats": "MND",
-      "kontonummer": "4001100",
+      "hovedkontonr": "400",
+      "underkontonr": "1100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN068",
+        "attestantId": "BPEN068",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -254,15 +264,16 @@
       "oppdragsId": 1911991,
       "sats": 4700.0,
       "typeSats": "MND",
-      "kontonummer": "4002100",
+      "hovedkontonr": "400",
+      "underkontonr": "2100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN068",
+        "attestantId": "BPEN068",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -278,15 +289,16 @@
       "oppdragsId": 1911991,
       "sats": 185.0,
       "typeSats": "MND",
-      "kontonummer": "4003100",
+      "hovedkontonr": "400",
+      "underkontonr": "3100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN068",
+        "attestantId": "BPEN068",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -302,15 +314,16 @@
       "oppdragsId": 1911991,
       "sats": 5817.0,
       "typeSats": "MND",
-      "kontonummer": "4001100",
+      "hovedkontonr": "400",
+      "underkontonr": "1100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN068",
+        "attestantId": "BPEN068",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -326,15 +339,16 @@
       "oppdragsId": 1911991,
       "sats": 4873.0,
       "typeSats": "MND",
-      "kontonummer": "4002100",
+      "hovedkontonr": "400",
+      "underkontonr": "2100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN068",
+        "attestantId": "BPEN068",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -350,15 +364,16 @@
       "oppdragsId": 1911991,
       "sats": 191.0,
       "typeSats": "MND",
-      "kontonummer": "4003100",
+      "hovedkontonr": "400",
+      "underkontonr": "3100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN068",
+        "attestantId": "BPEN068",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -374,15 +389,16 @@
       "oppdragsId": 1911991,
       "sats": 6038.0,
       "typeSats": "MND",
-      "kontonummer": "4001100",
+      "hovedkontonr": "400",
+      "underkontonr": "1100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN068",
+        "attestantId": "BPEN068",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -398,15 +414,16 @@
       "oppdragsId": 1911991,
       "sats": 5058.0,
       "typeSats": "MND",
-      "kontonummer": "4002100",
+      "hovedkontonr": "400",
+      "underkontonr": "2100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN068",
+        "attestantId": "BPEN068",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -422,15 +439,16 @@
       "oppdragsId": 1911991,
       "sats": 199.0,
       "typeSats": "MND",
-      "kontonummer": "4003100",
+      "hovedkontonr": "400",
+      "underkontonr": "3100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN068",
+        "attestantId": "BPEN068",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -446,15 +464,16 @@
       "oppdragsId": 1911991,
       "sats": 6260.0,
       "typeSats": "MND",
-      "kontonummer": "4001100",
+      "hovedkontonr": "400",
+      "underkontonr": "1100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN068",
+        "attestantId": "BPEN068",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -470,15 +489,16 @@
       "oppdragsId": 1911991,
       "sats": 5244.0,
       "typeSats": "MND",
-      "kontonummer": "4002100",
+      "hovedkontonr": "400",
+      "underkontonr": "2100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN068",
+        "attestantId": "BPEN068",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -494,15 +514,16 @@
       "oppdragsId": 1911991,
       "sats": 205.0,
       "typeSats": "MND",
-      "kontonummer": "4003100",
+      "hovedkontonr": "400",
+      "underkontonr": "3100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN068",
+        "attestantId": "BPEN068",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -518,15 +539,16 @@
       "oppdragsId": 1911991,
       "sats": 6260.0,
       "typeSats": "MND",
-      "kontonummer": "4001100",
+      "hovedkontonr": "400",
+      "underkontonr": "1100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN080",
+        "attestantId": "BPEN080",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -542,15 +564,16 @@
       "oppdragsId": 1911991,
       "sats": 5244.0,
       "typeSats": "MND",
-      "kontonummer": "4002100",
+      "hovedkontonr": "400",
+      "underkontonr": "2100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN080",
+        "attestantId": "BPEN080",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -566,15 +589,16 @@
       "oppdragsId": 1911991,
       "sats": 205.0,
       "typeSats": "MND",
-      "kontonummer": "4003100",
+      "hovedkontonr": "400",
+      "underkontonr": "3100",
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "29115040861"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "29115040861"
     },
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "BPEN080",
+        "attestantId": "BPEN080",
         "datoUgyldigFom": "9999-12-31"
       }
     ]

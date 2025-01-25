@@ -4,17 +4,17 @@ import kotlinx.serialization.Serializable
 
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragDTO
 
-@Serializable // Serializes to JSON because of Redis cache as a string instead of an object
+@Serializable
 data class Oppdrag(
-    val ansvarsSted: String? = null,
-    val antallAttestanter: Int,
-    val fagGruppe: String,
-    val fagOmraade: String,
+    val ansvarssted: String? = null,
+    val antAttestanter: Int,
+    val navnFaggruppe: String,
+    val navnFagomraade: String,
     val fagSystemId: String,
-    val gjelderId: String,
-    val kodeFagGruppe: String,
-    val kodeFagOmraade: String,
-    val kostnadsSted: String,
+    val oppdragGjelderId: String,
+    val kodeFaggruppe: String,
+    val kodeFagomraade: String,
+    val kostnadssted: String,
     val oppdragsId: Int,
     val attestanter: MutableMap<Int, List<String>> = mutableMapOf(),
 )
@@ -23,15 +23,15 @@ fun Oppdrag.toDTO(
     erSkjermetForSaksbehandler: Boolean = false,
     hasWriteAccess: Boolean = false,
 ) = OppdragDTO(
-    ansvarsSted = this.ansvarsSted,
-    antallAttestanter = this.antallAttestanter,
-    fagGruppe = this.fagGruppe,
-    fagOmraade = this.fagOmraade,
+    ansvarssted = this.ansvarssted,
+    antAttestanter = this.antAttestanter,
+    navnFaggruppe = this.navnFaggruppe,
+    navnFagomraade = this.navnFagomraade,
     fagSystemId = this.fagSystemId,
-    gjelderId = this.gjelderId,
-    kodeFagGruppe = this.kodeFagGruppe,
-    kodeFagOmraade = this.kodeFagOmraade,
-    kostnadsSted = this.kostnadsSted,
+    oppdragGjelderId = this.oppdragGjelderId,
+    kodeFaggruppe = this.kodeFaggruppe,
+    kodeFagomraade = this.kodeFagomraade,
+    kostnadssted = this.kostnadssted,
     oppdragsId = this.oppdragsId,
     erSkjermetForSaksbehandler = erSkjermetForSaksbehandler,
     hasWriteAccess = hasWriteAccess,

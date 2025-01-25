@@ -63,8 +63,8 @@ internal class AttestasjonApiTest :
         }
 
         test("søk etter oppdrag med gyldig gjelderId returnerer 200 OK") {
-            val oppdragsListe = List(11) { oppdragDTOTestdata }
-            coEvery { attestasjonService.getOppdrag(any(), any()) } returns oppdragsListe
+            val oppdragDtoList = List(11) { oppdragDTOTestdata }
+            coEvery { attestasjonService.getOppdrag(any(), any()) } returns oppdragDtoList
 
             val response =
                 RestAssured
@@ -82,8 +82,8 @@ internal class AttestasjonApiTest :
                     .response()
 
             val oppdragDTOList = Json.decodeFromString<List<OppdragDTO>>(response.body.asString())
-            oppdragDTOList shouldBe oppdragsListe
-            oppdragDTOList.size shouldBe oppdragsListe.size
+            oppdragDTOList shouldBe oppdragDtoList
+            oppdragDTOList.size shouldBe oppdragDtoList.size
         }
 
         test("sok etter oppdrag med ugyldig gjelderId returnerer 400 Bad Request") {
@@ -189,8 +189,8 @@ internal class AttestasjonApiTest :
             val fagOmraadeList =
                 listOf(
                     FagOmraade(
-                        navn = "Barnepensjon",
-                        kode = "BP",
+                        navnFagomraade = "Barnepensjon",
+                        kodeFagomraade = "BP",
                     ),
                 )
 
@@ -257,9 +257,9 @@ internal class AttestasjonApiTest :
                                 12345678,
                                 1234.56,
                                 "MND",
-                                "1234567",
+                                "123",
+                                "5678",
                                 50,
-                                "12345678901",
                                 "00123456789",
                                 "12345612345",
                                 "12345612345",

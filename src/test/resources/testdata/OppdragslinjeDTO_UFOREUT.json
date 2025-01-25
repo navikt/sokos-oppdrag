@@ -10,16 +10,17 @@
       "oppdragsId": 58308587,
       "sats": 23867.0,
       "typeSats": "MND",
-      "kontonummer": "4061000",
+      "hovedkontonr": "406",
+      "underkontonr": "1000",
       "grad": null,
       "kid": "",
-      "refusjonsid": null,
-      "skyldner": "80000466050",
-      "utbetalesTil": "24029428499"
+      "refunderesId": null,
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "24029428499"
     },
     "ansvarsStedForOppdragsLinje": null,
     "kostnadsStedForOppdragsLinje": null,
-    "attestasjoner": []
+    "attestasjonList": []
   },
   {
     "oppdragsLinje": {
@@ -32,16 +33,17 @@
       "oppdragsId": 58308587,
       "sats": 23867.0,
       "typeSats": "MND",
-      "kontonummer": "4061000",
+      "hovedkontonr": "406",
+      "underkontonr": "1000",
       "grad": null,
       "kid": "",
-      "refusjonsid": null,
-      "skyldner": "80000466050",
-      "utbetalesTil": "24029428499"
+      "refunderesId": null,
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "24029428499"
     },
     "ansvarsStedForOppdragsLinje": null,
     "kostnadsStedForOppdragsLinje": null,
-    "attestasjoner": []
+    "attestasjonList": []
   },
   {
     "oppdragsLinje": {
@@ -54,18 +56,19 @@
       "oppdragsId": 58308587,
       "sats": 21816.0,
       "typeSats": "MND",
-      "kontonummer": "4061000",
+      "hovedkontonr": "406",
+      "underkontonr": "1000",
       "grad": null,
       "kid": "",
-      "refusjonsid": null,
-      "skyldner": "80000466050",
-      "utbetalesTil": "24029428499"
+      "refunderesId": null,
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "24029428499"
     },
     "ansvarsStedForOppdragsLinje": null,
     "kostnadsStedForOppdragsLinje": null,
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "H135685",
+        "attestantId": "H135685",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -81,18 +84,19 @@
       "oppdragsId": 58308587,
       "sats": 22857.0,
       "typeSats": "MND",
-      "kontonummer": "4061000",
+      "hovedkontonr": "406",
+      "underkontonr": "1000",
       "grad": null,
       "kid": "",
-      "refusjonsid": null,
-      "skyldner": "80000466050",
-      "utbetalesTil": "24029428499"
+      "refunderesId": null,
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "24029428499"
     },
     "ansvarsStedForOppdragsLinje": null,
     "kostnadsStedForOppdragsLinje": null,
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "H135685",
+        "attestantId": "H135685",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -108,18 +112,19 @@
       "oppdragsId": 58308587,
       "sats": 22857.0,
       "typeSats": "MND",
-      "kontonummer": "4061000",
+      "hovedkontonr": "406",
+      "underkontonr": "1000",
       "grad": null,
       "kid": "",
-      "refusjonsid": null,
-      "skyldner": "80000466050",
-      "utbetalesTil": "24029428499"
+      "refunderesId": null,
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "24029428499"
     },
     "ansvarsStedForOppdragsLinje": null,
     "kostnadsStedForOppdragsLinje": null,
-    "attestasjoner": [
+    "attestasjonList": [
       {
-        "attestant": "H135685",
+        "attestantId": "H135685",
         "datoUgyldigFom": "9999-12-31"
       }
     ]
@@ -135,16 +140,17 @@
       "oppdragsId": 58308587,
       "sats": 24322.0,
       "typeSats": "MND",
-      "kontonummer": "4061000",
+      "hovedkontonr": "406",
+      "underkontonr": "1000",
       "grad": null,
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "24029428499"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "24029428499"
     },
     "ansvarsStedForOppdragsLinje": null,
     "kostnadsStedForOppdragsLinje": null,
-    "attestasjoner": []
+    "attestasjonList": []
   },
   {
     "oppdragsLinje": {
@@ -157,16 +163,17 @@
       "oppdragsId": 58308587,
       "sats": 24322.0,
       "typeSats": "MND",
-      "kontonummer": "4061000",
+      "hovedkontonr": "406",
+      "underkontonr": "1000",
       "grad": null,
       "kid": "",
-      "refusjonsid": null,
-      "skyldner": "80000466050",
-      "utbetalesTil": "24029428499"
+      "refunderesId": null,
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "24029428499"
     },
     "ansvarsStedForOppdragsLinje": null,
     "kostnadsStedForOppdragsLinje": null,
-    "attestasjoner": []
+    "attestasjonList": []
   },
   {
     "oppdragsLinje": {
@@ -179,16 +186,17 @@
       "oppdragsId": 58308587,
       "sats": 25431.0,
       "typeSats": "MND",
-      "kontonummer": "4061000",
+      "hovedkontonr": "406",
+      "underkontonr": "1000",
       "grad": null,
       "kid": "",
-      "refusjonsid": "",
-      "skyldner": "80000466050",
-      "utbetalesTil": "24029428499"
+      "refunderesId": "",
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "24029428499"
     },
     "ansvarsStedForOppdragsLinje": null,
     "kostnadsStedForOppdragsLinje": null,
-    "attestasjoner": []
+    "attestasjonList": []
   },
   {
     "oppdragsLinje": {
@@ -201,15 +209,16 @@
       "oppdragsId": 58308587,
       "sats": 25899.0,
       "typeSats": "MND",
-      "kontonummer": "4061000",
+      "hovedkontonr": "406",
+      "underkontonr": "1000",
       "grad": null,
       "kid": "",
-      "refusjonsid": null,
-      "skyldner": "80000466050",
-      "utbetalesTil": "24029428499"
+      "refunderesId": null,
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "24029428499"
     },
     "ansvarsStedForOppdragsLinje": null,
     "kostnadsStedForOppdragsLinje": null,
-    "attestasjoner": []
+    "attestasjonList": []
   }
 ]

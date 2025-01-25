@@ -183,6 +183,12 @@ components:
 
     AttestasjonRequest:
       type: object
+      required:
+        - gjelderId
+        - fagSystemId
+        - kodeFagOmraade
+        - oppdragsId
+        - linjer
       properties:
         gjelderId:
           type: string
@@ -205,6 +211,8 @@ components:
 
     ZOsResponse:
       type: object
+      required:
+        - message
       properties:
         message:
           type: string
@@ -213,14 +221,19 @@ components:
 
     Attestasjon:
       type: object
+      required:
+        - attestantId
+        - datoUgyldigFom
       properties:
-        attestant:
+        attestantId:
           type: string
         datoUgyldigFom:
           type: string
 
     AttestasjonLinje:
       type: object
+      required:
+        - linjeId
       properties:
         linjeId:
           type: number
@@ -238,34 +251,46 @@ components:
     FagOmraade:
       type: object
       required:
-        - navn
-        - kode
+        - navnFagomraade
+        - kodeFagomraade
       properties:
-        navn:
+        navnFagomraade:
           type: string
-        kode:
+        kodeFagomraade:
           type: string
 
     OppdragDTO:
       type: object
+      required:
+        - antAttestanter
+        - navnFaggruppe
+        - navnFagomraade
+        - fagSystemId
+        - oppdragGjelderId
+        - kodeFaggruppe
+        - kodeFagomraade
+        - kostnadssted
+        - oppdragsId
+        - erSkjermetForSaksbehandler
+        - hasWriteAccess
       properties:
-        ansvarsSted:
+        ansvarssted:
           type: string
-        antallAttestanter:
+        antAttestanter:
           type: integer
-        fagGruppe:
+        navnFaggruppe:
           type: string
-        fagOmraade:
+        navnFagomraade:
           type: string
         fagSystemId:
           type: string
-        gjelderId:
+        oppdragGjelderId:
           type: string
-        kostnadsSted:
+        kodeFaggruppe:
           type: string
-        kodeFagGruppe:
+        kodeFagomraade:
           type: string
-        kodeFagOmraade:
+        kostnadssted:
           type: string
         oppdragsId:
           type: integer
@@ -276,8 +301,11 @@ components:
 
     OppdragsdetaljerDTO:
       type: object
+      required:
+        - oppdragsLinjeList
+        - saksbehandlerIdent
       properties:
-        linjer:
+        oppdragsLinjeList:
           type: array
           items:
             $ref: '#/components/schemas/OppdragslinjeDTO'
@@ -286,6 +314,9 @@ components:
 
     OppdragslinjeDTO:
       type: object
+      required:
+        - oppdragsLinje
+        - attestasjonList
       properties:
         oppdragsLinje:
           $ref: '#/components/schemas/Oppdragslinje'
@@ -295,13 +326,22 @@ components:
         kostnadsStedForOppdragsLinje:
           type: string
           nullable: true
-        attestasjoner:
+        attestasjonList:
           type: array
           items:
             $ref: '#/components/schemas/Attestasjon'
 
     Oppdragslinje:
       type: object
+      required:
+        - attestert
+        - datoVedtakFom
+        - delytelseId
+        - kodeKlasse
+        - linjeId
+        - oppdragsId
+        - sats
+        - typeSats
       properties:
         attestert:
           type: boolean
@@ -322,22 +362,25 @@ components:
           type: number
         typeSats:
           type: string
+        hovedkontonr:
+          type: string
+          nullable: true
+        underkontonr:
+          type: string
+          nullable: true
         grad:
           type: number
           nullable: true
         kid:
           type: string
           nullable: true
-        kontonummer:
+        refunderesId:
+         type: string
+         nullable: true
+        skyldnerId:
           type: string
           nullable: true
-        utbetalesTil:
-          type: string
-          nullable: true
-        skyldner:
-          type: string
-          nullable: true
-        refusjonsid:
+        utbetalesTilId:
           type: string
           nullable: true
 

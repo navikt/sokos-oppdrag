@@ -70,8 +70,8 @@ internal class AttestasjonServiceTest :
             val fagomraader = attestasjonService.getFagOmraader()
             fagomraader.size shouldBe 293
             fagomraader.forEach {
-                it.kode shouldNotBe null
-                it.kode shouldNotBe null
+                it.kodeFagomraade shouldNotBe null
+                it.kodeFagomraade shouldNotBe null
             }
         }
 
@@ -87,15 +87,15 @@ internal class AttestasjonServiceTest :
             result.size shouldBe 16
             val oppdrag = result.first()
             oppdrag.oppdragsId shouldBe 58308587
-            oppdrag.antallAttestanter shouldBe 1
-            oppdrag.fagGruppe shouldBe "Inntektsytelser"
-            oppdrag.fagOmraade shouldBe "Uføretrygd"
+            oppdrag.antAttestanter shouldBe 1
+            oppdrag.navnFaggruppe shouldBe "Inntektsytelser"
+            oppdrag.navnFagomraade shouldBe "Uføretrygd"
             oppdrag.fagSystemId shouldBe "25444802"
-            oppdrag.gjelderId shouldBe "24029428499"
-            oppdrag.kodeFagGruppe shouldBe "INNT"
-            oppdrag.kodeFagOmraade shouldBe "UFOREUT"
-            oppdrag.kostnadsSted shouldBe "4402"
-            oppdrag.ansvarsSted shouldBe "4819"
+            oppdrag.oppdragGjelderId shouldBe "24029428499"
+            oppdrag.kodeFaggruppe shouldBe "INNT"
+            oppdrag.kodeFagomraade shouldBe "UFOREUT"
+            oppdrag.kostnadssted shouldBe "4402"
+            oppdrag.ansvarssted shouldBe "4819"
             oppdrag.erSkjermetForSaksbehandler shouldBe false
             oppdrag.hasWriteAccess shouldBe true
 
@@ -113,8 +113,8 @@ internal class AttestasjonServiceTest :
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata.copy(gjelderId = null, kodeFagOmraade = "FRIKORT1"), navIdent)
             result.size shouldBe 9
             result.forEach { oppdrag ->
-                oppdrag.gjelderId shouldBe GJELDER_ID
-                oppdrag.kodeFagOmraade shouldBe "FRIKORT1"
+                oppdrag.oppdragGjelderId shouldBe GJELDER_ID
+                oppdrag.kodeFagomraade shouldBe "FRIKORT1"
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
                 oppdrag.hasWriteAccess shouldBe true
             }
@@ -139,7 +139,7 @@ internal class AttestasjonServiceTest :
             result.size shouldBe 2
 
             result.forEach { oppdrag ->
-                oppdrag.gjelderId shouldBe GJELDER_ID
+                oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
                 oppdrag.hasWriteAccess shouldBe true
 
@@ -158,11 +158,11 @@ internal class AttestasjonServiceTest :
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
             result.size shouldBe 4
             result.forEach { oppdrag ->
-                oppdrag.gjelderId shouldBe GJELDER_ID
+                oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
                 oppdrag.hasWriteAccess shouldBe false
-                oppdrag.ansvarsSted shouldBe null
-                oppdrag.kostnadsSted shouldBe ENHETSNUMMER_NOS
+                oppdrag.ansvarssted shouldBe null
+                oppdrag.kostnadssted shouldBe ENHETSNUMMER_NOS
             }
 
             coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
@@ -178,11 +178,11 @@ internal class AttestasjonServiceTest :
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
             result.size shouldBe 4
             result.forEach { oppdrag ->
-                oppdrag.gjelderId shouldBe GJELDER_ID
+                oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
                 oppdrag.hasWriteAccess shouldBe true
-                oppdrag.ansvarsSted shouldBe null
-                oppdrag.kostnadsSted shouldBe ENHETSNUMMER_NOS
+                oppdrag.ansvarssted shouldBe null
+                oppdrag.kostnadssted shouldBe ENHETSNUMMER_NOS
             }
 
             coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
@@ -198,10 +198,10 @@ internal class AttestasjonServiceTest :
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
             result.size shouldBe 3
             result.forEach { oppdrag ->
-                oppdrag.gjelderId shouldBe GJELDER_ID
+                oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
                 oppdrag.hasWriteAccess shouldBe false
-                (oppdrag.ansvarsSted == ENHETSNUMMER_NOP || oppdrag.kostnadsSted == ENHETSNUMMER_NOP) shouldBe true
+                (oppdrag.ansvarssted == ENHETSNUMMER_NOP || oppdrag.kostnadssted == ENHETSNUMMER_NOP) shouldBe true
             }
 
             coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
@@ -217,10 +217,10 @@ internal class AttestasjonServiceTest :
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
             result.size shouldBe 3
             result.forEach { oppdrag ->
-                oppdrag.gjelderId shouldBe GJELDER_ID
+                oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
                 oppdrag.hasWriteAccess shouldBe true
-                (oppdrag.ansvarsSted == ENHETSNUMMER_NOP || oppdrag.kostnadsSted == ENHETSNUMMER_NOP) shouldBe true
+                (oppdrag.ansvarssted == ENHETSNUMMER_NOP || oppdrag.kostnadssted == ENHETSNUMMER_NOP) shouldBe true
             }
 
             coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
@@ -236,7 +236,7 @@ internal class AttestasjonServiceTest :
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
             result.size shouldBe 16
             result.forEach { oppdrag ->
-                oppdrag.gjelderId shouldBe GJELDER_ID
+                oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
                 oppdrag.hasWriteAccess shouldBe false
             }
@@ -254,7 +254,7 @@ internal class AttestasjonServiceTest :
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
             result.size shouldBe 16
             result.forEach { oppdrag ->
-                oppdrag.gjelderId shouldBe GJELDER_ID
+                oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
                 oppdrag.hasWriteAccess shouldBe true
             }
@@ -285,10 +285,10 @@ internal class AttestasjonServiceTest :
             val oppdragsId = 58308587
             val result = attestasjonService.getOppdragsdetaljer(oppdragsId, navIdent)
             result.saksbehandlerIdent shouldBe navIdent.ident
-            result.linjer.size shouldBe 9
+            result.oppdragsLinjeList.size shouldBe 9
 
             val oppdragslinjeDTOList: List<OppdragslinjeDTO> = Json.decodeFromString("testdata/OppdragslinjeDTO_UFOREUT.json".readFromResource())
-            result.linjer shouldContainExactly oppdragslinjeDTOList
+            result.oppdragsLinjeList shouldContainExactly oppdragslinjeDTOList
         }
 
         test("getOppdragsDetaljer returnerer riktig datasett for et gitt scenario med tre parallelle ytelser") {
@@ -298,17 +298,17 @@ internal class AttestasjonServiceTest :
             val oppdragsId = 1911991
             val result = attestasjonService.getOppdragsdetaljer(oppdragsId, navIdent)
             result.saksbehandlerIdent shouldBe navIdent.ident
-            result.linjer.size shouldBe 24
+            result.oppdragsLinjeList.size shouldBe 24
 
             val oppdragslinjeDTOList: List<OppdragslinjeDTO> = Json.decodeFromString("testdata/OppdragslinjeDTO_parallell_ytelser.json".readFromResource())
-            result.linjer shouldContainExactly oppdragslinjeDTOList
+            result.oppdragsLinjeList shouldContainExactly oppdragslinjeDTOList
 
             // Det er 2 attestasjoner på linjen med id 1
-            val enAvLinjene = result.linjer.filter { l -> l.oppdragsLinje.linjeId == 1 }
+            val enAvLinjene = result.oppdragsLinjeList.filter { l -> l.oppdragsLinje.linjeId == 1 }
 
             // Sjekker at begge kommer med i svaret
             enAvLinjene.size shouldBe 1
-            enAvLinjene.first().attestasjoner.size shouldBe 2
+            enAvLinjene.first().attestasjonList.size shouldBe 2
         }
 
         test("attestereOppdrag vellykket og 1 linje er oppdatert") {

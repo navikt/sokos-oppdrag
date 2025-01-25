@@ -23,8 +23,8 @@ class FagomraadeRepository(
                 ),
             ) { row ->
                 FagOmraade(
-                    navn = row.string("NAVN_FAGOMRAADE"),
-                    kode = row.string("KODE_FAGOMRAADE"),
+                    navnFagomraade = row.string("NAVN_FAGOMRAADE"),
+                    kodeFagomraade = row.string("KODE_FAGOMRAADE"),
                 )
             }
         }
