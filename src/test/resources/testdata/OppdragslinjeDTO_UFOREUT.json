@@ -2,6 +2,29 @@
   {
     "oppdragsLinje": {
       "attestert": false,
+      "datoVedtakFom": "2022-02-01",
+      "datoVedtakTom": "2021-11-30",
+      "delytelseId": "729543393",
+      "kodeKlasse": "UFOREUT",
+      "linjeId": 4,
+      "oppdragsId": 58308587,
+      "sats": 21816.0,
+      "typeSats": "MND",
+      "hovedkontonr": "406",
+      "underkontonr": "1000",
+      "grad": null,
+      "kid": "",
+      "refunderesId": null,
+      "skyldnerId": "80000466050",
+      "utbetalesTilId": "24029428499"
+    },
+    "ansvarsStedForOppdragsLinje": null,
+    "kostnadsStedForOppdragsLinje": null,
+    "attestasjonList": []
+  },
+  {
+    "oppdragsLinje": {
+      "attestert": false,
       "datoVedtakFom": "2021-12-01",
       "datoVedtakTom": "2021-12-31",
       "delytelseId": "759868829",
@@ -105,7 +128,7 @@
     "oppdragsLinje": {
       "attestert": true,
       "datoVedtakFom": "2023-01-01",
-      "datoVedtakTom": "2023-04-30",
+      "datoVedtakTom": null,
       "delytelseId": "771253891",
       "kodeKlasse": "UFOREUT",
       "linjeId": 10,
@@ -128,97 +151,5 @@
         "datoUgyldigFom": "9999-12-31"
       }
     ]
-  },
-  {
-    "oppdragsLinje": {
-      "attestert": false,
-      "datoVedtakFom": "2023-05-01",
-      "datoVedtakTom": "2023-12-31",
-      "delytelseId": "801686775",
-      "kodeKlasse": "UFOREUT",
-      "linjeId": 11,
-      "oppdragsId": 58308587,
-      "sats": 24322.0,
-      "typeSats": "MND",
-      "hovedkontonr": "406",
-      "underkontonr": "1000",
-      "grad": null,
-      "kid": "",
-      "refunderesId": "",
-      "skyldnerId": "80000466050",
-      "utbetalesTilId": "24029428499"
-    },
-    "ansvarsStedForOppdragsLinje": null,
-    "kostnadsStedForOppdragsLinje": null,
-    "attestasjonList": []
-  },
-  {
-    "oppdragsLinje": {
-      "attestert": false,
-      "datoVedtakFom": "2024-01-01",
-      "datoVedtakTom": "2024-04-30",
-      "delytelseId": "839410565",
-      "kodeKlasse": "UFOREUT",
-      "linjeId": 12,
-      "oppdragsId": 58308587,
-      "sats": 24322.0,
-      "typeSats": "MND",
-      "hovedkontonr": "406",
-      "underkontonr": "1000",
-      "grad": null,
-      "kid": "",
-      "refunderesId": null,
-      "skyldnerId": "80000466050",
-      "utbetalesTilId": "24029428499"
-    },
-    "ansvarsStedForOppdragsLinje": null,
-    "kostnadsStedForOppdragsLinje": null,
-    "attestasjonList": []
-  },
-  {
-    "oppdragsLinje": {
-      "attestert": false,
-      "datoVedtakFom": "2024-05-01",
-      "datoVedtakTom": "2024-06-30",
-      "delytelseId": "861989539",
-      "kodeKlasse": "UFOREUT",
-      "linjeId": 13,
-      "oppdragsId": 58308587,
-      "sats": 25431.0,
-      "typeSats": "MND",
-      "hovedkontonr": "406",
-      "underkontonr": "1000",
-      "grad": null,
-      "kid": "",
-      "refunderesId": "",
-      "skyldnerId": "80000466050",
-      "utbetalesTilId": "24029428499"
-    },
-    "ansvarsStedForOppdragsLinje": null,
-    "kostnadsStedForOppdragsLinje": null,
-    "attestasjonList": []
-  },
-  {
-    "oppdragsLinje": {
-      "attestert": false,
-      "datoVedtakFom": "2024-07-01",
-      "datoVedtakTom": null,
-      "delytelseId": "878336072",
-      "kodeKlasse": "UFOREUT",
-      "linjeId": 14,
-      "oppdragsId": 58308587,
-      "sats": 25899.0,
-      "typeSats": "MND",
-      "hovedkontonr": "406",
-      "underkontonr": "1000",
-      "grad": null,
-      "kid": "",
-      "refunderesId": null,
-      "skyldnerId": "80000466050",
-      "utbetalesTilId": "24029428499"
-    },
-    "ansvarsStedForOppdragsLinje": null,
-    "kostnadsStedForOppdragsLinje": null,
-    "attestasjonList": []
   }
 ]

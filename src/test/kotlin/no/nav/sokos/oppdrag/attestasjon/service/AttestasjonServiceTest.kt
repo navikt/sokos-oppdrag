@@ -84,18 +84,18 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
-            result.size shouldBe 16
+            result.size shouldBe 8
             val oppdrag = result.first()
-            oppdrag.oppdragsId shouldBe 58308587
+            oppdrag.oppdragsId shouldBe 25798519
             oppdrag.antAttestanter shouldBe 1
-            oppdrag.navnFaggruppe shouldBe "Inntektsytelser"
-            oppdrag.navnFagomraade shouldBe "Uføretrygd"
-            oppdrag.fagSystemId shouldBe "25444802"
+            oppdrag.navnFaggruppe shouldBe "HELSETJENESTER FRIKORT TAK 1 OG 2"
+            oppdrag.navnFagomraade shouldBe "Egenandelsrefusjon frikort tak 1"
+            oppdrag.fagSystemId shouldBe "13175913"
             oppdrag.oppdragGjelderId shouldBe "24029428499"
-            oppdrag.kodeFaggruppe shouldBe "INNT"
-            oppdrag.kodeFagomraade shouldBe "UFOREUT"
-            oppdrag.kostnadssted shouldBe "4402"
-            oppdrag.ansvarssted shouldBe "4819"
+            oppdrag.kodeFaggruppe shouldBe "FRIKORT"
+            oppdrag.kodeFagomraade shouldBe "FRIKORT1"
+            oppdrag.kostnadssted shouldBe "2360"
+            oppdrag.ansvarssted shouldBe "2340"
             oppdrag.erSkjermetForSaksbehandler shouldBe false
             oppdrag.hasWriteAccess shouldBe true
 
@@ -111,7 +111,7 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdentListe(listOf(GJELDER_ID), any()) } returns mapOf(GJELDER_ID to false)
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata.copy(gjelderId = null, kodeFagOmraade = "FRIKORT1"), navIdent)
-            result.size shouldBe 9
+            result.size shouldBe 3
             result.forEach { oppdrag ->
                 oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.kodeFagomraade shouldBe "FRIKORT1"
@@ -156,7 +156,7 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
-            result.size shouldBe 4
+            result.size shouldBe 3
             result.forEach { oppdrag ->
                 oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
@@ -176,7 +176,7 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
-            result.size shouldBe 4
+            result.size shouldBe 3
             result.forEach { oppdrag ->
                 oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
@@ -196,7 +196,7 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
-            result.size shouldBe 3
+            result.size shouldBe 2
             result.forEach { oppdrag ->
                 oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
@@ -215,7 +215,7 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
-            result.size shouldBe 3
+            result.size shouldBe 2
             result.forEach { oppdrag ->
                 oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
@@ -234,7 +234,7 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
-            result.size shouldBe 16
+            result.size shouldBe 8
             result.forEach { oppdrag ->
                 oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
@@ -252,7 +252,7 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
-            result.size shouldBe 16
+            result.size shouldBe 8
             result.forEach { oppdrag ->
                 oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
@@ -285,7 +285,7 @@ internal class AttestasjonServiceTest :
             val oppdragsId = 58308587
             val result = attestasjonService.getOppdragsdetaljer(oppdragsId, navIdent)
             result.saksbehandlerIdent shouldBe navIdent.ident
-            result.oppdragsLinjeList.size shouldBe 9
+            result.oppdragsLinjeList.size shouldBe 6
 
             val oppdragslinjeDTOList: List<OppdragslinjeDTO> = Json.decodeFromString("testdata/OppdragslinjeDTO_UFOREUT.json".readFromResource())
             result.oppdragsLinjeList shouldContainExactly oppdragslinjeDTOList
@@ -298,7 +298,7 @@ internal class AttestasjonServiceTest :
             val oppdragsId = 1911991
             val result = attestasjonService.getOppdragsdetaljer(oppdragsId, navIdent)
             result.saksbehandlerIdent shouldBe navIdent.ident
-            result.oppdragsLinjeList.size shouldBe 24
+            result.oppdragsLinjeList.size shouldBe 10
 
             val oppdragslinjeDTOList: List<OppdragslinjeDTO> = Json.decodeFromString("testdata/OppdragslinjeDTO_parallell_ytelser.json".readFromResource())
             result.oppdragsLinjeList shouldContainExactly oppdragslinjeDTOList
