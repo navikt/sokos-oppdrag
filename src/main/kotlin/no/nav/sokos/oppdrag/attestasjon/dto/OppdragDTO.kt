@@ -4,15 +4,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OppdragDTO(
-    val ansvarsSted: String? = null,
-    val antallAttestanter: Int,
-    val fagGruppe: String,
-    val fagOmraade: String,
+    val ansvarssted: String? = null,
+    val antAttestanter: Int,
+    val navnFaggruppe: String,
+    val navnFagomraade: String,
     val fagSystemId: String,
-    val gjelderId: String,
-    val kodeFagGruppe: String,
-    val kodeFagOmraade: String,
-    val kostnadsSted: String,
+    val oppdragGjelderId: String,
+    val kodeFaggruppe: String,
+    val kodeFagomraade: String,
+    val kostnadssted: String,
     val oppdragsId: Int,
     val erSkjermetForSaksbehandler: Boolean,
     val hasWriteAccess: Boolean,

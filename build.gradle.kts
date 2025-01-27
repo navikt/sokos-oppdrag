@@ -12,10 +12,10 @@ plugins {
     kotlin("jvm") version "2.1.0"
     kotlin("plugin.serialization") version "2.1.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("com.expediagroup.graphql") version "8.2.1"
+    id("com.expediagroup.graphql") version "8.3.0"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
-    id("org.openapi.generator") version "7.10.0"
+    id("org.openapi.generator") version "7.11.0"
 }
 
 group = "no.nav.sokos"
@@ -34,7 +34,7 @@ val kotlinxDatetimeVersion = "0.6.1"
 val kotlinxCoroutinesVersion = "1.10.1"
 
 // Monitorering
-val micrometerVersion = "1.14.2"
+val micrometerVersion = "1.14.3"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
@@ -52,10 +52,10 @@ val db2JccVersion = "12.1.0.0"
 val kotliqueryVersion = "1.9.1"
 
 // GraphQL
-val graphqlClientVersion = "8.2.1"
+val graphqlClientVersion = "8.3.0"
 
 // Cache
-val caffeineVersion = "3.1.8"
+val caffeineVersion = "3.2.0"
 
 // Redis
 val redisVersion = "6.5.2.RELEASE"

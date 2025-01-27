@@ -10,32 +10,31 @@ import no.nav.sokos.oppdrag.attestasjon.domain.toDTO
 import no.nav.sokos.oppdrag.common.NavIdent
 
 const val GJELDER_ID = "24029428499"
-const val KODE_FAGOMRAADE = "MOSALLE"
-const val KODE_FAGGRUPPE = "ERSEPT"
 
 const val APPLICATION_JSON = "application/json"
 const val INTEGRATION_BASE_API_PATH = "/api/v1/integration"
 const val OPPDRAGSINFO_BASE_API_PATH = "/api/v1/oppdragsinfo"
 const val ATTESTASJON_BASE_API_PATH = "/api/v1/attestasjon"
+const val FASTEDATA_BASE_API_PATH = "/api/v1/fastedata"
 
 object Testdata {
     val navIdent = NavIdent("Z999999")
     val tokenWithNavIdent = "tokenWithNavIdent.txt".readFromResource()
     val tokenWithoutNavIdent = "tokenWithoutNavIdent.txt".readFromResource()
 
-    val oppdragTestdata =
+    private val oppdragTestdata =
         Oppdrag(
-            antallAttestanter = 1,
-            fagGruppe = "fagGruppe",
-            fagOmraade = "fagOmraade",
-            fagSystemId = "fagSystemId",
-            gjelderId = GJELDER_ID,
-            kodeFagGruppe = KODE_FAGGRUPPE,
-            kodeFagOmraade = KODE_FAGOMRAADE,
-            kostnadsSted = "kostnadsSted",
-            ansvarsSted = "ansvarsSted",
-            oppdragsId = 1,
-            attestanter = mutableMapOf(1 to listOf("attestant1")),
+            antAttestanter = 1,
+            navnFaggruppe = "Arbeidsytelser",
+            navnFagomraade = "Arbeidsavklaringspenger",
+            fagSystemId = "123456789",
+            oppdragGjelderId = GJELDER_ID,
+            kodeFaggruppe = "ARBYT",
+            kodeFagomraade = "AAP",
+            kostnadssted = "8020",
+            ansvarssted = "4819",
+            oppdragsId = 58308587,
+            attestanter = mutableMapOf(1 to listOf(navIdent.ident)),
         )
 
     val oppdragDTOTestdata = oppdragTestdata.toDTO(hasWriteAccess = true)
@@ -51,16 +50,10 @@ object Testdata {
 
     val attestasjonRequestTestdata =
         AttestasjonRequest(
-            "12345678900",
-            "98765432100",
-            "BEH",
-            999999999,
-            listOf(
-                AttestasjonLinje(
-                    99999,
-                    "Z999999",
-                    "2021-01-01",
-                ),
-            ),
+            GJELDER_ID,
+            "123456789",
+            "AAP",
+            58308587,
+            listOf(AttestasjonLinje(1, navIdent.ident, "2021-01-01")),
         )
 }

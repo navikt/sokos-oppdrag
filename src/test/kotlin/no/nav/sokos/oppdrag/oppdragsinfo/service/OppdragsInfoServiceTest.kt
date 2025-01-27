@@ -14,13 +14,13 @@ import org.junit.jupiter.api.assertThrows
 
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.attestasjon.Testdata.navIdent
+import no.nav.sokos.oppdrag.common.exception.ForbiddenException
 import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import no.nav.sokos.oppdrag.listener.Db2Listener
 import no.nav.sokos.oppdrag.listener.Db2Listener.faggruppeRepository
 import no.nav.sokos.oppdrag.listener.Db2Listener.oppdragRepository
 import no.nav.sokos.oppdrag.listener.Db2Listener.oppdragsdetaljerRepository
-import no.nav.sokos.oppdrag.oppdragsinfo.exception.OppdragsinfoException
 
 private const val GJELDER_ID = "24029428499"
 private const val OPPDRAGSID = 964801
@@ -57,12 +57,12 @@ internal class OppdragsInfoServiceTest :
             val result = oppdragsInfoService.getOppdrag(GJELDER_ID, "", navIdent)
 
             result.shouldNotBeEmpty()
-            result.size shouldBe 16
+            result.size shouldBe 10
         }
 
         test("getOppdrag skal kaste exception hvis saksbehandler ikke har tilgang til personen") {
             coEvery { skjermingService.getSkjermingForIdent(any(), any()) } returns true
-            assertThrows<OppdragsinfoException> {
+            assertThrows<ForbiddenException> {
                 oppdragsInfoService.getOppdrag(GJELDER_ID, "", navIdent)
             }
         }
@@ -92,7 +92,7 @@ internal class OppdragsInfoServiceTest :
 
             val result = oppdragsInfoService.getOppdragsLinjer(OPPDRAGSID)
             result.shouldNotBeEmpty()
-            result.size shouldBe 15
+            result.size shouldBe 10
 
             val oppdragsLinje = result.first()
             oppdragsLinje.linjeId shouldBe 1
@@ -202,7 +202,7 @@ internal class OppdragsInfoServiceTest :
 
             val oppdragsLinjeDetaljer = oppdragsInfoService.getOppdragsLinjeDetaljer(OPPDRAGSID.toString(), "1")
             oppdragsLinjeDetaljer shouldNotBe null
-            oppdragsLinjeDetaljer.korrigerteLinjeIder?.size shouldBe 15
+            oppdragsLinjeDetaljer.korrigerteLinjeIder?.size shouldBe 10
             val oppdragsLinje = oppdragsLinjeDetaljer.korrigerteLinjeIder!!.first()
             oppdragsLinje.linjeId shouldBe 1
             oppdragsLinje.kodeKlasse shouldBe "PENBPGP-OPTP"
@@ -375,7 +375,7 @@ internal class OppdragsInfoServiceTest :
             }
 
             val result = oppdragsInfoService.getOppdragsLinjeOvriger(OPPDRAGSID.toString(), "1")
-            result.size shouldBe 15
+            result.size shouldBe 11
 
             val ovriger = result.first()
             ovriger.linjeId shouldBe 1

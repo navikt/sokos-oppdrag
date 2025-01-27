@@ -67,8 +67,8 @@ class AttestasjonRepository(
                     TRIM(L.UTBETALES_TIL_ID)     AS UTBETALES_TIL_ID,
                     TRIM(L.SKYLDNER_ID)          AS SKYLDNER_ID,
                     TRIM(L.REFUNDERES_ID)        AS REFUNDERES_ID,
-                    TRIM(kr.hovedkontonr)        AS HOVEDKONTONUMMER,
-                    TRIM(kr.underkontonr)        AS UNDERKONTONUMMER,
+                    TRIM(kr.hovedkontonr)        AS HOVEDKONTONR,
+                    TRIM(kr.underkontonr)        AS UNDERKONTONR,
                     G.GRAD                       as GRAD
             FROM T_OPPDRAGSLINJE L
                      JOIN T_LINJE_STATUS STATUSNY ON STATUSNY.LINJE_ID = L.LINJE_ID AND STATUSNY.OPPDRAGS_ID = L.OPPDRAGS_ID
@@ -213,42 +213,43 @@ class AttestasjonRepository(
 
     private val mapToOppdrag: (Row) -> Oppdrag = { row ->
         Oppdrag(
-            ansvarsSted = row.stringOrNull("ANSVARSSTED"),
-            antallAttestanter = row.int("ANT_ATTESTANTER"),
+            ansvarssted = row.stringOrNull("ANSVARSSTED"),
+            antAttestanter = row.int("ANT_ATTESTANTER"),
             fagSystemId = row.string("FAGSYSTEM_ID"),
-            gjelderId = row.string("OPPDRAG_GJELDER_ID"),
-            kostnadsSted = row.string("KOSTNADSSTED"),
-            fagGruppe = row.string("NAVN_FAGGRUPPE"),
-            fagOmraade = row.string("NAVN_FAGOMRAADE"),
+            oppdragGjelderId = row.string("OPPDRAG_GJELDER_ID"),
+            kostnadssted = row.string("KOSTNADSSTED"),
+            navnFaggruppe = row.string("NAVN_FAGGRUPPE"),
+            navnFagomraade = row.string("NAVN_FAGOMRAADE"),
             oppdragsId = row.int("OPPDRAGS_ID"),
-            kodeFagOmraade = row.string("KODE_FAGOMRAADE"),
-            kodeFagGruppe = row.string("KODE_FAGGRUPPE"),
+            kodeFagomraade = row.string("KODE_FAGOMRAADE"),
+            kodeFaggruppe = row.string("KODE_FAGGRUPPE"),
         )
     }
 
     private val mapToOppdragslinje: (Row) -> Oppdragslinje = { row ->
         Oppdragslinje(
-            oppdragsId = row.int("OPPDRAGS_ID"),
-            linjeId = row.int("LINJE_ID"),
-            kodeKlasse = row.string("KODE_KLASSE"),
+            attestert = row.string("ATTESTERT") == "J",
             datoVedtakFom = row.localDate("DATO_VEDTAK_FOM").toKotlinLocalDate(),
             datoVedtakTom = row.localDateOrNull("DATO_VEDTAK_TOM")?.toKotlinLocalDate(),
-            attestert = row.string("ATTESTERT") == "J",
+            delytelseId = row.string("DELYTELSE_ID"),
+            kodeKlasse = row.string("KODE_KLASSE"),
+            linjeId = row.int("LINJE_ID"),
+            oppdragsId = row.int("OPPDRAGS_ID"),
             sats = row.double("SATS"),
             typeSats = row.string("TYPE_SATS"),
-            delytelseId = row.string("DELYTELSE_ID"),
+            hovedkontonr = row.stringOrNull("HOVEDKONTONR"),
+            underkontonr = row.stringOrNull("UNDERKONTONR"),
             grad = row.intOrNull("GRAD"),
             kid = row.stringOrNull("KID"),
-            kontonummer = (row.stringOrNull("HOVEDKONTONUMMER") ?: "") + (row.stringOrNull("UNDERKONTONUMMER") ?: ""),
-            refusjonsid = row.stringOrNull("REFUNDERES_ID"),
-            skyldner = row.stringOrNull("SKYLDNER_ID"),
-            utbetalesTil = row.stringOrNull("UTBETALES_TIL_ID"),
+            refunderesId = row.stringOrNull("REFUNDERES_ID"),
+            skyldnerId = row.stringOrNull("SKYLDNER_ID"),
+            utbetalesTilId = row.stringOrNull("UTBETALES_TIL_ID"),
         )
     }
 
     private val mapToAttestasjon: (Row) -> Attestasjon = { row ->
         Attestasjon(
-            attestant = row.string("ATTESTANT_ID"),
+            attestantId = row.string("ATTESTANT_ID"),
             datoUgyldigFom = row.localDate("DATO_UGYLDIG_FOM").toKotlinLocalDate(),
         )
     }

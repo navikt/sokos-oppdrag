@@ -5,6 +5,7 @@ import mu.KotlinLogging
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
+import no.nav.sokos.oppdrag.common.exception.ForbiddenException
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
@@ -26,7 +27,6 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsEnhetDTO
 import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsLinjeDetaljerDTO
-import no.nav.sokos.oppdrag.oppdragsinfo.exception.OppdragsinfoException
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.FaggruppeRepository
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragRepository
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsdetaljerRepository
@@ -56,7 +56,7 @@ class OppdragsInfoService(
         )
 
         if ((gjelderId.toLong() in 1_000_000_001..79_999_999_999) && skjermingService.getSkjermingForIdent(gjelderId, saksbehandler)) {
-            throw OppdragsinfoException("Mangler rettigheter til å se informasjon!")
+            throw ForbiddenException("Mangler rettigheter til å se informasjon!")
         }
 
         return oppdragsInfoRepository.getOppdrag(gjelderId, faggruppeKode).ifEmpty {

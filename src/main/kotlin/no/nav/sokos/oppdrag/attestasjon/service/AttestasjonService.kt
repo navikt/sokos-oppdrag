@@ -14,13 +14,13 @@ import no.nav.sokos.oppdrag.attestasjon.domain.toDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
-import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.repository.FagomraadeRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
+import no.nav.sokos.oppdrag.common.exception.ForbiddenException
 import no.nav.sokos.oppdrag.common.redis.RedisCache
 import no.nav.sokos.oppdrag.common.util.CacheUtil
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
@@ -54,7 +54,7 @@ class AttestasjonService(
                 ),
             )
             if ((gjelderId.toLong() in 1_000_000_001..79_999_999_999) && skjermingService.getSkjermingForIdent(gjelderId, navIdent)) {
-                throw AttestasjonException("Mangler rettigheter til å se informasjon!")
+                throw ForbiddenException("Mangler rettigheter til å se informasjon!")
             }
             verifiedSkjermingForGjelderId = true
         }
@@ -79,8 +79,8 @@ class AttestasjonService(
                 if (verifiedSkjermingForGjelderId) {
                     list.map { it.copy(erSkjermetForSaksbehandler = false) }
                 } else {
-                    val skjermingMap = skjermingService.getSkjermingForIdentListe(list.map { it.gjelderId }.distinct(), navIdent)
-                    list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.gjelderId] == true) }
+                    val skjermingMap = skjermingService.getSkjermingForIdentListe(list.map { it.oppdragGjelderId }.distinct(), navIdent)
+                    list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.oppdragGjelderId] == true) }
                 }
             }.map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, navIdent)) }
     }
@@ -143,7 +143,7 @@ class AttestasjonService(
         )
 
         if (!saksbehandler.hasWriteAccessAttestasjon()) {
-            throw AttestasjonException("Mangler rettigheter til å attestere oppdrag!")
+            throw ForbiddenException("Mangler rettigheter til å attestere oppdrag!")
         }
         val response = zosConnectService.attestereOppdrag(request, saksbehandler.ident)
         removeOppdragCache(request.gjelderId, request.fagSystemId, request.kodeFagOmraade)
@@ -168,8 +168,8 @@ class AttestasjonService(
     ): Boolean =
         when {
             saksbehandler.hasReadAccessNasjonalt() -> true
-            saksbehandler.hasReadAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOS == oppdrag.kostnadsSted) -> true
-            saksbehandler.hasReadAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
+            saksbehandler.hasReadAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
+            saksbehandler.hasReadAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
             else -> false
         }
 
@@ -179,8 +179,8 @@ class AttestasjonService(
     ): Boolean =
         when {
             saksbehandler.hasWriteAccessNasjonalt() -> true
-            saksbehandler.hasWriteAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOS == oppdrag.kostnadsSted) -> true
-            saksbehandler.hasWriteAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
+            saksbehandler.hasWriteAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
+            saksbehandler.hasWriteAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
             else -> false
         }
 

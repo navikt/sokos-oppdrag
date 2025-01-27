@@ -10,5 +10,5 @@ data class OppdragslinjeDTO(
     val oppdragsLinje: Oppdragslinje,
     val ansvarsStedForOppdragsLinje: String? = null,
     val kostnadsStedForOppdragsLinje: String? = null,
-    val attestasjoner: List<Attestasjon>,
+    val attestasjonList: List<Attestasjon>,
 )

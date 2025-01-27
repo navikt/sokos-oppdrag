@@ -1,4 +1,4 @@
-FROM bellsoft/liberica-openjdk-alpine:21@sha256:45083bf56e4cf13c34c6ec04356deec655638c8aa8443f9dcab7a90fb4db8fb6
+FROM bellsoft/liberica-openjdk-alpine:21.0.5@sha256:45083bf56e4cf13c34c6ec04356deec655638c8aa8443f9dcab7a90fb4db8fb6
 
 RUN apk update && apk add --no-cache \
   dumb-init \

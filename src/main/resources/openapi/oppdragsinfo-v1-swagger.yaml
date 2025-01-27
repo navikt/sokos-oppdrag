@@ -4,7 +4,7 @@ info:
   title: OppdragsInfo API (sokos-oppdrag)
   description: API-tjeneste for å hente og presentere oppdragsinformasjon tilknyttet person eller foretak
   contact:
-    name: Team Moby (Motta og Beregne Ytelser)
+    name: Team Motta og Beregne
     email: okonomi@nav.no
     url: https://nav-it.slack.com/archives/CKZADNFBP
 

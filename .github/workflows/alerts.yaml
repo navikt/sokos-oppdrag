@@ -15,7 +15,7 @@ permissions:
 jobs:
   deploy-dev:
     name: Deploy to dev-fss
-    uses: navikt/monster-gha-workflows/.github/workflows/nais-alert-deploy.yaml@main
+    uses: navikt/mob-gha-workflows/.github/workflows/nais-alert-deploy.yaml@main
     with:
       cluster: dev-fss
       resource: .nais/alerts-dev.yaml
@@ -23,7 +23,7 @@ jobs:
 #  deploy-prod:
 #    name: Deploy to prod-fss
 #    needs: deploy-dev
-#    uses: navikt/monster-gha-workflows/.github/workflows/nais-alert-deploy.yaml@main
+#    uses: navikt/mob-gha-workflows/.github/workflows/nais-alert-deploy.yaml@main
 #    with:
 #      cluster: prod-fss
 #      resource: .nais/alerts-prod.yaml

@@ -1,0 +1,321 @@
+openapi: 3.0.1
+info:
+  version: 1.0.0
+  title: Faste data API (sokos-oppdrag)
+  description: API-tjeneste for å hente faste data
+  contact:
+    name: Team Motta og Beregne
+    email: okonomi@nav.no
+    url: https://nav-it.slack.com/archives/CKZADNFBP
+
+tags:
+  - name: Faste data
+    description: Oppslag om faste data
+
+servers:
+  - url: /api/v1/fastedata
+
+paths:
+
+  /fagomraader:
+    get:
+      tags:
+        - Faste data
+      summary: Hent tilgjengelige fagområder
+      description: Returnerer en liste av tilgjengelige fagområder.
+      operationId: getFagomraader
+      responses:
+        200:
+          description: OK - Hvis fagområder ikke finnes så returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Fagomraade'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /fagomraader/{kodeFagomraade}/korrigeringsaarsaker:
+    get:
+      tags:
+        - Fagområde
+      summary: Søk med fagområde kode
+      description: Returnerer korrigeringsårsaker for fagområde.
+      operationId: getKorrigeringsaarsaker
+      parameters:
+        - name: kodeFagomraade
+          in: path
+          description: Fagområdets kode
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK - Hvis fagområder ikke finnes så returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Korrigeringsaarsak'
+        400:
+          description: Ugyldig input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /fagomraader/{kodeFagomraade}/bilagstyper:
+    get:
+      tags:
+        - Fagområde
+      summary: Søk med fagområde kode
+      description: Returnerer bilagstyper for fagområde.
+      operationId: getBilagstyper
+      parameters:
+        - name: kodeFagomraade
+          in: path
+          description: Fagområdets kode
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK - Hvis fagområder ikke finnes så returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bilagstype'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /fagomraader/{kodeFagomraade}/klassekoder:
+    get:
+      tags:
+        - Fagområde
+      summary: Søk med fagområde kode
+      description: Returnerer klassekoder for fagområde.
+      operationId: getKlassekoder
+      parameters:
+        - name: kodeFagomraade
+          in: path
+          description: Fagområdets kode
+          required: true
+          schema:
+            type: string
+            maxLength: 8
+            pattern: '^[a-zA-Z0-9æøåÆØÅ]{0,8}$'
+      responses:
+        200:
+          description: OK - Hvis fagområder ikke finnes så returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Klassekode'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /faggrupper:
+    get:
+      tags:
+        - Faste data
+      summary: Hent tilgjengelige faggrupper
+      description: Returnerer en liste av tilgjengelige faggrupper.
+      responses:
+        400:
+          description: Ikke implementert ennå
+
+  /faggrupper/{kodeFaggruppe}/redusertSkatt:
+    get:
+      tags:
+        - Faggrupper
+      description: Returnerer redusert skatt for faggruppe.
+      summary: Hent redusert skatt for faggruppe
+      operationId: getFaggrupper
+      parameters:
+        - name: kodeFaggruppe
+          in: path
+          description: Fagområdets kode
+          required: true
+          schema:
+            type: string
+            maxLength: 8
+            pattern: '^[a-zA-Z0-9æøåÆØÅ]{0,8}$'
+      responses:
+        400:
+          description: Ikke implementert ennå
+
+  /klassekoder:
+    get:
+      tags:
+        - Faste data
+      summary: Hent tilgjengelige klassekoder
+      description: Returnerer en liste av tilgjengelige klassekoder.
+      responses:
+        400:
+          description: Ikke implementert ennå
+
+components:
+  schemas:
+    Fagomraade:
+      type: object
+      required:
+        - antAttestanter
+        - anviser
+        - bilagstypeFinnes
+        - klassekodeFinnes
+        - kodeFagomraade
+        - kodeFaggruppe
+        - korraarsakFinnes
+        - kodeMotregningsgruppe
+        - maksAktOppdrag
+        - navnFagomraade
+        - regelFinnes
+        - sjekkMotTps
+        - sjekkOffId
+        - tpsDistribusjon
+      properties:
+        antAttestanter:
+          type: number
+        anviser:
+          type: string
+        bilagstypeFinnes:
+          type: boolean
+        klassekodeFinnes:
+          type: boolean
+        kodeFagomraade:
+          type: string
+        kodeFaggruppe:
+          type: string
+        korraarsakFinnes:
+          type: boolean
+        kodeMotregningsgruppe:
+          type: string
+        maksAktOppdrag:
+          type: number
+        navnFagomraade:
+          type: string
+        regelFinnes:
+          type: boolean
+        sjekkMotTps:
+          type: string
+        sjekkOffId:
+          type: string
+        tpsDistribusjon:
+          type: string
+
+    Korrigeringsaarsak:
+      type: object
+      required:
+        - beskrivelse
+        - kodeAarsakKorr
+        - medforerKorr
+      properties:
+        beskrivelse:
+          type: string
+        kodeAarsakKorr:
+          type: string
+        medforerKorr:
+          type: boolean
+
+    Bilagstype:
+      type: object
+      required:
+        - kodeFagomraade
+        - typeBilag
+        - datoFom
+        - datoTom
+        - autoFagsystemId
+      properties:
+        kodeFagomraade:
+          type: string
+        typeBilag:
+          type: string
+        datoFom:
+          type: string
+        datoTom:
+          type: string
+        autoFagsystemId:
+          type: string
+
+    Klassekode:
+      type: object
+      required:
+        - kodeKlasse
+      properties:
+        kodeKlasse:
+          type: string
+
+
+    ApiError:
+      type: object
+      required:
+        - timestamp
+        - status
+        - error
+        - message
+        - path
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Tidspunkt feilen oppsto
+        status:
+          type: integer
+          example: 4xx
+          description: HTTP status kode
+        error:
+          type: string
+          example: Bad Request
+          description: En kort, lesbar oppsummering av problemet
+        message:
+          type: string
+          example: Det skjedde en feil
+          description: En lesbar forklaring som er spesifikk for denne forekomsten av problemet
+        path:
+          type: string
+          example: /api/v1/fastedata/fagomraader
+          description: Endepunktet hvor feilen oppstå
+
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      description: |-
+        OBO-token (JWT via OAuth2.0).<br> 
+          Følgende format må brukes i input-feltet "Value" under: <strong>\"Bearer {token}\"</strong>.<br> 
+          Eksempel på verdi i input-felt: <strong>Bearer eYdmifml0ejugm</strong>
+      name: Authorization
+      in: header
+
+

@@ -13,8 +13,8 @@ import io.ktor.http.HttpStatusCode
 import org.junit.jupiter.api.assertThrows
 
 import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
-import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
-import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
+import no.nav.sokos.oppdrag.attestasjon.Testdata.attestasjonRequestTestdata
+import no.nav.sokos.oppdrag.attestasjon.Testdata.navIdent
 import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
 
@@ -42,14 +42,8 @@ internal class ZOSConnectServiceTest :
 
             val response =
                 zosConnectService.attestereOppdrag(
-                    AttestasjonRequest(
-                        "123456789",
-                        "fagSystemId",
-                        "kodeFagOmraade",
-                        1,
-                        listOf(AttestasjonLinje(1, "Z999999", "2021-01-01")),
-                    ),
-                    "Z999999",
+                    attestasjonRequestTestdata,
+                    navIdent.ident,
                 )
 
             response.message shouldBe "Oppdatering vellykket. 1 linjer oppdatert"
@@ -69,14 +63,8 @@ internal class ZOSConnectServiceTest :
             val exception =
                 assertThrows<ZOSException> {
                     zosConnectService.attestereOppdrag(
-                        AttestasjonRequest(
-                            "123456789",
-                            "fagSystemId",
-                            "kodeFagOmraade",
-                            1,
-                            listOf(AttestasjonLinje(1, "Z999999", "2021-01-01")),
-                        ),
-                        "Z999999",
+                        attestasjonRequestTestdata,
+                        navIdent.ident,
                     )
                 }
 

@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OppdragsdetaljerDTO(
-    val linjer: List<OppdragslinjeDTO>,
+    val oppdragsLinjeList: List<OppdragslinjeDTO>,
     val saksbehandlerIdent: String,
 )

@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class FagOmraade(
-    val navn: String,
-    val kode: String,
+    val navnFagomraade: String,
+    val kodeFagomraade: String,
 )
