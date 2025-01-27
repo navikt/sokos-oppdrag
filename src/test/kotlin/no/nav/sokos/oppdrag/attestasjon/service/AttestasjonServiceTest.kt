@@ -25,7 +25,6 @@ import no.nav.sokos.oppdrag.attestasjon.api.model.AttestertStatus.EGEN_ATTESTERT
 import no.nav.sokos.oppdrag.attestasjon.api.model.ZosResponse
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
-import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NASJONALT_READ
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NASJONALT_WRITE
@@ -33,6 +32,7 @@ import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_READ
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_WRITE
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_READ
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_WRITE
+import no.nav.sokos.oppdrag.common.exception.ForbiddenException
 import no.nav.sokos.oppdrag.common.redis.RedisCache
 import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
@@ -266,7 +266,7 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, navIdent) } returns true
 
             val exception =
-                shouldThrow<AttestasjonException> {
+                shouldThrow<ForbiddenException> {
                     attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
                 }
 
@@ -358,7 +358,7 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(request.gjelderId, navIdent) } returns true
 
             val exception =
-                shouldThrow<AttestasjonException> {
+                shouldThrow<ForbiddenException> {
                     attestasjonService.attestereOppdrag(request, navIdent)
                 }
 

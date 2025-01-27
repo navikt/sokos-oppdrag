@@ -14,13 +14,13 @@ import org.junit.jupiter.api.assertThrows
 
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.attestasjon.Testdata.navIdent
+import no.nav.sokos.oppdrag.common.exception.ForbiddenException
 import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import no.nav.sokos.oppdrag.listener.Db2Listener
 import no.nav.sokos.oppdrag.listener.Db2Listener.faggruppeRepository
 import no.nav.sokos.oppdrag.listener.Db2Listener.oppdragRepository
 import no.nav.sokos.oppdrag.listener.Db2Listener.oppdragsdetaljerRepository
-import no.nav.sokos.oppdrag.oppdragsinfo.exception.OppdragsinfoException
 
 private const val GJELDER_ID = "24029428499"
 private const val OPPDRAGSID = 964801
@@ -62,7 +62,7 @@ internal class OppdragsInfoServiceTest :
 
         test("getOppdrag skal kaste exception hvis saksbehandler ikke har tilgang til personen") {
             coEvery { skjermingService.getSkjermingForIdent(any(), any()) } returns true
-            assertThrows<OppdragsinfoException> {
+            assertThrows<ForbiddenException> {
                 oppdragsInfoService.getOppdrag(GJELDER_ID, "", navIdent)
             }
         }
