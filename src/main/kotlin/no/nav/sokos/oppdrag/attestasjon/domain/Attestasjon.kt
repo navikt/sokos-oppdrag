@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Attestasjon(
-    val attestant: String,
+    val attestantId: String,
     val datoUgyldigFom: LocalDate,
 )

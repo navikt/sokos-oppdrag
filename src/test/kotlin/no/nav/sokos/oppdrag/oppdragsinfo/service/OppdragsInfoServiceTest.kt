@@ -57,7 +57,7 @@ internal class OppdragsInfoServiceTest :
             val result = oppdragsInfoService.getOppdrag(GJELDER_ID, "", navIdent)
 
             result.shouldNotBeEmpty()
-            result.size shouldBe 16
+            result.size shouldBe 10
         }
 
         test("getOppdrag skal kaste exception hvis saksbehandler ikke har tilgang til personen") {
@@ -92,7 +92,7 @@ internal class OppdragsInfoServiceTest :
 
             val result = oppdragsInfoService.getOppdragsLinjer(OPPDRAGSID)
             result.shouldNotBeEmpty()
-            result.size shouldBe 15
+            result.size shouldBe 10
 
             val oppdragsLinje = result.first()
             oppdragsLinje.linjeId shouldBe 1
@@ -202,7 +202,7 @@ internal class OppdragsInfoServiceTest :
 
             val oppdragsLinjeDetaljer = oppdragsInfoService.getOppdragsLinjeDetaljer(OPPDRAGSID.toString(), "1")
             oppdragsLinjeDetaljer shouldNotBe null
-            oppdragsLinjeDetaljer.korrigerteLinjeIder?.size shouldBe 15
+            oppdragsLinjeDetaljer.korrigerteLinjeIder?.size shouldBe 10
             val oppdragsLinje = oppdragsLinjeDetaljer.korrigerteLinjeIder!!.first()
             oppdragsLinje.linjeId shouldBe 1
             oppdragsLinje.kodeKlasse shouldBe "PENBPGP-OPTP"
@@ -375,7 +375,7 @@ internal class OppdragsInfoServiceTest :
             }
 
             val result = oppdragsInfoService.getOppdragsLinjeOvriger(OPPDRAGSID.toString(), "1")
-            result.size shouldBe 15
+            result.size shouldBe 11
 
             val ovriger = result.first()
             ovriger.linjeId shouldBe 1

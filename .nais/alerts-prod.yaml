@@ -107,7 +107,7 @@ spec:
         - apiURL:
             key: apiUrl
             name: slack-webhook
-          channel: '#team-moby-alerts-prod'
+          channel: '#team-mob-alerts-prod'
           iconEmoji: ':alert:'
           username: 'Alert prod-fss (sokos-oppdrag)'
           sendResolved: true

@@ -79,8 +79,8 @@ class AttestasjonService(
                 if (verifiedSkjermingForGjelderId) {
                     list.map { it.copy(erSkjermetForSaksbehandler = false) }
                 } else {
-                    val skjermingMap = skjermingService.getSkjermingForIdentListe(list.map { it.gjelderId }.distinct(), navIdent)
-                    list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.gjelderId] == true) }
+                    val skjermingMap = skjermingService.getSkjermingForIdentListe(list.map { it.oppdragGjelderId }.distinct(), navIdent)
+                    list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.oppdragGjelderId] == true) }
                 }
             }.map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, navIdent)) }
     }
@@ -168,8 +168,8 @@ class AttestasjonService(
     ): Boolean =
         when {
             saksbehandler.hasReadAccessNasjonalt() -> true
-            saksbehandler.hasReadAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOS == oppdrag.kostnadsSted) -> true
-            saksbehandler.hasReadAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
+            saksbehandler.hasReadAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
+            saksbehandler.hasReadAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
             else -> false
         }
 
@@ -179,8 +179,8 @@ class AttestasjonService(
     ): Boolean =
         when {
             saksbehandler.hasWriteAccessNasjonalt() -> true
-            saksbehandler.hasWriteAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOS == oppdrag.kostnadsSted) -> true
-            saksbehandler.hasWriteAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarsSted || oppdrag.ansvarsSted == null && ENHETSNUMMER_NOP == oppdrag.kostnadsSted) -> true
+            saksbehandler.hasWriteAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
+            saksbehandler.hasWriteAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
             else -> false
         }
 
