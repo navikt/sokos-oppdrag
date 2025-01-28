@@ -10,6 +10,7 @@ import no.nav.sokos.oppdrag.config.DatabaseConfig
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
+import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 
 class FagomraadeRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource,
@@ -19,28 +20,28 @@ class FagomraadeRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT TRIM(F.KODE_FAGOMRAADE)                     AS KODE_FAGOMRAADE,
-                           TRIM(F.NAVN_FAGOMRAADE)                     AS NAVN_FAGOMRAADE,
-                           TRIM(F.KODE_MOTREGNGRUPPE)                  AS KODE_MOTREGNGRUPPE,
-                           (SELECT DISTINCT 1 FROM T_FAGOMR_KORRARSAK
-                            WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS KORRAARSAK_FINNES,
-                           (SELECT DISTINCT 1 FROM T_FAGO_BILAGSTYPE
-                            WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS BILAGSTYPE_FINNES,
-                           (SELECT DISTINCT 1 FROM T_FAGO_KLASSEKODE
-                            WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS KLASSEKODE_FINNES,
-                           (SELECT DISTINCT 1 FROM T_FAGOMR_REGEL
-                            WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS REGEL_FINNES,
-                             TRIM(F.KODE_FAGGRUPPE)                    AS KODE_FAGGRUPPE,
-                             TRIM(F.ANT_ATTESTANTER)                   AS ANT_ATTESTANTER,
-                             TRIM(F.MAKS_AKT_OPPDRAG)                  AS MAKS_AKT_OPPDRAG,
-                             TRIM(F.TPS_DISTRIBUSJON)                  AS TPS_DISTRIBUSJON,
-                             TRIM(F.SJEKK_OFFID)                       AS SJEKK_OFFID,
-                             TRIM(F.ANVISER)                           AS ANVISER,
-                             TRIM(F.SJEKK_MOT_TPS)                     AS SJEKK_MOT_TPS,
-                             TRIM(F.BRUKERID)                          AS BRUKERID,
-                             TRIM(F.TIDSPKT_REG)                       AS TIDSPKT_REG
-                    FROM T_FAGOMRAADE F
-                    ORDER BY KODE_FAGOMRAADE ;
+                                  SELECT TRIM(F.KODE_FAGOMRAADE)                     AS KODE_FAGOMRAADE,
+                                         TRIM(F.NAVN_FAGOMRAADE)                     AS NAVN_FAGOMRAADE,
+                                         TRIM(F.KODE_MOTREGNGRUPPE)                  AS KODE_MOTREGNGRUPPE,
+                    kt                    (SELECT DISTINCT 1 FROM T_FAGOMR_KORRARSAK
+                                          WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS KORRAARSAK_FINNES,
+                                         (SELECT DISTINCT 1 FROM T_FAGO_BILAGSTYPE
+                                          WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS BILAGSTYPE_FINNES,
+                                         (SELECT DISTINCT 1 FROM T_FAGO_KLASSEKODE
+                                          WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS KLASSEKODE_FINNES,
+                                         (SELECT DISTINCT 1 FROM T_FAGOMR_REGEL
+                                          WHERE KODE_FAGOMRAADE = F.KODE_FAGOMRAADE) AS REGEL_FINNES,
+                                           TRIM(F.KODE_FAGGRUPPE)                    AS KODE_FAGGRUPPE,
+                                           TRIM(F.ANT_ATTESTANTER)                   AS ANT_ATTESTANTER,
+                                           TRIM(F.MAKS_AKT_OPPDRAG)                  AS MAKS_AKT_OPPDRAG,
+                                           TRIM(F.TPS_DISTRIBUSJON)                  AS TPS_DISTRIBUSJON,
+                                           TRIM(F.SJEKK_OFFID)                       AS SJEKK_OFFID,
+                                           TRIM(F.ANVISER)                           AS ANVISER,
+                                           TRIM(F.SJEKK_MOT_TPS)                     AS SJEKK_MOT_TPS,
+                                           TRIM(F.BRUKERID)                          AS BRUKERID,
+                                           TRIM(F.TIDSPKT_REG)                       AS TIDSPKT_REG
+                                  FROM T_FAGOMRAADE F
+                                  ORDER BY KODE_FAGOMRAADE ;
                     """.trimIndent(),
                 ),
             ) { row ->
@@ -113,6 +114,31 @@ class FagomraadeRepository(
                     datoFom = row.string("DATO_FOM"),
                     datoTom = row.string("DATO_TOM"),
                     autoFagsystem = row.string("AUTO_FAGSYSTEMID"),
+                )
+            }
+        }
+
+    fun getVentekriterier(kodeFaggruppe: String): List<Ventekriterier> =
+        sessionOf(dataSource).use { session ->
+            session.list(
+                queryOf(
+                    """
+                    SELECT KODE_FAGGRUPPE, TYPE_BILAG, DATO_FOM, BELOP_BRUTTO, BELOP_NETTO, 
+                           ANT_DAGER_ELDRENN, TIDLIGERE_AAR
+                    FROM T_VENT_KRITERIUM
+                    WHERE KODE_FAGGRUPPE = :KODE_FAGGRUPPE
+                    """.trimIndent(),
+                    mapOf("KODE_FAGGRUPPE" to kodeFaggruppe),
+                ),
+            ) { row ->
+                Ventekriterier(
+                    kodeFaggruppe = row.string("KODE_FAGGRUPPE"),
+                    typeBilag = row.string("TYPE_BILAG"),
+                    datoFom = row.string("DATO_FOM"),
+                    belopBrutto = row.string("BELOP_BRUTTO"),
+                    belopNetto = row.string("BELOP_NETTO"),
+                    antDagerEldreEnn = row.intOrNull("ANT_DAGER_ELDRENN"),
+                    tidligereAar = row.boolean("TIDLIGERE_AAR"),
                 )
             }
         }
