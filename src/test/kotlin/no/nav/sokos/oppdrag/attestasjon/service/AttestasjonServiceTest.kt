@@ -21,8 +21,11 @@ import no.nav.sokos.oppdrag.attestasjon.Testdata.navIdent
 import no.nav.sokos.oppdrag.attestasjon.Testdata.oppdragRequestTestdata
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
+import no.nav.sokos.oppdrag.attestasjon.api.model.AttestertStatus.ALLE
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestertStatus.EGEN_ATTESTERTE
+import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.ZosResponse
+import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
@@ -271,6 +274,48 @@ internal class AttestasjonServiceTest :
                 }
 
             exception.message shouldBe "Mangler rettigheter til å se informasjon!"
+        }
+
+        test("hent oppdrag should throw exception when there are over 999 oppdrags") {
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOS_READ))
+
+            // TODO: Remove this mock when the test is green
+            coEvery { skjermingService.getSkjermingForIdentListe(any(), any()) } returns emptyMap()
+
+            coEvery { attestasjonRepository.getOppdrag(any(), any(), any(), any(), any()) } returns
+                List(1000) {
+                    Oppdrag(
+                        antAttestanter = 1,
+                        navnFaggruppe = "HELSETJENESTER FRIKORT TAK 1 OG 2",
+                        navnFagomraade = "Egenandelsrefusjon frikort tak 1",
+                        fagSystemId = it.toString(),
+                        oppdragGjelderId = GJELDER_ID,
+                        kodeFaggruppe = "FRIKORT",
+                        kodeFagomraade = "FRIKORT1",
+                        kostnadssted = ENHETSNUMMER_NOS,
+                        ansvarssted = null,
+                        oppdragsId = it,
+                    )
+                }
+
+            val exception =
+                shouldThrow<IllegalArgumentException> {
+                    attestasjonService.getOppdrag(
+                        OppdragsRequest(
+                            gjelderId = null,
+                            fagSystemId = "2960",
+                            kodeFagGruppe = null,
+                            kodeFagOmraade = "MSRBAL",
+                            attestertStatus = ALLE,
+                        ),
+                        navIdent,
+                    )
+                }
+
+            // TODO: Replace with proper exception message
+            exception.message shouldBe "For mange treff eller noe sånt"
+
+            coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
         }
 
         test("getOppdragsdetaljer returnerer tom liste for et gitt oppdrag som ikke har attestasjonslinjer") {
