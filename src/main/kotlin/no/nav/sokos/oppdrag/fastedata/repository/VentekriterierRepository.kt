@@ -1,24 +1,31 @@
+
 package no.nav.sokos.oppdrag.fastedata.repository
 
-import javax.sql.DataSource
-
+import com.zaxxer.hikari.HikariDataSource
 import kotliquery.queryOf
 import kotliquery.sessionOf
 
+import no.nav.sokos.oppdrag.config.DatabaseConfig
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 
-class VentekriterierRepository(private val dataSource: DataSource) {
-    fun getVentekriterier(kodeFaggruppe: String): List<Ventekriterier> =
+class VentekriterierRepository(
+    private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource,
+) {
+    fun getAllVentekriterier(): List<Ventekriterier> =
         sessionOf(dataSource).use { session ->
             session.list(
                 queryOf(
                     """
-                    SELECT KODE_FAGGRUPPE, TYPE_BILAG, DATO_FOM, BELOP_BRUTTO, BELOP_NETTO, 
-                           ANT_DAGER_ELDRENN, TIDLIGERE_AAR
-                    FROM T_VENT_KRITERIUM
-                    WHERE KODE_FAGGRUPPE = :KODE_FAGGRUPPE
+                    SELECT TRIM(V.KODE_FAGGRUPPE) AS KODE_FAGGRUPPE,
+                           TRIM(V.TYPE_BILAG) AS TYPE_BILAG,
+                           V.DATO_FOM AS DATO_FOM,
+                           V.BELOP_BRUTTO AS BELOP_BRUTTO,
+                           V.BELOP_NETTO AS BELOP_NETTO,
+                           V.ANT_DAGER_ELDRENN AS ANT_DAGER_ELDRENN,
+                           V.TIDLIGERE_AAR AS TIDLIGERE_AAR
+                    FROM T_VENT_KRITERIUM V
+                    ORDER BY V.KODE_FAGGRUPPE
                     """.trimIndent(),
-                    mapOf("KODE_FAGGRUPPE" to kodeFaggruppe),
                 ),
             ) { row ->
                 Ventekriterier(

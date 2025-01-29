@@ -23,5 +23,8 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
                 ),
             )
         }
+        get("/ventekriterier") {
+            call.respond(fasteDataService.getAllVentekriterier())
+        }
     }
 }
