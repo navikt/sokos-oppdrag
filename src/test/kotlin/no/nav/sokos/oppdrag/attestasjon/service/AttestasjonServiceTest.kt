@@ -279,9 +279,6 @@ internal class AttestasjonServiceTest :
         test("hent oppdrag should throw exception when there are over 999 oppdrags") {
             val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOS_READ))
 
-            // TODO: Remove this mock when the test is green
-            coEvery { skjermingService.getSkjermingForIdentListe(any(), any()) } returns emptyMap()
-
             coEvery { attestasjonRepository.getOppdrag(any(), any(), any(), any(), any()) } returns
                 List(1000) {
                     Oppdrag(
@@ -298,6 +295,9 @@ internal class AttestasjonServiceTest :
                     )
                 }
 
+            coEvery { skjermingService.getSkjermingForIdentListe(any(), any()) } throws
+                AssertionError("getSkjermingForIdentListe should not be called for more than 999 idents")
+
             val exception =
                 shouldThrow<IllegalArgumentException> {
                     attestasjonService.getOppdrag(
@@ -312,10 +312,7 @@ internal class AttestasjonServiceTest :
                     )
                 }
 
-            // TODO: Replace with proper exception message
             exception.message shouldBe "For mange treff eller noe sånt"
-
-            coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
         }
 
         test("getOppdragsdetaljer returnerer tom liste for et gitt oppdrag som ikke har attestasjonslinjer") {
