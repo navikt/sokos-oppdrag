@@ -286,7 +286,7 @@ internal class AttestasjonServiceTest :
                         navnFaggruppe = "HELSETJENESTER FRIKORT TAK 1 OG 2",
                         navnFagomraade = "Egenandelsrefusjon frikort tak 1",
                         fagSystemId = it.toString(),
-                        oppdragGjelderId = GJELDER_ID,
+                        oppdragGjelderId = GJELDER_ID + it,
                         kodeFaggruppe = "FRIKORT",
                         kodeFagomraade = "FRIKORT1",
                         kostnadssted = ENHETSNUMMER_NOS,
@@ -312,7 +312,7 @@ internal class AttestasjonServiceTest :
                     )
                 }
 
-            exception.message shouldBe "For mange treff eller noe sånt"
+            exception.message shouldBe "Oppgitte søkekriterier gir for mange identer til å slå opp mot PDL (1000)!"
         }
 
         test("getOppdragsdetaljer returnerer tom liste for et gitt oppdrag som ikke har attestasjonslinjer") {
