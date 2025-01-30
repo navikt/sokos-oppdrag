@@ -276,7 +276,7 @@ internal class AttestasjonServiceTest :
             exception.message shouldBe "Mangler rettigheter til å se informasjon!"
         }
 
-        test("hent oppdrag should throw exception when there are over 999 oppdrags") {
+        test("hent oppdrag kaster exception hvis det er over 999 forskjellige identer i identifiserte oppdrag") {
             val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOS_READ))
 
             coEvery { attestasjonRepository.getOppdrag(any(), any(), any(), any(), any()) } returns
