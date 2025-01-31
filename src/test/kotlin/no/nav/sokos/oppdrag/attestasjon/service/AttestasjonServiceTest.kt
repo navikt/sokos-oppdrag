@@ -276,17 +276,17 @@ internal class AttestasjonServiceTest :
             exception.message shouldBe "Mangler rettigheter til å se informasjon!"
         }
 
-        test("hent oppdrag kaster exception hvis det er over 999 forskjellige identer i identifiserte oppdrag") {
+        test("hent oppdrag kaster exception hvis det er over 1000 forskjellige identer i identifiserte oppdrag") {
             val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOS_READ))
 
             coEvery { attestasjonRepository.getOppdrag(any(), any(), any(), any(), any()) } returns
-                List(1000) {
+                List(1001) {
                     Oppdrag(
                         antAttestanter = 1,
                         navnFaggruppe = "HELSETJENESTER FRIKORT TAK 1 OG 2",
                         navnFagomraade = "Egenandelsrefusjon frikort tak 1",
                         fagSystemId = it.toString(),
-                        oppdragGjelderId = GJELDER_ID + it,
+                        oppdragGjelderId = GJELDER_ID.dropLast(4) + String.format("%04d", it),
                         kodeFaggruppe = "FRIKORT",
                         kodeFagomraade = "FRIKORT1",
                         kostnadssted = ENHETSNUMMER_NOS,
@@ -296,7 +296,7 @@ internal class AttestasjonServiceTest :
                 }
 
             coEvery { skjermingService.getSkjermingForIdentListe(any(), any()) } throws
-                AssertionError("getSkjermingForIdentListe should not be called for more than 999 idents")
+                AssertionError("getSkjermingForIdentListe should not be called for more than 1000 idents")
 
             val exception =
                 shouldThrow<IllegalArgumentException> {
@@ -312,7 +312,7 @@ internal class AttestasjonServiceTest :
                     )
                 }
 
-            exception.message shouldBe "Oppgitte søkekriterier gir for mange identer til å slå opp mot PDL (1000)!"
+            exception.message shouldBe "Oppgitte søkekriterier gir for mange identer til å slå opp mot PDL (1001)!"
         }
 
         test("getOppdragsdetaljer returnerer tom liste for et gitt oppdrag som ikke har attestasjonslinjer") {

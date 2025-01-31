@@ -67,6 +67,12 @@ class AttestasjonService(
             }
 
         val oppdragsListe = attestasjonRepository.getOppdrag(gjelderId, request.fagSystemId, fagomraader, request.attestertStatus.attestert, request.attestertStatus.filterEgenAttestert)
+
+        val identer = oppdragsListe.map { it.oppdragGjelderId }.distinct()
+        if (identer.size > 1000) {
+            throw IllegalArgumentException("Oppgitte søkekriterier gir for mange identer til å slå opp mot PDL (${identer.size})!")
+        }
+
         val statusFilterOppdragList =
             oppdragsListe
                 .takeIf { request.attestertStatus.filterEgenAttestert != null }
@@ -79,10 +85,6 @@ class AttestasjonService(
                 if (verifiedSkjermingForGjelderId) {
                     list.map { it.copy(erSkjermetForSaksbehandler = false) }
                 } else {
-                    val identer = list.map { it.oppdragGjelderId }.distinct()
-                    if (identer.size > 999) {
-                        throw IllegalArgumentException("Oppgitte søkekriterier gir for mange identer til å slå opp mot PDL (${list.size})!")
-                    }
                     val skjermingMap = skjermingService.getSkjermingForIdentListe(identer, navIdent)
                     list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.oppdragGjelderId] == true) }
                 }
