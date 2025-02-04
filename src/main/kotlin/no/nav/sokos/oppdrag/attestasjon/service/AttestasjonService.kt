@@ -14,6 +14,7 @@ import no.nav.sokos.oppdrag.attestasjon.domain.toDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
+import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.repository.FagomraadeRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
@@ -70,7 +71,7 @@ class AttestasjonService(
 
         val identer = oppdragsListe.map { it.oppdragGjelderId }.distinct()
         if (identer.size > 1000) {
-            throw IllegalArgumentException("Oppgitte søkekriterier gir for mange identer til å slå opp mot PDL (${identer.size})!")
+            throw AttestasjonException("Oppgitte søkekriterier gir for stort treff. Vennligst avgrens søket.")
         }
 
         val statusFilterOppdragList =

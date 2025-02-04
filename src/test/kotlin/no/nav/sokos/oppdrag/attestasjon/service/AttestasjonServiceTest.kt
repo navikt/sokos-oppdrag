@@ -28,6 +28,7 @@ import no.nav.sokos.oppdrag.attestasjon.api.model.ZosResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
+import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NASJONALT_READ
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NASJONALT_WRITE
@@ -299,7 +300,7 @@ internal class AttestasjonServiceTest :
                 AssertionError("getSkjermingForIdentListe should not be called for more than 1000 idents")
 
             val exception =
-                shouldThrow<IllegalArgumentException> {
+                shouldThrow<AttestasjonException> {
                     attestasjonService.getOppdrag(
                         OppdragsRequest(
                             gjelderId = null,
@@ -312,7 +313,7 @@ internal class AttestasjonServiceTest :
                     )
                 }
 
-            exception.message shouldBe "Oppgitte søkekriterier gir for mange identer til å slå opp mot PDL (1001)!"
+            exception.message shouldBe "Oppgitte søkekriterier gir for stort treff. Vennligst avgrens søket."
         }
 
         test("getOppdragsdetaljer returnerer tom liste for et gitt oppdrag som ikke har attestasjonslinjer") {
