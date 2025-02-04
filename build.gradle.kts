@@ -172,12 +172,6 @@ tasks {
         dependsOn("openApiGenerate")
     }
 
-    ktlint {
-        filter {
-            exclude { element -> element.file.path.contains("generated/") }
-        }
-    }
-
     withType<ShadowJar>().configureEach {
         enabled = true
         archiveFileName.set("app.jar")
