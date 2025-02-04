@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    kotlin("jvm") version "2.1.0"
-    kotlin("plugin.serialization") version "2.1.0"
+    kotlin("jvm") version "2.1.10"
+    kotlin("plugin.serialization") version "2.1.10"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.expediagroup.graphql") version "8.3.0"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
@@ -58,11 +58,11 @@ val graphqlClientVersion = "8.3.0"
 val caffeineVersion = "3.2.0"
 
 // Redis
-val redisVersion = "6.5.2.RELEASE"
+val redisVersion = "6.5.3.RELEASE"
 
 // Test
 val kotestVersion = "6.0.0.M1"
-val wiremockVersion = "3.10.0"
+val wiremockVersion = "3.11.0"
 val mockOAuth2ServerVersion = "2.1.10"
 val mockkVersion = "1.13.16"
 val swaggerRequestValidatorVersion = "2.44.1"
