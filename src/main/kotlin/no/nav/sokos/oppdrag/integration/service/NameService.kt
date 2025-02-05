@@ -10,13 +10,13 @@ import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.client.ereg.EregClientService
 import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
-import no.nav.sokos.oppdrag.integration.client.tp.TpClientService
+import no.nav.sokos.oppdrag.integration.client.samhandler.SamhandlerClientService
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
 class NameService(
     private val pdlClientService: PdlClientService = PdlClientService(),
-    private val tpClientService: TpClientService = TpClientService(),
+    private val samhandlerClientService: SamhandlerClientService = SamhandlerClientService(),
     private val eregClientService: EregClientService = EregClientService(),
     private val auditLogger: AuditLogger = AuditLogger(),
 ) {
@@ -34,15 +34,15 @@ class NameService(
         )
 
         return when {
-            gjelderId.toLong() > 80_000_000_000 -> getLeverandorName(gjelderId)
+            gjelderId.toLong() > 80_000_000_000 -> getSamhandlerName(gjelderId)
             gjelderId.toLong() in 1_000_000_001..79_999_999_999 -> getPersonName(gjelderId)
             else -> getOrganisasjonsName(gjelderId.replace("^(00)?".toRegex(), ""))
         }
     }
 
-    private suspend fun getLeverandorName(gjelderId: String): NameResponse {
-        val leverandorName = tpClientService.getLeverandorNavn(gjelderId)
-        return NameResponse(leverandorName)
+    private suspend fun getSamhandlerName(tssId: String): NameResponse {
+        val samhandlerName = samhandlerClientService.getSamhandler(tssId)
+        return NameResponse(samhandlerName)
     }
 
     private suspend fun getPersonName(gjelderId: String): NameResponse {

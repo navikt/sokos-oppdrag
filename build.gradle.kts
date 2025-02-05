@@ -16,6 +16,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
     id("org.openapi.generator") version "7.11.0"
+    id("com.intershop.gradle.jaxb") version "7.0.1"
 }
 
 group = "no.nav.sokos"
@@ -59,6 +60,14 @@ val caffeineVersion = "3.2.0"
 
 // Redis
 val redisVersion = "6.5.3.RELEASE"
+
+// Jaxb
+val jakartaXmlVersion = "4.0.2"
+val jakartaInjectVersion = "2.0.1"
+val glassfishJaxbVersion = "4.0.5"
+
+// IBM MQ
+val ibmMqVersion = "9.4.1.1"
 
 // Test
 val kotestVersion = "6.0.0.M1"
@@ -124,6 +133,14 @@ dependencies {
     // Redis
     implementation("io.lettuce:lettuce-core:$redisVersion")
 
+    // Jaxb
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:$jakartaXmlVersion")
+    implementation("jakarta.inject:jakarta.inject-api:$jakartaInjectVersion")
+    runtimeOnly("org.glassfish.jaxb:jaxb-runtime:$glassfishJaxbVersion")
+
+    // IBM MQ
+    implementation("com.ibm.mq:com.ibm.mq.jakarta.client:$ibmMqVersion")
+
     // Test
     testImplementation("io.ktor:ktor-server-test-host-jvm:$ktorVersion")
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
@@ -152,6 +169,16 @@ sourceSets {
 kotlin {
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+jaxb {
+    javaGen {
+        register("tss") {
+            schema = file("src/main/resources/schema/tss.xsd")
+            packageName = "no.nav.tss"
+            outputDir = file("${layout.buildDirectory.get()}/generated/src/main/kotlin")
+        }
     }
 }
 
