@@ -38,7 +38,7 @@ jobs:
   deploy-dev:
     needs: build
     name: Deploy to dev-fss
-    uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
+    uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@chore/oppdatere_deploy_job
     with:
       cluster: dev-fss
       resource: .nais/naiserator-q1.yaml
@@ -47,7 +47,7 @@ jobs:
   deploy-dev-qx:
     needs: [build, deploy-dev]
     name: Deploy to dev-fss-qx
-    uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
+    uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@chore/oppdatere_deploy_job
     with:
       cluster: dev-fss
       resource: .nais/naiserator-qx.yaml
