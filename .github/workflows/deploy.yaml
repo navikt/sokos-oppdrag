@@ -13,7 +13,7 @@ on:
       - 'setupLocalEnvironment.sh'
       - 'dokumentasjon/**'
       - '.github/workflows/build-pr.yaml'
-      - '.github/workflows/manual-deploy-dev.yaml'
+      - 'manual-deploy.yaml'
       - '.github/workflows/security.yaml'
       - '.github/workflows/alerts.yaml'
       - '.nais/alerts-dev.yaml'
@@ -32,6 +32,8 @@ jobs:
     name: Build/test & push image
     uses: navikt/mob-gha-workflows/.github/workflows/gradle-build-push-image.yaml@main
     secrets: inherit
+    with:
+      gradle-task: ./gradlew clean build shadowJar
 
   deploy-dev:
     needs: build
@@ -39,7 +41,7 @@ jobs:
     uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
     with:
       cluster: dev-fss
-      resource: .nais/naiserator-dev.yaml
+      resource: .nais/naiserator-dev-q1.yaml
       image: ${{ needs.build.outputs.image }}
 
   deploy-dev-qx:
