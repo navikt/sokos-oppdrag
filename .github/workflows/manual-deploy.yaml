@@ -1,7 +1,15 @@
-name: Deploy application manual to dev
+name: Deploy application manual
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to deploy to (q1, qx, test)"
+        required: true
+        type: choice
+        options:
+          - q1
+          - qx
 
 env:
   TZ: Europe/Oslo
@@ -16,6 +24,7 @@ jobs:
     uses: navikt/mob-gha-workflows/.github/workflows/gradle-build-push-image.yaml@main
     secrets: inherit
     with:
+      gradle-task: ./gradlew clean build shadowJar
       image-tag: snapshot
 
   deploy-dev:
@@ -24,5 +33,5 @@ jobs:
     uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
     with:
       cluster: dev-fss
-      resource: .nais/naiserator-dev.yaml
+      resource: .nais/naiserator-dev-${{ inputs.environment }}.yaml
       image: ${{ needs.build.outputs.image }}
