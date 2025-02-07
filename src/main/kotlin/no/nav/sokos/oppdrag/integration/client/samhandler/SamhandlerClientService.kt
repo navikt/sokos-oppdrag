@@ -1,5 +1,6 @@
 package no.nav.sokos.oppdrag.integration.client.samhandler
 
+import java.io.StringReader
 import java.io.StringWriter
 import javax.xml.stream.XMLInputFactory
 import javax.xml.transform.stream.StreamSource
@@ -13,11 +14,8 @@ import jakarta.xml.bind.Marshaller
 import no.nav.sokos.oppdrag.common.mq.JmsProducerService
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.tss.SamhandlerIDataB980Type
-import no.nav.tss.TOutputElementer
 import no.nav.tss.TServicerutiner
 import no.nav.tss.TssSamhandlerData
-
-private val jaxbContextSamhandler = JAXBContext.newInstance(TssSamhandlerData::class.java)
 
 class SamhandlerClientService(
     private val jmsProducerService: JmsProducerService = JmsProducerService(),
@@ -26,6 +24,8 @@ class SamhandlerClientService(
             targetClient = WMQConstants.WMQ_CLIENT_NONJMS_MQ
         },
 ) {
+    private val jaxbContextSamhandler = JAXBContext.newInstance(TssSamhandlerData::class.java)
+
     fun getSamhandler(tssId: String): String {
         val request =
             TssSamhandlerData().apply {
@@ -43,12 +43,13 @@ class SamhandlerClientService(
                     }
             }
 
-        val response = jmsProducerService.send(marshallTssRequest(request), tssQueue)
+        val requestXML = marshallTssRequest(request)
+        val response = jmsProducerService.send(requestXML, tssQueue)
 
-        println("HVA FÅR JEG HER?? $response")
-
-        return unmarshallTssResponse(response).samhandlerODataB980.ident.first()?.navnSamh
-            ?: throw SamhanderException("Samhandler med tssId: $tssId ikke funnet")
+        return unmarshallTssResponse(response)
+            .tssOutputData.samhandlerODataB980.ident
+            .first()
+            ?.navnSamh ?: throw SamhanderException("Samhandler med tssId: $tssId ikke funnet")
     }
 
     private fun marshallTssRequest(request: Any): String {
@@ -63,11 +64,11 @@ class SamhandlerClientService(
         }
     }
 
-    private fun unmarshallTssResponse(response: String): TOutputElementer =
+    private fun unmarshallTssResponse(response: String): TssSamhandlerData =
         jaxbContextSamhandler
             .createUnmarshaller()
             .unmarshal(
-                XMLInputFactory.newInstance().createXMLStreamReader(StreamSource(response)),
-                TOutputElementer::class.java,
+                XMLInputFactory.newInstance().createXMLStreamReader(StreamSource(StringReader(response))),
+                TssSamhandlerData::class.java,
             ).value
 }

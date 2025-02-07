@@ -40,7 +40,7 @@ class NameService(
         }
     }
 
-    private suspend fun getSamhandlerName(tssId: String): NameResponse {
+    private fun getSamhandlerName(tssId: String): NameResponse {
         val samhandlerName = samhandlerClientService.getSamhandler(tssId)
         return NameResponse(samhandlerName)
     }

@@ -39,6 +39,7 @@ object PropertiesConfig {
                 "REDIS_PORT" to "6379",
                 "REDIS_PASSWORD" to "password",
                 "MQ_HOSTNAME" to "10.53.17.118",
+                "MQ_PORT" to "1413",
             ),
         )
 

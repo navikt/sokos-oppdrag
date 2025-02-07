@@ -22,7 +22,6 @@ object MQConfig {
             setIntProperty(WMQConstants.WMQ_CCSID, UTF_8_WITH_PUA)
             setIntProperty(WMQConstants.JMS_IBM_ENCODING, MQConstants.MQENC_NATIVE)
             setIntProperty(WMQConstants.JMS_IBM_CHARACTER_SET, UTF_8_WITH_PUA)
-            setBooleanProperty(WMQConstants.USER_AUTHENTICATION_MQCSP, true)
             setStringProperty(WMQConstants.USERID, mqProperties.mqServiceUsername)
             setStringProperty(WMQConstants.PASSWORD, mqProperties.mqServicePassword)
         }

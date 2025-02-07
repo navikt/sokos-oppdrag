@@ -330,7 +330,7 @@ internal class AttestasjonServiceTest :
             result.saksbehandlerIdent shouldBe navIdent.ident
             result.oppdragsLinjeList.size shouldBe 6
 
-            val oppdragslinjeDTOList: List<OppdragslinjeDTO> = Json.decodeFromString("testdata/OppdragslinjeDTO_UFOREUT.json".readFromResource())
+            val oppdragslinjeDTOList: List<OppdragslinjeDTO> = Json.decodeFromString("testdata/oppdragslinjeDTO_UFOREUT.json".readFromResource())
             result.oppdragsLinjeList shouldContainExactly oppdragslinjeDTOList
         }
 
@@ -343,7 +343,7 @@ internal class AttestasjonServiceTest :
             result.saksbehandlerIdent shouldBe navIdent.ident
             result.oppdragsLinjeList.size shouldBe 10
 
-            val oppdragslinjeDTOList: List<OppdragslinjeDTO> = Json.decodeFromString("testdata/OppdragslinjeDTO_parallell_ytelser.json".readFromResource())
+            val oppdragslinjeDTOList: List<OppdragslinjeDTO> = Json.decodeFromString("testdata/oppdragslinjeDTO_parallell_ytelser.json".readFromResource())
             result.oppdragsLinjeList shouldContainExactly oppdragslinjeDTOList
 
             // Det er 2 attestasjoner på linjen med id 1

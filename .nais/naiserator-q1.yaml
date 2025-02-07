@@ -74,6 +74,7 @@ spec:
       mountPath: /var/run/secrets/db2license
   envFrom:
     - secret: oppdrag-q1-credentials
+    - secret: sokos-oppdrag-mq-credentials
     - secret: sokos-oppdrag-redis-password
   env:
     - name: USE_AUTHENTICATION
@@ -113,11 +114,11 @@ spec:
 
     # MQ
     - name: MQ_HOSTNAME
-      value: mqls03.preprod.local
+      value: mqls02.preprod.local
     - name: MQ_PORT
       value: '1413'
     - name: MQ_QUEUE_MANAGER_NAME
-      value: MQLS03
+      value: MQLS02
     - name: MQ_CHANNEL_NAME
       value: Q1_SOKOS_OPPDRAG
     - name: MQ_TSS_SAMHANDLER_SERVICE_QUEUE
