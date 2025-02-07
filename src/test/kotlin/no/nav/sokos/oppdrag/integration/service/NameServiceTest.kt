@@ -70,7 +70,7 @@ internal class NameServiceTest :
             name shouldBe NameResponse("NAV Arbeid og ytelser")
         }
 
-/*        test("hent navn for gjelderId som er tssId") {
+        test("hent navn for gjelderId som er tssId") {
 
             val leverandorId = "1234567890123"
 
@@ -79,5 +79,5 @@ internal class NameServiceTest :
             val name = nameService.getNavn(leverandorId, navIdent)
 
             name shouldBe NameResponse("NAV Arbeid og ytelser")
-        }*/
+        }
     })

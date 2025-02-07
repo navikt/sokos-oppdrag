@@ -40,4 +40,13 @@ object Metrics {
             .withoutExemplars()
             .labelNames("responseCode")
             .register(prometheusMeterRegistry.prometheusRegistry)
+
+    val samhandlerCounter: Counter =
+        Counter
+            .builder()
+            .name("samhandler_counter")
+            .help("Counts calls to Samhandler with response status code")
+            .withoutExemplars()
+            .labelNames("responseCode")
+            .register(prometheusMeterRegistry.prometheusRegistry)
 }

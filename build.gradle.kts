@@ -80,8 +80,6 @@ val redisVersion = "6.5.3.RELEASE"
 
 // TSS
 val tjenestespesifikasjonVersion = "1.0_20250207093735_3b7cb5e"
-val jakartaXmlVersion = "4.0.2"
-val jakartaInjectVersion = "2.0.1"
 val glassfishJaxbVersion = "4.0.5"
 
 // IBM MQ
@@ -154,9 +152,7 @@ dependencies {
 
     // TSS
     implementation("no.nav.sokos.tjenestespesifikasjoner:nav-fim-tss-organisasjon-v4-tjenestespesifikasjon:$tjenestespesifikasjonVersion")
-    // implementation("jakarta.xml.bind:jakarta.xml.bind-api:$jakartaXmlVersion")
-    // implementation("jakarta.inject:jakarta.inject-api:$jakartaInjectVersion")
-    // runtimeOnly("org.glassfish.jaxb:jaxb-runtime:$glassfishJaxbVersion")
+    runtimeOnly("org.glassfish.jaxb:jaxb-runtime:$glassfishJaxbVersion")
 
     // IBM MQ
     implementation("com.ibm.mq:com.ibm.mq.jakarta.client:$ibmMqVersion")

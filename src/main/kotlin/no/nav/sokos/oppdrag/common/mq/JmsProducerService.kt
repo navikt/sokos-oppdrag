@@ -12,6 +12,7 @@ import no.nav.sokos.oppdrag.config.MQConfig
 
 open class JmsProducerService(
     connectionFactory: ConnectionFactory = MQConfig.connectionFactory(),
+    private val timeout: Long = 20000,
 ) {
     private val jmsContext: JMSContext = connectionFactory.createContext()
 
@@ -27,7 +28,7 @@ open class JmsProducerService(
 
                 context.createConsumer(temporaryQueue).use { consumer ->
                     val inputMessageText =
-                        when (val consumedMessage = consumer.receive(20000)) {
+                        when (val consumedMessage = consumer.receive(timeout)) {
                             is TextMessage -> consumedMessage.text
                             else ->
                                 throw JMSException(
