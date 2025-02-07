@@ -109,7 +109,6 @@ object PropertiesConfig {
         val skjermetUrl: String = getOrEmpty("SKJERMING_URL"),
         val pdlScope: String = getOrEmpty("PDL_SCOPE"),
         val pdlUrl: String = getOrEmpty("PDL_URL"),
-        val tpUrl: String = getOrEmpty("TP_URL"),
         val zosUrl: String = getOrEmpty("ZOS_URL"),
     )
 

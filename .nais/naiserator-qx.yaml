@@ -74,6 +74,7 @@ spec:
       mountPath: /var/run/secrets/db2license
   envFrom:
     - secret: oppdrag-qx-credentials
+    - secret: sokos-oppdrag-mq-credentials
     - secret: sokos-oppdrag-qx-redis-password
   env:
     - name: USE_AUTHENTICATION
@@ -107,9 +108,17 @@ spec:
     - name: GA_OKONOMI_EGNE_ANSATTE
       value: 1c7eec30-e0b3-4374-a175-13692bd299a3
 
-    # Tp
-    - name: TP_URL
-      value: "https://tp-q2.dev.intern.nav.no"
+    # MQ
+    - name: MQ_HOSTNAME
+      value: mqls02.preprod.local
+    - name: MQ_PORT
+      value: '1413'
+    - name: MQ_QUEUE_MANAGER_NAME
+      value: MQLS02
+    - name: MQ_CHANNEL_NAME
+      value: Q1_SOKOS_OPPDRAG
+    - name: MQ_TSS_SAMHANDLER_SERVICE_QUEUE
+      value: QA.Q1_415.AS10_SAMHANDLER_SERVICE
 
     # Pdl
     - name: PDL_URL

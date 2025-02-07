@@ -16,13 +16,30 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
     id("org.openapi.generator") version "7.11.0"
-    id("com.intershop.gradle.jaxb") version "7.0.1"
 }
 
 group = "no.nav.sokos"
 
 repositories {
     mavenCentral()
+
+    val githubToken = System.getenv("GITHUB_TOKEN")
+    if (githubToken.isNullOrEmpty()) {
+        maven {
+            name = "external-mirror-github-navikt"
+            url = uri("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
+        }
+    } else {
+        maven {
+            name = "github-package-registry-navikt"
+            url = uri("https://maven.pkg.github.com/navikt/maven-release")
+            credentials {
+                username = "token"
+                password = githubToken
+            }
+        }
+    }
+
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
 }
 
@@ -61,7 +78,8 @@ val caffeineVersion = "3.2.0"
 // Redis
 val redisVersion = "6.5.3.RELEASE"
 
-// Jaxb
+// TSS
+val tjenestespesifikasjonVersion = "1.0_20250207093735_3b7cb5e"
 val jakartaXmlVersion = "4.0.2"
 val jakartaInjectVersion = "2.0.1"
 val glassfishJaxbVersion = "4.0.5"
@@ -77,6 +95,7 @@ val mockkVersion = "1.13.16"
 val swaggerRequestValidatorVersion = "2.44.1"
 val testcontainersVersion = "1.20.4"
 val h2Version = "2.3.232"
+val activemqVersion = "2.39.0"
 
 dependencies {
 
@@ -133,10 +152,11 @@ dependencies {
     // Redis
     implementation("io.lettuce:lettuce-core:$redisVersion")
 
-    // Jaxb
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api:$jakartaXmlVersion")
-    implementation("jakarta.inject:jakarta.inject-api:$jakartaInjectVersion")
-    runtimeOnly("org.glassfish.jaxb:jaxb-runtime:$glassfishJaxbVersion")
+    // TSS
+    implementation("no.nav.sokos.tjenestespesifikasjoner:nav-fim-tss-organisasjon-v4-tjenestespesifikasjon:$tjenestespesifikasjonVersion")
+    // implementation("jakarta.xml.bind:jakarta.xml.bind-api:$jakartaXmlVersion")
+    // implementation("jakarta.inject:jakarta.inject-api:$jakartaInjectVersion")
+    // runtimeOnly("org.glassfish.jaxb:jaxb-runtime:$glassfishJaxbVersion")
 
     // IBM MQ
     implementation("com.ibm.mq:com.ibm.mq.jakarta.client:$ibmMqVersion")
@@ -151,6 +171,7 @@ dependencies {
     testImplementation("com.atlassian.oai:swagger-request-validator-restassured:$swaggerRequestValidatorVersion")
     testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
     testImplementation("com.h2database:h2:$h2Version")
+    testImplementation("org.apache.activemq:artemis-jakarta-server:$activemqVersion")
 }
 
 // Vulnerability fix because of id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
@@ -169,16 +190,6 @@ sourceSets {
 kotlin {
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
-    }
-}
-
-jaxb {
-    javaGen {
-        register("tss") {
-            schema = file("src/main/resources/schema/tss.xsd")
-            packageName = "no.nav.tss"
-            outputDir = file("${layout.buildDirectory.get()}/generated/src/main/kotlin")
-        }
     }
 }
 

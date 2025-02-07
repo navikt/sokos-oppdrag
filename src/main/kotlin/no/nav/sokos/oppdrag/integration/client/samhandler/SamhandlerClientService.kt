@@ -10,12 +10,12 @@ import com.ibm.msg.client.jakarta.wmq.WMQConstants
 import jakarta.jms.Queue
 import jakarta.xml.bind.JAXBContext
 import jakarta.xml.bind.Marshaller
+import no.rtv.namespacetss.SamhandlerIDataB980Type
+import no.rtv.namespacetss.TServicerutiner
+import no.rtv.namespacetss.TssSamhandlerData
 
 import no.nav.sokos.oppdrag.common.mq.JmsProducerService
 import no.nav.sokos.oppdrag.config.PropertiesConfig
-import no.nav.tss.SamhandlerIDataB980Type
-import no.nav.tss.TServicerutiner
-import no.nav.tss.TssSamhandlerData
 
 class SamhandlerClientService(
     private val jmsProducerService: JmsProducerService = JmsProducerService(),
