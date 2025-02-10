@@ -499,6 +499,16 @@ CREATE TABLE T_KORREKSJON
     BRUKERID         CHAR(8)      default '' not null
 );
 
+DROP TABLE IF EXISTS T_LINJE_VEDTAKSSATS;
+CREATE TABLE T_LINJE_VEDTAKSSATS
+(
+    OPPDRAGS_ID INTEGER                                not null,
+    LINJE_ID    SMALLINT                               not null,
+    VEDTAKSSATS DECIMAL(11, 2)                         not null,
+    BRUKERID    CHAR(8)      default 'CURRENT USER'    not null,
+    TIDSPKT_REG TIMESTAMP(6) default CURRENT TIMESTAMP not null
+);
+
 DROP TABLE IF EXISTS T_KJOREDATO;
 CREATE TABLE T_KJOREDATO
 (
