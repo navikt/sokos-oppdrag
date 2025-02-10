@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    kotlin("jvm") version "2.1.0"
-    kotlin("plugin.serialization") version "2.1.0"
+    kotlin("jvm") version "2.1.10"
+    kotlin("plugin.serialization") version "2.1.10"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.expediagroup.graphql") version "8.3.0"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
@@ -22,6 +22,24 @@ group = "no.nav.sokos"
 
 repositories {
     mavenCentral()
+
+    val githubToken = System.getenv("GITHUB_TOKEN")
+    if (githubToken.isNullOrEmpty()) {
+        maven {
+            name = "external-mirror-github-navikt"
+            url = uri("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
+        }
+    } else {
+        maven {
+            name = "github-package-registry-navikt"
+            url = uri("https://maven.pkg.github.com/navikt/maven-release")
+            credentials {
+                username = "token"
+                password = githubToken
+            }
+        }
+    }
+
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
 }
 
@@ -58,16 +76,24 @@ val graphqlClientVersion = "8.3.0"
 val caffeineVersion = "3.2.0"
 
 // Redis
-val redisVersion = "6.5.2.RELEASE"
+val redisVersion = "6.5.3.RELEASE"
+
+// TSS
+val tjenestespesifikasjonVersion = "1.0_20250207093735_3b7cb5e"
+val glassfishJaxbVersion = "4.0.5"
+
+// IBM MQ
+val ibmMqVersion = "9.4.1.1"
 
 // Test
-val kotestVersion = "6.0.0.M1"
-val wiremockVersion = "3.10.0"
+val kotestVersion = "6.0.0.M2"
+val wiremockVersion = "3.11.0"
 val mockOAuth2ServerVersion = "2.1.10"
 val mockkVersion = "1.13.16"
 val swaggerRequestValidatorVersion = "2.44.1"
 val testcontainersVersion = "1.20.4"
 val h2Version = "2.3.232"
+val activemqVersion = "2.39.0"
 
 dependencies {
 
@@ -124,6 +150,13 @@ dependencies {
     // Redis
     implementation("io.lettuce:lettuce-core:$redisVersion")
 
+    // TSS
+    implementation("no.nav.sokos.tjenestespesifikasjoner:nav-fim-tss-organisasjon-v4-tjenestespesifikasjon:$tjenestespesifikasjonVersion")
+    runtimeOnly("org.glassfish.jaxb:jaxb-runtime:$glassfishJaxbVersion")
+
+    // IBM MQ
+    implementation("com.ibm.mq:com.ibm.mq.jakarta.client:$ibmMqVersion")
+
     // Test
     testImplementation("io.ktor:ktor-server-test-host-jvm:$ktorVersion")
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
@@ -134,6 +167,7 @@ dependencies {
     testImplementation("com.atlassian.oai:swagger-request-validator-restassured:$swaggerRequestValidatorVersion")
     testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
     testImplementation("com.h2database:h2:$h2Version")
+    testImplementation("org.apache.activemq:artemis-jakarta-server:$activemqVersion")
 }
 
 // Vulnerability fix because of id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
@@ -170,12 +204,6 @@ tasks {
         dependsOn("ktlintFormat")
         dependsOn("graphqlGenerateClient")
         dependsOn("openApiGenerate")
-    }
-
-    ktlint {
-        filter {
-            exclude { element -> element.file.path.contains("generated/") }
-        }
     }
 
     withType<ShadowJar>().configureEach {

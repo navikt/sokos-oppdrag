@@ -21,10 +21,14 @@ import no.nav.sokos.oppdrag.attestasjon.Testdata.navIdent
 import no.nav.sokos.oppdrag.attestasjon.Testdata.oppdragRequestTestdata
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonLinje
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
+import no.nav.sokos.oppdrag.attestasjon.api.model.AttestertStatus.ALLE
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestertStatus.EGEN_ATTESTERTE
+import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.ZosResponse
+import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
+import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NASJONALT_READ
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NASJONALT_WRITE
@@ -273,6 +277,45 @@ internal class AttestasjonServiceTest :
             exception.message shouldBe "Mangler rettigheter til å se informasjon!"
         }
 
+        test("hent oppdrag kaster exception hvis det er over 1000 forskjellige identer i identifiserte oppdrag") {
+            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOS_READ))
+
+            coEvery { attestasjonRepository.getOppdrag(any(), any(), any(), any(), any()) } returns
+                List(1001) {
+                    Oppdrag(
+                        antAttestanter = 1,
+                        navnFaggruppe = "HELSETJENESTER FRIKORT TAK 1 OG 2",
+                        navnFagomraade = "Egenandelsrefusjon frikort tak 1",
+                        fagSystemId = it.toString(),
+                        oppdragGjelderId = GJELDER_ID.dropLast(4) + String.format("%04d", it),
+                        kodeFaggruppe = "FRIKORT",
+                        kodeFagomraade = "FRIKORT1",
+                        kostnadssted = ENHETSNUMMER_NOS,
+                        ansvarssted = null,
+                        oppdragsId = it,
+                    )
+                }
+
+            coEvery { skjermingService.getSkjermingForIdentListe(any(), any()) } throws
+                AssertionError("getSkjermingForIdentListe should not be called for more than 1000 idents")
+
+            val exception =
+                shouldThrow<AttestasjonException> {
+                    attestasjonService.getOppdrag(
+                        OppdragsRequest(
+                            gjelderId = null,
+                            fagSystemId = "2960",
+                            kodeFagGruppe = null,
+                            kodeFagOmraade = "MSRBAL",
+                            attestertStatus = ALLE,
+                        ),
+                        navIdent,
+                    )
+                }
+
+            exception.message shouldBe "Oppgitte søkekriterier gir for stort treff. Vennligst avgrens søket."
+        }
+
         test("getOppdragsdetaljer returnerer tom liste for et gitt oppdrag som ikke har attestasjonslinjer") {
             val result = attestasjonService.getOppdragsdetaljer(92345678, navIdent)
             result shouldBe OppdragsdetaljerDTO(emptyList(), navIdent.ident)
@@ -287,7 +330,7 @@ internal class AttestasjonServiceTest :
             result.saksbehandlerIdent shouldBe navIdent.ident
             result.oppdragsLinjeList.size shouldBe 6
 
-            val oppdragslinjeDTOList: List<OppdragslinjeDTO> = Json.decodeFromString("testdata/OppdragslinjeDTO_UFOREUT.json".readFromResource())
+            val oppdragslinjeDTOList: List<OppdragslinjeDTO> = Json.decodeFromString("testdata/oppdragslinjeDTO_UFOREUT.json".readFromResource())
             result.oppdragsLinjeList shouldContainExactly oppdragslinjeDTOList
         }
 
@@ -300,7 +343,7 @@ internal class AttestasjonServiceTest :
             result.saksbehandlerIdent shouldBe navIdent.ident
             result.oppdragsLinjeList.size shouldBe 10
 
-            val oppdragslinjeDTOList: List<OppdragslinjeDTO> = Json.decodeFromString("testdata/OppdragslinjeDTO_parallell_ytelser.json".readFromResource())
+            val oppdragslinjeDTOList: List<OppdragslinjeDTO> = Json.decodeFromString("testdata/oppdragslinjeDTO_parallell_ytelser.json".readFromResource())
             result.oppdragsLinjeList shouldContainExactly oppdragslinjeDTOList
 
             // Det er 2 attestasjoner på linjen med id 1

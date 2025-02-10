@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<tssSamhandlerData xmlns="http://www.rtv.no/NamespaceTSS">
+    <tssInputData>
+        <tssServiceRutine>
+            <samhandlerIDataB980>
+                <idOffTSS>80000415406</idOffTSS>
+                <hentNavn>J</hentNavn>
+                <brukerID>OB04</brukerID>
+            </samhandlerIDataB980>
+        </tssServiceRutine>
+    </tssInputData>
+    <tssOutputData>
+        <svarStatus>
+            <alvorligGrad>00</alvorligGrad>
+            <kodeMelding></kodeMelding>
+            <beskrMelding></beskrMelding>
+        </svarStatus>
+        <samhandlerODataB980>
+            <antIdenter>1</antIdenter>
+            <ident>
+                <idOff>00960510542</idOff>
+                <kodeIdentType>ORG</kodeIdentType>
+                <kodeSamhType>KRED</kodeSamhType>
+                <navnSamh>VOSS HERAD</navnSamh>
+                <avdelingsNr>01</avdelingsNr>
+                <offNrAvd></offNrAvd>
+                <avdelingsNavn></avdelingsNavn>
+                <idOffTSS>80000415406</idOffTSS>
+            </ident>
+        </samhandlerODataB980>
+    </tssOutputData>
+</tssSamhandlerData>

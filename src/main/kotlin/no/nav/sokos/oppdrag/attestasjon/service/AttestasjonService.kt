@@ -14,6 +14,7 @@ import no.nav.sokos.oppdrag.attestasjon.domain.toDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
+import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.repository.FagomraadeRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
@@ -67,6 +68,12 @@ class AttestasjonService(
             }
 
         val oppdragsListe = attestasjonRepository.getOppdrag(gjelderId, request.fagSystemId, fagomraader, request.attestertStatus.attestert, request.attestertStatus.filterEgenAttestert)
+
+        val identer = oppdragsListe.map { it.oppdragGjelderId }.distinct()
+        if (identer.size > 1000) {
+            throw AttestasjonException("Oppgitte søkekriterier gir for stort treff. Vennligst avgrens søket.")
+        }
+
         val statusFilterOppdragList =
             oppdragsListe
                 .takeIf { request.attestertStatus.filterEgenAttestert != null }
@@ -79,7 +86,7 @@ class AttestasjonService(
                 if (verifiedSkjermingForGjelderId) {
                     list.map { it.copy(erSkjermetForSaksbehandler = false) }
                 } else {
-                    val skjermingMap = skjermingService.getSkjermingForIdentListe(list.map { it.oppdragGjelderId }.distinct(), navIdent)
+                    val skjermingMap = skjermingService.getSkjermingForIdentListe(identer, navIdent)
                     list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.oppdragGjelderId] == true) }
                 }
             }.map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, navIdent)) }

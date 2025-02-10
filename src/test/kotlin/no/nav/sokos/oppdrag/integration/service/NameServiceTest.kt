@@ -12,12 +12,12 @@ import no.nav.sokos.oppdrag.attestasjon.Testdata.navIdent
 import no.nav.sokos.oppdrag.integration.client.ereg.EregClientService
 import no.nav.sokos.oppdrag.integration.client.ereg.Organisasjon
 import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
-import no.nav.sokos.oppdrag.integration.client.tp.TpClientService
+import no.nav.sokos.oppdrag.integration.client.samhandler.SamhandlerClientService
 
 private val pdlClientService = mockk<PdlClientService>()
-private val tpClientService = mockk<TpClientService>()
+private val samhandlerClientService = mockk<SamhandlerClientService>()
 private val eregClientService = mockk<EregClientService>()
-private val nameService = NameService(pdlClientService, tpClientService, eregClientService)
+private val nameService = NameService(pdlClientService, samhandlerClientService, eregClientService)
 
 internal class NameServiceTest :
     FunSpec({
@@ -70,11 +70,11 @@ internal class NameServiceTest :
             name shouldBe NameResponse("NAV Arbeid og ytelser")
         }
 
-        test("hent navn for gjelderId som er leverandørId") {
+        test("hent navn for gjelderId som er tssId") {
 
             val leverandorId = "1234567890123"
 
-            coEvery { tpClientService.getLeverandorNavn(any()) } returns "NAV Arbeid og ytelser"
+            coEvery { samhandlerClientService.getSamhandler(any()) } returns "NAV Arbeid og ytelser"
 
             val name = nameService.getNavn(leverandorId, navIdent)
 
