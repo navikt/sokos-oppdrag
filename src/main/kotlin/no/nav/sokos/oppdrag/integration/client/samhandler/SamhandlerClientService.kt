@@ -23,7 +23,7 @@ import no.nav.sokos.oppdrag.integration.metrics.Metrics
 
 private val logger = KotlinLogging.logger {}
 
-private const val BRUKER_ID = "OB04"
+private const val BRUKER_ID = "OB04ny"
 
 class SamhandlerClientService(
     private val jmsProducerService: JmsProducerService = JmsProducerService(),
