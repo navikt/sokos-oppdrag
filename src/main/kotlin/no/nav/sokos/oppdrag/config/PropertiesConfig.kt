@@ -38,6 +38,8 @@ object PropertiesConfig {
                 "REDIS_HOST" to "localhost",
                 "REDIS_PORT" to "6379",
                 "REDIS_PASSWORD" to "password",
+                "MQ_HOSTNAME" to "10.53.17.118",
+                "MQ_PORT" to "1413",
             ),
         )
 
@@ -107,8 +109,17 @@ object PropertiesConfig {
         val skjermetUrl: String = getOrEmpty("SKJERMING_URL"),
         val pdlScope: String = getOrEmpty("PDL_SCOPE"),
         val pdlUrl: String = getOrEmpty("PDL_URL"),
-        val tpUrl: String = getOrEmpty("TP_URL"),
         val zosUrl: String = getOrEmpty("ZOS_URL"),
+    )
+
+    data class MqProperties(
+        val mqHostname: String = getOrEmpty("MQ_HOSTNAME"),
+        val mqPort: Int = getOrEmpty("MQ_PORT").toInt(),
+        val mqQueueManagerName: String = getOrEmpty("MQ_QUEUE_MANAGER_NAME"),
+        val mqChannelName: String = getOrEmpty("MQ_CHANNEL_NAME"),
+        val mqServiceUsername: String = getOrEmpty("MQ_SERVICE_USERNAME"),
+        val mqServicePassword: String = getOrEmpty("MQ_SERVICE_PASSWORD"),
+        val mqTssSamhandlerServiceQueue: String = getOrEmpty("MQ_TSS_SAMHANDLER_SERVICE_QUEUE"),
     )
 
     enum class Profile {

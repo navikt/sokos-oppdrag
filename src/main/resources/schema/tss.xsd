@@ -1,0 +1,2150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2010 rel. 3 sp1 (x64) (http://www.altova.com) by XMLSpy 2009 Enterprise Ed., Installed for 30 users (with SMP from 2009-06-19 to 2010-06-20) (NAV ØKONOMITJENESTER) -->
+<!-- edited with XMLSPY v5 rel. 3 U (http://www.xmlspy.com) by Trygdeetaten (Rikstrygdeverket) -->
+<!-- 06.06.2011: lagt inn informasjon om rekvisisjon - informasjonselement 175 -->
+<xs:schema xmlns="http://www.rtv.no/NamespaceTSS" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.rtv.no/NamespaceTSS" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:element name="tssSamhandlerData">
+        <xs:annotation>
+            <xs:documentation>Dette skjema er basert på dokumentasjonen i GR.8410012.008 APP030 Interface Spesifikasjoner ver 0.9.doc</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:choice>
+                <xs:sequence>
+                    <xs:element name="tssInputData">
+                        <xs:complexType>
+                            <xs:choice>
+                                <xs:element name="tssServiceRutine" type="TServicerutiner"/>
+                                <xs:element name="tssAjourhold" type="Tajourføring"/>
+                            </xs:choice>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="tssOutputData" type="TOutputElementer" minOccurs="0"/>
+                </xs:sequence>
+                <xs:element name="tssInputDataAsyn">
+                    <xs:complexType>
+                        <xs:choice>
+                            <xs:element name="samhandlerIDataB970" type="samhandlerIDataB970Type"/>
+                        </xs:choice>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="tssOutputDataAsyn">
+                    <xs:complexType>
+                        <xs:choice>
+                            <xs:element name="samhandlerODataB970">
+                                <xs:complexType>
+                                    <xs:complexContent>
+                                        <xs:extension base="typeOD970"/>
+                                    </xs:complexContent>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:choice>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="Tdato">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver formatet og begrensningene til dato elementer som kommer fra/til TSS.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:whiteSpace value="collapse"/>
+            <xs:pattern value="\d{0}"/>
+            <xs:pattern value="\d{8}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="TServicerutiner">
+        <xs:choice>
+            <xs:element name="samhandlerIDataB910" type="samhandlerIDataB910Type"/>
+            <xs:element name="samhandlerIDataB920" type="samhandlerIDataB91AType"/>
+            <xs:element name="samhandlerIDataB930" type="samhandlerIDataB91AType"/>
+            <xs:element name="samhandlerIDataB931" type="samhandlerIDataB931Type"/>
+            <xs:element name="samhandlerIDataB940" type="samhandlerIDataB940Type"/>
+            <xs:element name="samhandlerIDataB950" type="samhandlerIDataB910Type"/>
+            <xs:element name="samhandlerIDataB960" type="samhandlerIDataB910Type"/>
+            <xs:element name="samhandlerIDataB961" type="samhandlerIDataB961Type"/>
+            <xs:element name="samhandlerIDataB980" type="samhandlerIDataB980Type"/>
+            <xs:element name="samhandlerIDataB985" type="samhandlerIDataB985Type"/>
+            <xs:element name="samhandlerIDataB98A" type="samhandlerIDataB98AType"/>
+            <xs:element name="samhandlerIDataB986" type="samhandlerIDataB986Type"/>
+            <xs:element name="samhandlerIDataB990" type="samhandlerIDataB990Type"/>
+            <xs:element name="samhandlerIDataB992" type="samhandlerIDataB992Type"/>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="Tajourføring">
+        <xs:sequence>
+            <xs:element name="systemInfo" type="systemInfoType">
+                <xs:annotation>
+                    <xs:documentation>Disse feltene skal alltid fylles ut av systemet. Brukeren skal aldri ha mulighet til å legge inn verdier her</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="samhandler" type="samhAjour110Type"/>
+            <xs:element name="samhIdData" type="samhAjour111Type" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="samhFagData" type="samhAjour120Type" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="samhAvdData" type="samhAjour125Type" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="adresseData" type="samhAjour130Type" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="kontoData" type="samhAjour140Type" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="kontaktData" type="samhAjour150Type" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="apningsTidData" type="samhAjour160Type" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="autorData" type="samhAjour170Type" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="samhRelasjonData" type="samhAjour180Type" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="avtaleData" type="samhAjour190Type" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TOutputElementer">
+        <xs:sequence>
+            <xs:element name="svarStatus" type="svarStatusType"/>
+            <xs:choice>
+                <xs:element name="ingenReturData"/>
+                <xs:element name="samhandlerODataB910" type="typeOD910"/>
+                <xs:element name="samhandlerODataB920" type="typeOD920"/>
+                <xs:element name="samhandlerODataB930" type="typeOD930"/>
+                <xs:element name="samhandlerODataB931" type="typeOD931"/>
+                <xs:element name="samhandlerODataB940">
+                    <xs:complexType>
+                        <xs:complexContent>
+                            <xs:extension base="typeOD940"/>
+                        </xs:complexContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="samhandlerODataB950" type="typeOD950"/>
+                <xs:element name="samhandlerODataB960" type="typeOD960"/>
+                <xs:element name="samhandlerODataB961" type="typeOD961"/>
+                <xs:element name="samhandlerODataB980" type="typeOD981"/>
+                <xs:element name="samhandlerODataB985" type="typeOD981"/>
+                <xs:element name="samhandlerODataB98A" type="typeOD982"/>
+                <xs:element name="samhandlerODataB986" type="typeOD981"/>
+                <xs:element name="samhandlerODataB990" type="typeOD990"/>
+                <xs:element name="samhandlerODataB992" type="typeOD992"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="systemInfoType">
+        <xs:annotation>
+            <xs:documentation>Beskriver systemgenerert informasjon</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="kilde">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:whiteSpace value="collapse"/>
+                        <xs:length value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="brukerID" type="Tbrukerid"/>
+            <xs:element name="kjoreNr">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="8"/>
+                        <xs:maxLength value="10"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhAjour110Type">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med i en 110-rekord ved oppdatering</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="idOff" type="Tidoff"/>
+            <xs:element name="kodeIdType" type="TkodeIdenttype"/>
+            <xs:element name="kodeSamhType" type="xs:string"/>
+            <xs:element name="datoSamhFom" type="Tdato"/>
+            <xs:element name="datoSamhTom" type="Tdato"/>
+            <xs:element name="navnSamh" type="Tbeskr40v"/>
+            <xs:element name="kodeSpraak" type="Tkode04v"/>
+            <xs:element name="etatsMerke">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:whiteSpace value="collapse"/>
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="utbetSperre">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kodeKontrInt" type="Tkode04v"/>
+            <xs:element name="kodeStatus" type="Tkode04v"/>
+            <xs:element name="oppdater" type="Tgyldig"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhAjour111Type">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med i en 111-rekord ved oppdatering</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="idAlternativ">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:length value="11"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kodeAltIdentType" type="TkodeIdenttype"/>
+            <xs:element name="datoIdentFom" type="Tdato"/>
+            <xs:element name="datoIdentTom" type="Tdato"/>
+            <xs:element name="gyldigIdent" type="Tgyldig"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhAjour120Type">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med i en 120-rekord ved oppdatering</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="kodeFagOmrade" type="xs:string"/>
+            <xs:element name="datoFagFom" type="Tdato"/>
+            <xs:element name="datoFagTom" type="Tdato"/>
+            <xs:element name="gyldigFag" type="Tgyldig"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhAjour125Type">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med i en 125-rekord ved oppdatering</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="avdNr" type="xs:string"/>
+            <xs:element name="avdNavn" type="Tbeskr40v"/>
+            <xs:element name="avdType" type="xs:string"/>
+            <xs:element name="datoAvdFom" type="Tdato"/>
+            <xs:element name="datoAvdTom" type="Tdato"/>
+            <xs:element name="gyldigAvd" type="Tgyldig"/>
+            <xs:element name="offNrAvd" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhAjour130Type">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med i en 130-rekord ved oppdatering</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="avdNr" type="xs:string"/>
+            <xs:element name="kodeAdrType" type="xs:string"/>
+            <xs:element name="kodeLand">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kommuneNr">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="postNr">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="\d{0}"/>
+                        <xs:pattern value="\d{4}"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="datoAdrFom" type="Tdato"/>
+            <xs:element name="datoAdrTom" type="Tdato"/>
+            <xs:element name="gyldigAdr" type="Tgyldig"/>
+            <xs:element name="adrLinjeData" type="adrLinjeType" minOccurs="0"/>
+            <xs:element name="adrRegionData" type="TAdrRegion" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TAdrRegion">
+        <xs:sequence>
+            <xs:element name="adrRegion" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="avdNr" type="xs:string"/>
+                        <xs:element name="kodeAdrType" type="xs:string"/>
+                        <xs:element name="kodeRegion" type="xs:string"/>
+                        <xs:element name="datoRegionFom" type="Tdato"/>
+                        <xs:element name="datoRegionTom" type="Tdato"/>
+                        <xs:element name="gyldigRegion" type="Tgyldig"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhAjour140Type">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med i en 140-rekord ved oppdatering</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="avdNr" type="xs:string"/>
+            <xs:element name="kodeKontoType" type="Tkodekontotype"/>
+            <xs:element name="giroNrInnland">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="11"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="giroNrUtland">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="36"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="bankNavn" type="Tbeskr40v"/>
+            <xs:element name="bankKode">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="36"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="swiftKode">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="11"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kodeLand">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="3"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kodeValuta">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="3"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="datoKontoFom" type="Tdato"/>
+            <xs:element name="datoKontoTom" type="Tdato"/>
+            <xs:element name="gyldigKonto" type="Tgyldig"/>
+            <xs:element name="utlBankAdrInfo" type="utlBankAdrType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhAjour150Type">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med i en 150-rekord ved oppdatering</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="avdNr" type="xs:string"/>
+            <xs:element name="kodeKontaktType" type="Tkodekontakttype"/>
+            <xs:element name="kontakt">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                        <xs:maxLength value="80"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="datoKontaktFom" type="Tdato"/>
+            <xs:element name="datoKontaktTom" type="Tdato"/>
+            <xs:element name="gyldigKontakt" type="Tgyldig"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhAjour160Type">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med i en 160-rekord ved oppdatering</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="avdNr" type="xs:string"/>
+            <xs:element name="kodeApnTidType" type="Tkodeapntidtype"/>
+            <xs:element name="kodeApnPeriode" type="Tkodeapnperiode"/>
+            <xs:element name="apningsTidFom" type="Thhmmss"/>
+            <xs:element name="apningsTidTom" type="Thhmmss"/>
+            <xs:element name="datoApningFom" type="Tdato"/>
+            <xs:element name="datoApningTom" type="Tdato"/>
+            <xs:element name="gyldigApning" type="Tgyldig"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhAjour170Type">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med i en 170-rekord ved oppdatering</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="kodeAutorType" type="xs:string"/>
+            <xs:element name="datoAutorFom" type="Tdato"/>
+            <xs:element name="datoAutorTom" type="Tdato"/>
+            <xs:element name="autorId">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="15"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="gyldigAutor" type="Tgyldig"/>
+            <xs:element name="autorRettInfo" type="TAutorRettInfo" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TAutorRettInfo">
+        <xs:sequence>
+            <xs:element name="autorRettighet" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="kodeAutorType" type="xs:string"/>
+                        <xs:element name="kodeAutorRettighet" type="xs:string"/>
+                        <xs:element name="datoARFom" type="Tdato"/>
+                        <xs:element name="datoARTom" type="Tdato"/>
+                        <xs:element name="datoVedtakGitt" type="Tdato"/>
+                        <xs:element name="datoVedtakMistet" type="Tdato"/>
+                        <xs:element name="gyldigAutor" type="Tgyldig"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhAjour180Type">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med i en 180-rekord ved oppdatering</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="idOff" type="Tidoff"/>
+            <xs:element name="kodeIdType" type="TkodeIdenttype"/>
+            <xs:element name="kodeSamhType" type="xs:string"/>
+            <xs:element name="kodeRelasjonRolle" type="xs:string"/>
+            <xs:element name="datoRelFom" type="Tdato"/>
+            <xs:element name="datoRelTom" type="Tdato"/>
+            <xs:element name="gyldigRelasjon" type="Tgyldig"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhAjour190Type">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med i en 190-rekord ved oppdatering</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="idOff" type="Tidoff"/>
+            <xs:element name="kodeIdType">
+                <xs:simpleType>
+                    <xs:restriction base="TkodeIdenttype">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kodeSamhType" type="xs:string"/>
+            <xs:element name="kodeAvtaleType">
+                <xs:simpleType>
+                    <xs:restriction base="Tkodeavtaletype">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="datoAvtaleFom">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="\d{8}"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="datoAvtaleTom" type="Tdato"/>
+            <xs:element name="avtaleNr">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="15"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="prosentAndel">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="\d{0}"/>
+                        <xs:pattern value="\d{1}"/>
+                        <xs:pattern value="\d{2}"/>
+                        <xs:pattern value="\d{3}"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="komNrTjeneste">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="gyldigAvtale" type="Tgyldig"/>
+            <xs:element name="avtRettighetData" type="samhAjour195Type" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhAjour195Type">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med i en 195-rekord ved oppdatering</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="idOff" type="Tidoff"/>
+            <xs:element name="kodeIdType">
+                <xs:simpleType>
+                    <xs:restriction base="TkodeIdenttype">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kodeSamhType" type="xs:string"/>
+            <xs:element name="kodeAvtaleType">
+                <xs:simpleType>
+                    <xs:restriction base="Tkodeavtaletype">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kodeAvtaleRett" type="xs:string"/>
+            <xs:element name="datoAvtaleRettFom" type="Tdato"/>
+            <xs:element name="datoAvtaleRettTom" type="Tdato"/>
+            <xs:element name="gyldigAvtaleRett" type="Tgyldig"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhandlerIDataB910Type">
+        <xs:annotation>
+            <xs:documentation>Dette er typen som beskriver spørsmålelementene, attributene og tekst  som input inn mot TSS</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice>
+                <xs:element name="idOffTSS" type="TTSSidoff"/>
+                <xs:element name="OFFid" type="TidOFF1"/>
+            </xs:choice>
+            <xs:element name="aktuellDato" type="Tdato"/>
+            <xs:element name="historikk" type="Thistorikk"/>
+            <xs:element name="brukerID" type="Tbrukerid">
+                <xs:annotation>
+                    <xs:documentation>Dette feltet skal ikke fylles ut av en bruker i et skjermbilde.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhandlerIDataB961Type">
+        <xs:annotation>
+            <xs:documentation>Dette er typen som beskriver spørsmålelementene, attributene og tekst  som input inn mot TSS</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice>
+                <xs:element name="idOffTSS" type="TTSSidoff"/>
+                <xs:element name="OFFid" type="TidOFF1"/>
+            </xs:choice>
+            <xs:element name="aktuellDato" type="Tdato"/>
+            <xs:element name="historikk" type="Thistorikk"/>
+            <xs:element name="brukerID" type="Tbrukerid">
+                <xs:annotation>
+                    <xs:documentation>Dette feltet skal ikke fylles ut av en bruker i et skjermbilde.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="aksjonsKode" type="xs:string"/>
+            <xs:element name="aksjonsKode2" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TidOFF1">
+        <xs:sequence>
+            <xs:element name="idOff" type="Tidoff"/>
+            <xs:element name="kodeIdType" type="TkodeIdenttype"/>
+            <xs:element name="kodeSamhType" type="xs:string"/>
+            <xs:element name="avdelingsNr" type="xs:string"/>
+            <xs:element name="offNrAvd" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TidOFF2">
+        <xs:sequence>
+            <xs:element name="idOff" type="Tidoff"/>
+            <xs:element name="kodeIdType" type="TkodeIdenttype"/>
+            <xs:element name="kodeSamhType" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhandlerIDataB91AType">
+        <xs:annotation>
+            <xs:documentation>Dette er typen som beskriver spørsmålelementene, attributene og tekst  som input inn mot TSS</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice>
+                <xs:element name="idOffTSS" type="TTSSidoff"/>
+                <xs:element name="OFFid" type="TidOFF2"/>
+            </xs:choice>
+            <xs:element name="aktuellDato" type="Tdato"/>
+            <xs:element name="historikk" type="Thistorikk"/>
+            <xs:element name="brukerID" type="Tbrukerid">
+                <xs:annotation>
+                    <xs:documentation>Dette feltet skal ikke fylles ut av en bruker i et skjermbilde.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhandlerIDataB931Type">
+        <xs:annotation>
+            <xs:documentation>Dette er typen som beskriver spørsmålelementene, attributene og tekst  som input inn mot TSS</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice>
+                <xs:element name="idOffTSS" type="TTSSidoff"/>
+                <xs:element name="OFFid" type="TidOFF2"/>
+            </xs:choice>
+            <xs:element name="kodeRelRolle" type="xs:string"/>
+            <xs:element name="kodeSamhType2" type="xs:string"/>
+            <xs:element name="kodeRelNiva" type="xs:string"/>
+            <xs:element name="buffnr" type="xs:string"/>
+            <xs:element name="aktuellDato" type="Tdato"/>
+            <xs:element name="historikk" type="Thistorikk"/>
+            <xs:element name="brukerID" type="Tbrukerid">
+                <xs:annotation>
+                    <xs:documentation>Dette feltet skal ikke fylles ut av en bruker i et skjermbilde.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ak1" type="xs:string"/>
+            <xs:element name="ak2" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhandlerIDataB970Type">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med ved spørring mot 970</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="kodeSamhType" type="xs:string"/>
+            <xs:element name="kodeFagOmrade" type="xs:string"/>
+            <xs:element name="kodeAvtaleType" type="Tkodeavtaletype"/>
+            <xs:element name="aktuellDato" type="Tdato"/>
+            <xs:element name="historikk" type="Thistorikk"/>
+            <xs:element name="brukerID" type="Tbrukerid">
+                <xs:annotation>
+                    <xs:documentation>Dette feltet skal ikke fylles ut av en bruker i et skjermbilde.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="antStatOmrader" type="Tantallforekomster"/>
+            <xs:element name="statOmrader" type="omradeTabellType"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhandlerIDataB980Type">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med ved spørring mot 980</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice>
+                <xs:element name="idOffTSS" type="TTSSidoff"/>
+                <xs:element name="OFFid" type="TidOFF1"/>
+            </xs:choice>
+            <xs:element name="hentNavn" type="xs:string"/>
+            <xs:element name="brukerID" type="Tbrukerid">
+                <xs:annotation>
+                    <xs:documentation>Dette feltet skal ikke fylles ut av en bruker i et skjermbilde.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhandlerIDataB985Type">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med ved spørring mot 985</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="navnSamh" type="Tbeskr40v"/>
+            <xs:element name="kodeSamhType" type="xs:string"/>
+            <xs:element name="delNavn" type="xs:string"/>
+            <xs:element name="buffnr" type="xs:string"/>
+            <xs:element name="brukerID" type="Tbrukerid">
+                <xs:annotation>
+                    <xs:documentation>Dette feltet skal ikke fylles ut av en bruker i et skjermbilde.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhandlerIDataB98AType">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med ved spørring mot 985</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="navnSamh" type="Tbeskr40v"/>
+            <xs:element name="kodeSamhType" type="xs:string"/>
+            <xs:element name="delNavn" type="xs:string"/>
+            <xs:element name="buffnr" type="xs:string"/>
+            <xs:element name="brukerID" type="Tbrukerid">
+                <xs:annotation>
+                    <xs:documentation>Dette feltet skal ikke fylles ut av en bruker i et skjermbilde.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="aksjonsKode" type="xs:string"/>
+            <xs:element name="aksjonsKode2" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhandlerIDataB986Type">
+        <xs:annotation>
+            <xs:documentation>Inneholder elementene som skal være med ved spørring mot 985</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="typeGironr" type="xs:string"/>
+            <xs:element name="giroNummer" type="xs:string"/>
+            <xs:element name="brukerID" type="Tbrukerid">
+                <xs:annotation>
+                    <xs:documentation>Dette feltet skal ikke fylles ut av en bruker i et skjermbilde.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhandlerIDataB990Type">
+        <xs:annotation>
+            <xs:documentation>DivInneholder elementene som skal være med ved spørring mot 940</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="kodeTabell" type="xs:string"/>
+            <xs:element name="brukerID" type="Tbrukerid">
+                <xs:annotation>
+                    <xs:documentation>Dette feltet skal ikke fylles ut av en bruker i et skjermbilde.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhandlerIDataB992Type">
+        <xs:annotation>
+            <xs:documentation>DivInneholder elementene som skal være med ved spørring mot 940</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="kodeTabell" type="xs:string"/>
+            <xs:element name="brukerID" type="Tbrukerid">
+                <xs:annotation>
+                    <xs:documentation>Dette feltet skal ikke fylles ut av en bruker i et skjermbilde.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="buffnr" type="xs:string"/>
+            <xs:element name="aksjonsKode" type="xs:string"/>
+            <xs:element name="aksjonsKode2" type="xs:string"/>
+            <xs:element name="kilde" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="Tbrukerid">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver brukerident elementer</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="8"/>
+            <xs:minLength value="0" fixed="false"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Thistorikk">
+        <xs:annotation>
+            <xs:documentation>Dette er en type for å beskrive historikkvalg elementer</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="0"/>
+            <xs:maxLength value="1"/>
+            <xs:enumeration value="J"/>
+            <xs:enumeration value=""/>
+            <xs:enumeration value="N"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Tkodeavtaletype">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver kodeelementer for avtaletype</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="omradeTabellType">
+        <xs:annotation>
+            <xs:documentation>Dette er en  type som beskriver elementene til et område</xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="TAdrOmrade">
+        <xs:sequence>
+            <xs:element name="typeOmrade" type="Ttypeomrade"/>
+            <xs:element name="omrade">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:whiteSpace value="collapse"/>
+                        <xs:minLength value="1"/>
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="postNr">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:whiteSpace value="collapse"/>
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="Tidoff">
+        <xs:annotation>
+            <xs:documentation>Dette er en type for å beskrive personid elementer</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="4"/>
+            <xs:maxLength value="11"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="TTSSidoff">
+        <xs:annotation>
+            <xs:documentation>Dette er en type for å beskrive TSS id-elementer</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:length value="11"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Ttssformat">
+        <xs:annotation>
+            <xs:documentation>Denne typen beskriver dataformat elementer til TSS (COBOL eller XML)</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:length value="3"/>
+            <xs:enumeration value="COB"/>
+            <xs:enumeration value="XML"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Ttidreg">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver tidspunktelementer for registrering av data  i TSS</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="12"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="TkodeIdenttype">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver kodeelementer  til en identitet</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:whiteSpace value="collapse"/>
+            <xs:maxLength value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="samhandlerType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene osv til en samhandler</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="idOff" type="Tidoff"/>
+            <xs:element name="kodeIdentType" type="TkodeIdenttype"/>
+            <xs:element name="kodeSamhType" type="xs:string"/>
+            <xs:element name="beskSamhType">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="30"/>
+                        <xs:whiteSpace value="collapse"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="datoSamhFom" type="Tdato"/>
+            <xs:element name="datoSamhTom" type="Tdato"/>
+            <xs:element name="navnSamh">
+                <xs:simpleType>
+                    <xs:restriction base="Tbeskr40">
+                        <xs:minLength value="0"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kodeSpraak">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="etatsMerke" type="Tgyldig"/>
+            <xs:element name="utbetSperre" type="Tgyldig"/>
+            <xs:element name="kodeKontrInt">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="beskrKontrInt">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="30"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kodeStatus">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="beskrStatus">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="26"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kilde" type="xs:string"/>
+            <xs:element name="brukerId" type="Tbrukerid"/>
+            <xs:element name="tidReg" type="Ttidreg"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhIDType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til en samhandlerID </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="idAlternativ">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                        <xs:maxLength value="11"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kodeAltIdentType" type="TkodeIdenttype"/>
+            <xs:element name="beskrAltIdentType">
+                <xs:simpleType>
+                    <xs:restriction base="Tbeskr40">
+                        <xs:minLength value="0"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="datoIdentFom" type="Tdato"/>
+            <xs:element name="datoIdentTom" type="Tdato"/>
+            <xs:element name="gyldigIdent" type="Tgyldig"/>
+            <xs:element name="kilde">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="brukerId" type="Tbrukerid"/>
+            <xs:element name="tidReg" type="Ttidreg"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhFagType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til en samhandlerfag</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="kodeFagOmrade" type="xs:string"/>
+            <xs:element name="beskrFagOmrade" type="Tbeskr40v"/>
+            <xs:element name="datoFagFom" type="Tdato"/>
+            <xs:element name="datoFagTom" type="Tdato"/>
+            <xs:element name="gyldigFag" type="Tgyldig"/>
+            <xs:element name="kilde" type="xs:string"/>
+            <xs:element name="brukerId" type="Tbrukerid"/>
+            <xs:element name="tidReg" type="Ttidreg"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhAvdPraType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til en avdeling - praksis</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="avdNr" type="xs:string"/>
+            <xs:element name="avdNavn" type="Tbeskr40v"/>
+            <xs:element name="typeAvd" type="xs:string"/>
+            <xs:element name="beskrTypeAvd" type="xs:string"/>
+            <xs:element name="datoAvdFom" type="Tdato"/>
+            <xs:element name="datoAvdTom" type="Tdato"/>
+            <xs:element name="gyldigAvd" type="Tgyldig"/>
+            <xs:element name="idOffTSS" type="TTSSidoff"/>
+            <xs:element name="offNrAvd" type="xs:string"/>
+            <xs:element name="kilde" type="xs:string"/>
+            <xs:element name="brukerId" type="Tbrukerid"/>
+            <xs:element name="tidReg" type="Ttidreg"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="adresseGrpType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til en adresse gruppe</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="avdNr" type="xs:string"/>
+            <xs:element name="kodeAdresseType" type="xs:string"/>
+            <xs:element name="beskrAdresseType" type="Tbeskr40v"/>
+            <xs:element name="kodeLand">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:whiteSpace value="collapse"/>
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kommuneNr">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:whiteSpace value="collapse"/>
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="postNr">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:whiteSpace value="collapse"/>
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="poststed" type="xs:string"/>
+            <xs:element name="datoAdresseFom" type="Tdato"/>
+            <xs:element name="datoAdresseTom" type="Tdato"/>
+            <xs:element name="gyldigAdresse" type="Tgyldig"/>
+            <xs:element name="kilde" type="xs:string"/>
+            <xs:element name="brukerId" type="Tbrukerid"/>
+            <xs:element name="tidReg" type="Ttidreg"/>
+            <xs:element name="antAdrLinje" type="Tantallforekomster"/>
+            <xs:element name="adrLinjeInfo" type="adrLinjeType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="Tantallforekomster">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver formatet og begrensningene ti elementer som gjelder antall forekomster</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:whiteSpace value="collapse"/>
+            <xs:pattern value="\d{0}"/>
+            <xs:pattern value="\d{1}"/>
+            <xs:pattern value="\d{2}"/>
+            <xs:pattern value="\d{3}"/>
+            <xs:pattern value="\d{4}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="adresseGrpInfoType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene som brukes til gruppe adresse data</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="adresse" type="adresseGrpType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="Tgyldig">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver formatet/begrensninene til elementer som handler om gyldihet</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:whiteSpace value="collapse"/>
+            <xs:minLength value="0"/>
+            <xs:maxLength value="1"/>
+            <xs:enumeration value="J"/>
+            <xs:enumeration value="N"/>
+            <xs:enumeration value=""/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Tprogramid">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver formatet/begrensninene til elementer som handler om identiten til en modul</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="8"/>
+            <xs:minLength value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Tkodekontotype">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver formatet/begrensninene til elementer som handler om kontortype koder</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:length value="4"/>
+            <xs:enumeration value="BANK"/>
+            <xs:enumeration value="SJKK"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Tkodekontakttype">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver formatet/begrensninene til elementer som handler om kontakttype koder</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:whiteSpace value="collapse"/>
+            <xs:maxLength value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Tbeskr40">
+        <xs:annotation>
+            <xs:documentation>Denne typen beskriver kodebeskrivelse elementer</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="40"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Ttypeomrade">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver formatet/begrensninene til elementer som handler om område typer</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:length value="1"/>
+            <xs:enumeration value="R"/>
+            <xs:enumeration value="F"/>
+            <xs:enumeration value="K"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="adrRegionInfoType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til samhandler regionadresser</xs:documentation>
+        </xs:annotation>
+        <xs:sequence maxOccurs="unbounded">
+            <xs:element name="adrRegion" type="adrRegionType"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="relSamhType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til en relasjons samhandler </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="idAlternativ">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:whiteSpace value="collapse"/>
+                        <xs:maxLength value="11"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kodeAltIdentType" type="TkodeIdenttype"/>
+            <xs:element name="beskrAltIdentType">
+                <xs:simpleType>
+                    <xs:restriction base="Tbeskr40">
+                        <xs:minLength value="0"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="datoIdentFom" type="Tdato"/>
+            <xs:element name="datoIdentTom" type="Tdato"/>
+            <xs:element name="gyldigIdent" type="Tgyldig"/>
+            <xs:element name="kilde">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="brukerId" type="Tbrukerid"/>
+            <xs:element name="tidReg" type="Ttidreg"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="relasjonSamhType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til samhandler adresse data</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="samhRelasjonType">
+                <xs:sequence>
+                    <xs:element name="antRelSamh" type="Tantallforekomster"/>
+                    <xs:element name="relSamhandler" type="relSamhType" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="adresseSamhType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til samhandler adresse data</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="adresseGrpType">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="antAdrRegion" type="Tantallforekomster"/>
+                    <xs:element name="adrRegionInfo" type="adrRegionInfoType" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:simpleType name="Tkodeapntidtype">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver formatet/begrensninene til elementer som handler om åpningstid</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="4"/>
+            <xs:minLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Tkodeapnperiode">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver formatet/begrensninene til elementer som handler om åpningsperioder</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="4"/>
+            <xs:minLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Thhmmss">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver formatet/begrensninene til elementer som handler om tid (hour-minute-second)</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-2][0-9]\.[0-6][0-9]\.[0-6][0-9]"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="kontoType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til samhandler konto/giro data</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="avdNr" type="xs:string"/>
+            <xs:element name="kodeKontoType" type="Tkodekontotype"/>
+            <xs:element name="beskrKontoType" type="Tbeskr40v"/>
+            <xs:element name="gironrInnland">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="11"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="gironrUtland">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="36"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="bankNavn">
+                <xs:simpleType>
+                    <xs:restriction base="Tbeskr40">
+                        <xs:minLength value="0"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="bankKode">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="36"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="swiftKode">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="11"/>
+                        <xs:minLength value="0"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kodeLand">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="3"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kodeValuta">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="3"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="datoKontoFom" type="Tdato"/>
+            <xs:element name="datoKontoTom" type="Tdato"/>
+            <xs:element name="gyldigKonto" type="Tgyldig"/>
+            <xs:element name="kilde">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="brukerId" type="Tbrukerid"/>
+            <xs:element name="tidReg" type="Ttidreg"/>
+            <xs:element name="antUtlBankAdr" type="Tantallforekomster"/>
+            <xs:element name="utlBankAdrInfo" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="utlBankAdr" type="utlBankAdrType" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="kontaktType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til samhandler kontakter </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="avdNr" type="xs:string"/>
+            <xs:element name="kodeKontaktType">
+                <xs:simpleType>
+                    <xs:restriction base="Tkodekontakttype">
+                        <xs:whiteSpace value="collapse"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="beskrKontaktType" type="Tbeskr40v"/>
+            <xs:element name="kontakt">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                        <xs:maxLength value="80"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="datoKontaktFom" type="Tdato"/>
+            <xs:element name="datoKontaktTom" type="Tdato"/>
+            <xs:element name="gyldigKontakt" type="Tgyldig"/>
+            <xs:element name="kilde">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="brukerId" type="Tbrukerid"/>
+            <xs:element name="tidReg" type="Ttidreg"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="autorisasjonType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til autorisasjoner </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="kodeAutorType" type="xs:string"/>
+            <xs:element name="beskrAutorType" type="Tbeskr40v"/>
+            <xs:element name="datoAutorFom" type="Tdato"/>
+            <xs:element name="datoAutorTom" type="Tdato"/>
+            <xs:element name="autorId">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="15"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="gyldigAutor" type="Tgyldig"/>
+            <xs:element name="kilde">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="brukerId" type="Tbrukerid"/>
+            <xs:element name="tidReg" type="Ttidreg"/>
+            <xs:element name="antAutorRett" type="Tantallforekomster" minOccurs="0"/>
+            <xs:element name="autorRettInfo" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence minOccurs="0">
+                        <xs:element name="autorRettighet" type="autorRettighetType" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhRelasjonType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til samhandler relasjoner</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="idOff" type="Tidoff"/>
+            <xs:element name="kodeIdentTypeU" type="TkodeIdenttype"/>
+            <xs:element name="beskrIdentTypeU" type="Tbeskr40v"/>
+            <xs:element name="kodeSamhTypeU" type="xs:string"/>
+            <xs:element name="beskrSamhTypeU" type="Tbeskr40v"/>
+            <xs:element name="kodeRelRolle" type="xs:string"/>
+            <xs:element name="beskrRelRolle" type="Tbeskr40v"/>
+            <xs:element name="datoRelasjonFom" type="Tdato"/>
+            <xs:element name="datoRelasjonTom" type="Tdato"/>
+            <xs:element name="gyldigRelasjon" type="Tgyldig"/>
+            <xs:element name="nivaRelasjon" type="xs:string"/>
+            <xs:element name="kilde" type="xs:string"/>
+            <xs:element name="brukerId" type="Tbrukerid"/>
+            <xs:element name="tidReg" type="Ttidreg"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="avtaleType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til samhandler  avtaler</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="idOff" type="Tidoff"/>
+            <xs:element name="kodeIdentTypeU" type="TkodeIdenttype"/>
+            <xs:element name="kodeSamhTypeU" type="xs:string"/>
+            <xs:element name="kodeAvtaleType" type="Tkodeavtaletype"/>
+            <xs:element name="beskrAvtaleType" type="Tbeskr40v"/>
+            <xs:element name="datoAvtaleFom" type="Tdato"/>
+            <xs:element name="datoAvtaleTom" type="Tdato"/>
+            <xs:element name="avtaleNr">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="15"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="prosentAndel">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value="\d{0}"/>
+                        <xs:pattern value="\d{1}"/>
+                        <xs:pattern value="\d{2}"/>
+                        <xs:pattern value="\d{3}"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kommNrTjeneste">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="gyldigAvtale" type="Tgyldig"/>
+            <xs:element name="kilde" type="xs:string"/>
+            <xs:element name="brukerId" type="Tbrukerid"/>
+            <xs:element name="tidReg" type="Ttidreg"/>
+            <xs:element name="antAvtRett" type="Tantallforekomster"/>
+            <xs:element name="avtRettInfo" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="avtaleRettighet" type="avtaleRettType" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="samhandlerIDataB940Type">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til samhandler adresse data</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="kodeSamhType">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kodeFagOmrade" type="xs:string"/>
+            <xs:element name="kodeAvtaleType" type="Tkodeavtaletype"/>
+            <xs:element name="kodeAdresseType" type="xs:string"/>
+            <xs:element name="navnSamh" type="Tbeskr40v"/>
+            <xs:element name="buffnr" type="xs:string"/>
+            <xs:element name="brukerID" type="Tbrukerid">
+                <xs:annotation>
+                    <xs:documentation>Dette feltet skal ikke fylles ut av en bruker i et skjermbilde.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="typeOmrade" type="Ttypeomrade"/>
+            <xs:element name="omrade">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:whiteSpace value="collapse"/>
+                        <xs:minLength value="1"/>
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="postNr">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:whiteSpace value="collapse"/>
+                        <xs:maxLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="avtaleRettType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til samhandler avtalerettigheter</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="idOff" type="Tidoff"/>
+            <xs:element name="kodeIdentTypeU" type="TkodeIdenttype"/>
+            <xs:element name="kodeSamhTypeU" type="xs:string"/>
+            <xs:element name="kodeAvtaleType" type="Tkodeavtaletype"/>
+            <xs:element name="kodeAvtaleRett" type="xs:string"/>
+            <xs:element name="beskrAvtaleRett" type="Tbeskr40v"/>
+            <xs:element name="datoAvtaleRettFom" type="Tdato"/>
+            <xs:element name="datoAvtaleRettTom" type="Tdato"/>
+            <xs:element name="gyldigAvtaleRett" type="Tgyldig"/>
+            <xs:element name="kilde" type="xs:string"/>
+            <xs:element name="brukerId" type="Tbrukerid"/>
+            <xs:element name="tidReg" type="Ttidreg"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="adrLinjeType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til samhandler adresser</xs:documentation>
+        </xs:annotation>
+        <xs:sequence maxOccurs="unbounded">
+            <xs:element name="adresseLinje">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                        <xs:maxLength value="60"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="autorRettighetType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til samhandler autorisasjonrettigheter</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="kodeAutorType" type="xs:string"/>
+            <xs:element name="kodeAutRett" type="xs:string"/>
+            <xs:element name="beskrAutRett" type="Tbeskr40v"/>
+            <xs:element name="datoAutRettFom" type="Tdato"/>
+            <xs:element name="datoAutRettTom" type="Tdato"/>
+            <xs:element name="datoVedtakGitt" type="Tdato"/>
+            <xs:element name="datoVedtakMistet" type="Tdato"/>
+            <xs:element name="gyldigAutRett" type="Tgyldig"/>
+            <xs:element name="kilde" type="xs:string"/>
+            <xs:element name="brukerId" type="Tbrukerid"/>
+            <xs:element name="tidReg" type="Ttidreg"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="rekvisisjonType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til samhandler rekvisisjonsrettighet</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="kodeRekvisisjonRett" type="xs:string"/>
+            <xs:element name="beskrRekvisisjonRett" type="Tbeskr40v"/>
+            <xs:element name="datoRekRettFom" type="Tdato"/>
+            <xs:element name="datoRekRettTom" type="Tdato"/>
+            <xs:element name="datoVedtakGitt" type="Tdato"/>
+            <xs:element name="datoVedtakMistet" type="Tdato"/>
+            <xs:element name="gyldigRekRett" type="Tgyldig"/>
+            <xs:element name="kilde" type="xs:string"/>
+            <xs:element name="brukerId" type="Tbrukerid"/>
+            <xs:element name="tidReg" type="Ttidreg"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="utlBankAdrType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til samhandler utenlandske bankadresser</xs:documentation>
+        </xs:annotation>
+        <xs:sequence maxOccurs="unbounded">
+            <xs:element name="adresse">
+                <xs:simpleType>
+                    <xs:restriction base="Tbeskr40">
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="adrRegionType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til samhandler adresseregioner</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="avdNr" type="xs:string"/>
+            <xs:element name="kodeAdrType" type="xs:string"/>
+            <xs:element name="kodeRegion" type="xs:string"/>
+            <xs:element name="beskrRegion" type="Tbeskr40v"/>
+            <xs:element name="datoRegionFom" type="Tdato"/>
+            <xs:element name="datoRegionTom" type="Tdato"/>
+            <xs:element name="gyldigRegion" type="Tgyldig"/>
+            <xs:element name="kilde" type="xs:string"/>
+            <xs:element name="brukerId" type="Tbrukerid"/>
+            <xs:element name="tidReg" type="Ttidreg"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ID100Type">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementene til informasjonselement 100</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="idKode" maxOccurs="11">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="3"/>
+                        <xs:minLength value="3"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="data" maxOccurs="11">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:maxLength value="200"/>
+                        <xs:minLength value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="Tbeskr40v">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver formatet/begrensninene til elementerr som handler om tekstbeskrivelser (40-sifre, valgfritt)</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:whiteSpace value="collapse"/>
+            <xs:minLength value="0"/>
+            <xs:maxLength value="40"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Tbeskr30v">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver formatet/begrensninene til elementerr som handler om tekstbeskrivelser (30-sifre, valgfritt)</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="0"/>
+            <xs:maxLength value="30"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Tkode04v">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver formatet/begrensninene til elementer som handler om 4-sifre koder (valgfritt)</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="0"/>
+            <xs:maxLength value="4"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="svarStatusType">
+        <xs:annotation>
+            <xs:documentation>Dette er en type som beskriver elementer, attributer og tekst til svarstatus for data som kommer fra TSS</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="alvorligGrad">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="1"/>
+                        <xs:maxLength value="2"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kodeMelding">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="8"/>
+                        <xs:whiteSpace value="collapse"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="beskrMelding">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="0"/>
+                        <xs:maxLength value="75"/>
+                        <xs:whiteSpace value="collapse"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="kodeIdType" type="TkodeIdenttype" minOccurs="0"/>
+            <xs:element name="idOff" type="Tidoff" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeSamhandlere">
+        <xs:annotation>
+            <xs:documentation>Basistypen for å beskrive samhandlere</xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="Samhandler">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver alle feltene i en enkelt samhandlerrelasjon.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="typeSamhandlere">
+                <xs:sequence>
+                    <xs:element name="samhandler110" type="typeSamhandler"/>
+                    <xs:element name="alternativId111" type="typeAltId"/>
+                    <xs:element name="samhandlerFag120" type="typeSamhFag" minOccurs="0"/>
+                    <xs:element name="samhandlerAvd125" type="typeSamhAvd" minOccurs="0"/>
+                    <xs:element name="adresse130" type="typeSamhAdr" minOccurs="0"/>
+                    <xs:element name="konto140" type="typeSamhKonto" minOccurs="0"/>
+                    <xs:element name="kontakter150" type="typeSamhKontakt" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="typeOD910">
+        <xs:annotation>
+            <xs:documentation>Her beskrives returfeltene fra 910</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antallSamhandlere" type="xs:string"/>
+            <xs:element name="enkeltSamhandler" type="Samhandler" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeOD920">
+        <xs:annotation>
+            <xs:documentation>Her beskrives returfeltene fra 920</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antallSamhandlere" type="xs:string"/>
+            <xs:element name="enkeltSamhandler" type="typeSamhandlerRoller" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeRoAuRe">
+        <xs:annotation>
+            <xs:documentation>Basistype for å beskrive roller</xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="typeSamhandlerRoller">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver alle feltene i en enkelt samhandlerrelasjon.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="typeRoAuRe">
+                <xs:sequence>
+                    <xs:element name="samhandler110" type="typeSamhandler"/>
+                    <xs:element name="autorisasjon170" type="typeAutorisasjon"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="typeOD930">
+        <xs:annotation>
+            <xs:documentation>Her beskrives returfeltene fra 930</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antallSamhandlere" type="xs:string"/>
+            <xs:element name="enkeltSamhandler" type="typeRelasjoner" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeRelAvt">
+        <xs:annotation>
+            <xs:documentation>Basistype for å beskrive avtaler</xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="typeRelasjoner">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver alle feltene i en enkelt samhandlerrelasjon.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="typeRelAvt">
+                <xs:sequence>
+                    <xs:element name="samhandler110" type="typeSamhandler"/>
+                    <xs:element name="relasjoner180" type="typeRelAvtaler"/>
+                    <xs:element name="avtaler190" type="typeAvtaler"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="typeOD931">
+        <xs:annotation>
+            <xs:documentation>Her beskrives returfeltene fra 931</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antallSamhandlere" type="xs:string"/>
+            <xs:element name="enkeltSamhandler" type="typeRel931" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeRela">
+        <xs:annotation>
+            <xs:documentation>Basistype for å beskrive avtaler</xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="typeRel931">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver alle feltene i en enkelt samhandlerrelasjon.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="typeRela">
+                <xs:sequence>
+                    <xs:element name="samhandler110" type="typeSamhandler"/>
+                    <xs:element name="alternativId111" type="typeAltId"/>
+                    <xs:element name="samhandlerAvd125" type="typeSamhAvd" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="typeOD950">
+        <xs:annotation>
+            <xs:documentation>Her beskrives returfeltene fra 950</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antallSamhandlere" type="xs:string"/>
+            <xs:element name="enkeltSamhandler" type="typeApningstider" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeOppeTid">
+        <xs:annotation>
+            <xs:documentation>Basistype for å beskrive åpningstider</xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="typeApningstider">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver alle feltene i en enkelt samhandlerrelasjon.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="typeOppeTid">
+                <xs:sequence>
+                    <xs:element name="samhandler110" type="typeSamhandler"/>
+                    <xs:element name="samhandlerAvd125" type="typeSamhAvd"/>
+                    <xs:element name="apningstider160" type="typeApning"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="typeApning">
+        <xs:annotation>
+            <xs:documentation>Avdeling - praksis til en samhandler</xs:documentation>
+        </xs:annotation>
+        <xs:sequence minOccurs="0">
+            <xs:element name="antATider" type="Tantallforekomster"/>
+            <xs:element name="apningsTider" type="TapningTid" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TapningTid">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver alle feltene i en .</xs:documentation>
+        </xs:annotation>
+        <xs:sequence minOccurs="0">
+            <xs:element name="apningsTid" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="avdelingsNr" type="xs:string"/>
+                        <xs:element name="kodeApnTidType" type="Tkodeapntidtype"/>
+                        <xs:element name="beskrApnTidType" type="Tbeskr40v"/>
+                        <xs:element name="kodeApnPeriode" type="Tkodeapnperiode"/>
+                        <xs:element name="beskrApnPeriode" type="Tbeskr40v"/>
+                        <xs:element name="ApningsTidFom" type="Thhmmss"/>
+                        <xs:element name="ApningsTidTom" type="Thhmmss"/>
+                        <xs:element name="datoApningFom" type="Tdato"/>
+                        <xs:element name="datoApningTom" type="Tdato"/>
+                        <xs:element name="gyldigApning" type="Tgyldig"/>
+                        <xs:element name="kilde" type="xs:string"/>
+                        <xs:element name="brukerId" type="Tbrukerid"/>
+                        <xs:element name="tidReg" type="Ttidreg"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeOD960">
+        <xs:annotation>
+            <xs:documentation>Her beskrives returfeltene fra 960</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antallSamhandlere" type="xs:string"/>
+            <xs:element name="enkeltSamhandler" type="typeKomplett" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeOD961">
+        <xs:annotation>
+            <xs:documentation>Her beskrives returfeltene fra 961</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antallSamhandlere" type="xs:string"/>
+            <xs:element name="enkeltSamhandler" type="typeKomplett61" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeKompSam">
+        <xs:annotation>
+            <xs:documentation>Basistype for å beskrive en komplett samhandler</xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="typeKomplett">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver alle feltene i en enkelt samhandlerrelasjon.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="typeKompSam">
+                <xs:sequence>
+                    <xs:element name="samhandler110" type="typeSamhandler"/>
+                    <xs:element name="alternativId111" type="typeAltId"/>
+                    <xs:element name="samhandlerFag120" type="typeSamhFag" minOccurs="0"/>
+                    <xs:element name="samhandlerAvd125" type="typeSamhAvd" minOccurs="0"/>
+                    <xs:element name="adresse130" type="typeSamhAdr" minOccurs="0"/>
+                    <xs:element name="konto140" type="typeSamhKonto" minOccurs="0"/>
+                    <xs:element name="kontakter150" type="typeSamhKontakt" minOccurs="0"/>
+                    <xs:element name="autorisasjon170" type="typeAutorisasjon" minOccurs="0"/>
+                    <xs:element name="relasjoner180" type="typeRelAvtaler" minOccurs="0"/>
+                    <xs:element name="avtaler190" type="typeAvtaler" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="typeKomplett61">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver alle feltene i en enkelt samhandlerrelasjon.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="typeKompSam">
+                <xs:sequence>
+                    <xs:element name="samhandler110" type="typeSamhandler"/>
+                    <xs:element name="alternativId111" type="typeAltId"/>
+                    <xs:element name="samhandlerFag120" type="typeSamhFag" minOccurs="0"/>
+                    <xs:element name="samhandlerAvd125" type="typeSamhAvd" minOccurs="0"/>
+                    <xs:element name="adresse130" type="typeSamhAdr" minOccurs="0"/>
+                    <xs:element name="konto140" type="typeSamhKonto" minOccurs="0"/>
+                    <xs:element name="kontakter150" type="typeSamhKontakt" minOccurs="0"/>
+                    <xs:element name="autorisasjon170" type="typeAutorisasjon" minOccurs="0"/>
+                    <xs:element name="rekvisisjon175" type="typeRekvisisjon" minOccurs="0"/>
+                    <xs:element name="relasjoner180" type="typeRelAvtaler" minOccurs="0"/>
+                    <xs:element name="avtaler190" type="typeAvtaler" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="typeOD970">
+        <xs:annotation>
+            <xs:documentation>Her beskrives returfeltene fra 970</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="samhandler110" type="typeSamhandler"/>
+            <xs:element name="alternativId111" type="typeAltId"/>
+            <xs:element name="samhandlerFag120" type="typeSamhFag"/>
+            <xs:element name="autorisasjon170" type="typeAutorisasjon"/>
+            <xs:element name="relasjoner180" type="typeRelAvtaler"/>
+            <xs:element name="avtaler190" type="typeAvtaler"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeOD940">
+        <xs:annotation>
+            <xs:documentation>Her beskrives returfeltene fra 940</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antallSamhandlere" type="xs:string"/>
+            <xs:element name="enkeltSamhandler" type="typeKomp940" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeKomp940">
+        <xs:annotation>
+            <xs:documentation>Her beskrives returfeltene fra 940</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="samhandler110" type="typeSamhandler"/>
+            <xs:element name="samhandlerAvd125" type="typeSamhAvd"/>
+            <xs:element name="adresse130" type="typeSamhAdr"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeOD981">
+        <xs:annotation>
+            <xs:documentation>Her beskrives returfeltene fra 980</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antIdenter" type="Tantallforekomster"/>
+            <xs:element name="ident" type="identOffEks" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="identOffEks">
+        <xs:annotation>
+            <xs:documentation>Her beskrives returfeltene fra 980</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="idOff" type="Tidoff"/>
+            <xs:element name="kodeIdentType" type="TkodeIdenttype"/>
+            <xs:element name="kodeSamhType" type="xs:string"/>
+            <xs:element name="navnSamh" type="Tbeskr40v"/>
+            <xs:element name="avdelingsNr" type="xs:string"/>
+            <xs:element name="offNrAvd" type="xs:string"/>
+            <xs:element name="avdelingsNavn" type="xs:string"/>
+            <xs:element name="idOffTSS" type="TTSSidoff"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeOD982">
+        <xs:annotation>
+            <xs:documentation>Her beskrives returfeltene fra 98A</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antIdenter" type="Tantallforekomster"/>
+            <xs:element name="ident" type="identOffEks2" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="identOffEks2">
+        <xs:annotation>
+            <xs:documentation>Her beskrives returfeltene fra 98A</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="idOff" type="Tidoff"/>
+            <xs:element name="kodeIdentType" type="TkodeIdenttype"/>
+            <xs:element name="kodeSamhType" type="xs:string"/>
+            <xs:element name="navnSamh" type="Tbeskr40v"/>
+            <xs:element name="avdelingsNr" type="xs:string"/>
+            <xs:element name="offNrAvd" type="xs:string"/>
+            <xs:element name="avdelingsNavn" type="xs:string"/>
+            <xs:element name="avdelingsType" type="xs:string"/>
+            <xs:element name="idOffTSS" type="TTSSidoff"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeOD990">
+        <xs:annotation>
+            <xs:documentation>Her beskrives returfeltene fra 990</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antKodeVerk" type="Tantallforekomster"/>
+            <xs:element name="kodeVerk" type="kodeVerkType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeKodeVerk"/>
+    <xs:complexType name="kodeVerkType">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver alle feltene i en enkelt samhandlerrelasjon.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="typeKodeVerk">
+                <xs:sequence>
+                    <xs:element name="kodeTabell" type="xs:string"/>
+                    <xs:element name="kodeVerdi">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                                <xs:minLength value="1"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="kodeBeskr">
+                        <xs:simpleType>
+                            <xs:restriction base="Tbeskr40">
+                                <xs:minLength value="0"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="kodeVerkType1">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver alle feltene i en enkelt samhandlerrelasjon.</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="typeKodeVerk">
+                <xs:sequence>
+                    <xs:element name="kodeTabell" type="xs:string"/>
+                    <xs:element name="kodeVerdi">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:maxLength value="4"/>
+                                <xs:minLength value="1"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="kodeBeskr">
+                        <xs:simpleType>
+                            <xs:restriction base="Tbeskr40">
+                                <xs:minLength value="0"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="tilgangsRolle" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="typeOD992">
+        <xs:annotation>
+            <xs:documentation>Her beskrives returfeltene fra 992</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antKodeVerk" type="Tantallforekomster"/>
+            <xs:element name="kodeVerk" type="kodeVerkType1" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeRelAvtaler">
+        <xs:annotation>
+            <xs:documentation>Relasjon mellom to samhandlere</xs:documentation>
+        </xs:annotation>
+        <xs:sequence minOccurs="0">
+            <xs:element name="antSamhRelasjon" type="Tantallforekomster"/>
+            <xs:element name="samhRelasjon" type="relasjonSamhType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeAvtaler">
+        <xs:annotation>
+            <xs:documentation>Informasjon for en avtale</xs:documentation>
+        </xs:annotation>
+        <xs:sequence minOccurs="0">
+            <xs:element name="antAvtaler" type="Tantallforekomster"/>
+            <xs:element name="avtaler" type="avtaleType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeSamhandler">
+        <xs:annotation>
+            <xs:documentation>Basis-informasjon for en samhandler</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antSamh" type="Tantallforekomster"/>
+            <xs:element name="samhandler" type="samhandlerType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeAutorisasjon">
+        <xs:annotation>
+            <xs:documentation>Autorisasjon til samhandler</xs:documentation>
+        </xs:annotation>
+        <xs:sequence minOccurs="0">
+            <xs:element name="antAutorInfo" type="Tantallforekomster"/>
+            <xs:element name="autorisasjon" type="autorisasjonType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeRekvisisjon">
+        <xs:annotation>
+            <xs:documentation>Rekvisisjon til samhandler</xs:documentation>
+        </xs:annotation>
+        <xs:sequence minOccurs="0">
+            <xs:element name="antRekInfo" type="Tantallforekomster"/>
+            <xs:element name="rekvisisjon" type="rekvisisjonType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeAltId">
+        <xs:annotation>
+            <xs:documentation>Alternativ identifikasjon til en samhandler</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antSamhId" type="Tantallforekomster"/>
+            <xs:element name="samhId" type="samhIDType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeSamhFag">
+        <xs:annotation>
+            <xs:documentation>Fagområder til en samhandler</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antSamhFag" type="Tantallforekomster"/>
+            <xs:element name="samhFag" type="samhFagType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeSamhAvd">
+        <xs:annotation>
+            <xs:documentation>Avdeling - praksis til en samhandler</xs:documentation>
+        </xs:annotation>
+        <xs:sequence minOccurs="0">
+            <xs:element name="antSamhAvd" type="Tantallforekomster"/>
+            <xs:element name="samhAvd" type="samhAvdPraType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeSamhAdr">
+        <xs:annotation>
+            <xs:documentation>Adresseopplysninger til en samhandler</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antAdresse" type="Tantallforekomster"/>
+            <xs:element name="adresseSamh" type="adresseSamhType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeSamhKonto">
+        <xs:annotation>
+            <xs:documentation>Kontoopplysninger for en samhandler</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antKonto" type="Tantallforekomster"/>
+            <xs:element name="konto" type="kontoType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="typeSamhKontakt">
+        <xs:annotation>
+            <xs:documentation>Kontaktopplysninger på en samhandler</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="antKontakt" type="Tantallforekomster"/>
+            <xs:element name="enKontakt" type="kontaktType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="DBdate">
+        <xs:annotation>
+            <xs:documentation>Typen beskriver formatet og begrensningene til datoene som kommer fra TPS.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:whiteSpace value="collapse"/>
+            <xs:pattern value="\d{0}"/>
+            <xs:pattern value="\d{4}-\d{2}-\d{2}"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

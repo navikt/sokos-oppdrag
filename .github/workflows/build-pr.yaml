@@ -22,7 +22,3 @@ jobs:
   build-pr:
     name: Build and test
     uses: navikt/mob-gha-workflows/.github/workflows/gradle-build-pr.yaml@main
-    with:
-      gradle-task: ./gradlew clean build shadowJar
-
-

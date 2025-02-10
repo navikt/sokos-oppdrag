@@ -15,23 +15,17 @@ object Metrics {
     val prometheusMeterRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 
     val eregCallCounter: Counter =
-        Counter.builder()
+        Counter
+            .builder()
             .name(EREG_CALL_COUNTER)
             .help("Counts calls to Ereg with response status code")
             .withoutExemplars()
             .labelNames("responseCode")
             .register(prometheusMeterRegistry.prometheusRegistry)
 
-    val tpCallCounter: Counter =
-        Counter.builder()
-            .name(TP_CALL_COUNTER)
-            .help("Counts calls to Tp with response status code")
-            .withoutExemplars()
-            .labelNames("responseCode")
-            .register(prometheusMeterRegistry.prometheusRegistry)
-
     val pdlCallCounter: Counter =
-        Counter.builder()
+        Counter
+            .builder()
             .name(PDL_CALL_COUNTER)
             .help("Counts calls to Pdl with response status code")
             .withoutExemplars()
@@ -39,9 +33,19 @@ object Metrics {
             .register(prometheusMeterRegistry.prometheusRegistry)
 
     val nomCallCounter: Counter =
-        Counter.builder()
+        Counter
+            .builder()
             .name(NOM_CALL_COUNTER)
             .help("Counts calls to Nom with response status code")
+            .withoutExemplars()
+            .labelNames("responseCode")
+            .register(prometheusMeterRegistry.prometheusRegistry)
+
+    val samhandlerCounter: Counter =
+        Counter
+            .builder()
+            .name("samhandler_counter")
+            .help("Counts calls to Samhandler with response status code")
             .withoutExemplars()
             .labelNames("responseCode")
             .register(prometheusMeterRegistry.prometheusRegistry)
