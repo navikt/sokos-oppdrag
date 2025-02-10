@@ -61,7 +61,7 @@ val caffeineVersion = "3.2.0"
 val redisVersion = "6.5.3.RELEASE"
 
 // Test
-val kotestVersion = "6.0.0.M1"
+val kotestVersion = "6.0.0.M2"
 val wiremockVersion = "3.11.0"
 val mockOAuth2ServerVersion = "2.1.10"
 val mockkVersion = "1.13.16"
