@@ -1,4 +1,3 @@
-
 package no.nav.sokos.oppdrag.fastedata.repository
 
 import com.zaxxer.hikari.HikariDataSource
@@ -13,6 +12,15 @@ class VentekriterierRepository(
 ) {
     fun getAllVentekriterier(): List<Ventekriterier> =
         sessionOf(dataSource).use { session ->
+            val firstRow =
+                session.run(
+                    queryOf("SELECT * FROM T_VENT_KRITERIUM FETCH FIRST 1 ROW ONLY").map { row ->
+                        row.string("KODE_FAGGRUPPE")
+                    }.asSingle,
+                ) ?: "No data found"
+
+            println("Available Columns in DB2 Table: $firstRow")
+
             session.list(
                 queryOf(
                     """
@@ -21,7 +29,7 @@ class VentekriterierRepository(
                            V.DATO_FOM AS DATO_FOM,
                            V.BELOP_BRUTTO AS BELOP_BRUTTO,
                            V.BELOP_NETTO AS BELOP_NETTO,
-                           V.ANT_DAGER_ELDRENN AS ANT_DAGER_ELDRENN,
+                           V.ANT_DAGER_ELDREENN AS ANT_DAGER_ELDREENN,
                            V.TIDLIGERE_AAR AS TIDLIGERE_AAR
                     FROM T_VENT_KRITERIUM V
                     ORDER BY V.KODE_FAGGRUPPE
@@ -34,7 +42,7 @@ class VentekriterierRepository(
                     datoFom = row.string("DATO_FOM"),
                     belopBrutto = row.string("BELOP_BRUTTO"),
                     belopNetto = row.string("BELOP_NETTO"),
-                    antDagerEldreEnn = row.intOrNull("ANT_DAGER_ELDRENN"),
+                    antDagerEldreenn = row.intOrNull("ANT_DAGER_ELDREENN"),
                     tidligereAar = row.boolean("TIDLIGERE_AAR"),
                 )
             }

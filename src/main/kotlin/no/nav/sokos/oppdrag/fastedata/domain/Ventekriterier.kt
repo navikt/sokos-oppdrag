@@ -9,6 +9,6 @@ data class Ventekriterier(
     val datoFom: String,
     val belopBrutto: String,
     val belopNetto: String,
-    val antDagerEldreEnn: Int?,
+    val antDagerEldreenn: Int?,
     val tidligereAar: Boolean?,
 )
