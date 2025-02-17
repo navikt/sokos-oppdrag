@@ -44,15 +44,15 @@ repositories {
 }
 
 // Ktor
-val ktorVersion = "3.0.3"
+val ktorVersion = "3.1.0"
 
 // Serialization
 val kotlinxSerializationVersion = "1.8.0"
-val kotlinxDatetimeVersion = "0.6.1"
+val kotlinxDatetimeVersion = "0.6.2"
 val kotlinxCoroutinesVersion = "1.10.1"
 
 // Monitorering
-val micrometerVersion = "1.14.3"
+val micrometerVersion = "1.14.4"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
@@ -79,7 +79,7 @@ val caffeineVersion = "3.2.0"
 val redisVersion = "6.5.3.RELEASE"
 
 // TSS
-val tjenestespesifikasjonVersion = "1.0_20250207093735_3b7cb5e"
+val tjenestespesifikasjonVersion = "1.0_20250211133838_7726a80"
 val glassfishJaxbVersion = "4.0.5"
 
 // IBM MQ
@@ -87,7 +87,7 @@ val ibmMqVersion = "9.4.1.1"
 
 // Test
 val kotestVersion = "6.0.0.M2"
-val wiremockVersion = "3.11.0"
+val wiremockVersion = "3.12.0"
 val mockOAuth2ServerVersion = "2.1.10"
 val mockkVersion = "1.13.16"
 val swaggerRequestValidatorVersion = "2.44.1"
