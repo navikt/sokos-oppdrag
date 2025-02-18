@@ -19,4 +19,5 @@ data class OppdragsLinje(
     val refunderesOrgnr: String? = null,
     val brukerId: String,
     val tidspktReg: String,
+    val vedtakssats: Double?,
 )

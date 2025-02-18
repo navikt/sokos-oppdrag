@@ -236,6 +236,7 @@ internal class OppdragsInfoApiTest :
                         refunderesOrgnr = "123456789",
                         brukerId = "abc123",
                         tidspktReg = "2024-01-01",
+                        vedtakssats = 1000.0,
                     ),
                 )
 
@@ -670,6 +671,7 @@ internal class OppdragsInfoApiTest :
                                 refunderesOrgnr = "123456789",
                                 brukerId = "abc123",
                                 tidspktReg = "2024-01-01",
+                                vedtakssats = 1500.0,
                             ),
                         ),
                     harValutaer = TRUE,

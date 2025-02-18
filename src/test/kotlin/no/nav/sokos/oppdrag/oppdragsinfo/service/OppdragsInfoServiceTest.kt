@@ -219,6 +219,7 @@ internal class OppdragsInfoServiceTest :
             oppdragsLinje.refunderesOrgnr.shouldBeEmpty()
             oppdragsLinje.brukerId shouldBe "KONV"
             oppdragsLinje.tidspktReg shouldBe "2008-12-06 12:29:45.435239"
+            oppdragsLinje.vedtakssats shouldBe 1000.0
 
             oppdragsLinjeDetaljer.harValutaer shouldBe false
             oppdragsLinjeDetaljer.harSkyldnere shouldBe true

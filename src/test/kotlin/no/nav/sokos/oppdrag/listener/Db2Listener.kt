@@ -58,6 +58,7 @@ object Db2Listener : TestListener {
             session.update(queryOf("DELETE FROM T_KRAVHAVER"))
             session.update(queryOf("DELETE FROM T_LINJEENHET"))
             session.update(queryOf("DELETE FROM T_LINJE_STATUS"))
+            session.update(queryOf("DELETE FROM T_LINJE_VEDTAKSSATS"))
             session.update(queryOf("DELETE FROM T_MAKS_DATO"))
             session.update(queryOf("DELETE FROM T_OMPOSTERING"))
             session.update(queryOf("DELETE FROM T_OPPDRAG"))
