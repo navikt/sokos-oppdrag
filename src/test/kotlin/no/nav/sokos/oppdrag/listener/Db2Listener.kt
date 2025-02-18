@@ -14,6 +14,7 @@ import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.repository.FagomraadeRepository
 import no.nav.sokos.oppdrag.config.DatabaseTestConfig
 import no.nav.sokos.oppdrag.config.transaction
+import no.nav.sokos.oppdrag.fastedata.repository.VentekriterierRepository
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.FaggruppeRepository
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragRepository
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsdetaljerRepository
@@ -25,6 +26,8 @@ object Db2Listener : TestListener {
     val oppdragsdetaljerRepository = spyk(OppdragsdetaljerRepository(dataSource))
     val fagomraadeRepository = spyk(FagomraadeRepository(dataSource))
     val faggruppeRepository = spyk(FaggruppeRepository(dataSource))
+    val venteKriterierRepository = spyk(VentekriterierRepository(dataSource))
+    val fasteDataFagomraadeRepository = spyk(no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository(dataSource))
 
     override suspend fun beforeSpec(spec: Spec) {
         dataSource shouldNotBe null
@@ -67,6 +70,7 @@ object Db2Listener : TestListener {
             session.update(queryOf("DELETE FROM T_SKYLDNER"))
             session.update(queryOf("DELETE FROM T_TEKST"))
             session.update(queryOf("DELETE FROM T_VALUTA"))
+            session.update(queryOf("DELETE FROM T_VENT_KRITERIUM"))
         }
     }
 }

@@ -40,8 +40,8 @@ class VentekriterierRepository(
                     kodeFaggruppe = row.string("KODE_FAGGRUPPE"),
                     typeBilag = row.string("TYPE_BILAG"),
                     datoFom = row.string("DATO_FOM"),
-                    belopBrutto = row.string("BELOP_BRUTTO"),
-                    belopNetto = row.string("BELOP_NETTO"),
+                    belopBrutto = row.doubleOrNull("BELOP_BRUTTO"),
+                    belopNetto = row.doubleOrNull("BELOP_NETTO"),
                     antDagerEldreenn = row.intOrNull("ANT_DAGER_ELDREENN"),
                     tidligereAar = row.boolean("TIDLIGERE_AAR"),
                 )

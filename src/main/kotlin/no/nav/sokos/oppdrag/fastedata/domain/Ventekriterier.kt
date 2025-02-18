@@ -7,8 +7,8 @@ data class Ventekriterier(
     val kodeFaggruppe: String,
     val typeBilag: String,
     val datoFom: String,
-    val belopBrutto: String,
-    val belopNetto: String,
+    val belopBrutto: Double?,
+    val belopNetto: Double?,
     val antDagerEldreenn: Int?,
     val tidligereAar: Boolean?,
 )
