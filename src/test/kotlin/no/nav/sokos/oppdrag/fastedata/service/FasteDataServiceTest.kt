@@ -22,13 +22,11 @@ internal class FasteDataServiceTest :
                 venteKriterierRepository,
             )
 
-        beforeEach {
+        test("getAllVentekriterier skal returnere en liste av Ventekriterier") {
             Db2Listener.dataSource.transaction { session ->
                 session.update(queryOf("database/fastedata/getVentekriterier.sql".readFromResource())) shouldBeGreaterThan 0
             }
-        }
 
-        test("getAllVentekriterier skal returnere en liste av Ventekriterier") {
             val result = fastedataService.getAllVentekriterier()
             result.shouldNotBeEmpty()
             result.size shouldBe 2
