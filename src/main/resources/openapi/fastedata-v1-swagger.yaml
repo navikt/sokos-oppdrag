@@ -16,7 +16,6 @@ servers:
   - url: /api/v1/fastedata
 
 paths:
-
   /fagomraader:
     get:
       tags:
@@ -137,6 +136,31 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Klassekode'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /ventekriterier:
+    get:
+      tags:
+        - Faste data
+      summary: Hent alle ventekriterier
+      description: Returnerer en liste av alle ventekriterier.
+      operationId: getVentekriterier
+      responses:
+        200:
+          description: OK - Hvis ventekriterier finnes, returneres liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ventekriterier'
         500:
           description: Annen feil
           content:
@@ -277,6 +301,33 @@ components:
         kodeKlasse:
           type: string
 
+    Ventekriterier:
+      type: object
+      required:
+        - kodeFaggruppe
+        - typeBilag
+        - datoFom
+        - belopBrutto
+        - belopNetto
+        - antDagerEldreenn
+        - tidligereAar
+      properties:
+        kodeFaggruppe:
+          type: string
+        typeBilag:
+          type: string
+        datoFom:
+          type: string
+          format: date
+        belopBrutto:
+          type: number
+        belopNetto:
+          type: number
+        antDagerEldreenn:
+          type: integer
+        tidligereAar:
+          type: boolean
+
 
     ApiError:
       type: object
@@ -317,5 +368,3 @@ components:
           Eksempel på verdi i input-felt: <strong>Bearer eYdmifml0ejugm</strong>
       name: Authorization
       in: header
-
-

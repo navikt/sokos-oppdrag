@@ -40,6 +40,15 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
             )
         }
     }
+
+    route("$BASE_PATH/ventekriterier") {
+        get("") {
+            call.respond(
+                fasteDataService.getAllVentekriterier(),
+            )
+        }
+    }
+
     route("$BASE_PATH/faggrupper") {
         get("") {
             call.respond(

@@ -701,3 +701,17 @@ CREATE TABLE T_KONTOREGEL
     BRUKERID            CHAR(8)      default 'CURRENT USER' not null,
     TIDSPKT_REG         TIMESTAMP(6) default CURRENT TIMESTAMP not null
 );
+
+DROP TABLE IF EXISTS T_VENT_KRITERIUM;
+create table T_VENT_KRITERIUM
+(
+    KODE_FAGGRUPPE     CHAR(8)                                not null,
+    TYPE_BILAG         CHAR(2)                                not null,
+    DATO_FOM           DATE                                   not null,
+    BELOP_BRUTTO       DECIMAL(15, 2),
+    BELOP_NETTO        DECIMAL(15, 2),
+    ANT_DAGER_ELDREENN SMALLINT,
+    TIDLIGERE_AAR      CHAR(1)                                not null,
+    BRUKERID           CHAR(8)      default 'CURRENT USER'    not null,
+    TIDSPKT_REG        TIMESTAMP(6) default CURRENT TIMESTAMP not null
+);

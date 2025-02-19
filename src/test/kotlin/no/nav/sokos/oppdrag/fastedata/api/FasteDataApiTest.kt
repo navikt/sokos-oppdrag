@@ -27,10 +27,12 @@ import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
+import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.fagomraader
 import no.nav.sokos.oppdrag.fastedata.korrigeringsaarsaker
 import no.nav.sokos.oppdrag.fastedata.service.FasteDataService
 import no.nav.sokos.oppdrag.fastedata.validator.INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
+import no.nav.sokos.oppdrag.fastedata.ventekriterier
 
 private const val PORT = 9090
 
@@ -51,7 +53,6 @@ internal class FasteDataApiTest :
         }
 
         test("hent fagområder returnerer 200 OK") {
-
             coEvery { fasteDataService.getFagomraader() } returns fagomraader
 
             val response =
@@ -72,7 +73,6 @@ internal class FasteDataApiTest :
         }
 
         test("hent fagområder returnerer 500 Internal Server Error") {
-
             coEvery { fasteDataService.getFagomraader() } throws RuntimeException("En feil")
 
             val response =
@@ -100,7 +100,6 @@ internal class FasteDataApiTest :
         }
 
         test("korrigeringsårsaker tilhørende fagområde returnerer 200 OK") {
-
             coEvery { fasteDataService.getKorrigeringsaarsaker(any()) } returns korrigeringsaarsaker
 
             val response =
@@ -121,7 +120,6 @@ internal class FasteDataApiTest :
         }
 
         test("korrigeringsårsaker tilhørende fagområde med ugyldig query parameter returnerer 400 Bad Request") {
-
             val response =
                 RestAssured
                     .given()
@@ -138,6 +136,56 @@ internal class FasteDataApiTest :
 
             Json.decodeFromString<ApiError>(response.asString()).status shouldBe HttpStatusCode.BadRequest.value
             Json.decodeFromString<ApiError>(response.asString()).message shouldBe INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
+        }
+
+        test("ventekriterier returnerer 200 OK") {
+
+            coEvery { fasteDataService.getAllVentekriterier() } returns ventekriterier
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/ventekriterier")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.OK.value)
+                    .extract()
+                    .response()
+
+            val actualVentekriterier: List<Ventekriterier> = Json.decodeFromString(response.asString())
+
+            actualVentekriterier shouldBe ventekriterier
+        }
+
+        test("ventekriterier returnerer 500 Internal Server Error") {
+            coEvery { fasteDataService.getAllVentekriterier() } throws RuntimeException("En feil")
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/ventekriterier")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()) shouldBe
+                ApiError(
+                    error = HttpStatusCode.InternalServerError.description,
+                    status = HttpStatusCode.InternalServerError.value,
+                    message = "En feil",
+                    path = "$FASTEDATA_BASE_API_PATH/ventekriterier",
+                    timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
+                )
         }
     })
 
