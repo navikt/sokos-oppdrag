@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.fastedata.repository
 
 import com.zaxxer.hikari.HikariDataSource
+import kotliquery.LoanPattern.using
 import kotliquery.queryOf
 import kotliquery.sessionOf
 
@@ -11,16 +12,7 @@ class VentekriterierRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource,
 ) {
     fun getAllVentekriterier(): List<Ventekriterier> =
-        sessionOf(dataSource).use { session ->
-            val firstRow =
-                session.run(
-                    queryOf("SELECT * FROM T_VENT_KRITERIUM FETCH FIRST 1 ROW ONLY").map { row ->
-                        row.string("KODE_FAGGRUPPE")
-                    }.asSingle,
-                ) ?: "No data found"
-
-            println("Available Columns in DB2 Table: $firstRow")
-
+        using(sessionOf(dataSource)) { session ->
             session.list(
                 queryOf(
                     """
