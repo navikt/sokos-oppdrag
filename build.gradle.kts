@@ -76,10 +76,10 @@ val graphqlClientVersion = "8.3.0"
 val caffeineVersion = "3.2.0"
 
 // Redis
-val redisVersion = "6.5.3.RELEASE"
+val redisVersion = "6.5.4.RELEASE"
 
 // TSS
-val tjenestespesifikasjonVersion = "1.0_20250211133838_7726a80"
+val tjenestespesifikasjonVersion = "1.0_20250218124429_8804209"
 val glassfishJaxbVersion = "4.0.5"
 
 // IBM MQ
@@ -91,7 +91,7 @@ val wiremockVersion = "3.12.0"
 val mockOAuth2ServerVersion = "2.1.10"
 val mockkVersion = "1.13.16"
 val swaggerRequestValidatorVersion = "2.44.1"
-val testcontainersVersion = "1.20.4"
+val testcontainersVersion = "1.20.5"
 val h2Version = "2.3.232"
 val activemqVersion = "2.39.0"
 
