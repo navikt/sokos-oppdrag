@@ -17,16 +17,19 @@ class VentestatuskodeRepository(
                 queryOf(
                     """
                     SELECT 
-                        V.KODE_VENTESTATUS AS KODE_VENTESTATUS,
-                        V.BESKRIVELSE AS BESKRIVELSE,
-                        V.PRIORITET AS PRIORITET,
-                        V.SETTES_MANUELT AS SETTES_MANUELT,
-                        V.KODE_ARVES_TIL AS KODE_ARVES_TIL,
-                        R.KODE_VENTESTATUS_U AS KAN_MANUELT_ENDRES_TIL
-                    FROM T_VENT_STATUSKODE V
-                    LEFT JOIN T_VENT_STATUSREGEL R 
-                        ON V.KODE_VENTESTATUS = R.KODE_VENTESTATUS_H
-                    ORDER BY V.KODE_VENTESTATUS
+                        v.KODE_VENTESTATUS AS KODE_VENTESTATUS,
+                        v.BESKRIVELSE AS BESKRIVELSE,
+                        v.TYPE_VENTESTATUS AS TYPE_VENTESTATUS,
+                        v.KODE_ARVES_TIL AS KODE_ARVES_TIL,
+                        v.SETTES_MANUELT AS SETTES_MANUELT,
+                        v.OVERFOR_MOTTKOMP AS OVERFOR_MOTTKOMP,
+                        v.PRIORITET AS PRIORITET,
+                        (SELECT SUBSTR(xmlserialize(xmlagg(xmltext(', ' || KODE_VENTESTATUS_U)) as CLOB), 3) 
+                         FROM T_VENT_STATUSREGEL 
+                         WHERE KODE_VENTESTATUS_H = v.KODE_VENTESTATUS) 
+                         AS KAN_MANUELT_ENDRES_TIL
+                    FROM T_VENT_STATUSKODE v
+                    ORDER BY v.KODE_VENTESTATUS
                     """.trimIndent(),
                 ),
             ) { row ->
@@ -34,7 +37,7 @@ class VentestatuskodeRepository(
                     kodeVentestatus = row.string("KODE_VENTESTATUS"),
                     beskrivelse = row.string("BESKRIVELSE"),
                     prioritet = row.intOrNull("PRIORITET"),
-                    settesManuelt = row.string("SETTES_MANUELT") == "J",
+                    settesManuelt = row.boolean("SETTES_MANUELT"),
                     kodeArvesTil = row.stringOrNull("KODE_ARVES_TIL"),
                     kanManueltEndresTil = row.stringOrNull("KAN_MANUELT_ENDRES_TIL"),
                 )
