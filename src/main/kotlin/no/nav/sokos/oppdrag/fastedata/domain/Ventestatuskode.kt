@@ -4,12 +4,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Ventestatuskode(
-    val kodeVenteStatus: String,
+    val kodeVentestatus: String,
     val beskrivelse: String,
-    val typeVenteStatus: String?,
-    val kodeArvesTil: String?,
-    val settesManuelt: Boolean,
-    val overforMottKomp: Boolean,
     val prioritet: Int?,
-    val kanManueltEndresTil: List<String>,
+    val settesManuelt: Boolean,
+    val kodeArvesTil: String?,
+    val kanManueltEndresTil: String?,
 )
