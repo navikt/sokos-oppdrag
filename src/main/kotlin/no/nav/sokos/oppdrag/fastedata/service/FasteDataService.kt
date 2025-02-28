@@ -19,12 +19,12 @@ class FasteDataService(
     private val ventekriterierRepository: VentekriterierRepository = VentekriterierRepository(),
     private val ventestatuskodeRepository: VentestatuskodeRepository = VentestatuskodeRepository(),
 ) {
-    fun getAllVentekriterier(): List<Ventestatuskode> {
+    fun getAllVentestatuskoder(): List<Ventestatuskode> {
         logger.info { "Henter alle ventestatuskoder" }
         return ventestatuskodeRepository.getAllVentestatuskoder()
     }
 
-    fun getAllVentestatuskoder(): List<Ventekriterier> {
+    fun getAllVentekriterier(): List<Ventekriterier> {
         logger.info { "Henter alle ventekriterier" }
         return ventekriterierRepository.getAllVentekriterier()
     }
