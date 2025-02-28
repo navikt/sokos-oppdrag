@@ -7,16 +7,24 @@ import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
+import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentekriterierRepository
+import no.nav.sokos.oppdrag.fastedata.repository.VentestatuskodeRepository
 
 private val logger = KotlinLogging.logger {}
 
 class FasteDataService(
     private val fagomraadeRepository: FagomraadeRepository = FagomraadeRepository(),
     private val ventekriterierRepository: VentekriterierRepository = VentekriterierRepository(),
+    private val ventestatuskodeRepository: VentestatuskodeRepository = VentestatuskodeRepository(),
 ) {
-    fun getAllVentekriterier(): List<Ventekriterier> {
+    fun getAllVentekriterier(): List<Ventestatuskode> {
+        logger.info { "Henter alle ventestatuskoder" }
+        return ventestatuskodeRepository.getAllVentestatuskoder()
+    }
+
+    fun getAllVentestatuskoder(): List<Ventekriterier> {
         logger.info { "Henter alle ventekriterier" }
         return ventekriterierRepository.getAllVentekriterier()
     }

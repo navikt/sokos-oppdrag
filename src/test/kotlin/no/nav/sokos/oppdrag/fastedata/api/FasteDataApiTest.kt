@@ -138,6 +138,14 @@ internal class FasteDataApiTest :
             Json.decodeFromString<ApiError>(response.asString()).message shouldBe INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
         }
 
+        // TODO:  .get("$FASTEDATA_BASE_API_PATH/fagomraader/''!/korrigeringsaarsaker") ha med 500 test
+
+        // TODO: /fagomraader/{kodeFagomraade}/bilagstyper: 200 test
+        // TODO: /fagomraader/{kodeFagomraade}/bilagstyper: 500 test
+
+        // TODO: /fagomraader/{kodeFagomraade}/klassekoder: 200 test
+        // TODO: /fagomraader/{kodeFagomraade}/klassekoder: 500 test
+
         test("ventekriterier returnerer 200 OK") {
 
             coEvery { fasteDataService.getAllVentekriterier() } returns ventekriterier
