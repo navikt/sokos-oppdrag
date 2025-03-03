@@ -13,9 +13,9 @@ plugins {
     kotlin("plugin.serialization") version "2.1.10"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.expediagroup.graphql") version "8.3.0"
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
+    id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
-    id("org.openapi.generator") version "7.11.0"
+    id("org.openapi.generator") version "7.12.0"
 }
 
 group = "no.nav.sokos"
@@ -44,7 +44,7 @@ repositories {
 }
 
 // Ktor
-val ktorVersion = "3.1.0"
+val ktorVersion = "3.1.1"
 
 // Serialization
 val kotlinxSerializationVersion = "1.8.0"
@@ -57,7 +57,7 @@ val micrometerVersion = "1.14.4"
 // Logging
 val kotlinLoggingVersion = "3.0.5"
 val janionVersion = "3.1.12"
-val logbackVersion = "1.5.16"
+val logbackVersion = "1.5.17"
 val logstashVersion = "8.0"
 val papertrailappVersion = "1.0.0"
 
@@ -83,13 +83,13 @@ val tjenestespesifikasjonVersion = "1.0_20250218124429_8804209"
 val glassfishJaxbVersion = "4.0.5"
 
 // IBM MQ
-val ibmMqVersion = "9.4.1.1"
+val ibmMqVersion = "9.4.2.0"
 
 // Test
 val kotestVersion = "6.0.0.M2"
 val wiremockVersion = "3.12.0"
 val mockOAuth2ServerVersion = "2.1.10"
-val mockkVersion = "1.13.16"
+val mockkVersion = "1.13.17"
 val swaggerRequestValidatorVersion = "2.44.1"
 val testcontainersVersion = "1.20.5"
 val h2Version = "2.3.232"
