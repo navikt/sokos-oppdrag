@@ -850,6 +850,9 @@ components:
           type: string
         refunderesOrgnr:
           type: string
+        vedtakssats:
+          type: number
+          format: double
         brukerId:
           type: string
         tidspktReg:
