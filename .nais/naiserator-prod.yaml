@@ -104,9 +104,17 @@ spec:
     - name: GA_OKONOMI_EGNE_ANSATTE
       value: a3866f87-9b10-4b99-b4e9-a8c736d13b5b
 
-    # Tp
-    - name: TP_URL
-      value: "https://tp.nais.adeo.no" # Denne skal byttes ut mot TSS-proxy
+    # MQ
+    - name: MQ_HOSTNAME
+      value: mqls02.preprod.local # Må oppdateres
+    - name: MQ_PORT
+      value: '1413' # Må oppdateres
+    - name: MQ_QUEUE_MANAGER_NAME
+      value: MQLS02 # Må oppdateres
+    - name: MQ_CHANNEL_NAME
+      value: Q1_SOKOS_OPPDRAG # Må oppdateres
+    - name: MQ_TSS_SAMHANDLER_SERVICE_QUEUE
+      value: QA.Q1_415.AS10_SAMHANDLER_SERVICE # Må oppdateres
 
     # PDL
     - name: PDL_URL
