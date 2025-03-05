@@ -26,6 +26,7 @@ import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
+import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
@@ -166,6 +167,70 @@ internal class FasteDataApiTest :
             Json.decodeFromString<ApiError>(response.asString()).message shouldBe INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
         }
 
+        test("hent billagstyper returnerer 200 OK") {
+            val mockedBillagstyper =
+                listOf(
+                    Bilagstype(
+                        kodeFagomraade = "FAG1",
+                        typeBilag = "TYPE1",
+                        datoFom = "2021-01-01",
+                        datoTom = "2021-12-31",
+                        autoFagsystemId = "ID1",
+                    ),
+                    Bilagstype(
+                        kodeFagomraade = "FAG2",
+                        typeBilag = "TYPE2",
+                        datoFom = "2022-01-01",
+                        datoTom = "2022-12-31",
+                        autoFagsystemId = "ID2",
+                    ),
+                )
+            coEvery { fasteDataService.getBilagstyper(any()) } returns mockedBillagstyper
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/billagstyper")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.OK.value)
+                    .extract()
+                    .response()
+
+            val actualBillagstyper: List<Bilagstype> = Json.decodeFromString(response.asString())
+
+            actualBillagstyper shouldBe mockedBillagstyper
+        }
+
+        test("hent billagstyper returnerer 500 Internal Server Error") {
+            coEvery { fasteDataService.getBilagstyper(any()) } throws RuntimeException("En feil")
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/billagstyper")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
+
+            val apiErrorResponse = Json.decodeFromString<ApiError>(response.asString())
+
+            apiErrorResponse.status shouldBe HttpStatusCode.InternalServerError.value
+            apiErrorResponse.message shouldBe "En feil"
+            apiErrorResponse.path shouldBe "$FASTEDATA_BASE_API_PATH/billagstyper"
+            apiErrorResponse.timestamp shouldNotBe null
+        }
+
         test("ventekriterier returnerer 200 OK") {
 
             coEvery { fasteDataService.getAllVentekriterier() } returns ventekriterier
@@ -226,7 +291,6 @@ private fun Application.applicationTestModule() {
     }
 }
 
-// TODO: /fagomraader/{kodeFagomraade}/bilagstyper: 200 test
 // TODO: /fagomraader/{kodeFagomraade}/bilagstyper: 500 test
 
 // TODO: /fagomraader/{kodeFagomraade}/klassekoder: 200 test
