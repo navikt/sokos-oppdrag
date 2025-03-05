@@ -6,6 +6,7 @@ import kotlinx.serialization.json.Json
 import com.atlassian.oai.validator.restassured.OpenApiValidationFilter
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -119,6 +120,33 @@ internal class FasteDataApiTest :
             Json.decodeFromString<List<Korrigeringsaarsak>>(response.asString()) shouldBe korrigeringsaarsaker
         }
 
+        test("korrigeringsårsaker tilhørende fagområde returnerer 500 Internal Server Error") {
+            coEvery { fasteDataService.getKorrigeringsaarsaker(any()) } throws RuntimeException("En feil")
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/''!/korrigeringsaarsker")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
+
+            val apiErrorResponse = Json.decodeFromString<ApiError>(response.asString())
+
+            apiErrorResponse.status shouldBe HttpStatusCode.InternalServerError.value
+            apiErrorResponse.message shouldBe "En feil"
+            apiErrorResponse.path shouldBe "$FASTEDATA_BASE_API_PATH/fagomraader/''!/korrigeringsaarsker"
+
+            val timestamp = Instant.parse(response.body.jsonPath().getString("timestamp"))
+            timestamp shouldNotBe null
+        }
+
         test("korrigeringsårsaker tilhørende fagområde med ugyldig query parameter returnerer 400 Bad Request") {
             val response =
                 RestAssured
@@ -137,14 +165,6 @@ internal class FasteDataApiTest :
             Json.decodeFromString<ApiError>(response.asString()).status shouldBe HttpStatusCode.BadRequest.value
             Json.decodeFromString<ApiError>(response.asString()).message shouldBe INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
         }
-
-        // TODO:  .get("$FASTEDATA_BASE_API_PATH/fagomraader/''!/korrigeringsaarsaker") ha med 500 test
-
-        // TODO: /fagomraader/{kodeFagomraade}/bilagstyper: 200 test
-        // TODO: /fagomraader/{kodeFagomraade}/bilagstyper: 500 test
-
-        // TODO: /fagomraader/{kodeFagomraade}/klassekoder: 200 test
-        // TODO: /fagomraader/{kodeFagomraade}/klassekoder: 500 test
 
         test("ventekriterier returnerer 200 OK") {
 
@@ -205,3 +225,9 @@ private fun Application.applicationTestModule() {
         }
     }
 }
+
+// TODO: /fagomraader/{kodeFagomraade}/bilagstyper: 200 test
+// TODO: /fagomraader/{kodeFagomraade}/bilagstyper: 500 test
+
+// TODO: /fagomraader/{kodeFagomraade}/klassekoder: 200 test
+// TODO: /fagomraader/{kodeFagomraade}/klassekoder: 500 test
