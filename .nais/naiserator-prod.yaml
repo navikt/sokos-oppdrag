@@ -106,15 +106,15 @@ spec:
 
     # MQ
     - name: MQ_HOSTNAME
-      value: mqls02.preprod.local # Må oppdateres
+      value: mpls02.preprod.local
     - name: MQ_PORT
-      value: '1413' # Må oppdateres
+      value: '1414'
     - name: MQ_QUEUE_MANAGER_NAME
-      value: MQLS02 # Må oppdateres
+      value: MPLS02
     - name: MQ_CHANNEL_NAME
-      value: Q1_SOKOS_OPPDRAG # Må oppdateres
+      value: P_SOKOS_OPPDRAG
     - name: MQ_TSS_SAMHANDLER_SERVICE_QUEUE
-      value: QA.Q1_415.AS10_SAMHANDLER_SERVICE # Må oppdateres
+      value: QA.P415.AS10_SAMHANDLER_SERVICE
 
     # PDL
     - name: PDL_URL
