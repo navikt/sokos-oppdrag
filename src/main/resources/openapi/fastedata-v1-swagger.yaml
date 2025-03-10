@@ -170,6 +170,31 @@ paths:
       security:
         - Bearer: [ ]
 
+  /ventestatuskoder:
+    get:
+      tags:
+        - Faste data
+      summary: Hent alle ventestatuskoder
+      description: Returnerer en liste av alle ventestatuskoder.
+      operationId: getVentestatuskoder
+      responses:
+        200:
+          description: OK - Hvis ventestatuskoder finnes, returneres liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ventestatuskode'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
   /faggrupper:
     get:
       tags:
@@ -328,6 +353,28 @@ components:
         tidligereAar:
           type: boolean
 
+    Ventestatuskode:
+      type: object
+      required:
+        - kodeVentestatus
+        - beskrivelse
+        - settesManuelt
+      properties:
+        kodeVentestatus:
+          type: string
+        beskrivelse:
+          type: string
+        prioritet:
+          type: integer
+          nullable: true
+        settesManuelt:
+          type: boolean
+        kodeArvesTil:
+          type: string
+          nullable: true
+        kanManueltEndresTil:
+          type: string
+          nullable: true
 
     ApiError:
       type: object
