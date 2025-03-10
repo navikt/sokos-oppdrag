@@ -87,11 +87,11 @@ val ibmMqVersion = "9.4.2.0"
 
 // Test
 val kotestVersion = "6.0.0.M2"
-val wiremockVersion = "3.12.0"
+val wiremockVersion = "3.12.1"
 val mockOAuth2ServerVersion = "2.1.10"
 val mockkVersion = "1.13.17"
 val swaggerRequestValidatorVersion = "2.44.1"
-val testcontainersVersion = "1.20.5"
+val testcontainersVersion = "1.20.6"
 val h2Version = "2.3.232"
 val activemqVersion = "2.39.0"
 
