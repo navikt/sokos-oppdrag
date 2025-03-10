@@ -70,7 +70,7 @@ spec:
     - secret: db2license
       mountPath: /var/run/secrets/db2license
   envFrom:
-    - secret: oppdrag-q1-credentials # Må oppdateres
+    - secret: sokos-oppdrag-oppdrag-credentials
     - secret: sokos-oppdrag-redis-password
   env:
     - name: USE_AUTHENTICATION
@@ -84,13 +84,13 @@ spec:
 
     # Db2
     - name: DATABASE_HOST
-      value: "155.55.1.82" # Må oppdateres
+      value: "155.55.1.78"
     - name: DATABASE_PORT
-      value: "5025" # Må oppdateres
+      value: "5021"
     - name: DATABASE_NAME
-      value: "QDB2" # Må oppdateres
+      value: "DB2"
     - name: DATABASE_SCHEMA
-      value: "OS231Q1" # Må oppdateres
+      value: "OS231P"
 
     # Ereg
     - name: EREG_URL
