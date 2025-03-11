@@ -11,6 +11,7 @@ import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.listener.Db2Listener
 import no.nav.sokos.oppdrag.listener.Db2Listener.fasteDataFagomraadeRepository
 import no.nav.sokos.oppdrag.listener.Db2Listener.venteKriterierRepository
+import no.nav.sokos.oppdrag.listener.Db2Listener.ventestatuskodeRepository
 
 internal class FasteDataServiceTest :
     FunSpec({
@@ -20,6 +21,7 @@ internal class FasteDataServiceTest :
             FasteDataService(
                 fasteDataFagomraadeRepository,
                 venteKriterierRepository,
+                ventestatuskodeRepository,
             )
 
         test("getAllVentekriterier skal returnere en liste av Ventekriterier") {

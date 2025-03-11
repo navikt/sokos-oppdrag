@@ -15,6 +15,7 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.server.routing.routing
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import io.restassured.RestAssured
 
@@ -37,6 +38,7 @@ import no.nav.sokos.oppdrag.fastedata.ventekriterier
 import no.nav.sokos.oppdrag.fastedata.ventestatuskoder
 
 private const val PORT = 9090
+private const val FAGOMRAADE = "''!"
 
 private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
 
@@ -140,7 +142,33 @@ internal class FasteDataApiTest :
             Json.decodeFromString<ApiError>(response.asString()).message shouldBe INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
         }
 
-        // TODO:  .get("$FASTEDATA_BASE_API_PATH/fagomraader/''!/korrigeringsaarsaker") ha med 500 test
+        test("hent korrigeringsaarsaker returnerer 500 Internal Server Error") {
+
+            every { fasteDataService.getKorrigeringsaarsaker("MYST") } throws RuntimeException("En feil")
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/MYST/korrigeringsaarsaker")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()) shouldBe
+                ApiError(
+                    error = HttpStatusCode.InternalServerError.description,
+                    status = HttpStatusCode.InternalServerError.value,
+                    message = "En feil",
+                    path = "$FASTEDATA_BASE_API_PATH/fagomraader/MYST/korrigeringsaarsaker",
+                    timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
+                )
+        }
 
         // TODO: /fagomraader/{kodeFagomraade}/bilagstyper: 200 test
         // TODO: /fagomraader/{kodeFagomraade}/bilagstyper: 500 test
