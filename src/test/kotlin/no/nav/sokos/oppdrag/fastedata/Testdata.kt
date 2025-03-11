@@ -3,6 +3,7 @@ package no.nav.sokos.oppdrag.fastedata
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
+import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 
 val fagomraader =
     listOf(
@@ -68,5 +69,25 @@ val ventekriterier =
             belopNetto = 250000.00,
             antDagerEldreenn = 60,
             tidligereAar = false,
+        ),
+    )
+
+val ventestatuskoder =
+    listOf(
+        Ventestatuskode(
+            kodeVentestatus = "ADDR",
+            beskrivelse = "Periode ikke utbet, navn/adresse mangler",
+            prioritet = 120,
+            settesManuelt = true,
+            kodeArvesTil = "ADDR",
+            kanManueltEndresTil = "AVVE, REAK, REBE, STOP",
+        ),
+        Ventestatuskode(
+            kodeVentestatus = "AFFR",
+            beskrivelse = "Midlertidig stopp av overf UR, arb.g.",
+            prioritet = 35,
+            settesManuelt = false,
+            kodeArvesTil = "AVAV",
+            kanManueltEndresTil = "REAK, REBE",
         ),
     )
