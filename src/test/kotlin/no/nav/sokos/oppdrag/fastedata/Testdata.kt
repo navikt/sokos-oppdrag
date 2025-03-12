@@ -1,5 +1,6 @@
 package no.nav.sokos.oppdrag.fastedata
 
+import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
@@ -47,6 +48,16 @@ val korrigeringsaarsaker =
             beskrivelse = "Linjestatus endret",
             kodeAarsakKorr = "0001",
             medforerKorr = true,
+        ),
+    )
+val bilagstype =
+    listOf(
+        Bilagstype(
+            kodeFagomraade = "AAPARENA",
+            typeBilag = "O",
+            datoFom = "2024-12-01",
+            datoTom = "2022-12-01",
+            autoFagsystemId = "ABC",
         ),
     )
 

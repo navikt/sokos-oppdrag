@@ -26,6 +26,8 @@ import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
+import no.nav.sokos.oppdrag.fastedata.bilagstype
+import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
@@ -170,8 +172,52 @@ internal class FasteDataApiTest :
                 )
         }
 
-        // TODO: /fagomraader/{kodeFagomraade}/bilagstyper: 200 test
-        // TODO: /fagomraader/{kodeFagomraade}/bilagstyper: 500 test
+        test("hent bilagstyper returnerer 200 OK") {
+            coEvery { fasteDataService.getBilagstyper(any()) } returns bilagstype
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/MYST/bilagstyper")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.OK.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<List<Bilagstype>>(response.asString()) shouldBe bilagstype
+        }
+
+        test("hent bilagstyper returnerer 500 Internal Server Error") {
+            coEvery { fasteDataService.getBilagstyper(any()) } throws RuntimeException("En feil")
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/MYST/bilagstyper")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()) shouldBe
+                ApiError(
+                    error = HttpStatusCode.InternalServerError.description,
+                    status = HttpStatusCode.InternalServerError.value,
+                    message = "En feil",
+                    path = "$FASTEDATA_BASE_API_PATH/fagomraader/MYST/bilagstyper",
+                    timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
+                )
+        }
 
         // TODO: /fagomraader/{kodeFagomraade}/klassekoder: 200 test
         // TODO: /fagomraader/{kodeFagomraade}/klassekoder: 500 test
