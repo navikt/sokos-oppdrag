@@ -2,6 +2,7 @@ package no.nav.sokos.oppdrag.fastedata
 
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
+import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
@@ -58,6 +59,13 @@ val bilagstype =
             datoFom = "2024-12-01",
             datoTom = "2022-12-01",
             autoFagsystemId = "ABC",
+        ),
+    )
+
+val klassekoder =
+    listOf(
+        Klassekode(
+            kodeKlasse = "String",
         ),
     )
 

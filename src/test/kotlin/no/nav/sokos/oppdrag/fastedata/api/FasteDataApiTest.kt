@@ -29,10 +29,12 @@ import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.fastedata.bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
+import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.fastedata.fagomraader
+import no.nav.sokos.oppdrag.fastedata.klassekoder
 import no.nav.sokos.oppdrag.fastedata.korrigeringsaarsaker
 import no.nav.sokos.oppdrag.fastedata.service.FasteDataService
 import no.nav.sokos.oppdrag.fastedata.validator.INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
@@ -40,7 +42,8 @@ import no.nav.sokos.oppdrag.fastedata.ventekriterier
 import no.nav.sokos.oppdrag.fastedata.ventestatuskoder
 
 private const val PORT = 9090
-private const val FAGOMRAADE = "''!"
+private const val KODE_FAGOMRAADE = "MYST"
+private const val KODE_FAGOMRAADE2 = "MYSTB"
 
 private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
 
@@ -115,7 +118,7 @@ internal class FasteDataApiTest :
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
-                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/MYSTB/korrigeringsaarsaker")
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE2/korrigeringsaarsaker")
                     .then()
                     .assertThat()
                     .statusCode(HttpStatusCode.OK.value)
@@ -146,7 +149,7 @@ internal class FasteDataApiTest :
 
         test("hent korrigeringsaarsaker returnerer 500 Internal Server Error") {
 
-            every { fasteDataService.getKorrigeringsaarsaker("MYST") } throws RuntimeException("En feil")
+            every { fasteDataService.getKorrigeringsaarsaker(KODE_FAGOMRAADE) } throws RuntimeException("En feil")
 
             val response =
                 RestAssured
@@ -155,7 +158,7 @@ internal class FasteDataApiTest :
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
-                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/MYST/korrigeringsaarsaker")
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE/korrigeringsaarsaker")
                     .then()
                     .assertThat()
                     .statusCode(HttpStatusCode.InternalServerError.value)
@@ -167,7 +170,7 @@ internal class FasteDataApiTest :
                     error = HttpStatusCode.InternalServerError.description,
                     status = HttpStatusCode.InternalServerError.value,
                     message = "En feil",
-                    path = "$FASTEDATA_BASE_API_PATH/fagomraader/MYST/korrigeringsaarsaker",
+                    path = "$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE/korrigeringsaarsaker",
                     timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
                 )
         }
@@ -182,7 +185,7 @@ internal class FasteDataApiTest :
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
-                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/MYST/bilagstyper")
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE/bilagstyper")
                     .then()
                     .assertThat()
                     .statusCode(HttpStatusCode.OK.value)
@@ -202,7 +205,7 @@ internal class FasteDataApiTest :
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
-                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/MYST/bilagstyper")
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE/bilagstyper")
                     .then()
                     .assertThat()
                     .statusCode(HttpStatusCode.InternalServerError.value)
@@ -214,13 +217,57 @@ internal class FasteDataApiTest :
                     error = HttpStatusCode.InternalServerError.description,
                     status = HttpStatusCode.InternalServerError.value,
                     message = "En feil",
-                    path = "$FASTEDATA_BASE_API_PATH/fagomraader/MYST/bilagstyper",
+                    path = "$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE/bilagstyper",
                     timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
                 )
         }
 
-        // TODO: /fagomraader/{kodeFagomraade}/klassekoder: 200 test
-        // TODO: /fagomraader/{kodeFagomraade}/klassekoder: 500 test
+        test("hent klassekode returnerer 200 OK") {
+            coEvery { fasteDataService.getKlassekoder(any()) } returns klassekoder
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE/klassekoder")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.OK.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<List<Klassekode>>(response.asString()) shouldBe klassekoder
+        }
+
+        test("hent klassekoder returnerer 500 Internal Server Error") {
+            coEvery { fasteDataService.getKlassekoder(any()) } throws RuntimeException("En feil")
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE/klassekoder")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()) shouldBe
+                ApiError(
+                    error = HttpStatusCode.InternalServerError.description,
+                    status = HttpStatusCode.InternalServerError.value,
+                    message = "En feil",
+                    path = "$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE/klassekoder",
+                    timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
+                )
+        }
 
         test("ventekriterier returnerer 200 OK") {
 
