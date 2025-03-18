@@ -52,7 +52,7 @@ val kotlinxDatetimeVersion = "0.6.2"
 val kotlinxCoroutinesVersion = "1.10.1"
 
 // Monitorering
-val micrometerVersion = "1.14.4"
+val micrometerVersion = "1.14.5"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
@@ -76,7 +76,7 @@ val graphqlClientVersion = "8.3.0"
 val caffeineVersion = "3.2.0"
 
 // Redis
-val redisVersion = "6.5.4.RELEASE"
+val redisVersion = "6.5.5.RELEASE"
 
 // TSS
 val tjenestespesifikasjonVersion = "1.0_20250218124429_8804209"
