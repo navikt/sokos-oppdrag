@@ -368,7 +368,7 @@ components:
           type: integer
           nullable: true
         settesManuelt:
-          type: boolean
+          type: string
         kodeArvesTil:
           type: string
           nullable: true

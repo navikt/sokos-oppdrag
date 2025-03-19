@@ -4,23 +4,24 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
+import io.mockk.every
 import kotliquery.queryOf
+import kotliquery.sessionOf
+import kotliquery.using
 
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.config.transaction
+import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.listener.Db2Listener
-import no.nav.sokos.oppdrag.listener.Db2Listener.fasteDataFagomraadeRepository
-import no.nav.sokos.oppdrag.listener.Db2Listener.venteKriterierRepository
-import no.nav.sokos.oppdrag.listener.Db2Listener.ventestatuskodeRepository
 
 internal class FasteDataServiceTest : FunSpec({
     extensions(Db2Listener)
 
     val fastedataService =
         FasteDataService(
-            fasteDataFagomraadeRepository,
-            venteKriterierRepository,
-            ventestatuskodeRepository,
+            Db2Listener.fasteDataFagomraadeRepository,
+            Db2Listener.venteKriterierRepository,
+            Db2Listener.ventestatuskodeRepository,
         )
 
     test("getAllVentekriterier skal returnere en liste av Ventekriterier") {
@@ -47,6 +48,40 @@ internal class FasteDataServiceTest : FunSpec({
             session.update(queryOf("database/fastedata/getVentestatuskoder.sql".readFromResource())) shouldBeGreaterThan 0
         }
 
+        every { Db2Listener.ventestatuskodeRepository.getAllVentestatuskoder() }.returns(
+            using(sessionOf(Db2Listener.dataSource)) { session ->
+                session.list(
+                    queryOf(
+                        """
+                        SELECT
+                            v.KODE_VENTESTATUS AS KODE_VENTESTATUS,
+                            v.BESKRIVELSE AS BESKRIVELSE,
+                            v.TYPE_VENTESTATUS AS TYPE_VENTESTATUS,
+                            v.KODE_ARVES_TIL AS KODE_ARVES_TIL,
+                            v.SETTES_MANUELT AS SETTES_MANUELT,
+                            v.OVERFOR_MOTTKOMP AS OVERFOR_MOTTKOMP,
+                            v.PRIORITET AS PRIORITET,
+                            COALESCE((SELECT
+                                GROUP_CONCAT(KODE_VENTESTATUS_U SEPARATOR ', ')
+                             FROM T_VENT_STATUSREGEL
+                             WHERE KODE_VENTESTATUS_H = v.KODE_VENTESTATUS), '') AS KAN_MANUELT_ENDRES_TIL
+                        FROM T_VENT_STATUSKODE v
+                        ORDER BY v.KODE_VENTESTATUS
+                        """.trimIndent(),
+                    ),
+                ) { row ->
+                    Ventestatuskode(
+                        kodeVentestatus = row.string("KODE_VENTESTATUS"),
+                        beskrivelse = row.string("BESKRIVELSE"),
+                        prioritet = row.intOrNull("PRIORITET"),
+                        settesManuelt = row.string("SETTES_MANUELT"),
+                        kodeArvesTil = row.stringOrNull("KODE_ARVES_TIL"),
+                        kanManueltEndresTil = row.stringOrNull("KAN_MANUELT_ENDRES_TIL"),
+                    )
+                }
+            },
+        )
+
         val result = fastedataService.getAllVentestatuskoder()
         result.shouldNotBeEmpty()
         result.size shouldBe 2
@@ -55,7 +90,7 @@ internal class FasteDataServiceTest : FunSpec({
         ventestatuskode.kodeVentestatus shouldBe "ADDR"
         ventestatuskode.beskrivelse shouldBe "Periode ikke utbet, navn/adresse mangler"
         ventestatuskode.prioritet shouldBe 120
-        ventestatuskode.settesManuelt shouldBe true
+        ventestatuskode.settesManuelt shouldBe "J"
         ventestatuskode.kodeArvesTil shouldBe "ADDR"
         ventestatuskode.kanManueltEndresTil shouldBe "AVVE"
     }

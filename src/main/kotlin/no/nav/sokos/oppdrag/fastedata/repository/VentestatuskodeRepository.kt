@@ -37,7 +37,7 @@ class VentestatuskodeRepository(
                     kodeVentestatus = row.string("KODE_VENTESTATUS"),
                     beskrivelse = row.string("BESKRIVELSE"),
                     prioritet = row.intOrNull("PRIORITET"),
-                    settesManuelt = row.boolean("SETTES_MANUELT"),
+                    settesManuelt = row.string("SETTES_MANUELT"),
                     kodeArvesTil = row.stringOrNull("KODE_ARVES_TIL"),
                     kanManueltEndresTil = row.stringOrNull("KAN_MANUELT_ENDRES_TIL"),
                 )

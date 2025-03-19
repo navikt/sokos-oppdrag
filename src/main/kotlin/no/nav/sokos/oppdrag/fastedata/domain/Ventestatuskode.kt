@@ -7,7 +7,7 @@ data class Ventestatuskode(
     val kodeVentestatus: String,
     val beskrivelse: String,
     val prioritet: Int?,
-    val settesManuelt: Boolean,
+    val settesManuelt: String,
     val kodeArvesTil: String?,
     val kanManueltEndresTil: String?,
 )
