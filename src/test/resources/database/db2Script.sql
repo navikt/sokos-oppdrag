@@ -502,10 +502,10 @@ CREATE TABLE T_KORREKSJON
 DROP TABLE IF EXISTS T_LINJE_VEDTAKSSATS;
 CREATE TABLE T_LINJE_VEDTAKSSATS
 (
-    OPPDRAGS_ID INTEGER                                not null,
-    LINJE_ID    SMALLINT                               not null,
-    VEDTAKSSATS DECIMAL(11, 2)                         not null,
-    BRUKERID    CHAR(8)      default 'CURRENT USER'    not null,
+    OPPDRAGS_ID INTEGER                             not null,
+    LINJE_ID    SMALLINT                            not null,
+    VEDTAKSSATS DECIMAL(11, 2)                      not null,
+    BRUKERID    CHAR(8)      default 'CURRENT USER' not null,
     TIDSPKT_REG TIMESTAMP(6) default CURRENT TIMESTAMP not null
 );
 
@@ -705,13 +705,37 @@ CREATE TABLE T_KONTOREGEL
 DROP TABLE IF EXISTS T_VENT_KRITERIUM;
 create table T_VENT_KRITERIUM
 (
-    KODE_FAGGRUPPE     CHAR(8)                                not null,
-    TYPE_BILAG         CHAR(2)                                not null,
-    DATO_FOM           DATE                                   not null,
+    KODE_FAGGRUPPE     CHAR(8)                             not null,
+    TYPE_BILAG         CHAR(2)                             not null,
+    DATO_FOM           DATE                                not null,
     BELOP_BRUTTO       DECIMAL(15, 2),
     BELOP_NETTO        DECIMAL(15, 2),
     ANT_DAGER_ELDREENN SMALLINT,
-    TIDLIGERE_AAR      CHAR(1)                                not null,
-    BRUKERID           CHAR(8)      default 'CURRENT USER'    not null,
+    TIDLIGERE_AAR      CHAR(1)                             not null,
+    BRUKERID           CHAR(8)      default 'CURRENT USER' not null,
     TIDSPKT_REG        TIMESTAMP(6) default CURRENT TIMESTAMP not null
+);
+
+DROP TABLE IF EXISTS T_VENT_STATUSKODE;
+create table T_VENT_STATUSKODE
+(
+    KODE_VENTESTATUS CHAR(4)                                not null,
+    BESKRIVELSE      CHAR(40),
+    TYPE_VENTESTATUS CHAR(4)                                not null,
+    KODE_ARVES_TIL   CHAR(4)                                not null,
+    SETTES_MANUELT   CHAR(1)                                not null,
+    OVERFOR_MOTTKOMP CHAR(1)                                not null,
+    PRIORITET        SMALLINT                               not null,
+    TIL_GSAK         CHAR(1)                                not null,
+    BRUKERID         CHAR(8)      default 'CURRENT USER'    not null,
+    TIDSPKT_REG      TIMESTAMP(6) default CURRENT TIMESTAMP not null
+);
+
+DROP TABLE IF EXISTS T_VENT_STATUSREGEL;
+create table T_VENT_STATUSREGEL
+(
+    KODE_VENTESTATUS_H CHAR(4)                             not null,
+    KODE_VENTESTATUS_U CHAR(4)                             not null,
+    BRUKERID           CHAR(8)      default 'CURRENT USER' not null,
+    TIDSPKT_ENDRET     TIMESTAMP(6) default CURRENT TIMESTAMP not null
 );
