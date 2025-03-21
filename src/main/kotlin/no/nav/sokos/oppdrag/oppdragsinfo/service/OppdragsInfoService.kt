@@ -9,7 +9,6 @@ import no.nav.sokos.oppdrag.common.exception.ForbiddenException
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kid
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kravhaver
@@ -27,7 +26,6 @@ import no.nav.sokos.oppdrag.oppdragsinfo.domain.Tekst
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Valuta
 import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsEnhetDTO
 import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsLinjeDetaljerDTO
-import no.nav.sokos.oppdrag.oppdragsinfo.repository.FaggruppeRepository
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragRepository
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsdetaljerRepository
 
@@ -37,7 +35,6 @@ private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 class OppdragsInfoService(
     private val oppdragsInfoRepository: OppdragRepository = OppdragRepository(),
     private val oppdragsdetaljerRepository: OppdragsdetaljerRepository = OppdragsdetaljerRepository(),
-    private val faggruppeRepository: FaggruppeRepository = FaggruppeRepository(),
     private val skjermingService: SkjermingService = SkjermingService(),
     private val auditLogger: AuditLogger = AuditLogger(),
 ) {
@@ -63,11 +60,6 @@ class OppdragsInfoService(
             secureLogger.info { "Fant ingen oppdrag for gjelderId: $gjelderId" }
             return emptyList()
         }
-    }
-
-    fun getFagGrupper(): List<FagGruppe> {
-        logger.info { "Henter faggrupper" }
-        return faggruppeRepository.getFagGrupper()
     }
 
     fun getOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> {

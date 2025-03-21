@@ -8,7 +8,6 @@ import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -42,7 +41,6 @@ import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import no.nav.sokos.oppdrag.listener.Db2Listener
 import no.nav.sokos.oppdrag.listener.Db2Listener.attestasjonRepository
-import no.nav.sokos.oppdrag.listener.Db2Listener.fagomraadeRepository
 import no.nav.sokos.oppdrag.listener.RedisListener
 
 internal class AttestasjonServiceTest :
@@ -58,7 +56,6 @@ internal class AttestasjonServiceTest :
         val attestasjonService: AttestasjonService by lazy {
             AttestasjonService(
                 attestasjonRepository = attestasjonRepository,
-                fagomraadeRepository = fagomraadeRepository,
                 zosConnectService = zosConnectService,
                 skjermingService = skjermingService,
                 redisCache = redisCache,
@@ -68,15 +65,6 @@ internal class AttestasjonServiceTest :
         afterEach {
             clearAllMocks()
             redisCache.getAllKeys().forEach { redisCache.delete(it) }
-        }
-
-        test("getFagOmraader skal returnere en liste med FagOmraade") {
-            val fagomraader = attestasjonService.getFagOmraader()
-            fagomraader.size shouldBe 293
-            fagomraader.forEach {
-                it.kodeFagomraade shouldNotBe null
-                it.kodeFagomraade shouldNotBe null
-            }
         }
 
         test("getOppdrag for en gjelderId når saksbehandler har skjermingtilgang til personen") {
