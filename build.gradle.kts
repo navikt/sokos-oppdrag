@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    kotlin("jvm") version "2.1.10"
-    kotlin("plugin.serialization") version "2.1.10"
+    kotlin("jvm") version "2.1.20"
+    kotlin("plugin.serialization") version "2.1.20"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("com.expediagroup.graphql") version "8.3.0"
+    id("com.expediagroup.graphql") version "8.4.0"
     id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
     id("org.openapi.generator") version "7.12.0"
@@ -57,7 +57,7 @@ val micrometerVersion = "1.14.5"
 // Logging
 val kotlinLoggingVersion = "3.0.5"
 val janionVersion = "3.1.12"
-val logbackVersion = "1.5.17"
+val logbackVersion = "1.5.18"
 val logstashVersion = "8.0"
 val papertrailappVersion = "1.0.0"
 
@@ -70,7 +70,7 @@ val db2JccVersion = "12.1.0.0"
 val kotliqueryVersion = "1.9.1"
 
 // GraphQL
-val graphqlClientVersion = "8.3.0"
+val graphqlClientVersion = "8.4.0"
 
 // Cache
 val caffeineVersion = "3.2.0"
@@ -93,7 +93,7 @@ val mockkVersion = "1.13.17"
 val swaggerRequestValidatorVersion = "2.44.1"
 val testcontainersVersion = "1.20.6"
 val h2Version = "2.3.232"
-val activemqVersion = "2.39.0"
+val activemqVersion = "2.40.0"
 
 dependencies {
 
