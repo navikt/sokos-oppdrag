@@ -4,6 +4,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 
 import com.atlassian.oai.validator.restassured.OpenApiValidationFilter
+import io.kotest.common.KotestInternal
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
@@ -50,6 +51,7 @@ private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplica
 private val validationFilter = OpenApiValidationFilter("openapi/fastedata-v1-swagger.yaml")
 private val fasteDataService = mockk<FasteDataService>()
 
+@OptIn(KotestInternal::class)
 internal class FasteDataApiTest :
     FunSpec({
 
@@ -118,7 +120,7 @@ internal class FasteDataApiTest :
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
-                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE2/korrigeringsaarsaker")
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE_MYSTB/korrigeringsaarsaker")
                     .then()
                     .assertThat()
                     .statusCode(HttpStatusCode.OK.value)
@@ -149,7 +151,7 @@ internal class FasteDataApiTest :
 
         test("hent korrigeringsaarsaker returnerer 500 Internal Server Error") {
 
-            every { fasteDataService.getKorrigeringsaarsaker(KODE_FAGOMRAADE) } throws RuntimeException("En feil")
+            every { fasteDataService.getKorrigeringsaarsaker(KODE_FAGOMRAADE_MYST) } throws RuntimeException("En feil")
 
             val response =
                 RestAssured
@@ -158,7 +160,7 @@ internal class FasteDataApiTest :
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
-                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE/korrigeringsaarsaker")
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE_MYST/korrigeringsaarsaker")
                     .then()
                     .assertThat()
                     .statusCode(HttpStatusCode.InternalServerError.value)
@@ -170,7 +172,7 @@ internal class FasteDataApiTest :
                     error = HttpStatusCode.InternalServerError.description,
                     status = HttpStatusCode.InternalServerError.value,
                     message = "En feil",
-                    path = "$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE/korrigeringsaarsaker",
+                    path = "$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE_MYST/korrigeringsaarsaker",
                     timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
                 )
         }
@@ -185,7 +187,7 @@ internal class FasteDataApiTest :
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
-                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE/bilagstyper")
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE_MYST/bilagstyper")
                     .then()
                     .assertThat()
                     .statusCode(HttpStatusCode.OK.value)
@@ -205,7 +207,7 @@ internal class FasteDataApiTest :
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
-                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE/bilagstyper")
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE_MYST/bilagstyper")
                     .then()
                     .assertThat()
                     .statusCode(HttpStatusCode.InternalServerError.value)
@@ -217,7 +219,7 @@ internal class FasteDataApiTest :
                     error = HttpStatusCode.InternalServerError.description,
                     status = HttpStatusCode.InternalServerError.value,
                     message = "En feil",
-                    path = "$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE/bilagstyper",
+                    path = "$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE_MYST/bilagstyper",
                     timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
                 )
         }
@@ -232,7 +234,7 @@ internal class FasteDataApiTest :
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
-                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE/klassekoder")
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE_MYST/klassekoder")
                     .then()
                     .assertThat()
                     .statusCode(HttpStatusCode.OK.value)
@@ -252,7 +254,7 @@ internal class FasteDataApiTest :
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
-                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE/klassekoder")
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE_MYST/klassekoder")
                     .then()
                     .assertThat()
                     .statusCode(HttpStatusCode.InternalServerError.value)
@@ -264,7 +266,7 @@ internal class FasteDataApiTest :
                     error = HttpStatusCode.InternalServerError.description,
                     status = HttpStatusCode.InternalServerError.value,
                     message = "En feil",
-                    path = "$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE/klassekoder",
+                    path = "$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE_MYST/klassekoder",
                     timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
                 )
         }
