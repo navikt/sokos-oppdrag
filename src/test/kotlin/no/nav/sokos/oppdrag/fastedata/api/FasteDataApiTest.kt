@@ -42,7 +42,7 @@ import no.nav.sokos.oppdrag.fastedata.ventekriterier
 import no.nav.sokos.oppdrag.fastedata.ventestatuskoder
 
 private const val PORT = 9090
-private const val KODE_FAGOMRAADE = "MYST"
+private const val KODE_FAGOMRAADE_MYST = "MYST"
 private const val KODE_FAGOMRAADE2 = "MYSTB"
 
 private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
