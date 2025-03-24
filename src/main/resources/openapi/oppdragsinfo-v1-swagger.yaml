@@ -857,6 +857,12 @@ components:
           type: string
         tidspktReg:
           type: string
+        hovedkontonr:
+          type: string
+          nullable: true
+        underkontonr:
+          type: string
+          nullable: true
 
     OppdragsLinjeDetaljerDTO:
       type: object
