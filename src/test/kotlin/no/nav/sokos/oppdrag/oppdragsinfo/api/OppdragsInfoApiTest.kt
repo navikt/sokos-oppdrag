@@ -31,7 +31,6 @@ import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
-import no.nav.sokos.oppdrag.oppdragsinfo.domain.FagGruppe
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kid
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Kravhaver
@@ -155,63 +154,6 @@ internal class OppdragsInfoApiTest :
                     status = HttpStatusCode.InternalServerError.value,
                     message = "The token was expected to have 3 parts, but got 0.",
                     path = "$OPPDRAGSINFO_BASE_API_PATH/sok",
-                    timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
-                )
-        }
-
-        test("hent faggrupper returnerer 200 OK") {
-
-            val fagGruppeKodeList =
-                listOf(
-                    FagGruppe(
-                        navn = "ABC",
-                        type = "DEF",
-                    ),
-                )
-
-            every { oppdragsInfoService.getFagGrupper() } returns fagGruppeKodeList
-
-            val response =
-                RestAssured
-                    .given()
-                    .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                    .port(PORT)
-                    .get("$OPPDRAGSINFO_BASE_API_PATH/faggrupper")
-                    .then()
-                    .assertThat()
-                    .statusCode(HttpStatusCode.OK.value)
-                    .extract()
-                    .response()
-
-            Json.decodeFromString<List<FagGruppe>>(response.asString()) shouldBe fagGruppeKodeList
-        }
-
-        test("hent faggrupper returnerer 500 Internal Server Error") {
-
-            every { oppdragsInfoService.getFagGrupper() } throws RuntimeException("En feil")
-
-            val response =
-                RestAssured
-                    .given()
-                    .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                    .port(PORT)
-                    .get("$OPPDRAGSINFO_BASE_API_PATH/faggrupper")
-                    .then()
-                    .assertThat()
-                    .statusCode(HttpStatusCode.InternalServerError.value)
-                    .extract()
-                    .response()
-
-            Json.decodeFromString<ApiError>(response.asString()) shouldBe
-                ApiError(
-                    error = HttpStatusCode.InternalServerError.description,
-                    status = HttpStatusCode.InternalServerError.value,
-                    message = "En feil",
-                    path = "$OPPDRAGSINFO_BASE_API_PATH/faggrupper",
                     timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
                 )
         }

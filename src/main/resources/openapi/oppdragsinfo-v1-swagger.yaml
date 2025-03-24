@@ -54,32 +54,6 @@ paths:
       security:
         - Bearer: [ ]
 
-
-  /faggrupper:
-    get:
-      tags:
-        - oppdragsinfo
-      summary: Hent tilgjengelige faggrupper
-      description: Returnerer en liste av tilgjengelige faggrupper. Faggruppe kan brukes til å filtrere søket i endepunktet -> /oppdragsegenskaper
-      operationId: hentFagGrupper
-      responses:
-        200:
-          description: OK - Hvis faggrupper ikke finnes så returneres tom liste
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/FagGruppe'
-        500:
-          description: Annen feil
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiError'
-      security:
-        - Bearer: [ ]
-
   /{oppdragsId}/oppdragslinjer:
     get:
       tags:
@@ -707,18 +681,6 @@ components:
           type: string
           description: filtrering på faggruppeKode
           nullable: true
-
-
-    FagGruppe:
-      type: object
-      required:
-        - navn
-        - type
-      properties:
-        navn:
-          type: string
-        type:
-          type: string
 
     OppdragsEnhetDTO:
       type: object

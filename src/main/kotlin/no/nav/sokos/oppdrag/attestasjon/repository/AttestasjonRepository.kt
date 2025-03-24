@@ -211,6 +211,26 @@ class AttestasjonRepository(
                 }
         }
 
+    fun getFagomraaderForFaggruppe(kodeFaggruppe: String): List<String> {
+        val query =
+            """
+            SELECT TRIM(FO.KODE_FAGOMRAADE) AS KODE_FAGOMRAADE                               
+            FROM T_FAGOMRAADE FO 
+            JOIN T_FAGGRUPPE FG ON FG.KODE_FAGGRUPPE = FO.KODE_FAGGRUPPE
+            and fg.KODE_FAGGRUPPE = :KODEFAGGRUPPE
+            """.trimIndent()
+        return using(sessionOf(dataSource)) { session ->
+            session.list(
+                queryOf(
+                    query,
+                    mapOf(
+                        "KODEFAGGRUPPE" to kodeFaggruppe,
+                    ),
+                ),
+            ) { row -> row.string("KODE_FAGOMRAADE") }
+        }
+    }
+
     private val mapToOppdrag: (Row) -> Oppdrag = { row ->
         Oppdrag(
             ansvarssted = row.stringOrNull("ANSVARSSTED"),
