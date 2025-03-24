@@ -179,6 +179,8 @@ internal class OppdragsInfoApiTest :
                         brukerId = "abc123",
                         tidspktReg = "2024-01-01",
                         vedtakssats = 1000.0,
+                        hovedkontonr = "TB",
+                        underkontonr = "AFP",
                     ),
                 )
 
@@ -614,6 +616,8 @@ internal class OppdragsInfoApiTest :
                                 brukerId = "abc123",
                                 tidspktReg = "2024-01-01",
                                 vedtakssats = 1500.0,
+                                hovedkontonr = "216",
+                                underkontonr = "5310",
                             ),
                         ),
                     harValutaer = TRUE,
