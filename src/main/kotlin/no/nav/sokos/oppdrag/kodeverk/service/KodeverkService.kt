@@ -8,8 +8,6 @@ import no.nav.sokos.oppdrag.kodeverk.repository.KodeverkRepository
 
 private val logger = KotlinLogging.logger {}
 
-// TODO: Redis cache??
-
 class KodeverkService(
     private val kodeverkRepository: KodeverkRepository = KodeverkRepository(),
 ) {

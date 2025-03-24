@@ -3,7 +3,6 @@ package no.nav.sokos.oppdrag.kodeverk.service
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.mockk.clearAllMocks
 
 import no.nav.sokos.oppdrag.listener.Db2Listener
 import no.nav.sokos.oppdrag.listener.Db2Listener.kodeverkRepository
@@ -17,13 +16,9 @@ internal class KodeverkServiceTest :
                 kodeverkRepository = kodeverkRepository,
             )
 
-        afterEach {
-            clearAllMocks()
-        }
-
         test("getFagGrupper skal returnere navn og type") {
-            val result = kodeverkService.getFagGrupper()
-            result.forEach { fagGruppe ->
+            val fagGrupper = kodeverkService.getFagGrupper()
+            fagGrupper.forEach { fagGruppe ->
                 fagGruppe.navn shouldNotBe null
                 fagGruppe.type shouldNotBe null
             }
