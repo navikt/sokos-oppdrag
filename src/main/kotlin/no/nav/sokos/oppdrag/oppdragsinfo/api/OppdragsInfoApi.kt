@@ -27,12 +27,6 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
             )
         }
 
-        get("faggrupper") {
-            call.respond(
-                oppdragsInfoService.getFagGrupper(),
-            )
-        }
-
         get("{oppdragsId}/oppdragslinjer") {
             call.respond(
                 oppdragsInfoService.getOppdragsLinjer(

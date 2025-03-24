@@ -13,6 +13,7 @@ const val GJELDER_ID = "24029428499"
 
 const val APPLICATION_JSON = "application/json"
 const val INTEGRATION_BASE_API_PATH = "/api/v1/integration"
+const val KODERVERK_BASE_API_PATH = "/api/v1/kodeverk"
 const val OPPDRAGSINFO_BASE_API_PATH = "/api/v1/oppdragsinfo"
 const val ATTESTASJON_BASE_API_PATH = "/api/v1/attestasjon"
 const val FASTEDATA_BASE_API_PATH = "/api/v1/fastedata"
