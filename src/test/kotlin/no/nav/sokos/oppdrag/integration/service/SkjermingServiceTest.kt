@@ -13,22 +13,22 @@ import no.nav.sokos.oppdrag.common.GRUPPE_EGNE_ANSATTE
 import no.nav.sokos.oppdrag.common.GRUPPE_FORTROLIG
 import no.nav.sokos.oppdrag.common.GRUPPE_STRENGT_FORTROLIG
 import no.nav.sokos.oppdrag.common.NavIdent
-import no.nav.sokos.oppdrag.common.redis.RedisCache
+import no.nav.sokos.oppdrag.common.valkey.ValkeyCache
 import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
 import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetClientService
-import no.nav.sokos.oppdrag.listener.RedisListener
+import no.nav.sokos.oppdrag.listener.Valkeylistener
 
 private val pdlClientService = mockk<PdlClientService>()
 private val skjermetClientService = mockk<SkjermetClientService>()
 
 internal class SkjermingServiceTest :
     FunSpec({
-        extensions(RedisListener)
+        extensions(Valkeylistener)
 
-        val redisCache: RedisCache by lazy {
-            RedisCache(
+        val valkeyCache: ValkeyCache by lazy {
+            ValkeyCache(
                 name = "skjermingService",
-                redisClient = RedisListener.redisClient,
+                valkeyClient = Valkeylistener.valkeyClient,
             )
         }
 
@@ -36,7 +36,7 @@ internal class SkjermingServiceTest :
             SkjermingService(
                 pdlClientService = pdlClientService,
                 skjermetClientService = skjermetClientService,
-                redisCache = redisCache,
+                valkeyCache = valkeyCache,
             )
         }
 

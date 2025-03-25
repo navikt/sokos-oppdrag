@@ -24,7 +24,7 @@ Applikasjon er en proxy mellom OppdragZ og Utbetalingsportalen (intern arbeidsfl
 * Gradle 8
 * [Kotest](https://plugins.jetbrains.com/plugin/14080-kotest) plugin for å kjøre tester
 * [Docker](https://www.docker.com/)
-    * for å starte opp en Redis server lokalt
+    * for å starte opp en Valkey server lokalt
     * for å kjøre testcontainers
 
 ### Bygge prosjekt
@@ -35,7 +35,7 @@ Applikasjon er en proxy mellom OppdragZ og Utbetalingsportalen (intern arbeidsfl
 
 Kjør `./setupLocalEnvironment.sh` for å sette opp prosjektet lokalt.
 
-Kjør `docker-compose up -d` for å starte opp en Redis server lokalt.
+Kjør `docker-compose up -d` for å starte opp en Valkey server lokalt.
 
 Applikasjonen trenger en db2 lisens fil for å koble til DB2 lokalt. Kontakt en utvikler fra Team MOBY for å få denne filen.
 

@@ -1,8 +1,8 @@
-package no.nav.sokos.oppdrag.common.redis
+package no.nav.sokos.oppdrag.common.valkey
 
 import io.micrometer.prometheusmetrics.PrometheusConfig
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 
 object Metrics {
-    val prometheusMeterRegistryRedis = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
+    val prometheusMeterRegistryValkey = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 }

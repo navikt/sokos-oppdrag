@@ -6,26 +6,26 @@ metadata:
   annotations:
     "nais.io/run-as-group": "0"
     "nais.io/read-only-file-system": "false"
-  name: sokos-oppdrag-redis
+  name: sokos-oppdrag-qx-valkey
   namespace: okonomi
 spec:
-  image: bitnami/redis:6.2.16
+  image: {{image}}
   port: 6379
-  replicas: # A single Redis-app doesn't scale
+  replicas:
+    max: 1
     min: 1
-    max: 1 # More replicas doesn't sync
-  resources: # you need to monitor the resource usage yourself
+  resources:
     limits:
       memory: 128Mi
     requests:
-      cpu: 3m
+      cpu: 50m
       memory: 128Mi
   accessPolicy:
     inbound:
       rules:
-        - application: sokos-oppdrag
+        - application: sokos-oppdrag-qx
   service:
     port: 6379
     protocol: redis
   envFrom:
-    - secret: sokos-oppdrag-redis-password
+    - secret: sokos-oppdrag-qx-valkey-password

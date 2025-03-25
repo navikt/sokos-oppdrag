@@ -2,6 +2,8 @@ package no.nav.sokos.oppdrag.kodeverk.service
 
 import mu.KotlinLogging
 
+import no.nav.sokos.oppdrag.common.valkey.ValkeyCache
+import no.nav.sokos.oppdrag.config.ValkeyConfig.createCodec
 import no.nav.sokos.oppdrag.kodeverk.domain.FagGruppe
 import no.nav.sokos.oppdrag.kodeverk.domain.FagOmraade
 import no.nav.sokos.oppdrag.kodeverk.repository.KodeverkRepository
@@ -10,14 +12,19 @@ private val logger = KotlinLogging.logger {}
 
 class KodeverkService(
     private val kodeverkRepository: KodeverkRepository = KodeverkRepository(),
+    private val valkeyCache: ValkeyCache = ValkeyCache(name = "kodeverkServcie"),
 ) {
-    fun getFagGrupper(): List<FagGruppe> {
+    suspend fun getFagGrupper(): List<FagGruppe> {
         logger.info { "Henter faggrupper" }
-        return kodeverkRepository.getFagGrupper()
+        return valkeyCache.getAsync(key = "faggrupper", codec = createCodec<List<FagGruppe>>("get-faggrupper")) {
+            kodeverkRepository.getFagGrupper()
+        }
     }
 
-    fun getFagOmraader(): List<FagOmraade> {
+    suspend fun getFagOmraader(): List<FagOmraade> {
         logger.info { "Henter fagområder" }
-        return kodeverkRepository.getFagOmraader()
+        return valkeyCache.getAsync(key = "fagomraader", codec = createCodec<List<FagOmraade>>("get-fagomraader")) {
+            kodeverkRepository.getFagOmraader()
+        }
     }
 }

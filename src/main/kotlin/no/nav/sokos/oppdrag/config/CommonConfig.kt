@@ -29,7 +29,7 @@ import io.micrometer.core.instrument.binder.system.UptimeMetrics
 import org.slf4j.event.Level
 
 import no.nav.sokos.oppdrag.attestasjon.metrics.Metrics as AttestasjonMetrics
-import no.nav.sokos.oppdrag.common.redis.Metrics as RedisMetrics
+import no.nav.sokos.oppdrag.common.valkey.Metrics as RedisMetrics
 import no.nav.sokos.oppdrag.integration.metrics.Metrics as IntegrationMetrics
 import no.nav.sokos.oppdrag.oppdragsinfo.metrics.Metrics as OppdragsInfoMetrics
 import no.nav.sokos.oppdrag.attestasjon.config.requestValidationAttestasjonConfig
@@ -111,7 +111,7 @@ fun Routing.internalNaisRoutes(
         }
         get("metrics") {
             call.respondText(
-                RedisMetrics.prometheusMeterRegistryRedis.scrape() +
+                RedisMetrics.prometheusMeterRegistryValkey.scrape() +
                     IntegrationMetrics.prometheusMeterRegistry.scrape() +
                     OppdragsInfoMetrics.prometheusMeterRegistryOppdragsInfo.scrape() +
                     AttestasjonMetrics.prometheusMeterRegistryAttestasjon.scrape(),

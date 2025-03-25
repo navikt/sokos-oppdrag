@@ -75,8 +75,8 @@ val graphqlClientVersion = "8.4.0"
 // Cache
 val caffeineVersion = "3.2.0"
 
-// Redis
-val redisVersion = "6.5.5.RELEASE"
+// Valkey
+val valkeyVersion = "6.5.5.RELEASE"
 
 // TSS
 val tjenestespesifikasjonVersion = "1.0_20250218124429_8804209"
@@ -148,7 +148,7 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
 
     // Redis
-    implementation("io.lettuce:lettuce-core:$redisVersion")
+    implementation("io.lettuce:lettuce-core:$valkeyVersion")
 
     // TSS
     implementation("no.nav.sokos.tjenestespesifikasjoner:nav-fim-tss-organisasjon-v4-tjenestespesifikasjon:$tjenestespesifikasjonVersion")

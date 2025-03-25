@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.common.redis
+package no.nav.sokos.oppdrag.common.valkey
 
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -13,19 +13,19 @@ import io.lettuce.core.codec.RedisCodec
 import io.micrometer.core.instrument.Counter
 import mu.KotlinLogging
 
-import no.nav.sokos.oppdrag.config.RedisConfig
-import no.nav.sokos.oppdrag.config.RedisConfig.useConnection
+import no.nav.sokos.oppdrag.config.ValkeyConfig
+import no.nav.sokos.oppdrag.config.ValkeyConfig.useConnection
 
 private val logger = KotlinLogging.logger {}
 
-class RedisCache(
+class ValkeyCache(
     private val name: String,
     private val cacheTTL: Duration = 10.minutes,
-    private val redisClient: RedisClient = RedisConfig.getRedisClient(),
+    private val valkeyClient: RedisClient = ValkeyConfig.getValkeyClient(),
 ) {
-    private val cacheHit = Counter.builder("sokos_oppdrag_redis_$name").tag("result", "hit").register(Metrics.prometheusMeterRegistryRedis)
-    private val cacheError = Counter.builder("sokos_oppdrag_redis_$name").tag("result", "error").register(Metrics.prometheusMeterRegistryRedis)
-    private val cacheMiss = Counter.builder("sokos_oppdrag_redis_$name").tag("result", "miss").register(Metrics.prometheusMeterRegistryRedis)
+    private val cacheHit = Counter.builder("sokos_oppdrag_valkey_$name").tag("result", "hit").register(Metrics.prometheusMeterRegistryValkey)
+    private val cacheError = Counter.builder("sokos_oppdrag_valkey_$name").tag("result", "error").register(Metrics.prometheusMeterRegistryValkey)
+    private val cacheMiss = Counter.builder("sokos_oppdrag_valkey_$name").tag("result", "miss").register(Metrics.prometheusMeterRegistryValkey)
 
     @OptIn(ExperimentalLettuceCoroutinesApi::class)
     suspend fun <T : Any> getAsync(
@@ -33,7 +33,7 @@ class RedisCache(
         codec: RedisCodec<String, T>,
         loader: suspend () -> T,
     ): T =
-        redisClient.useConnection(codec) { connection ->
+        valkeyClient.useConnection(codec) { connection ->
             try {
                 connection.get(key)
             } catch (e: SerializationException) {
@@ -50,14 +50,14 @@ class RedisCache(
 
     @OptIn(ExperimentalLettuceCoroutinesApi::class)
     suspend fun delete(key: String) {
-        redisClient.connect().use { connection ->
+        valkeyClient.connect().use { connection ->
             connection.coroutines().del(key)
         }
     }
 
     @OptIn(ExperimentalLettuceCoroutinesApi::class)
     suspend fun getAllKeys(): List<String> =
-        redisClient.connect().use { connection ->
+        valkeyClient.connect().use { connection ->
             connection.coroutines().keys("*").toList()
         }
 }
