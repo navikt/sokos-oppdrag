@@ -20,4 +20,6 @@ data class OppdragsLinje(
     val brukerId: String,
     val tidspktReg: String,
     val vedtakssats: Double?,
+    val hovedkontonr: String?,
+    val underkontonr: String?,
 )

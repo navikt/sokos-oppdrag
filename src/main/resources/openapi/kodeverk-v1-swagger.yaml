@@ -1,0 +1,135 @@
+openapi: 3.0.1
+info:
+  version: 1.0.0
+  title: Kodeverk API (sokos-oppdrag)
+  description: API-tjeneste for å søke etter kodeverk
+  contact:
+    name: Team Motta og Beregne
+    email: okonomi@nav.no
+    url: https://nav-it.slack.com/archives/CKZADNFBP
+
+tags:
+  - name: Kodeverk
+    description: Opplysninger om kodeverk
+
+servers:
+  - url: /api/v1/kodeverk
+
+paths:
+
+  /fagomraader:
+    get:
+      tags:
+        - kodeverk
+      summary: Hent tilgjengelige fagområder
+      description: Returnerer en liste av tilgjengelige fagområder.
+      operationId: getFagOmraade
+      responses:
+        200:
+          description: OK - Hvis fagområder ikke finnes så returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FagOmraade'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /faggrupper:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Hent tilgjengelige faggrupper
+      description: Returnerer en liste av tilgjengelige faggrupper. Faggruppe kan brukes til å filtrere søket i endepunktet -> /oppdragsegenskaper
+      operationId: hentFagGrupper
+      responses:
+        200:
+          description: OK - Hvis faggrupper ikke finnes så returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FagGruppe'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+components:
+  schemas:
+    FagOmraade:
+      type: object
+      required:
+        - navnFagomraade
+        - kodeFagomraade
+      properties:
+        navnFagomraade:
+          type: string
+        kodeFagomraade:
+          type: string
+
+    FagGruppe:
+      type: object
+      required:
+        - navn
+        - type
+      properties:
+        navn:
+          type: string
+        type:
+          type: string
+
+
+    ApiError:
+      type: object
+      required:
+        - timestamp
+        - status
+        - error
+        - message
+        - path
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Tidspunkt feilen oppsto
+        status:
+          type: integer
+          example: 4xx
+          description: HTTP status kode
+        error:
+          type: string
+          example: Bad Request
+          description: En kort, lesbar oppsummering av problemet
+        message:
+          type: string
+          example: Det skjedde en feil
+          description: En lesbar forklaring som er spesifikk for denne forekomsten av problemet
+        path:
+          type: string
+          example: /api/v1/kodeverk/fagomraader
+          description: Endepunktet hvor feilen oppstå
+
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      description: |-
+        OBO-token (JWT via OAuth2.0).<br> 
+          Følgende format må brukes i input-feltet "Value" under: <strong>\"Bearer {token}\"</strong>.<br> 
+          Eksempel på verdi i input-felt: <strong>Bearer eYdmifml0ejugm</strong>
+      name: Authorization
+      in: header
+
+
