@@ -3,6 +3,7 @@ package no.nav.sokos.oppdrag.attestasjon.service
 import kotlinx.serialization.json.Json
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.common.KotestInternal
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainExactly
@@ -36,21 +37,22 @@ import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_WRITE
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_READ
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_WRITE
 import no.nav.sokos.oppdrag.common.exception.ForbiddenException
-import no.nav.sokos.oppdrag.common.redis.RedisCache
+import no.nav.sokos.oppdrag.common.valkey.ValkeyCache
 import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import no.nav.sokos.oppdrag.listener.Db2Listener
 import no.nav.sokos.oppdrag.listener.Db2Listener.attestasjonRepository
-import no.nav.sokos.oppdrag.listener.RedisListener
+import no.nav.sokos.oppdrag.listener.Valkeylistener
 
+@OptIn(KotestInternal::class)
 internal class AttestasjonServiceTest :
     FunSpec({
-        extensions(RedisListener, Db2Listener)
+        extensions(Valkeylistener, Db2Listener)
 
         val zosConnectService: ZOSConnectService = mockk<ZOSConnectService>()
         val skjermingService = mockk<SkjermingService>()
-        val redisCache: RedisCache by lazy {
-            RedisCache(name = "oppdrag", redisClient = RedisListener.redisClient)
+        val valkeyCache: ValkeyCache by lazy {
+            ValkeyCache(name = "oppdrag", valkeyClient = Valkeylistener.valkeyClient)
         }
 
         val attestasjonService: AttestasjonService by lazy {
@@ -58,13 +60,13 @@ internal class AttestasjonServiceTest :
                 attestasjonRepository = attestasjonRepository,
                 zosConnectService = zosConnectService,
                 skjermingService = skjermingService,
-                redisCache = redisCache,
+                valkeyCache = valkeyCache,
             )
         }
 
         afterEach {
             clearAllMocks()
-            redisCache.getAllKeys().forEach { redisCache.delete(it) }
+            valkeyCache.getAllKeys().forEach { valkeyCache.delete(it) }
         }
 
         test("getOppdrag for en gjelderId når saksbehandler har skjermingtilgang til personen") {

@@ -78,15 +78,15 @@ spec:
   envFrom:
     - secret: oppdrag-qx-credentials
     - secret: sokos-oppdrag-mq-credentials
-    - secret: sokos-oppdrag-qx-redis-password
+    - secret: sokos-oppdrag-qx-valkey-password
   env:
     - name: USE_AUTHENTICATION
       value: "true"
 
     # Redis
-    - name: REDIS_HOST
-      value: "sokos-oppdrag-qx-redis.okonomi.svc.nais.local"
-    - name: REDIS_PORT
+    - name: VALKEY_HOST
+      value: "sokos-oppdrag-qx-valkey.okonomi.svc.nais.local"
+    - name: VALKEY_PORT
       value: "6379"
 
     # Db2

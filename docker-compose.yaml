@@ -1,7 +1,17 @@
+version: '3.8'
+
 services:
-  redis:
-    image: bitnami/redis:6.2.16
-    container_name: redis
-    command: redis-server --requirepass password
+  valkey:
+    image: valkey/valkey:8.1-alpine
+    container_name: valkey
+    environment:
+      - VALKEY_PASSWORD=password  # Set your desired password here
+      - VALKEY_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
     ports:
-      - "6379:6379"
+      - '6379:6379'
+    volumes:
+      - valkey_data:/bitnami/valkey/data
+
+volumes:
+  valkey_data:
+    driver: local

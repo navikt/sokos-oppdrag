@@ -2,7 +2,6 @@ package no.nav.sokos.oppdrag.config
 
 import java.nio.ByteBuffer
 
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 import io.lettuce.core.ExperimentalLettuceCoroutinesApi
@@ -16,25 +15,25 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
 
-object RedisConfig {
-    private fun getRedisURI(): RedisURI {
-        val redisProperties: PropertiesConfig.RedisProperties = PropertiesConfig.RedisProperties()
+object ValkeyConfig {
+    private fun getValkeyURI(): RedisURI {
+        val valkeyProperties: PropertiesConfig.ValkeyProperties = PropertiesConfig.ValkeyProperties()
 
-        val redisURI =
+        val valkeyURI =
             RedisURI
                 .builder()
-                .withHost(redisProperties.host)
-                .withPort(redisProperties.port.toInt())
-                .withSsl(redisProperties.ssl)
-                .withAuthentication("", redisProperties.password)
+                .withHost(valkeyProperties.host)
+                .withPort(valkeyProperties.port.toInt())
+                .withSsl(valkeyProperties.ssl)
+                .withAuthentication("", valkeyProperties.password)
                 .build()
-        return redisURI
+        return valkeyURI
     }
 
-    fun getRedisClient(redisURI: RedisURI = getRedisURI()): RedisClient {
-        val client = RedisClient.create(redisURI)
+    fun getValkeyClient(valkeyURI: RedisURI = getValkeyURI()): RedisClient {
+        val client = RedisClient.create(valkeyURI)
         client.connect().use { connection ->
-            logger.info { "Connected to Redis: ${connection.sync().ping()}" }
+            logger.info { "Connected to Valkey: ${connection.sync().ping()}" }
         }
         return client
     }

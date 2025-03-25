@@ -35,9 +35,9 @@ object PropertiesConfig {
                 "APPLICATION_PROFILE" to Profile.LOCAL.toString(),
                 "USE_AUTHENTICATION" to "false",
                 "ZOS_URL" to "http://155.55.1.82:9080/osattestasjonapi",
-                "REDIS_HOST" to "localhost",
-                "REDIS_PORT" to "6379",
-                "REDIS_PASSWORD" to "password",
+                "VALKEY_HOST" to "localhost",
+                "VALKEY_PORT" to "6379",
+                "VALKEY_PASSWORD" to "password",
                 "MQ_HOSTNAME" to "10.53.17.118",
                 "MQ_PORT" to "1413",
             ),
@@ -96,11 +96,11 @@ object PropertiesConfig {
             ),
     )
 
-    data class RedisProperties(
-        val host: String = getOrEmpty("REDIS_HOST"),
-        val port: String = getOrEmpty("REDIS_PORT"),
-        val password: String = getOrEmpty("REDIS_PASSWORD"),
-        val ssl: Boolean = getOrEmpty("REDIS_SSL").toBoolean(),
+    data class ValkeyProperties(
+        val host: String = getOrEmpty("VALKEY_HOST"),
+        val port: String = getOrEmpty("VALKEY_PORT"),
+        val password: String = getOrEmpty("VALKEY_PASSWORD"),
+        val ssl: Boolean = getOrEmpty("VALKEY_SSL").toBoolean(),
     )
 
     data class EksterneHostProperties(
