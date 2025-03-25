@@ -4,17 +4,25 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 
+import no.nav.sokos.oppdrag.common.valkey.ValkeyCache
 import no.nav.sokos.oppdrag.listener.Db2Listener
 import no.nav.sokos.oppdrag.listener.Db2Listener.kodeverkRepository
+import no.nav.sokos.oppdrag.listener.Valkeylistener
 
 internal class KodeverkServiceTest :
     FunSpec({
-        extensions(Db2Listener)
+        extensions(Db2Listener, Valkeylistener)
 
-        val kodeverkService =
+        val valkeyCache: ValkeyCache by lazy {
+            ValkeyCache(name = "oppdrag", valkeyClient = Valkeylistener.valkeyClient)
+        }
+
+        val kodeverkService: KodeverkService by lazy {
             KodeverkService(
                 kodeverkRepository = kodeverkRepository,
+                valkeyCache = valkeyCache,
             )
+        }
 
         test("getFagGrupper skal returnere navn og type") {
             val fagGrupper = kodeverkService.getFagGrupper()

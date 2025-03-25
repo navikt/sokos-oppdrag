@@ -10,7 +10,7 @@ private const val VALKEY_PORT = 6379
 
 object Valkeylistener : TestListener {
     private val valkeyContainer =
-        GenericContainer("valkey:8.1-alpine")
+        GenericContainer("valkey/valkey:8.1-alpine")
             .withExposedPorts(VALKEY_PORT)
             .withReuse(true)
 

@@ -43,7 +43,7 @@ jobs:
 
   deploy-dev-qx:
     needs: build-push-image
-    name: Deploy valkey to dev-fss
+    name: Deploy valkey to dev-fss-qx
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

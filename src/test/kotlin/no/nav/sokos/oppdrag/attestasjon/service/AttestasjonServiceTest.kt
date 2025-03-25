@@ -3,6 +3,7 @@ package no.nav.sokos.oppdrag.attestasjon.service
 import kotlinx.serialization.json.Json
 
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.common.KotestInternal
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainExactly
@@ -43,6 +44,7 @@ import no.nav.sokos.oppdrag.listener.Db2Listener
 import no.nav.sokos.oppdrag.listener.Db2Listener.attestasjonRepository
 import no.nav.sokos.oppdrag.listener.Valkeylistener
 
+@OptIn(KotestInternal::class)
 internal class AttestasjonServiceTest :
     FunSpec({
         extensions(Valkeylistener, Db2Listener)
