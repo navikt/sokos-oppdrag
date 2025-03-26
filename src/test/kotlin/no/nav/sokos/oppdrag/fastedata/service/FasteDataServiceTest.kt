@@ -69,6 +69,19 @@ internal class FasteDataServiceTest : FunSpec({
         bilagstype.autoFagsystemId shouldBe "N"
     }
 
+    test("getKlassekoder skal returnere en liste av Klassekode for valgt fagområde") {
+        Db2Listener.dataSource.transaction { session ->
+            session.update(queryOf("database/fastedata/getKlassekoder.sql".readFromResource())) shouldBeGreaterThan 0
+        }
+
+        val result = fastedataService.getKlassekoder(KODE_FAGOMRAADE_MEFOGNY)
+        result.shouldNotBeEmpty()
+        result.size shouldBe 7
+
+        val klassekode = result.first()
+        klassekode.kodeKlasse shouldBe "EFOGNYOR"
+    }
+
     test("getAllVentekriterier skal returnere en liste av Ventekriterier") {
         Db2Listener.dataSource.transaction { session ->
             session.update(queryOf("database/fastedata/getVentekriterier.sql".readFromResource())) shouldBeGreaterThan 0
