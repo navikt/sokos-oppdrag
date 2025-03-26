@@ -14,6 +14,8 @@ import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.listener.Db2Listener
 
+private const val KODE_FAGOMRAADE_MEFOGNY = "MEFOGNY"
+
 internal class FasteDataServiceTest : FunSpec({
     extensions(Db2Listener)
 
@@ -48,6 +50,23 @@ internal class FasteDataServiceTest : FunSpec({
         fagomraade.bilagstypeFinnes shouldBe false
         fagomraade.klassekodeFinnes shouldBe false
         fagomraade.regelFinnes shouldBe true
+    }
+
+    test("getBilagstyper skal returnere en liste av Bilagstype for valgt fagområde") {
+        Db2Listener.dataSource.transaction { session ->
+            session.update(queryOf("database/fastedata/getBilagstyper.sql".readFromResource())) shouldBeGreaterThan 0
+        }
+
+        val result = fastedataService.getBilagstyper(KODE_FAGOMRAADE_MEFOGNY)
+        result.shouldNotBeEmpty()
+        result.size shouldBe 3
+
+        val bilagstype = result.first()
+        bilagstype.kodeFagomraade.trim() shouldBe KODE_FAGOMRAADE_MEFOGNY
+        bilagstype.typeBilag shouldBe "MEMO"
+        bilagstype.datoFom shouldBe "2013-01-01"
+        bilagstype.datoTom shouldBe null
+        bilagstype.autoFagsystemId shouldBe "N"
     }
 
     test("getAllVentekriterier skal returnere en liste av Ventekriterier") {
