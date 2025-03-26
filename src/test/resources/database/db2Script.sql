@@ -439,6 +439,48 @@ values ('AAP     ', 'Arbeidsavklaringspenger                           ', 'ARBYT
        ('UNG     ', 'Ungdomsytelse                                     ', 'UNG     ', 1, 1, 'J', 'J', '   ', 'J', 'UNG ', 'TOB-4122', '2024-09-27 09:58:44.819956'),
        ('UTBINNKR', 'Utbetaling for mye innkrevd                       ', 'UTBINNKR', 1, 1, 'N', 'J', '   ', 'J', '    ', 'OPOS592 ', '2013-08-21 16:17:48.552935');
 
+DROP TABLE IF EXISTS T_FAGOMR_REGEL;
+CREATE TABLE T_FAGOMR_REGEL
+(
+    KODE_FAGOMRAADE CHAR(8)                             not null,
+    KODE_REGEL      CHAR(8)                             not null,
+    DATO_FOM        DATE                                not null,
+    BRUKERID        CHAR(8)      default 'CURRENT USER' not null,
+    TIDSPKT_REG     TIMESTAMP(6) default CURRENT TIMESTAMP not null
+);
+
+DROP TABLE IF EXISTS T_FAGOMR_KORRARSAK;
+CREATE TABLE T_FAGOMR_KORRARSAK
+(
+    KODE_FAGOMRAADE  CHAR(8)                             not null,
+    KODE_AARSAK_KORR CHAR(4)                             not null,
+    MEDFORER_KORR    CHAR(1)                             not null,
+    NY_ATTESTASJON   CHAR(1)                             not null,
+    BRUKERID         CHAR(8)      default 'CURRENT USER' not null,
+    TIDSPKT_REG      TIMESTAMP(6) default CURRENT TIMESTAMP not null
+);
+
+DROP TABLE IF EXISTS T_FAGO_BILAGSTYPE;
+CREATE TABLE T_FAGO_BILAGSTYPE
+(
+    KODE_FAGOMRAADE  CHAR(8)                             not null,
+    TYPE_BILAG       CHAR(4)                             not null,
+    DATO_FOM         DATE                                not null,
+    DATO_TOM         DATE,
+    AUTO_FAGSYSTEMID CHAR(1)                             not null,
+    BRUKERID         CHAR(8)      default 'CURRENT USER' not null,
+    TIDSPKT_REG      TIMESTAMP(6) default CURRENT TIMESTAMP not null
+);
+
+DROP TABLE IF EXISTS T_FAGO_KLASSEKODE;
+CREATE TABLE T_FAGO_KLASSEKODE
+(
+    KODE_FAGOMRAADE CHAR(8)                             not null,
+    KODE_KLASSE     CHAR(50)                            not null,
+    BRUKERID        CHAR(8)      default 'CURRENT USER' not null,
+    TIDSPKT_REG     TIMESTAMP(6) default CURRENT TIMESTAMP not null
+);
+
 DROP TABLE IF EXISTS T_ENHETSTYPE;
 CREATE TABLE T_ENHETSTYPE
 (
@@ -719,15 +761,15 @@ create table T_VENT_KRITERIUM
 DROP TABLE IF EXISTS T_VENT_STATUSKODE;
 create table T_VENT_STATUSKODE
 (
-    KODE_VENTESTATUS CHAR(4)                                not null,
+    KODE_VENTESTATUS CHAR(4)                             not null,
     BESKRIVELSE      CHAR(40),
-    TYPE_VENTESTATUS CHAR(4)                                not null,
-    KODE_ARVES_TIL   CHAR(4)                                not null,
-    SETTES_MANUELT   CHAR(1)                                not null,
-    OVERFOR_MOTTKOMP CHAR(1)                                not null,
-    PRIORITET        SMALLINT                               not null,
-    TIL_GSAK         CHAR(1)                                not null,
-    BRUKERID         CHAR(8)      default 'CURRENT USER'    not null,
+    TYPE_VENTESTATUS CHAR(4)                             not null,
+    KODE_ARVES_TIL   CHAR(4)                             not null,
+    SETTES_MANUELT   CHAR(1)                             not null,
+    OVERFOR_MOTTKOMP CHAR(1)                             not null,
+    PRIORITET        SMALLINT                            not null,
+    TIL_GSAK         CHAR(1)                             not null,
+    BRUKERID         CHAR(8)      default 'CURRENT USER' not null,
     TIDSPKT_REG      TIMESTAMP(6) default CURRENT TIMESTAMP not null
 );
 

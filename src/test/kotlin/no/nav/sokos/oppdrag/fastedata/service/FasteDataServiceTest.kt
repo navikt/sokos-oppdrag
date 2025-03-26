@@ -24,6 +24,32 @@ internal class FasteDataServiceTest : FunSpec({
             Db2Listener.ventestatuskodeRepository,
         )
 
+    test("hentAlleFagomraader skal returnere en liste av Fagomraade") {
+        Db2Listener.dataSource.transaction { session ->
+            session.update(queryOf("database/fastedata/getFagomraader.sql".readFromResource())) shouldBeGreaterThan 0
+        }
+
+        val result = fastedataService.getFagomraader()
+        result.shouldNotBeEmpty()
+        result.size shouldBe 293
+
+        val fagomraade = result.first()
+        fagomraade.kodeFagomraade shouldBe "AAP"
+        fagomraade.navnFagomraade shouldBe "Arbeidsavklaringspenger"
+        fagomraade.kodeFaggruppe shouldBe "ARBYT"
+        fagomraade.antAttestanter shouldBe 1
+        fagomraade.maksAktOppdrag shouldBe 99
+        fagomraade.tpsDistribusjon shouldBe "J"
+        fagomraade.sjekkOffId shouldBe "J"
+        fagomraade.anviser shouldBe "N"
+        fagomraade.sjekkMotTps shouldBe "J"
+        fagomraade.kodeMotregningsgruppe shouldBe "MAAP"
+        fagomraade.korraarsakFinnes shouldBe false
+        fagomraade.bilagstypeFinnes shouldBe false
+        fagomraade.klassekodeFinnes shouldBe false
+        fagomraade.regelFinnes shouldBe true
+    }
+
     test("getAllVentekriterier skal returnere en liste av Ventekriterier") {
         Db2Listener.dataSource.transaction { session ->
             session.update(queryOf("database/fastedata/getVentekriterier.sql".readFromResource())) shouldBeGreaterThan 0
