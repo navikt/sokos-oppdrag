@@ -82,6 +82,21 @@ internal class FasteDataServiceTest : FunSpec({
         klassekode.kodeKlasse shouldBe "EFOGNYOR"
     }
 
+    test("getKorrigeringsaarsaker skal returnere en liste av Korrigeringsaarsak for valgt fagområde") {
+        Db2Listener.dataSource.transaction { session ->
+            session.update(queryOf("database/fastedata/getKorrigeringsaarsaker.sql".readFromResource())) shouldBeGreaterThan 0
+        }
+
+        val result = fastedataService.getKorrigeringsaarsaker("BIDRINKR")
+        result.shouldNotBeEmpty()
+        result.size shouldBe 16
+
+        val korrigeringsaarsak = result.first()
+        korrigeringsaarsak.kodeAarsakKorr shouldBe "0001"
+        korrigeringsaarsak.beskrivelse shouldBe "Linjestatus endret"
+        korrigeringsaarsak.medforerKorr shouldBe false
+    }
+
     test("getAllVentekriterier skal returnere en liste av Ventekriterier") {
         Db2Listener.dataSource.transaction { session ->
             session.update(queryOf("database/fastedata/getVentekriterier.sql".readFromResource())) shouldBeGreaterThan 0
