@@ -11,6 +11,7 @@ on:
       - 'setupLocalEnvironment.sh'
       - 'dokumentasjon/**'
       - '.github/workflows/deploy.yaml'
+      - '.github/workflows/deploy-valkey.yaml'
       - '.github/workflows/manual-deploy.yaml'
       - '.github/workflows/security.yaml'
       - '.github/workflows/alerts.yaml'

@@ -12,6 +12,7 @@ on:
       - '.editorconfig'
       - 'setupLocalEnvironment.sh'
       - 'dokumentasjon/**'
+      - '.github/workflows/deploy-valkey.yaml'
       - '.github/workflows/build-pr.yaml'
       - '.github/workflows/manual-deploy.yaml'
       - '.github/workflows/security.yaml'
