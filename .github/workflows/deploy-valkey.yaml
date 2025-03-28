@@ -1,0 +1,57 @@
+name: Build and deploy valkey
+on:
+  push:
+    paths:
+      - '.nais/valkey/**'
+      - '.github/workflows/deploy-valkey.yaml'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build-push-image:
+    name: Build and push image to GAR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build and push to GAR
+        id: docker-build-push
+        uses: nais/docker-build-push@v0
+        with:
+          team: okonomi
+          dockerfile: .nais/valkey/Dockerfile
+          tag: ${{ inputs.image-tag }}
+    outputs:
+      image: ${{ steps.docker-build-push.outputs.image }}
+
+  deploy-dev:
+    needs: build-push-image
+    name: Deploy valkey to dev-fss
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 'Deploy to dev-fss'
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLUSTER: dev-fss
+          TEAM: okonomi
+          RESOURCE: ".nais/valkey/valkey-q1.yaml"
+          VAR: image=${{ needs.build-push-image.outputs.image }}
+
+  deploy-dev-qx:
+    needs: build-push-image
+    name: Deploy valkey to dev-fss-qx
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 'Deploy to dev-fss-qx'
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLUSTER: dev-fss
+          TEAM: okonomi
+          RESOURCE: ".nais/valkey/valkey-qx.yaml"
+          VAR: image=${{ needs.build-push-image.outputs.image }}

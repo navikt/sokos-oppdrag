@@ -20,8 +20,8 @@ import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.common.exception.ForbiddenException
-import no.nav.sokos.oppdrag.common.redis.RedisCache
 import no.nav.sokos.oppdrag.common.util.CacheUtil
+import no.nav.sokos.oppdrag.common.valkey.ValkeyCache
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 
@@ -34,7 +34,7 @@ class AttestasjonService(
     private val auditLogger: AuditLogger = AuditLogger(),
     private val zosConnectService: ZOSConnectService = ZOSConnectService(),
     private val skjermingService: SkjermingService = SkjermingService(),
-    private val redisCache: RedisCache = RedisCache("attestasjonService"),
+    private val valkeyCache: ValkeyCache = ValkeyCache("attestasjonService"),
 ) {
     suspend fun getOppdrag(
         request: OppdragsRequest,
@@ -157,9 +157,9 @@ class AttestasjonService(
         fagSystemId: String? = null,
         fagOmraade: String? = null,
     ) {
-        redisCache.getAllKeys().forEach { key ->
+        valkeyCache.getAllKeys().forEach { key ->
             if (key.contains(gjelderId.orEmpty()) || CacheUtil.isFagSystemIdPartOfCacheKey(key, fagSystemId.orEmpty()) || key.contains(fagOmraade.orEmpty())) {
-                redisCache.delete(key)
+                valkeyCache.delete(key)
             }
         }
     }

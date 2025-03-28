@@ -14,7 +14,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.server.routing.routing
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import io.restassured.RestAssured
 
@@ -57,10 +57,11 @@ internal class KodeverkApiTest :
                     ),
                 )
 
-            every { kodeverkService.getFagGrupper() } returns fagGruppeKodeList
+            coEvery { kodeverkService.getFagGrupper() } returns fagGruppeKodeList
 
             val response =
-                RestAssured.given()
+                RestAssured
+                    .given()
                     .filter(validationFilter)
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer ${Testdata.tokenWithNavIdent}")
@@ -77,10 +78,11 @@ internal class KodeverkApiTest :
 
         test("hent faggrupper returnerer 500 Internal Server Error") {
 
-            every { kodeverkService.getFagGrupper() } throws RuntimeException("En feil")
+            coEvery { kodeverkService.getFagGrupper() } throws RuntimeException("En feil")
 
             val response =
-                RestAssured.given()
+                RestAssured
+                    .given()
                     .filter(validationFilter)
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer ${Testdata.tokenWithNavIdent}")
@@ -112,10 +114,11 @@ internal class KodeverkApiTest :
                     ),
                 )
 
-            every { kodeverkService.getFagOmraader() } returns fagOmraadeList
+            coEvery { kodeverkService.getFagOmraader() } returns fagOmraadeList
 
             val response =
-                RestAssured.given()
+                RestAssured
+                    .given()
                     .filter(validationFilter)
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer ${Testdata.tokenWithNavIdent}")
@@ -132,10 +135,11 @@ internal class KodeverkApiTest :
 
         test("hent alle fagområder returnerer 500 Internal Server Error") {
 
-            every { kodeverkService.getFagOmraader() } throws RuntimeException("Noe gikk galt")
+            coEvery { kodeverkService.getFagOmraader() } throws RuntimeException("Noe gikk galt")
 
             val response =
-                RestAssured.given()
+                RestAssured
+                    .given()
                     .filter(validationFilter)
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer ${Testdata.tokenWithNavIdent}")
