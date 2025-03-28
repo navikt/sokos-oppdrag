@@ -41,6 +41,14 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
         }
     }
 
+    route("$BASE_PATH/ventestatuskoder") {
+        get("") {
+            call.respond(
+                fasteDataService.getAllVentestatuskoder(),
+            )
+        }
+    }
+
     route("$BASE_PATH/ventekriterier") {
         get("") {
             call.respond(

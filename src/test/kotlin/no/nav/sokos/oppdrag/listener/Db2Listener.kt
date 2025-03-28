@@ -14,6 +14,7 @@ import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.config.DatabaseTestConfig
 import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.fastedata.repository.VentekriterierRepository
+import no.nav.sokos.oppdrag.fastedata.repository.VentestatuskodeRepository
 import no.nav.sokos.oppdrag.kodeverk.repository.KodeverkRepository
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragRepository
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsdetaljerRepository
@@ -26,6 +27,7 @@ object Db2Listener : TestListener {
     val kodeverkRepository = spyk(KodeverkRepository(dataSource))
     val venteKriterierRepository = spyk(VentekriterierRepository(dataSource))
     val fasteDataFagomraadeRepository = spyk(no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository(dataSource))
+    val ventestatuskodeRepository = spyk(VentestatuskodeRepository(dataSource))
 
     override suspend fun beforeSpec(spec: Spec) {
         dataSource shouldNotBe null
@@ -33,6 +35,7 @@ object Db2Listener : TestListener {
         oppdragRepository shouldNotBe null
         oppdragsdetaljerRepository shouldNotBe null
         kodeverkRepository shouldNotBe null
+        ventestatuskodeRepository shouldNotBe null
 
         dataSource.transaction { session ->
             val query = "database/db2Script.sql".readFromResource()
