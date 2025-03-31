@@ -44,7 +44,7 @@ repositories {
 }
 
 // Ktor
-val ktorVersion = "3.1.1"
+val ktorVersion = "3.1.2"
 
 // Serialization
 val kotlinxSerializationVersion = "1.8.0"
@@ -65,7 +65,7 @@ val papertrailappVersion = "1.0.0"
 val natpryceVersion = "1.6.10.0"
 
 // Database
-val hikariVersion = "6.2.1"
+val hikariVersion = "6.3.0"
 val db2JccVersion = "12.1.0.0"
 val kotliqueryVersion = "1.9.1"
 
@@ -86,7 +86,7 @@ val glassfishJaxbVersion = "4.0.5"
 val ibmMqVersion = "9.4.2.0"
 
 // Test
-val kotestVersion = "6.0.0.M2"
+val kotestVersion = "6.0.0.M3"
 val wiremockVersion = "3.12.1"
 val mockOAuth2ServerVersion = "2.1.10"
 val mockkVersion = "1.13.17"
