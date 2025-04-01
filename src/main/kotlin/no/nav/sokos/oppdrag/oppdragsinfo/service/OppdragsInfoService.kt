@@ -121,7 +121,7 @@ class OppdragsInfoService(
             harValutaer = eksisterer["T_VALUTA"] ?: false,
             harSkyldnere = eksisterer["T_SKYLDNER"] ?: false,
             harKravhavere = eksisterer["T_KRAVHAVER"] ?: false,
-            harEnheter = eksisterer["T_ENHET"] ?: false,
+            harEnheter = eksisterer["T_LINJEENHET"] ?: false,
             harGrader = eksisterer["T_GRAD"] ?: false,
             harTekster = eksisterer["T_TEKST"] ?: false,
             harKidliste = eksisterer["T_KID"] ?: false,
