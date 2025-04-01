@@ -305,7 +305,7 @@ class OppdragRepository(
                     WHERE OPPDRAGS_ID = :oppdragsId
                     AND LINJE_ID = :linjeId
                     UNION ALL
-                    SELECT 'T_LINJEENHET ' AS table_name, COUNT(*) AS EKSISTERER
+                    SELECT 'T_LINJEENHET' AS table_name, COUNT(*) AS EKSISTERER
                     FROM T_LINJEENHET 
                     WHERE OPPDRAGS_ID = :oppdragsId
                     AND LINJE_ID = :linjeId
