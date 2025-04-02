@@ -100,7 +100,7 @@ class FagomraadeRepository(
                            DATO_TOM,
                            AUTO_FAGSYSTEMID
                      from T_FAGO_BILAGSTYPE
-                           WHERE FK.KODE_FAGOMRAADE = :KODE_FAGOMRAADE   
+                           WHERE KODE_FAGOMRAADE = :KODE_FAGOMRAADE   
                     """.trimIndent(),
                     mapOf(
                         "KODE_FAGOMRAADE" to kodeFagomraade,
@@ -111,7 +111,7 @@ class FagomraadeRepository(
                     kodeFagomraade = row.string("KODE_FAGOMRAADE"),
                     typeBilag = row.string("TYPE_BILAG"),
                     datoFom = row.string("DATO_FOM"),
-                    datoTom = row.string("DATO_TOM"),
+                    datoTom = row.stringOrNull("DATO_TOM"),
                     autoFagsystemId = row.string("AUTO_FAGSYSTEMID"),
                 )
             }

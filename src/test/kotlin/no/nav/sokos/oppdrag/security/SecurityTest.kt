@@ -35,7 +35,7 @@ val oppdragsInfoService = mockk<OppdragsInfoService>()
 
 /**
  * Test for å sjekke at sikkerhetsmekanismen fungerer som forventet. Bruker
- * oppdragsinfo som utgangspunkt, fordi alle endepunktene i applikasjonen
+ * kodeverk som utgangspunkt, fordi alle endepunktene i applikasjonen
  * er sikret under samme konfigurasjon. Endepunktene er wrappet i
  * en authenticate() funksjon som sjekker om bruker er autentisert.
  */
@@ -54,7 +54,7 @@ internal class SecurityTest :
                             }
                         }
                     }
-                    val response = client.get("$OPPDRAGSINFO_BASE_API_PATH/faggrupper")
+                    val response = client.get("$OPPDRAGSINFO_BASE_API_PATH/12345676544/oppdragslinjer")
                     response.status shouldBe HttpStatusCode.Unauthorized
                 }
             }

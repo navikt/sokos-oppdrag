@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    kotlin("jvm") version "2.1.10"
-    kotlin("plugin.serialization") version "2.1.10"
+    kotlin("jvm") version "2.1.20"
+    kotlin("plugin.serialization") version "2.1.20"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("com.expediagroup.graphql") version "8.3.0"
+    id("com.expediagroup.graphql") version "8.4.0"
     id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
     id("org.openapi.generator") version "7.12.0"
@@ -44,7 +44,7 @@ repositories {
 }
 
 // Ktor
-val ktorVersion = "3.1.1"
+val ktorVersion = "3.1.2"
 
 // Serialization
 val kotlinxSerializationVersion = "1.8.0"
@@ -52,12 +52,12 @@ val kotlinxDatetimeVersion = "0.6.2"
 val kotlinxCoroutinesVersion = "1.10.1"
 
 // Monitorering
-val micrometerVersion = "1.14.4"
+val micrometerVersion = "1.14.5"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
 val janionVersion = "3.1.12"
-val logbackVersion = "1.5.17"
+val logbackVersion = "1.5.18"
 val logstashVersion = "8.0"
 val papertrailappVersion = "1.0.0"
 
@@ -65,18 +65,18 @@ val papertrailappVersion = "1.0.0"
 val natpryceVersion = "1.6.10.0"
 
 // Database
-val hikariVersion = "6.2.1"
+val hikariVersion = "6.3.0"
 val db2JccVersion = "12.1.0.0"
 val kotliqueryVersion = "1.9.1"
 
 // GraphQL
-val graphqlClientVersion = "8.3.0"
+val graphqlClientVersion = "8.4.0"
 
 // Cache
 val caffeineVersion = "3.2.0"
 
-// Redis
-val redisVersion = "6.5.4.RELEASE"
+// Valkey
+val valkeyVersion = "6.5.5.RELEASE"
 
 // TSS
 val tjenestespesifikasjonVersion = "1.0_20250218124429_8804209"
@@ -86,14 +86,14 @@ val glassfishJaxbVersion = "4.0.5"
 val ibmMqVersion = "9.4.2.0"
 
 // Test
-val kotestVersion = "6.0.0.M2"
-val wiremockVersion = "3.12.0"
+val kotestVersion = "6.0.0.M3"
+val wiremockVersion = "3.12.1"
 val mockOAuth2ServerVersion = "2.1.10"
 val mockkVersion = "1.13.17"
 val swaggerRequestValidatorVersion = "2.44.1"
-val testcontainersVersion = "1.20.5"
+val testcontainersVersion = "1.20.6"
 val h2Version = "2.3.232"
-val activemqVersion = "2.39.0"
+val activemqVersion = "2.40.0"
 
 dependencies {
 
@@ -148,7 +148,7 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
 
     // Redis
-    implementation("io.lettuce:lettuce-core:$redisVersion")
+    implementation("io.lettuce:lettuce-core:$valkeyVersion")
 
     // TSS
     implementation("no.nav.sokos.tjenestespesifikasjoner:nav-fim-tss-organisasjon-v4-tjenestespesifikasjon:$tjenestespesifikasjonVersion")
@@ -269,7 +269,7 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "8.12"
+        gradleVersion = "8.13"
     }
 
     ("jar") {

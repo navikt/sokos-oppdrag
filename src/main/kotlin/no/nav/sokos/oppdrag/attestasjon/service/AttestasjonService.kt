@@ -8,7 +8,6 @@ import mu.KotlinLogging
 import no.nav.sokos.oppdrag.attestasjon.api.model.AttestasjonRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.ZosResponse
-import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.domain.toDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragDTO
@@ -16,14 +15,13 @@ import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
-import no.nav.sokos.oppdrag.attestasjon.repository.FagomraadeRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.common.exception.ForbiddenException
-import no.nav.sokos.oppdrag.common.redis.RedisCache
 import no.nav.sokos.oppdrag.common.util.CacheUtil
+import no.nav.sokos.oppdrag.common.valkey.ValkeyCache
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 
@@ -33,11 +31,10 @@ const val ENHETSNUMMER_NOP = "4819"
 
 class AttestasjonService(
     private val attestasjonRepository: AttestasjonRepository = AttestasjonRepository(),
-    private val fagomraadeRepository: FagomraadeRepository = FagomraadeRepository(),
     private val auditLogger: AuditLogger = AuditLogger(),
     private val zosConnectService: ZOSConnectService = ZOSConnectService(),
     private val skjermingService: SkjermingService = SkjermingService(),
-    private val redisCache: RedisCache = RedisCache("attestasjonService"),
+    private val valkeyCache: ValkeyCache = ValkeyCache("attestasjonService"),
 ) {
     suspend fun getOppdrag(
         request: OppdragsRequest,
@@ -63,7 +60,7 @@ class AttestasjonService(
         val fagomraader =
             when {
                 !request.kodeFagOmraade.isNullOrBlank() -> listOf(request.kodeFagOmraade)
-                !request.kodeFagGruppe.isNullOrBlank() -> fagomraadeRepository.getFagomraaderForFaggruppe(request.kodeFagGruppe)
+                !request.kodeFagGruppe.isNullOrBlank() -> attestasjonRepository.getFagomraaderForFaggruppe(request.kodeFagGruppe)
                 else -> emptyList()
             }
 
@@ -91,8 +88,6 @@ class AttestasjonService(
                 }
             }.map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, navIdent)) }
     }
-
-    fun getFagOmraader(): List<FagOmraade> = fagomraadeRepository.getFagOmraader()
 
     fun getOppdragsdetaljer(
         oppdragsId: Int,
@@ -162,9 +157,9 @@ class AttestasjonService(
         fagSystemId: String? = null,
         fagOmraade: String? = null,
     ) {
-        redisCache.getAllKeys().forEach { key ->
+        valkeyCache.getAllKeys().forEach { key ->
             if (key.contains(gjelderId.orEmpty()) || CacheUtil.isFagSystemIdPartOfCacheKey(key, fagSystemId.orEmpty()) || key.contains(fagOmraade.orEmpty())) {
-                redisCache.delete(key)
+                valkeyCache.delete(key)
             }
         }
     }

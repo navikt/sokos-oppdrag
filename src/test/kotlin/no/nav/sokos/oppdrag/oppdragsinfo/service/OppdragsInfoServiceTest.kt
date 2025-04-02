@@ -18,7 +18,6 @@ import no.nav.sokos.oppdrag.common.exception.ForbiddenException
 import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import no.nav.sokos.oppdrag.listener.Db2Listener
-import no.nav.sokos.oppdrag.listener.Db2Listener.faggruppeRepository
 import no.nav.sokos.oppdrag.listener.Db2Listener.oppdragRepository
 import no.nav.sokos.oppdrag.listener.Db2Listener.oppdragsdetaljerRepository
 
@@ -34,21 +33,12 @@ internal class OppdragsInfoServiceTest :
             OppdragsInfoService(
                 oppdragRepository,
                 oppdragsdetaljerRepository,
-                faggruppeRepository,
                 skjermingService,
             )
 
         beforeEach {
             Db2Listener.dataSource.transaction { session ->
                 session.update(queryOf("database/oppdragsinfo/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
-            }
-        }
-
-        test("getFagGrupper skal returnere navn og type") {
-            val result = faggruppeRepository.getFagGrupper()
-            result.forEach { fagGruppe ->
-                fagGruppe.navn shouldNotBe null
-                fagGruppe.type shouldNotBe null
             }
         }
 

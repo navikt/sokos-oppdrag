@@ -6,29 +6,29 @@ import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisURI
 import org.testcontainers.containers.GenericContainer
 
-private const val REDIS_PORT = 6379
+private const val VALKEY_PORT = 6379
 
-object RedisListener : TestListener {
-    private val redisContainer =
-        GenericContainer("redis:6.2.6")
-            .withExposedPorts(REDIS_PORT)
+object Valkeylistener : TestListener {
+    private val valkeyContainer =
+        GenericContainer("valkey/valkey:8.1-alpine")
+            .withExposedPorts(VALKEY_PORT)
             .withReuse(true)
 
-    lateinit var redisClient: RedisClient
+    lateinit var valkeyClient: RedisClient
 
     override suspend fun beforeSpec(spec: Spec) {
-        redisContainer.start()
-        redisClient =
+        valkeyContainer.start()
+        valkeyClient =
             RedisClient.create(
                 RedisURI
                     .builder()
-                    .withHost(redisContainer.host)
-                    .withPort(redisContainer.firstMappedPort)
+                    .withHost(valkeyContainer.host)
+                    .withPort(valkeyContainer.firstMappedPort)
                     .build(),
             )
     }
 
     override suspend fun afterSpec(spec: Spec) {
-        redisContainer.stop()
+        valkeyContainer.stop()
     }
 }

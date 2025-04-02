@@ -12,6 +12,8 @@ import no.nav.sokos.oppdrag.fastedata.api.fastedataApi
 import no.nav.sokos.oppdrag.fastedata.api.fastedataSwaggerApi
 import no.nav.sokos.oppdrag.integration.api.integrationApi
 import no.nav.sokos.oppdrag.integration.api.integrationSwaggerApi
+import no.nav.sokos.oppdrag.kodeverk.api.kodeverkApi
+import no.nav.sokos.oppdrag.kodeverk.api.kodeverkSwaggerApi
 import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoApi
 import no.nav.sokos.oppdrag.venteregister.api.venteregisterApi
 
@@ -21,12 +23,14 @@ fun Application.routingConfig(
 ) {
     routing {
         internalNaisRoutes(applicationState)
+        kodeverkSwaggerApi()
         oppdragsinfoSwaggerApi()
         integrationSwaggerApi()
         attestasjonSwaggerApi()
         fastedataSwaggerApi()
         venteregisterApi()
         authenticate(useAuthentication, AUTHENTICATION_NAME) {
+            kodeverkApi()
             integrationApi()
             oppdragsInfoApi()
             attestasjonApi()

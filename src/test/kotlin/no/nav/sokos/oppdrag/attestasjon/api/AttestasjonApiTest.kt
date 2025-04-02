@@ -16,7 +16,6 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import io.ktor.server.routing.routing
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import io.restassured.RestAssured
 
@@ -32,7 +31,6 @@ import no.nav.sokos.oppdrag.attestasjon.api.model.AttestertStatus.IKKE_FERDIG_AT
 import no.nav.sokos.oppdrag.attestasjon.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.attestasjon.api.model.ZosResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.Attestasjon
-import no.nav.sokos.oppdrag.attestasjon.domain.FagOmraade
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdragslinje
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
@@ -180,63 +178,6 @@ internal class AttestasjonApiTest :
                     error = HttpStatusCode.InternalServerError.description,
                     message = "The token was expected to have 3 parts, but got 0.",
                     path = "$ATTESTASJON_BASE_API_PATH/sok",
-                    timestamp = Instant.parse(response.jsonPath().getString("timestamp")),
-                )
-        }
-
-        test("hent alle fagområder returnerer 200 OK") {
-
-            val fagOmraadeList =
-                listOf(
-                    FagOmraade(
-                        navnFagomraade = "Barnepensjon",
-                        kodeFagomraade = "BP",
-                    ),
-                )
-
-            every { attestasjonService.getFagOmraader() } returns fagOmraadeList
-
-            val response =
-                RestAssured
-                    .given()
-                    .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                    .port(PORT)
-                    .get("$ATTESTASJON_BASE_API_PATH/fagomraader")
-                    .then()
-                    .assertThat()
-                    .statusCode(HttpStatusCode.OK.value)
-                    .extract()
-                    .response()
-
-            Json.decodeFromString<List<FagOmraade>>(response.body.asString()) shouldBe fagOmraadeList
-        }
-
-        test("hent alle fagområder returnerer 500 Internal Server Error") {
-
-            every { attestasjonService.getFagOmraader() } throws RuntimeException("Noe gikk galt")
-
-            val response =
-                RestAssured
-                    .given()
-                    .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
-                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                    .port(PORT)
-                    .get("$ATTESTASJON_BASE_API_PATH/fagomraader")
-                    .then()
-                    .assertThat()
-                    .statusCode(HttpStatusCode.InternalServerError.value)
-                    .extract()
-                    .response()
-
-            Json.decodeFromString<ApiError>(response.asString()) shouldBe
-                ApiError(
-                    status = HttpStatusCode.InternalServerError.value,
-                    error = HttpStatusCode.InternalServerError.description,
-                    message = "Noe gikk galt",
-                    path = "$ATTESTASJON_BASE_API_PATH/fagomraader",
                     timestamp = Instant.parse(response.jsonPath().getString("timestamp")),
                 )
         }

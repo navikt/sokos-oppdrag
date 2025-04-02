@@ -3,15 +3,15 @@ package no.nav.sokos.oppdrag.integration.service
 import no.nav.pdl.enums.AdressebeskyttelseGradering
 import no.nav.pdl.hentpersonbolk.Person
 import no.nav.sokos.oppdrag.common.NavIdent
-import no.nav.sokos.oppdrag.common.redis.RedisCache
-import no.nav.sokos.oppdrag.config.RedisConfig.createCodec
+import no.nav.sokos.oppdrag.common.valkey.ValkeyCache
+import no.nav.sokos.oppdrag.config.ValkeyConfig.createCodec
 import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
 import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetClientService
 
 class SkjermingService(
     private val pdlClientService: PdlClientService = PdlClientService(),
     private val skjermetClientService: SkjermetClientService = SkjermetClientService(),
-    private val redisCache: RedisCache = RedisCache(name = "skjermingService"),
+    private val valkeyCache: ValkeyCache = ValkeyCache(name = "skjermingService"),
 ) {
     suspend fun getSkjermingForIdentListe(
         identer: List<String>,
@@ -25,13 +25,13 @@ class SkjermingService(
         }
 
         val egenAnsattMap =
-            redisCache
+            valkeyCache
                 .getAsync(key = personIdenter.joinToString(), codec = createCodec<Map<String, Boolean>>("hent-egne-ansatte")) {
                     skjermetClientService.isSkjermedePersonerInSkjermingslosningen(personIdenter)
                 }.mapValues { (_, skjermet) -> !navIdent.hasAccessEgneAnsatte() && skjermet }
 
         val adressebeskyttelseMap =
-            redisCache
+            valkeyCache
                 .getAsync(key = personIdenter.joinToString(), codec = createCodec<Map<String, Person>>("hent-pdl")) {
                     pdlClientService.getPerson(identer = personIdenter)
                 }.mapValues { (_, person) ->

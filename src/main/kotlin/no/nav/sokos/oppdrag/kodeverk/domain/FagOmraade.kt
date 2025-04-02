@@ -1,4 +1,4 @@
-package no.nav.sokos.oppdrag.attestasjon.domain
+package no.nav.sokos.oppdrag.kodeverk.domain
 
 import kotlinx.serialization.Serializable
 

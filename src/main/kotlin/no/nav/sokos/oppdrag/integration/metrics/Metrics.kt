@@ -7,7 +7,7 @@ import io.prometheus.metrics.core.metrics.Counter
 private const val METRICS_NAMESPACE = "sokos_oppdrag_integration"
 
 private const val EREG_CALL_COUNTER = "${METRICS_NAMESPACE}_ereg_call_counter"
-private const val TP_CALL_COUNTER = "${METRICS_NAMESPACE}_tp_call_counter"
+private const val SAMHANDLER_COUNTER = "${METRICS_NAMESPACE}_samhandler_call_counter"
 private const val PDL_CALL_COUNTER = "${METRICS_NAMESPACE}_pdl_call_counter"
 private const val NOM_CALL_COUNTER = "${METRICS_NAMESPACE}_nom_call_counter"
 
@@ -44,7 +44,7 @@ object Metrics {
     val samhandlerCounter: Counter =
         Counter
             .builder()
-            .name("samhandler_counter")
+            .name(SAMHANDLER_COUNTER)
             .help("Counts calls to Samhandler with response status code")
             .withoutExemplars()
             .labelNames("responseCode")

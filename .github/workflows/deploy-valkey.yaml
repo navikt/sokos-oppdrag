@@ -1,0 +1,46 @@
+name: Build and deploy valkey
+on:
+  push:
+    paths:
+      - '.nais/valkey/**'
+      - '.github/workflows/deploy-valkey.yaml'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build-push-image:
+    name: Build and push image to GAR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build valkey-image and push to GAR
+        id: docker-build-push
+        uses: nais/docker-build-push@v0
+        with:
+          team: okonomi
+          dockerfile: .nais/valkey/Dockerfile
+          tag: ${{ inputs.image-tag }}
+    outputs:
+      image: ${{ steps.docker-build-push.outputs.image }}
+
+  deploy-dev:
+    needs: build-push-image
+    name: Deploy valkey to dev-fss
+    uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
+    with:
+      cluster: dev-fss
+      resource: .nais/valkey/valkey-q1.yaml
+      image: ${{ needs.build-push-image.outputs.image }}
+
+  deploy-dev-qx:
+    needs: [ build-push-image, deploy-dev ]
+    name: Deploy valkey to dev-fss-qx
+    uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
+    with:
+      cluster: dev-fss
+      resource: .nais/valkey/valkey-qx.yaml
+      image: ${{ needs.build-push-image.outputs.image }}

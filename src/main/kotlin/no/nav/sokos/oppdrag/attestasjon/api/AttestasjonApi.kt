@@ -24,12 +24,6 @@ fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonSer
             call.respond(oppdragsListe)
         }
 
-        get("fagomraader") {
-            call.respond(
-                attestasjonService.getFagOmraader(),
-            )
-        }
-
         get("{oppdragsId}/oppdragsdetaljer") {
             val saksbehandler = getSaksbehandler(call)
             call.respond(

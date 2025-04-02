@@ -108,8 +108,10 @@ class OppdragRepository(
                         TRIM(OPLI.REFUNDERES_ID) AS REFUNDERES_ID,
                         TRIM(OPLI.BRUKERID) AS BRUKERID,
                         OPLI.TIDSPKT_REG,
-                        VEDTAKSSATS.VEDTAKSSATS AS VEDTAKSSATS
-                    FROM T_KJOREDATO KJDA, T_OPPDRAGSLINJE OPLI, T_LINJE_STATUS LIST
+                        VEDTAKSSATS.VEDTAKSSATS AS VEDTAKSSATS,
+                        KONT.HOVEDKONTONR AS HOVEDKONTONR,
+                        KONT.UNDERKONTONR AS UNDERKONTONR
+                    FROM T_KJOREDATO KJDA, T_OPPDRAGSLINJE OPLI, T_KONTOREGEL KONT, T_LINJE_STATUS LIST
                     LEFT OUTER JOIN T_KORREKSJON KORR
                         ON LIST.OPPDRAGS_ID = KORR.OPPDRAGS_ID
                         AND LIST.LINJE_ID = KORR.LINJE_ID
@@ -117,6 +119,7 @@ class OppdragRepository(
                         ON LIST.OPPDRAGS_ID = VEDTAKSSATS.OPPDRAGS_ID 
                         AND LIST.LINJE_ID = VEDTAKSSATS.LINJE_ID
                     WHERE OPLI.OPPDRAGS_ID = :oppdragsId
+                    AND KONT.KODE_KLASSE = OPLI.KODE_KLASSE
                     AND LIST.OPPDRAGS_ID = OPLI.OPPDRAGS_ID
                     AND LIST.LINJE_ID = OPLI.LINJE_ID
                     AND LIST.TIDSPKT_REG = (SELECT MAX(LIS1.TIDSPKT_REG)
@@ -302,7 +305,7 @@ class OppdragRepository(
                     WHERE OPPDRAGS_ID = :oppdragsId
                     AND LINJE_ID = :linjeId
                     UNION ALL
-                    SELECT 'T_LINJEENHET ' AS table_name, COUNT(*) AS EKSISTERER
+                    SELECT 'T_LINJEENHET' AS table_name, COUNT(*) AS EKSISTERER
                     FROM T_LINJEENHET 
                     WHERE OPPDRAGS_ID = :oppdragsId
                     AND LINJE_ID = :linjeId
@@ -375,6 +378,8 @@ class OppdragRepository(
             vedtakssats = row.doubleOrNull("VEDTAKSSATS"),
             brukerId = row.string("BRUKERID"),
             tidspktReg = row.string("TIDSPKT_REG"),
+            hovedkontonr = row.stringOrNull("HOVEDKONTONR"),
+            underkontonr = row.stringOrNull("UNDERKONTONR"),
         )
     }
 
