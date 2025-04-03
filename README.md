@@ -29,7 +29,7 @@ Applikasjon er en proxy mellom OppdragZ og Utbetalingsportalen (intern arbeidsfl
 
 ### Bygge prosjekt
 
-`./gradlew clean build shadowJar`
+`./gradlew build shadowJar`
 
 ### Lokal utvikling
 
@@ -40,7 +40,8 @@ Kjør `docker-compose up -d` for å starte opp en Valkey server lokalt.
 Applikasjonen trenger en db2 lisens fil for å koble til DB2 lokalt. Kontakt en utvikler fra Team MOBY for å få denne filen.
 
 # 3. Programvarearkitektur
-TODO
+
+[System diagram](./dokumentasjon/system-diagram.md)
 
 # 4. Deployment
 
