@@ -47,7 +47,7 @@ repositories {
 val ktorVersion = "3.1.2"
 
 // Serialization
-val kotlinxSerializationVersion = "1.8.0"
+val kotlinxSerializationVersion = "1.8.1"
 val kotlinxDatetimeVersion = "0.6.2"
 val kotlinxCoroutinesVersion = "1.10.1"
 
@@ -58,7 +58,7 @@ val micrometerVersion = "1.14.5"
 val kotlinLoggingVersion = "3.0.5"
 val janionVersion = "3.1.12"
 val logbackVersion = "1.5.18"
-val logstashVersion = "8.0"
+val logstashVersion = "8.1"
 val papertrailappVersion = "1.0.0"
 
 // Config
