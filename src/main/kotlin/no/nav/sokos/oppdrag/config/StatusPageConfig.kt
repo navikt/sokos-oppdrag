@@ -15,7 +15,6 @@ import io.ktor.server.response.respond
 
 import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSException
-import no.nav.sokos.oppdrag.common.exception.ForbiddenException
 import no.nav.sokos.oppdrag.integration.exception.IntegrationException
 
 fun StatusPagesConfig.statusPageConfig() {
@@ -23,7 +22,6 @@ fun StatusPagesConfig.statusPageConfig() {
         val (responseStatus, apiError) =
             when (cause) {
                 is RequestValidationException -> createApiError(HttpStatusCode.BadRequest, cause.reasons.joinToString(), call)
-                is ForbiddenException -> createApiError(HttpStatusCode.InternalServerError, cause.message, call)
                 is AttestasjonException, is IntegrationException -> createApiError(HttpStatusCode.BadRequest, cause.message, call)
                 is ZOSException -> Pair(HttpStatusCode.allStatusCodes.find { it.value == cause.apiError.status }!!, cause.apiError)
                 is IllegalArgumentException -> createApiError(HttpStatusCode.BadRequest, cause.message, call)

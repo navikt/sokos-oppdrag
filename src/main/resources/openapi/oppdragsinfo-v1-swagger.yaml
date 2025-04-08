@@ -32,13 +32,11 @@ paths:
         required: true
       responses:
         200:
-          description: OK - Hvis oppdragsegenskaper ikke finnes, returneres tom liste
+          description: OK - Returnerer liste med oppdrag, hvis oppdragene ikke finnes, returneres tom liste eller hvis personen er skjermet så returneres det en feilmelding
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Oppdrag'
+                $ref: '#/components/schemas/WrappedResponseWithErrorDTO'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
@@ -752,6 +750,18 @@ components:
           type: string
         brukerid:
           type: string
+
+    WrappedResponseWithErrorDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Oppdrag'
+        error:
+          type: string
+          nullable: true
 
     Oppdrag:
       type: object

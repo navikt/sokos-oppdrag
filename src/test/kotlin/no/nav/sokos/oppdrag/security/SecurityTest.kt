@@ -22,6 +22,7 @@ import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import no.nav.security.mock.oauth2.withMockOAuth2Server
 import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.attestasjon.OPPDRAGSINFO_BASE_API_PATH
+import no.nav.sokos.oppdrag.common.dto.WrappedReponseWithErrorDTO
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.PropertiesConfig
 import no.nav.sokos.oppdrag.config.authenticate
@@ -73,7 +74,7 @@ internal class SecurityTest :
                         }
                     }
 
-                    coEvery { oppdragsInfoService.getOppdrag(any(), any(), any()) } returns emptyList()
+                    coEvery { oppdragsInfoService.getOppdrag(any(), any(), any()) } returns WrappedReponseWithErrorDTO()
 
                     val client =
                         createClient {

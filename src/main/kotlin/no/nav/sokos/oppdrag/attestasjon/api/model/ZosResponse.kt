@@ -4,5 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ZosResponse(
-    val message: String,
+    val errorMessage: String? = null,
+    val successMessage: String? = null,
 )

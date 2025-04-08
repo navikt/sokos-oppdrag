@@ -25,6 +25,7 @@ import io.restassured.RestAssured
 import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.attestasjon.OPPDRAGSINFO_BASE_API_PATH
 import no.nav.sokos.oppdrag.attestasjon.Testdata.tokenWithNavIdent
+import no.nav.sokos.oppdrag.common.dto.WrappedReponseWithErrorDTO
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.authenticate
@@ -84,7 +85,7 @@ internal class OppdragsInfoApiTest :
                     ),
                 )
 
-            coEvery { oppdragsInfoService.getOppdrag(any(), any(), any()) } returns oppdragsegenskaperList
+            coEvery { oppdragsInfoService.getOppdrag(any(), any(), any()) } returns WrappedReponseWithErrorDTO(data = oppdragsegenskaperList)
 
             val response =
                 RestAssured
@@ -101,7 +102,9 @@ internal class OppdragsInfoApiTest :
                     .extract()
                     .response()
 
-            Json.decodeFromString<List<Oppdrag>>(response.asString()) shouldBe oppdragsegenskaperList
+            val result = Json.decodeFromString<WrappedReponseWithErrorDTO<Oppdrag>>(response.asString())
+            result.data shouldBe oppdragsegenskaperList
+            result.data.size shouldBe 1
         }
 
         test("sok etter oppdragsegenskaper med ugyldig gjelderId returnerer 400 Bad Request") {

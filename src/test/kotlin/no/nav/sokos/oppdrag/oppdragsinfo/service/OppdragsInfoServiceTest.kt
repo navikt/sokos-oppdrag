@@ -10,11 +10,9 @@ import io.kotest.matchers.string.shouldBeEmpty
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotliquery.queryOf
-import org.junit.jupiter.api.assertThrows
 
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.attestasjon.Testdata.navIdent
-import no.nav.sokos.oppdrag.common.exception.ForbiddenException
 import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import no.nav.sokos.oppdrag.listener.Db2Listener
@@ -46,22 +44,23 @@ internal class OppdragsInfoServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(any(), any()) } returns false
             val result = oppdragsInfoService.getOppdrag(GJELDER_ID, "", navIdent)
 
-            result.shouldNotBeEmpty()
-            result.size shouldBe 10
+            result.data.shouldNotBeEmpty()
+            result.data.size shouldBe 10
         }
 
         test("getOppdrag skal kaste exception hvis saksbehandler ikke har tilgang til personen") {
             coEvery { skjermingService.getSkjermingForIdent(any(), any()) } returns true
-            assertThrows<ForbiddenException> {
-                oppdragsInfoService.getOppdrag(GJELDER_ID, "", navIdent)
-            }
+
+            val result = oppdragsInfoService.getOppdrag(GJELDER_ID, "", navIdent)
+
+            result.errorMessage shouldBe "Mangler rettigheter til å se informasjon!"
         }
 
         test("getOppdrag skal returnere tom liste hvis ingen oppdrager finnes") {
             coEvery { skjermingService.getSkjermingForIdent(any(), any()) } returns false
             val result = oppdragsInfoService.getOppdrag("12345678901", "", navIdent)
 
-            result.shouldBeEmpty()
+            result.data.shouldBeEmpty()
         }
 
         test("getBehandlendeEnhetForOppdrag skal returnere en OppdragsEnhetDTO") {

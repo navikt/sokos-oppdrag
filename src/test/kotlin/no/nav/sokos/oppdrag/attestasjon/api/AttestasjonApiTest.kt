@@ -36,6 +36,7 @@ import no.nav.sokos.oppdrag.attestasjon.dto.OppdragDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.service.AttestasjonService
+import no.nav.sokos.oppdrag.common.dto.WrappedReponseWithErrorDTO
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.authenticate
@@ -62,7 +63,7 @@ internal class AttestasjonApiTest :
 
         test("søk etter oppdrag med gyldig gjelderId returnerer 200 OK") {
             val oppdragDtoList = List(11) { oppdragDTOTestdata }
-            coEvery { attestasjonService.getOppdrag(any(), any()) } returns oppdragDtoList
+            coEvery { attestasjonService.getOppdrag(any(), any()) } returns WrappedReponseWithErrorDTO(data = oppdragDtoList)
 
             val response =
                 RestAssured
@@ -79,9 +80,9 @@ internal class AttestasjonApiTest :
                     .extract()
                     .response()
 
-            val oppdragDTOList = Json.decodeFromString<List<OppdragDTO>>(response.body.asString())
-            oppdragDTOList shouldBe oppdragDtoList
-            oppdragDTOList.size shouldBe oppdragDtoList.size
+            val result = Json.decodeFromString<WrappedReponseWithErrorDTO<OppdragDTO>>(response.body.asString())
+            result.data.size shouldBe oppdragDtoList.size
+            result.data shouldBe oppdragDtoList
         }
 
         test("sok etter oppdrag med ugyldig gjelderId returnerer 400 Bad Request") {
@@ -140,7 +141,7 @@ internal class AttestasjonApiTest :
 
         test("sok etter oppdrag med gyldig søkeparametere returnerer 200 OK") {
 
-            coEvery { attestasjonService.getOppdrag(any(), any()) } returns emptyList()
+            coEvery { attestasjonService.getOppdrag(any(), any()) } returns WrappedReponseWithErrorDTO(data = emptyList())
 
             RestAssured
                 .given()

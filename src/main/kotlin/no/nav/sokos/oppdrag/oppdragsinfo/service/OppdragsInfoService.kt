@@ -5,7 +5,7 @@ import mu.KotlinLogging
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
-import no.nav.sokos.oppdrag.common.exception.ForbiddenException
+import no.nav.sokos.oppdrag.common.dto.WrappedReponseWithErrorDTO
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
@@ -42,7 +42,7 @@ class OppdragsInfoService(
         gjelderId: String,
         faggruppeKode: String?,
         saksbehandler: NavIdent,
-    ): List<Oppdrag> {
+    ): WrappedReponseWithErrorDTO<Oppdrag> {
         secureLogger.info { "Søker etter oppdrag med gjelderId: $gjelderId" }
         auditLogger.auditLog(
             AuditLogg(
@@ -53,13 +53,10 @@ class OppdragsInfoService(
         )
 
         if ((gjelderId.toLong() in 1_000_000_001..79_999_999_999) && skjermingService.getSkjermingForIdent(gjelderId, saksbehandler)) {
-            throw ForbiddenException("Mangler rettigheter til å se informasjon!")
+            return WrappedReponseWithErrorDTO(errorMessage = "Mangler rettigheter til å se informasjon!")
         }
 
-        return oppdragsInfoRepository.getOppdrag(gjelderId, faggruppeKode).ifEmpty {
-            secureLogger.info { "Fant ingen oppdrag for gjelderId: $gjelderId" }
-            return emptyList()
-        }
+        return WrappedReponseWithErrorDTO(data = oppdragsInfoRepository.getOppdrag(gjelderId, faggruppeKode))
     }
 
     fun getOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> {

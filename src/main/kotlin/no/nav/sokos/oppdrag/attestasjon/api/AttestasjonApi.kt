@@ -19,9 +19,9 @@ fun Route.attestasjonApi(attestasjonService: AttestasjonService = AttestasjonSer
         post("sok") {
             val request = call.receive<OppdragsRequest>()
             val saksbehandler = getSaksbehandler(call)
-
-            val oppdragsListe = attestasjonService.getOppdrag(request, saksbehandler)
-            call.respond(oppdragsListe)
+            call.response.headers.append("ErrorMessage", "Ingen tilgang til oppdrag")
+            val wrappedReponseWithErrorDTO = attestasjonService.getOppdrag(request, saksbehandler)
+            call.respond(wrappedReponseWithErrorDTO)
         }
 
         get("{oppdragsId}/oppdragsdetaljer") {
