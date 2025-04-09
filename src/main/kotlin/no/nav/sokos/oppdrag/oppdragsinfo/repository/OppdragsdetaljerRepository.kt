@@ -150,7 +150,7 @@ class OppdragsdetaljerRepository(
                     linjeId = row.int("LINJE_ID"),
                     vedtaksId = row.string("VEDTAK_ID"),
                     henvisning = row.string("HENVISNING"),
-                    soknadsType = row.string("TYPE_SOKNAD"),
+                    typeSoknad = row.string("TYPE_SOKNAD"),
                 )
             }
         }
@@ -175,7 +175,7 @@ class OppdragsdetaljerRepository(
             ) { row ->
                 Valuta(
                     linjeId = row.int("LINJE_ID"),
-                    type = row.string("TYPE_VALUTA"),
+                    typeValuta = row.string("TYPE_VALUTA"),
                     datoFom = row.string("DATO_FOM"),
                     nokkelId = row.int("NOKKEL_ID"),
                     valuta = row.string("VALUTA"),

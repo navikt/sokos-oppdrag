@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Korreksjon(
-    val linje: Int,
-    val korrigertLinje: Int,
+    val linjeId: Int,
+    val linjeIdKorr: Int,
 )

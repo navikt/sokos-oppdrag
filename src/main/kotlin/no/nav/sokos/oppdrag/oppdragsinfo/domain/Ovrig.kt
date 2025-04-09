@@ -7,5 +7,5 @@ data class Ovrig(
     val linjeId: Int,
     val vedtaksId: String,
     val henvisning: String,
-    val soknadsType: String,
+    val typeSoknad: String,
 )

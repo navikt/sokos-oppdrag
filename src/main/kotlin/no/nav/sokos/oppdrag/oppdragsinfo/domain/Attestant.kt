@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Attestant(
     val attestantId: String,
-    val ugyldigFom: String,
+    val datoUgyldigFom: String,
 )

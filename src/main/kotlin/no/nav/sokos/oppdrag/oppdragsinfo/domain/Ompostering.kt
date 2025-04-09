@@ -8,7 +8,7 @@ data class Ompostering(
     val kodeFaggruppe: String,
     val lopenr: Int,
     val ompostering: String,
-    val omposteringFom: String? = null,
+    val datoOmposterFom: String? = null,
     val feilReg: String,
     val beregningsId: Int? = null,
     val utfort: String,

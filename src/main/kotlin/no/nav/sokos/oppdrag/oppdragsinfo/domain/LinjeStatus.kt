@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class LinjeStatus(
-    val status: String,
+    val kodeStatus: String,
     val datoFom: String,
     val tidspktReg: String,
     val brukerid: String,

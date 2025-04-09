@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OppdragsEnhet(
-    val type: String,
+    val typeEnhet: String,
     val datoFom: String,
     val enhet: String,
 )

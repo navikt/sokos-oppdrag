@@ -216,10 +216,10 @@ class OppdragsInfoService(
         if (korrigerteLinjer.isNotEmpty()) {
             var linje = linjeId.toInt()
             for (korreksjon in korrigerteLinjer) {
-                val korrLinje = korreksjon.linje
+                val korrLinje = korreksjon.linjeId
                 if (korrLinje == linje) {
                     korrigerteLinjeIder.add(korrLinje)
-                    linje = korreksjon.korrigertLinje
+                    linje = korreksjon.linjeIdKorr
                 }
             }
             korrigerteLinjeIder.add(linje)
