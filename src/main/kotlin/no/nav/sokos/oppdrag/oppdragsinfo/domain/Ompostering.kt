@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Ompostering(
-    val id: String,
+    val gjelderId: String,
     val kodeFaggruppe: String,
     val lopenr: Int,
     val ompostering: String,

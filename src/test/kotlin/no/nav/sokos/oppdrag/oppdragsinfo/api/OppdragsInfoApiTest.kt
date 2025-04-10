@@ -304,7 +304,7 @@ internal class OppdragsInfoApiTest :
             val omposteringerList =
                 listOf(
                     Ompostering(
-                        id = "a1",
+                        gjelderId = "a1",
                         kodeFaggruppe = "fag1",
                         lopenr = 1,
                         ompostering = "z",

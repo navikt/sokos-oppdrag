@@ -385,7 +385,7 @@ class OppdragRepository(
 
     private val mapToOppdragsOmpostering: (Row) -> Ompostering = { row ->
         Ompostering(
-            id = row.string("GJELDER_ID"),
+            gjelderId = row.string("GJELDER_ID"),
             kodeFaggruppe = row.string("KODE_FAGGRUPPE"),
             lopenr = row.int("LOPENR"),
             ompostering = row.string("OMPOSTERING"),

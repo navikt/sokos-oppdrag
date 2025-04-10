@@ -111,7 +111,7 @@ internal class OppdragsInfoServiceTest :
             result.size shouldBe 2
 
             val ompostering = result.first()
-            ompostering.id shouldBe "01015949240"
+            ompostering.gjelderId shouldBe "01015949240"
             ompostering.kodeFaggruppe shouldBe "KORTTID"
             ompostering.lopenr shouldBe 1
             ompostering.ompostering shouldBe "J"
