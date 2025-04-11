@@ -43,7 +43,7 @@ class ZOSConnectService(
                 val attestasjonskvittering = result.osAttestasjonOperationResponse?.attestasjonskvittering?.responsAttestasjon
                 val zOsResponse =
                     ZosResponse(
-                        "Oppdatering vellykket. ${attestasjonskvittering?.antLinjerMottatt} linjer oppdatert",
+                        successMessage = "Oppdatering vellykket. ${attestasjonskvittering?.antLinjerMottatt} linjer oppdatert",
                     )
                 if (attestasjonskvittering?.statuskode != 0) {
                     throw ZOSException(

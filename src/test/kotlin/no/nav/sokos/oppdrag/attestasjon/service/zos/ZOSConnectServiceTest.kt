@@ -1,6 +1,5 @@
 package no.nav.sokos.oppdrag.attestasjon.service.zos
 
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
@@ -46,7 +45,7 @@ internal class ZOSConnectServiceTest :
                     navIdent.ident,
                 )
 
-            response.message shouldBe "Oppdatering vellykket. 1 linjer oppdatert"
+            response.successMessage shouldBe "Oppdatering vellykket. 1 linjer oppdatert"
         }
 
         test("attesterer oppdrag gir http status kode 400 Bad Request, og statuskode 8 fra OppdragZ hvor oppdragslinje ikke funnet") {

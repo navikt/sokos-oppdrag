@@ -342,10 +342,10 @@ class OppdragRepository(
 
     private val mapToOppdrag: (Row) -> Oppdrag = { row ->
         Oppdrag(
-            fagSystemId = row.string("FAGSYSTEM_ID"),
+            fagsystemId = row.string("FAGSYSTEM_ID"),
             oppdragsId = row.int("OPPDRAGS_ID"),
-            navnFagGruppe = row.string("NAVN_FAGGRUPPE"),
-            navnFagOmraade = row.string("NAVN_FAGOMRAADE"),
+            navnFaggruppe = row.string("NAVN_FAGGRUPPE"),
+            navnFagomraade = row.string("NAVN_FAGOMRAADE"),
             kjorIdag = row.string("KJOR_IDAG"),
             typeBilag = row.string("TYPE_BILAG"),
             kodeStatus = row.string("KODE_STATUS"),
@@ -354,7 +354,7 @@ class OppdragRepository(
 
     private val mapToOppdragsEnhet: (Row) -> OppdragsEnhet = { row ->
         OppdragsEnhet(
-            type = row.string("TYPE_ENHET"),
+            typeEnhet = row.string("TYPE_ENHET"),
             datoFom = row.string("DATO_FOM"),
             enhet = row.string("ENHET"),
         )
@@ -374,7 +374,7 @@ class OppdragRepository(
             attestert = row.string("ATTESTERT"),
             delytelseId = row.string("DELYTELSE_ID"),
             utbetalesTilId = row.string("UTBETALES_TIL_ID"),
-            refunderesOrgnr = row.stringOrNull("REFUNDERES_ID"),
+            refunderesId = row.stringOrNull("REFUNDERES_ID"),
             vedtakssats = row.doubleOrNull("VEDTAKSSATS"),
             brukerId = row.string("BRUKERID"),
             tidspktReg = row.string("TIDSPKT_REG"),
@@ -385,11 +385,11 @@ class OppdragRepository(
 
     private val mapToOppdragsOmpostering: (Row) -> Ompostering = { row ->
         Ompostering(
-            id = row.string("GJELDER_ID"),
+            gjelderId = row.string("GJELDER_ID"),
             kodeFaggruppe = row.string("KODE_FAGGRUPPE"),
             lopenr = row.int("LOPENR"),
             ompostering = row.string("OMPOSTERING"),
-            omposteringFom = row.stringOrNull("DATO_OMPOSTER_FOM"),
+            datoOmposterFom = row.stringOrNull("DATO_OMPOSTER_FOM"),
             feilReg = row.string("FEILREG"),
             beregningsId = row.intOrNull("BEREGNINGS_ID"),
             utfort = row.string("UTFORT"),
@@ -408,7 +408,7 @@ class OppdragRepository(
 
     private val mapToOppdragsLinjeStatus: (Row) -> LinjeStatus = { row ->
         LinjeStatus(
-            status = row.string("KODE_STATUS"),
+            kodeStatus = row.string("KODE_STATUS"),
             datoFom = row.string("DATO_FOM"),
             tidspktReg = row.string("TIDSPKT_REG"),
             brukerid = row.string("BRUKERID"),
@@ -418,14 +418,14 @@ class OppdragRepository(
     private val mapToOppdragsLinjeAttestant: (Row) -> Attestant = { row ->
         Attestant(
             attestantId = row.string("ATTESTANT_ID"),
-            ugyldigFom = row.string("DATO_UGYLDIG_FOM"),
+            datoUgyldigFom = row.string("DATO_UGYLDIG_FOM"),
         )
     }
 
     private val mapToOppdragsKorreksjon: (Row) -> Korreksjon = { row ->
         Korreksjon(
-            linje = row.int("LINJE_ID"),
-            korrigertLinje = row.int("LINJE_ID_KORR"),
+            linjeId = row.int("LINJE_ID"),
+            linjeIdKorr = row.int("LINJE_ID_KORR"),
         )
     }
 }

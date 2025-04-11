@@ -19,7 +19,7 @@ import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
-import no.nav.sokos.oppdrag.common.exception.ForbiddenException
+import no.nav.sokos.oppdrag.common.dto.WrappedReponseWithErrorDTO
 import no.nav.sokos.oppdrag.common.util.CacheUtil
 import no.nav.sokos.oppdrag.common.valkey.ValkeyCache
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
@@ -39,7 +39,7 @@ class AttestasjonService(
     suspend fun getOppdrag(
         request: OppdragsRequest,
         navIdent: NavIdent,
-    ): List<OppdragDTO> {
+    ): WrappedReponseWithErrorDTO<OppdragDTO> {
         val gjelderId = request.gjelderId
         var verifiedSkjermingForGjelderId = false
         if (!gjelderId.isNullOrBlank()) {
@@ -52,7 +52,7 @@ class AttestasjonService(
                 ),
             )
             if ((gjelderId.toLong() in 1_000_000_001..79_999_999_999) && skjermingService.getSkjermingForIdent(gjelderId, navIdent)) {
-                throw ForbiddenException("Mangler rettigheter til å se informasjon!")
+                return WrappedReponseWithErrorDTO(errorMessage = "Mangler rettigheter til å se informasjon!")
             }
             verifiedSkjermingForGjelderId = true
         }
@@ -76,17 +76,20 @@ class AttestasjonService(
                 .takeIf { request.attestertStatus.filterEgenAttestert != null }
                 ?.filter { filterEgenAttestertOppdrag(it, request.attestertStatus.filterEgenAttestert!!, navIdent) } ?: oppdragsListe
 
-        return statusFilterOppdragList
-            .filter { hasSaksbehandlerReadAccess(it, navIdent) }
-            .map { it.toDTO() }
-            .let { list ->
-                if (verifiedSkjermingForGjelderId) {
-                    list.map { it.copy(erSkjermetForSaksbehandler = false) }
-                } else {
-                    val skjermingMap = skjermingService.getSkjermingForIdentListe(identer, navIdent)
-                    list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.oppdragGjelderId] == true) }
-                }
-            }.map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, navIdent)) }
+        return WrappedReponseWithErrorDTO(
+            data =
+                statusFilterOppdragList
+                    .filter { hasSaksbehandlerReadAccess(it, navIdent) }
+                    .map { it.toDTO() }
+                    .let { list ->
+                        if (verifiedSkjermingForGjelderId) {
+                            list.map { it.copy(erSkjermetForSaksbehandler = false) }
+                        } else {
+                            val skjermingMap = skjermingService.getSkjermingForIdentListe(identer, navIdent)
+                            list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.oppdragGjelderId] == true) }
+                        }
+                    }.map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, navIdent)) },
+        )
     }
 
     fun getOppdragsdetaljer(
@@ -145,7 +148,9 @@ class AttestasjonService(
         )
 
         if (!saksbehandler.hasWriteAccessAttestasjon()) {
-            throw ForbiddenException("Mangler rettigheter til å attestere oppdrag!")
+            return ZosResponse(
+                errorMessage = "Mangler rettigheter til å attestere oppdrag!",
+            )
         }
         val response = zosConnectService.attestereOppdrag(request, saksbehandler.ident)
         removeOppdragCache(request.gjelderId, request.fagSystemId, request.kodeFagOmraade)

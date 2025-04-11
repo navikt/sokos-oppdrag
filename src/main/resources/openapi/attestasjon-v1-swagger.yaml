@@ -33,13 +33,11 @@ paths:
         required: true
       responses:
         200:
-          description: OK - Hvis oppdrag ikke finnes, returneres tom liste
+          description: OK - Returnerer liste med oppdrag, hvis oppdragene ikke finnes, returneres tom liste eller hvis personen er skjermet så returneres det en feilmelding
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/OppdragDTO'
+                $ref: '#/components/schemas/WrappedResponseWithErrorDTO'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
@@ -211,13 +209,15 @@ components:
 
     ZOsResponse:
       type: object
-      required:
-        - message
       properties:
-        message:
+        successMessage:
           type: string
           example: "Oppdatering vellykket. 2 linjer oppdatert."
           description: Melding om oppdatering er vellykket og antall linjer oppdatert
+        errorMessage:
+          type: string
+          example: "Mangler rettigheter til å attestere oppdrag!"
+          description: Melding om oppdatering feilet pga manglende rettigheter
 
     Attestasjon:
       type: object
@@ -258,6 +258,18 @@ components:
           type: string
         kodeFagomraade:
           type: string
+
+    WrappedResponseWithErrorDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/OppdragDTO'
+        error:
+          type: string
+          nullable: true
 
     OppdragDTO:
       type: object

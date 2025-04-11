@@ -10,11 +10,9 @@ import io.kotest.matchers.string.shouldBeEmpty
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotliquery.queryOf
-import org.junit.jupiter.api.assertThrows
 
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.attestasjon.Testdata.navIdent
-import no.nav.sokos.oppdrag.common.exception.ForbiddenException
 import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import no.nav.sokos.oppdrag.listener.Db2Listener
@@ -46,22 +44,23 @@ internal class OppdragsInfoServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(any(), any()) } returns false
             val result = oppdragsInfoService.getOppdrag(GJELDER_ID, "", navIdent)
 
-            result.shouldNotBeEmpty()
-            result.size shouldBe 10
+            result.data.shouldNotBeEmpty()
+            result.data.size shouldBe 10
         }
 
         test("getOppdrag skal kaste exception hvis saksbehandler ikke har tilgang til personen") {
             coEvery { skjermingService.getSkjermingForIdent(any(), any()) } returns true
-            assertThrows<ForbiddenException> {
-                oppdragsInfoService.getOppdrag(GJELDER_ID, "", navIdent)
-            }
+
+            val result = oppdragsInfoService.getOppdrag(GJELDER_ID, "", navIdent)
+
+            result.errorMessage shouldBe "Mangler rettigheter til å se informasjon!"
         }
 
         test("getOppdrag skal returnere tom liste hvis ingen oppdrager finnes") {
             coEvery { skjermingService.getSkjermingForIdent(any(), any()) } returns false
             val result = oppdragsInfoService.getOppdrag("12345678901", "", navIdent)
 
-            result.shouldBeEmpty()
+            result.data.shouldBeEmpty()
         }
 
         test("getBehandlendeEnhetForOppdrag skal returnere en OppdragsEnhetDTO") {
@@ -71,8 +70,8 @@ internal class OppdragsInfoServiceTest :
 
             val result = oppdragsInfoService.getBehandlendeEnhetForOppdrag(OPPDRAGSID)
             result shouldNotBe null
-            result.enhet.type shouldNotBe "BEH"
-            result.behandlendeEnhet?.type shouldBe "BEH"
+            result.enhet.typeEnhet shouldNotBe "BEH"
+            result.behandlendeEnhet?.typeEnhet shouldBe "BEH"
         }
 
         test("getOppdragsLinjer skal returnere en liste av OppdragsLinje") {
@@ -97,7 +96,7 @@ internal class OppdragsInfoServiceTest :
             oppdragsLinje.attestert shouldBe "J"
             oppdragsLinje.delytelseId shouldBe "12249330"
             oppdragsLinje.utbetalesTilId shouldBe "01010093666"
-            oppdragsLinje.refunderesOrgnr.shouldBeEmpty()
+            oppdragsLinje.refunderesId.shouldBeEmpty()
             oppdragsLinje.brukerId shouldBe "KONV"
             oppdragsLinje.tidspktReg shouldBe "2008-12-06 12:29:45.435239"
         }
@@ -112,11 +111,11 @@ internal class OppdragsInfoServiceTest :
             result.size shouldBe 2
 
             val ompostering = result.first()
-            ompostering.id shouldBe "01015949240"
+            ompostering.gjelderId shouldBe "01015949240"
             ompostering.kodeFaggruppe shouldBe "KORTTID"
             ompostering.lopenr shouldBe 1
             ompostering.ompostering shouldBe "J"
-            ompostering.omposteringFom shouldBe "2024-06-16"
+            ompostering.datoOmposterFom shouldBe "2024-06-16"
             ompostering.feilReg shouldBe "N"
             ompostering.beregningsId shouldBe 558151804
             ompostering.utfort shouldBe "N"
@@ -134,7 +133,7 @@ internal class OppdragsInfoServiceTest :
             result.size shouldBe 4
 
             val oppdragsEnhet = result.first()
-            oppdragsEnhet.type shouldBe "BEH"
+            oppdragsEnhet.typeEnhet shouldBe "BEH"
             oppdragsEnhet.datoFom shouldBe "2008-12-06"
             oppdragsEnhet.enhet shouldBe "4819"
         }
@@ -164,7 +163,7 @@ internal class OppdragsInfoServiceTest :
             result.size shouldBe 3
 
             val linjeStatus = result.first()
-            linjeStatus.status shouldBe "LOPE"
+            linjeStatus.kodeStatus shouldBe "LOPE"
             linjeStatus.datoFom shouldBe "2009-01-01"
             linjeStatus.tidspktReg shouldBe "2009-01-03 21:29:52.396564"
             linjeStatus.brukerid shouldBe "K231B260"
@@ -181,7 +180,7 @@ internal class OppdragsInfoServiceTest :
 
             val attestant = result.first()
             attestant.attestantId shouldBe "KONV"
-            attestant.ugyldigFom shouldBe "9999-12-31"
+            attestant.datoUgyldigFom shouldBe "9999-12-31"
         }
 
         test("getOppdragsLinjeDetaljer skal returnere en OppdragsLinjeDetaljerDTO") {
@@ -206,7 +205,7 @@ internal class OppdragsInfoServiceTest :
             oppdragsLinje.attestert shouldBe "J"
             oppdragsLinje.delytelseId shouldBe "12249330"
             oppdragsLinje.utbetalesTilId shouldBe "01010093666"
-            oppdragsLinje.refunderesOrgnr.shouldBeEmpty()
+            oppdragsLinje.refunderesId.shouldBeEmpty()
             oppdragsLinje.brukerId shouldBe "KONV"
             oppdragsLinje.tidspktReg shouldBe "2008-12-06 12:29:45.435239"
             oppdragsLinje.vedtakssats shouldBe 1000.0
@@ -232,7 +231,7 @@ internal class OppdragsInfoServiceTest :
 
             val valuta = result.first()
             valuta.linjeId shouldBe 1
-            valuta.type shouldBe "UTB"
+            valuta.typeValuta shouldBe "UTB"
             valuta.datoFom shouldBe "2002-03-01"
             valuta.nokkelId shouldBe 1
             valuta.valuta shouldBe "SEK"
@@ -372,6 +371,6 @@ internal class OppdragsInfoServiceTest :
             ovriger.linjeId shouldBe 1
             ovriger.vedtaksId shouldBe "20090101"
             ovriger.henvisning shouldBe "11008824"
-            ovriger.soknadsType shouldBe "NY"
+            ovriger.typeSoknad shouldBe "NY"
         }
     })
