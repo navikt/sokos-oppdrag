@@ -25,6 +25,7 @@ import io.restassured.RestAssured
 import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.attestasjon.OPPDRAGSINFO_BASE_API_PATH
 import no.nav.sokos.oppdrag.attestasjon.Testdata.tokenWithNavIdent
+import no.nav.sokos.oppdrag.common.dto.WrappedReponseWithErrorDTO
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.authenticate
@@ -74,17 +75,17 @@ internal class OppdragsInfoApiTest :
             val oppdragsegenskaperList =
                 listOf(
                     Oppdrag(
-                        fagSystemId = "12345678901",
+                        fagsystemId = "12345678901",
                         oppdragsId = 1234556,
-                        navnFagGruppe = "faggruppeNavn",
-                        navnFagOmraade = "fagomraadeNavn",
+                        navnFaggruppe = "faggruppeNavn",
+                        navnFagomraade = "fagomraadeNavn",
                         kjorIdag = "kjorIdag",
                         typeBilag = "bilagsType",
                         kodeStatus = "PASS",
                     ),
                 )
 
-            coEvery { oppdragsInfoService.getOppdrag(any(), any(), any()) } returns oppdragsegenskaperList
+            coEvery { oppdragsInfoService.getOppdrag(any(), any(), any()) } returns WrappedReponseWithErrorDTO(data = oppdragsegenskaperList)
 
             val response =
                 RestAssured
@@ -101,7 +102,9 @@ internal class OppdragsInfoApiTest :
                     .extract()
                     .response()
 
-            Json.decodeFromString<List<Oppdrag>>(response.asString()) shouldBe oppdragsegenskaperList
+            val result = Json.decodeFromString<WrappedReponseWithErrorDTO<Oppdrag>>(response.asString())
+            result.data shouldBe oppdragsegenskaperList
+            result.data.size shouldBe 1
         }
 
         test("sok etter oppdragsegenskaper med ugyldig gjelderId returnerer 400 Bad Request") {
@@ -175,7 +178,7 @@ internal class OppdragsInfoApiTest :
                         attestert = "J",
                         delytelseId = "D3",
                         utbetalesTilId = "A1B2",
-                        refunderesOrgnr = "123456789",
+                        refunderesId = "123456789",
                         brukerId = "abc123",
                         tidspktReg = "2024-01-01",
                         vedtakssats = 1000.0,
@@ -237,13 +240,13 @@ internal class OppdragsInfoApiTest :
                 OppdragsEnhetDTO(
                     enhet =
                         OppdragsEnhet(
-                            type = "BOS",
+                            typeEnhet = "BOS",
                             datoFom = "2024-01-01",
                             enhet = "0502",
                         ),
                     behandlendeEnhet =
                         OppdragsEnhet(
-                            type = "BEH",
+                            typeEnhet = "BEH",
                             datoFom = "2024-01-01",
                             enhet = "0502",
                         ),
@@ -301,11 +304,11 @@ internal class OppdragsInfoApiTest :
             val omposteringerList =
                 listOf(
                     Ompostering(
-                        id = "a1",
+                        gjelderId = "a1",
                         kodeFaggruppe = "fag1",
                         lopenr = 1,
                         ompostering = "z",
-                        omposteringFom = "2024-01-01",
+                        datoOmposterFom = "2024-01-01",
                         feilReg = "",
                         beregningsId = 22,
                         utfort = "j",
@@ -366,7 +369,7 @@ internal class OppdragsInfoApiTest :
             val oppdragsEnhetList =
                 listOf(
                     OppdragsEnhet(
-                        type = "BOS",
+                        typeEnhet = "BOS",
                         datoFom = "2024-01-01",
                         enhet = "0502",
                     ),
@@ -482,7 +485,7 @@ internal class OppdragsInfoApiTest :
             val linjeStatusList =
                 listOf(
                     LinjeStatus(
-                        status = "AKTIV",
+                        kodeStatus = "AKTIV",
                         datoFom = "2024-01-01",
                         tidspktReg = "2024-01-01",
                         brukerid = "A12345",
@@ -542,7 +545,7 @@ internal class OppdragsInfoApiTest :
                 listOf(
                     Attestant(
                         attestantId = "A1",
-                        ugyldigFom = "2024-01-01",
+                        datoUgyldigFom = "2024-01-01",
                     ),
                 )
 
@@ -612,7 +615,7 @@ internal class OppdragsInfoApiTest :
                                 attestert = "J",
                                 delytelseId = "D3",
                                 utbetalesTilId = "A1B2",
-                                refunderesOrgnr = "123456789",
+                                refunderesId = "123456789",
                                 brukerId = "abc123",
                                 tidspktReg = "2024-01-01",
                                 vedtakssats = 1500.0,
@@ -682,7 +685,7 @@ internal class OppdragsInfoApiTest :
                 listOf(
                     Valuta(
                         linjeId = 1,
-                        type = "NOK",
+                        typeValuta = "NOK",
                         datoFom = "2024-01-01",
                         nokkelId = 2,
                         valuta = "NOK",
@@ -1166,7 +1169,7 @@ internal class OppdragsInfoApiTest :
                         linjeId = 1,
                         vedtaksId = "b123",
                         henvisning = "c321",
-                        soknadsType = "NN",
+                        typeSoknad = "NN",
                     ),
                 )
 

@@ -32,13 +32,11 @@ paths:
         required: true
       responses:
         200:
-          description: OK - Hvis oppdragsegenskaper ikke finnes, returneres tom liste
+          description: OK - Returnerer liste med oppdrag, hvis oppdragene ikke finnes, returneres tom liste eller hvis personen er skjermet så returneres det en feilmelding
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Oppdrag'
+                $ref: '#/components/schemas/WrappedResponseWithErrorDTO'
         400:
           description: Ugyldig request, oppfyller ikke swagger-kontrakt
           content:
@@ -695,7 +693,7 @@ components:
     Ompostering:
       type: object
       required:
-        - id
+        - gjelderId
         - kodeFaggruppe
         - lopenr
         - ompostering
@@ -704,7 +702,7 @@ components:
         - brukerid
         - tidspktReg
       properties:
-        id:
+        gjelderId:
           type: string
         kodeFaggruppe:
           type: string
@@ -712,7 +710,7 @@ components:
           type: integer
         ompostering:
           type: string
-        omposteringFom:
+        datoOmposterFom:
           type: string
         feilReg:
           type: string
@@ -728,11 +726,11 @@ components:
     OppdragsEnhet:
       type: object
       required:
-        - type
+        - typeEnhet
         - datoFom
         - enhet
       properties:
-        type:
+        typeEnhet:
           type: string
         datoFom:
           type: string
@@ -753,16 +751,28 @@ components:
         brukerid:
           type: string
 
+    WrappedResponseWithErrorDTO:
+      type: object
+      properties:
+        data:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/Oppdrag'
+        error:
+          type: string
+          nullable: true
+
     Oppdrag:
       type: object
       properties:
-        fagSystemId:
+        fagsystemId:
           type: string
         oppdragsId:
           type: integer
-        navnFagGruppe:
+        navnFaggruppe:
           type: string
-        navnFagOmraade:
+        navnFagomraade:
           type: string
         kjorIdag:
           type: string
@@ -810,7 +820,7 @@ components:
           type: string
         utbetalesTilId:
           type: string
-        refunderesOrgnr:
+        refunderesId:
           type: string
         vedtakssats:
           type: number
@@ -862,12 +872,12 @@ components:
     LinjeStatus:
       type: object
       required:
-        - status
+        - kodeStatus
         - datoFom
         - tidspktReg
         - brukerid
       properties:
-        status:
+        kodeStatus:
           type: string
         datoFom:
           type: string
@@ -880,18 +890,18 @@ components:
       type: object
       required:
         - attestantId
-        - ugyldigFom
+        - datoUgyldigFom
       properties:
         attestantId:
           type: string
-        ugyldigFom:
+        datoUgyldigFom:
           type: string
 
     Valuta:
       type: object
       required:
         - linjeId
-        - type
+        - typeValuta
         - datoFom
         - nokkelId
         - valuta
@@ -900,7 +910,7 @@ components:
       properties:
         linjeId:
           type: integer
-        type:
+        typeValuta:
           type: string
         datoFom:
           type: string
@@ -999,6 +1009,7 @@ components:
           type: string
         brukerid:
           type: string
+
     Tekst:
       type: object
       required:
@@ -1036,7 +1047,7 @@ components:
         - linjeId
         - vedtaksId
         - henvisning
-        - soknadsType
+        - typeSoknad
       properties:
         linjeId:
           type: integer
@@ -1044,7 +1055,7 @@ components:
           type: string
         henvisning:
           type: string
-        soknadsType:
+        typeSoknad:
           type: string
 
     Maksdato:

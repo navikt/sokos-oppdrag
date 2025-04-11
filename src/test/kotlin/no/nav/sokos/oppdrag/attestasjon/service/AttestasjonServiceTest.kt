@@ -3,7 +3,6 @@ package no.nav.sokos.oppdrag.attestasjon.service
 import kotlinx.serialization.json.Json
 
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.common.KotestInternal
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainExactly
@@ -36,7 +35,6 @@ import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_READ
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_WRITE
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_READ
 import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_WRITE
-import no.nav.sokos.oppdrag.common.exception.ForbiddenException
 import no.nav.sokos.oppdrag.common.valkey.ValkeyCache
 import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
@@ -44,7 +42,6 @@ import no.nav.sokos.oppdrag.listener.Db2Listener
 import no.nav.sokos.oppdrag.listener.Db2Listener.attestasjonRepository
 import no.nav.sokos.oppdrag.listener.Valkeylistener
 
-@OptIn(KotestInternal::class)
 internal class AttestasjonServiceTest :
     FunSpec({
         extensions(Valkeylistener, Db2Listener)
@@ -78,8 +75,8 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
-            result.size shouldBe 8
-            val oppdrag = result.first()
+            result.data.size shouldBe 8
+            val oppdrag = result.data.first()
             oppdrag.oppdragsId shouldBe 25798519
             oppdrag.antAttestanter shouldBe 1
             oppdrag.navnFaggruppe shouldBe "HELSETJENESTER FRIKORT TAK 1 OG 2"
@@ -105,8 +102,8 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdentListe(listOf(GJELDER_ID), any()) } returns mapOf(GJELDER_ID to false)
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata.copy(gjelderId = null, kodeFagOmraade = "FRIKORT1"), navIdent)
-            result.size shouldBe 3
-            result.forEach { oppdrag ->
+            result.data.size shouldBe 3
+            result.data.first { oppdrag ->
                 oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.kodeFagomraade shouldBe "FRIKORT1"
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
@@ -130,9 +127,9 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata.copy(attestertStatus = EGEN_ATTESTERTE), navIdent)
-            result.size shouldBe 2
+            result.data.size shouldBe 2
 
-            result.forEach { oppdrag ->
+            result.data.forEach { oppdrag ->
                 oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
                 oppdrag.hasWriteAccess shouldBe true
@@ -150,8 +147,8 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
-            result.size shouldBe 3
-            result.forEach { oppdrag ->
+            result.data.size shouldBe 3
+            result.data.forEach { oppdrag ->
                 oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
                 oppdrag.hasWriteAccess shouldBe false
@@ -170,8 +167,8 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
-            result.size shouldBe 3
-            result.forEach { oppdrag ->
+            result.data.size shouldBe 3
+            result.data.forEach { oppdrag ->
                 oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
                 oppdrag.hasWriteAccess shouldBe true
@@ -190,8 +187,8 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
-            result.size shouldBe 2
-            result.forEach { oppdrag ->
+            result.data.size shouldBe 2
+            result.data.forEach { oppdrag ->
                 oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
                 oppdrag.hasWriteAccess shouldBe false
@@ -209,8 +206,8 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
-            result.size shouldBe 2
-            result.forEach { oppdrag ->
+            result.data.size shouldBe 2
+            result.data.forEach { oppdrag ->
                 oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
                 oppdrag.hasWriteAccess shouldBe true
@@ -228,8 +225,8 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
-            result.size shouldBe 8
-            result.forEach { oppdrag ->
+            result.data.size shouldBe 8
+            result.data.forEach { oppdrag ->
                 oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
                 oppdrag.hasWriteAccess shouldBe false
@@ -246,8 +243,8 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
-            result.size shouldBe 8
-            result.forEach { oppdrag ->
+            result.data.size shouldBe 8
+            result.data.forEach { oppdrag ->
                 oppdrag.oppdragGjelderId shouldBe GJELDER_ID
                 oppdrag.erSkjermetForSaksbehandler shouldBe false
                 oppdrag.hasWriteAccess shouldBe true
@@ -256,15 +253,12 @@ internal class AttestasjonServiceTest :
             coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
         }
 
-        test("getOppdrag for en gjelderId kaster exception når saksbehandler ikke har tilgang til personen pga. skjerming") {
+        test("getOppdrag for en gjelderId kaster exception når saksbehandler ikke har tilgang til personen pga skjerming") {
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, navIdent) } returns true
 
-            val exception =
-                shouldThrow<ForbiddenException> {
-                    attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
-                }
+            val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
 
-            exception.message shouldBe "Mangler rettigheter til å se informasjon!"
+            result.errorMessage shouldBe "Mangler rettigheter til å se informasjon!"
         }
 
         test("hent oppdrag kaster exception hvis det er over 1000 forskjellige identer i identifiserte oppdrag") {
@@ -390,11 +384,8 @@ internal class AttestasjonServiceTest :
             val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NASJONALT_READ))
             coEvery { skjermingService.getSkjermingForIdent(request.gjelderId, navIdent) } returns true
 
-            val exception =
-                shouldThrow<ForbiddenException> {
-                    attestasjonService.attestereOppdrag(request, navIdent)
-                }
+            val result = attestasjonService.attestereOppdrag(request, navIdent)
 
-            exception.message shouldBe "Mangler rettigheter til å attestere oppdrag!"
+            result.errorMessage shouldBe "Mangler rettigheter til å attestere oppdrag!"
         }
     })

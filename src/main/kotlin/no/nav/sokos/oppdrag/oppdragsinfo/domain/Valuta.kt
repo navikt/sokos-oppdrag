@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Valuta(
     val linjeId: Int,
-    val type: String,
+    val typeValuta: String,
     val datoFom: String,
     val nokkelId: Int,
     val valuta: String,
