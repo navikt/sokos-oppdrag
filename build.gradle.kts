@@ -12,7 +12,7 @@ plugins {
     kotlin("jvm") version "2.1.20"
     kotlin("plugin.serialization") version "2.1.20"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("com.expediagroup.graphql") version "8.4.0"
+    id("com.expediagroup.graphql") version "8.5.0"
     id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
     id("org.openapi.generator") version "7.12.0"
@@ -49,10 +49,10 @@ val ktorVersion = "3.1.2"
 // Serialization
 val kotlinxSerializationVersion = "1.8.1"
 val kotlinxDatetimeVersion = "0.6.2"
-val kotlinxCoroutinesVersion = "1.10.1"
+val kotlinxCoroutinesVersion = "1.10.2"
 
 // Monitorering
-val micrometerVersion = "1.14.5"
+val micrometerVersion = "1.14.6"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
@@ -70,7 +70,7 @@ val db2JccVersion = "12.1.0.0"
 val kotliqueryVersion = "1.9.1"
 
 // GraphQL
-val graphqlClientVersion = "8.4.0"
+val graphqlClientVersion = "8.5.0"
 
 // Cache
 val caffeineVersion = "3.2.0"
@@ -89,7 +89,7 @@ val ibmMqVersion = "9.4.2.0"
 val kotestVersion = "6.0.0.M3"
 val wiremockVersion = "3.12.1"
 val mockOAuth2ServerVersion = "2.1.10"
-val mockkVersion = "1.13.17"
+val mockkVersion = "1.14.0"
 val swaggerRequestValidatorVersion = "2.44.1"
 val testcontainersVersion = "1.20.6"
 val h2Version = "2.3.232"
