@@ -44,3 +44,12 @@ jobs:
       cluster: dev-fss
       resource: .nais/valkey/valkey-qx.yaml
       image: ${{ needs.build-push-image.outputs.image }}
+
+  deploy-prod:
+    needs: [ build-push-image, deploy-dev, deploy-dev-qx ]
+    name: Deploy valkey to prod-fss
+    uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
+    with:
+      cluster: prod-fss
+      resource: .nais/valkey/valkey-prod.yaml
+      image: ${{ needs.build-push-image.outputs.image }}
