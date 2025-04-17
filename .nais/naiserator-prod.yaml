@@ -77,7 +77,7 @@ spec:
 
     # Redis
     - name: VALKEY_HOST
-      value: "sokos-oppdrag-redis.okonomi.svc.nais.local"
+      value: "sokos-oppdrag-valkey.okonomi.svc.nais.local"
     - name: VALKEY_PORT
       value: "6379"
 
