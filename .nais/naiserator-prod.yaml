@@ -31,9 +31,114 @@ spec:
       memory: 4096Mi
   ingresses:
     - https://sokos-oppdrag.intern.nav.no
+    - https://sokos-oppdrag.prod-fss-pub.nais.io
   prometheus:
     enabled: true
     path: /internal/metrics
+  secureLogs:
+    enabled: true
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
   azure:
     application:
       enabled: true
+      tenant: trygdeetaten.no
+      allowAllUsers: true
+      claims:
+        extra:
+          - NAVident
+        groups:
+          - id: 420124f2-7456-4e3e-b035-7283bdabd51a # 0000-GA-okonomi-fortrolig
+          - id: 22806019-fb74-41a5-a3cd-302624299935 # 0000-GA-okonomi-strengt_fortrolig
+          - id: a3866f87-9b10-4b99-b4e9-a8c736d13b5b # 0000-GA-okonomi-egne_ansatte
+          - id: 726bdce4-c2ff-4b63-9047-cb524a4663a1 # 0000-GA-SOKOS-MF-Attestasjon-nasjonalt-READ
+          - id: bc45e68e-1497-43e9-a069-a5e2ab3eb964 # 0000-GA-SOKOS-MF-Attestasjon-nasjonalt-WRITE
+          - id: dcb37007-aeff-4e1c-bc10-7ddc00b37b27 # 0000-GA-SOKOS-MF-Attestasjon-NOP-READ
+          - id: 93ab2dc2-50a6-4dfc-aaff-a7fae9afe6bd # 0000-GA-SOKOS-MF-Attestasjon-NOP-WRITE
+          - id: 02606272-3cb4-49b8-b1f7-cb9b3b8f9b0e # 0000-GA-SOKOS-MF-Attestasjon-NOS-READ
+          - id: 38cbf869-d707-45a7-998c-81cb245bebdf # 0000-GA-SOKOS-MF-Attestasjon-NOS-WRITE
+  accessPolicy:
+    inbound:
+      rules:
+        - application: sokos-utbetalingsportalen
+          namespace: okonomi
+          cluster: prod-gcp
+  webproxy: true
+  filesFrom:
+    - secret: db2license
+      mountPath: /var/run/secrets/db2license
+  envFrom:
+    - secret: sokos-oppdrag-oppdrag-credentials
+    - secret: sokos-oppdrag-redis-password
+  env:
+    - name: USE_AUTHENTICATION
+      value: "true"
+
+    # Redis
+    - name: REDIS_HOST
+      value: "sokos-oppdrag-redis.okonomi.svc.nais.local"
+    - name: REDIS_PORT
+      value: "6379"
+
+    # Db2
+    - name: DATABASE_HOST
+      value: "155.55.1.78"
+    - name: DATABASE_PORT
+      value: "5021"
+    - name: DATABASE_NAME
+      value: "DB2"
+    - name: DATABASE_SCHEMA
+      value: "OS231P"
+
+    # Ereg
+    - name: EREG_URL
+      value: "https://ereg-services.intern.nav.no"
+
+    # Nom
+    - name: SKJERMING_URL
+      value: "https://skjermede-personer-pip.nais.adeo.no"
+    - name: SKJERMING_CLIENT_ID
+      value: "api://prod-fss.nom.skjermede-personer-pip/.default"
+    - name: GA_OKONOMI_EGNE_ANSATTE
+      value: a3866f87-9b10-4b99-b4e9-a8c736d13b5b
+
+    # MQ
+    - name: MQ_HOSTNAME
+      value: mpls02.preprod.local
+    - name: MQ_PORT
+      value: '1414'
+    - name: MQ_QUEUE_MANAGER_NAME
+      value: MPLS02
+    - name: MQ_CHANNEL_NAME
+      value: P_SOKOS_OPPDRAG
+    - name: MQ_TSS_SAMHANDLER_SERVICE_QUEUE
+      value: QA.P415.AS10_SAMHANDLER_SERVICE
+
+    # PDL
+    - name: PDL_URL
+      value: "https://pdl-api.intern.nav.no/"
+    - name: PDL_SCOPE
+      value: "api://prod-fss.pdl.pdl-api/.default"
+    - name: GA_OKONOMI_FORTROLIG
+      value: 420124f2-7456-4e3e-b035-7283bdabd51a
+    - name: GA_OKONOMI_STRENGT_FORTROLIG
+      value: 22806019-fb74-41a5-a3cd-302624299935
+
+    - name: GA_SOKOS_MF_ATTESTASJON_NASJONALT_READ
+      value: 726bdce4-c2ff-4b63-9047-cb524a4663a1
+    - name: GA_SOKOS_MF_ATTESTASJON_NASJONALT_WRITE
+      value: bc45e68e-1497-43e9-a069-a5e2ab3eb964
+    - name: GA_SOKOS_MF_ATTESTASJON_NOP_READ
+      value: dcb37007-aeff-4e1c-bc10-7ddc00b37b27
+    - name: GA_SOKOS_MF_ATTESTASJON_NOP_WRITE
+      value: 93ab2dc2-50a6-4dfc-aaff-a7fae9afe6bd
+    - name: GA_SOKOS_MF_ATTESTASJON_NOS_READ
+      value: 02606272-3cb4-49b8-b1f7-cb9b3b8f9b0e
+    - name: GA_SOKOS_MF_ATTESTASJON_NOS_WRITE
+      value: 38cbf869-d707-45a7-998c-81cb245bebdf
+
+    # ZOS-Connect
+    - name: ZOS_URL
+      value: "https://155.55.1.78:9080/osattestasjonapi"
