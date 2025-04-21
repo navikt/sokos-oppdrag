@@ -12,7 +12,7 @@ plugins {
     kotlin("jvm") version "2.1.20"
     kotlin("plugin.serialization") version "2.1.20"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("com.expediagroup.graphql") version "8.5.0"
+    id("com.expediagroup.graphql") version "8.6.0"
     id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
     id("org.openapi.generator") version "7.12.0"
@@ -70,7 +70,7 @@ val db2JccVersion = "12.1.0.0"
 val kotliqueryVersion = "1.9.1"
 
 // GraphQL
-val graphqlClientVersion = "8.5.0"
+val graphqlClientVersion = "8.6.0"
 
 // Cache
 val caffeineVersion = "3.2.0"
@@ -79,7 +79,7 @@ val caffeineVersion = "3.2.0"
 val valkeyVersion = "6.5.5.RELEASE"
 
 // TSS
-val tjenestespesifikasjonVersion = "1.0_20250218124429_8804209"
+val tjenestespesifikasjonVersion = "1.0_20250414143240_7082707"
 val glassfishJaxbVersion = "4.0.5"
 
 // IBM MQ
