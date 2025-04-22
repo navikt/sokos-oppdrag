@@ -105,7 +105,7 @@ spec:
 
     # MQ
     - name: MQ_HOSTNAME
-      value: mpls02.preprod.local
+      value: mpls02.adeo.no
     - name: MQ_PORT
       value: '1414'
     - name: MQ_QUEUE_MANAGER_NAME
