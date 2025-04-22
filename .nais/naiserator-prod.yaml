@@ -100,7 +100,7 @@ spec:
     - name: SKJERMING_URL
       value: "https://skjermede-personer-pip.intern.nav.no"
     - name: SKJERMING_CLIENT_ID
-      value: "api://prod-fss.nom.skjermede-personer-pip/.default"
+      value: "api://prod-gcp.nom.skjermede-personer-pip/.default"
     - name: GA_OKONOMI_EGNE_ANSATTE
       value: a3866f87-9b10-4b99-b4e9-a8c736d13b5b
 
