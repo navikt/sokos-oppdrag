@@ -98,7 +98,7 @@ spec:
 
     # Nom
     - name: SKJERMING_URL
-      value: "https://skjermede-personer-pip.nais.adeo.no"
+      value: "https://skjermede-personer-pip.intern.nav.no"
     - name: SKJERMING_CLIENT_ID
       value: "api://prod-fss.nom.skjermede-personer-pip/.default"
     - name: GA_OKONOMI_EGNE_ANSATTE
