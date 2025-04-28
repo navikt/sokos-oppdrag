@@ -12,10 +12,10 @@ plugins {
     kotlin("jvm") version "2.1.20"
     kotlin("plugin.serialization") version "2.1.20"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("com.expediagroup.graphql") version "8.6.0"
+    id("com.expediagroup.graphql") version "8.6.2"
     id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
-    id("org.openapi.generator") version "7.12.0"
+    id("org.openapi.generator") version "7.13.0"
 }
 
 group = "no.nav.sokos"
@@ -70,7 +70,7 @@ val db2JccVersion = "12.1.0.0"
 val kotliqueryVersion = "1.9.1"
 
 // GraphQL
-val graphqlClientVersion = "8.6.0"
+val graphqlClientVersion = "8.6.2"
 
 // Cache
 val caffeineVersion = "3.2.0"
@@ -87,11 +87,11 @@ val ibmMqVersion = "9.4.2.0"
 
 // Test
 val kotestVersion = "6.0.0.M3"
-val wiremockVersion = "3.12.1"
+val wiremockVersion = "3.13.0"
 val mockOAuth2ServerVersion = "2.1.10"
 val mockkVersion = "1.14.0"
 val swaggerRequestValidatorVersion = "2.44.1"
-val testcontainersVersion = "1.20.6"
+val testcontainersVersion = "1.21.0"
 val h2Version = "2.3.232"
 val activemqVersion = "2.40.0"
 
