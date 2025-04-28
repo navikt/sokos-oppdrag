@@ -181,6 +181,7 @@ internal class OppdragsInfoApiTest :
                         vedtakssats = 1000.0,
                         hovedkontonr = "TB",
                         underkontonr = "AFP",
+                        vedtakId = "01012020",
                     ),
                 )
 
@@ -618,6 +619,7 @@ internal class OppdragsInfoApiTest :
                                 vedtakssats = 1500.0,
                                 hovedkontonr = "216",
                                 underkontonr = "5310",
+                                vedtakId = "1",
                             ),
                         ),
                     harValutaer = TRUE,

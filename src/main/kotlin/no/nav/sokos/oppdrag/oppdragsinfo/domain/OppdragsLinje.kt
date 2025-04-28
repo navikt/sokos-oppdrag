@@ -22,4 +22,5 @@ data class OppdragsLinje(
     val vedtakssats: Double?,
     val hovedkontonr: String?,
     val underkontonr: String?,
+    val vedtakId: String?,
 )

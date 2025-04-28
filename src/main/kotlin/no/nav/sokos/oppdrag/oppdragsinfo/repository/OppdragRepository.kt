@@ -110,7 +110,8 @@ class OppdragRepository(
                         OPLI.TIDSPKT_REG,
                         VEDTAKSSATS.VEDTAKSSATS AS VEDTAKSSATS,
                         KONT.HOVEDKONTONR AS HOVEDKONTONR,
-                        KONT.UNDERKONTONR AS UNDERKONTONR
+                        KONT.UNDERKONTONR AS UNDERKONTONR,
+                        OPLI.VEDTAK_ID    AS VEDTAK_ID
                     FROM T_KJOREDATO KJDA, T_OPPDRAGSLINJE OPLI, T_KONTOREGEL KONT, T_LINJE_STATUS LIST
                     LEFT OUTER JOIN T_KORREKSJON KORR
                         ON LIST.OPPDRAGS_ID = KORR.OPPDRAGS_ID
@@ -380,6 +381,7 @@ class OppdragRepository(
             tidspktReg = row.string("TIDSPKT_REG"),
             hovedkontonr = row.stringOrNull("HOVEDKONTONR"),
             underkontonr = row.stringOrNull("UNDERKONTONR"),
+            vedtakId = row.stringOrNull("VEDTAK_ID"),
         )
     }
 
