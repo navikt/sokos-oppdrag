@@ -174,9 +174,9 @@ class AttestasjonService(
         saksbehandler: NavIdent,
     ): Boolean =
         when {
-            saksbehandler.hasReadAccessNasjonalt() -> true
-            saksbehandler.hasReadAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
-            saksbehandler.hasReadAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
+            saksbehandler.hasReadAccessAttestasjonNasjonalt() -> true
+            saksbehandler.hasReadAccessAttestasjonNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
+            saksbehandler.hasReadAccessAttestasjonNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
             else -> false
         }
 
@@ -185,9 +185,9 @@ class AttestasjonService(
         saksbehandler: NavIdent,
     ): Boolean =
         when {
-            saksbehandler.hasWriteAccessNasjonalt() -> true
-            saksbehandler.hasWriteAccessNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
-            saksbehandler.hasWriteAccessNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
+            saksbehandler.hasWriteAccessAttestasjonNasjonalt() -> true
+            saksbehandler.hasWriteAccessAttestasjonNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
+            saksbehandler.hasWriteAccessAttestasjonNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
             else -> false
         }
 
