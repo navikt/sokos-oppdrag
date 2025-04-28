@@ -7,6 +7,7 @@ import no.nav.sokos.oppdrag.common.valkey.ValkeyCache
 import no.nav.sokos.oppdrag.config.ValkeyConfig.createCodec
 import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
 import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetClientService
+import no.nav.sokos.oppdrag.security.AdGroup
 
 class SkjermingService(
     private val pdlClientService: PdlClientService = PdlClientService(),
@@ -28,7 +29,7 @@ class SkjermingService(
             valkeyCache
                 .getAsync(key = personIdenter.joinToString(), codec = createCodec<Map<String, Boolean>>("hent-egne-ansatte")) {
                     skjermetClientService.isSkjermedePersonerInSkjermingslosningen(personIdenter)
-                }.mapValues { (_, skjermet) -> !navIdent.hasAccessEgneAnsatte() && skjermet }
+                }.mapValues { (_, skjermet) -> !navIdent.hasAdGroupAccess(AdGroup.EGNE_ANSATTE.adGroupName) && skjermet }
 
         val adressebeskyttelseMap =
             valkeyCache
@@ -36,9 +37,9 @@ class SkjermingService(
                     pdlClientService.getPerson(identer = personIdenter)
                 }.mapValues { (_, person) ->
                     val graderinger = person.adressebeskyttelse.map { it.gradering }
-                    !navIdent.hasAccessFortrolig() &&
+                    !navIdent.hasAdGroupAccess(AdGroup.FORTROLIG.adGroupName) &&
                         AdressebeskyttelseGradering.FORTROLIG in graderinger ||
-                        !navIdent.hasAccessStrengtFortrolig() &&
+                        !navIdent.hasAdGroupAccess(AdGroup.STRENGT_FORTROLIG.adGroupName) &&
                         graderinger.any {
                             it == AdressebeskyttelseGradering.STRENGT_FORTROLIG || it == AdressebeskyttelseGradering.STRENGT_FORTROLIG_UTLAND
                         }

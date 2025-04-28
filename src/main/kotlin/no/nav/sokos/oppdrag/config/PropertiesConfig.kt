@@ -9,15 +9,7 @@ import com.natpryce.konfig.Key
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 
-import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NASJONALT_READ
-import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NASJONALT_WRITE
-import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_READ
-import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_WRITE
-import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_READ
-import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_WRITE
-import no.nav.sokos.oppdrag.common.GRUPPE_EGNE_ANSATTE
-import no.nav.sokos.oppdrag.common.GRUPPE_FORTROLIG
-import no.nav.sokos.oppdrag.common.GRUPPE_STRENGT_FORTROLIG
+import no.nav.sokos.oppdrag.security.AdGroup
 
 object PropertiesConfig {
     private val defaultProperties =
@@ -84,15 +76,18 @@ object PropertiesConfig {
         val clientSecret: String = getOrEmpty("AZURE_APP_CLIENT_SECRET"),
         val groupAccess: Map<String, String> =
             mapOf(
-                getOrEmpty("GA_OKONOMI_EGNE_ANSATTE") to GRUPPE_EGNE_ANSATTE,
-                getOrEmpty("GA_OKONOMI_FORTROLIG") to GRUPPE_FORTROLIG,
-                getOrEmpty("GA_OKONOMI_STRENGT_FORTROLIG") to GRUPPE_STRENGT_FORTROLIG,
-                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NASJONALT_READ") to GRUPPE_ATTESTASJON_NASJONALT_READ,
-                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NASJONALT_WRITE") to GRUPPE_ATTESTASJON_NASJONALT_WRITE,
-                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NOP_READ") to GRUPPE_ATTESTASJON_NOP_READ,
-                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NOP_WRITE") to GRUPPE_ATTESTASJON_NOP_WRITE,
-                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NOS_READ") to GRUPPE_ATTESTASJON_NOS_READ,
-                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NOS_WRITE") to GRUPPE_ATTESTASJON_NOS_WRITE,
+                getOrEmpty("GA_OKONOMI_EGNE_ANSATTE") to AdGroup.EGNE_ANSATTE.adGroupName,
+                getOrEmpty("GA_OKONOMI_FORTROLIG") to AdGroup.FORTROLIG.adGroupName,
+                getOrEmpty("GA_OKONOMI_STRENGT_FORTROLIG") to AdGroup.STRENGT_FORTROLIG.adGroupName,
+                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NASJONALT_READ") to AdGroup.ATTESTASJON_NASJONALT_READ.adGroupName,
+                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NASJONALT_WRITE") to AdGroup.ATTESTASJON_NASJONALT_WRITE.adGroupName,
+                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NOP_READ") to AdGroup.ATTESTASJON_NOP_READ.adGroupName,
+                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NOP_WRITE") to AdGroup.ATTESTASJON_NOP_WRITE.adGroupName,
+                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NOS_READ") to AdGroup.ATTESTASJON_NOS_READ.adGroupName,
+                getOrEmpty("GA_SOKOS_MF_ATTESTASJON_NOS_WRITE") to AdGroup.ATTESTASJON_NOS_WRITE.adGroupName,
+                getOrEmpty("GA_SOKOS_MF_OPPDRAGSINFO_NASJONALT_READ") to AdGroup.OPPDRAGSINFO_NASJONALT_READ.adGroupName,
+                getOrEmpty("GA_SOKOS_MF_OPPDRAGSINFO_NOP_READ") to AdGroup.OPPDRAGSINFO_NOP_READ.adGroupName,
+                getOrEmpty("GA_SOKOS_MF_OPPDRAGSINFO_NOS_READ") to AdGroup.OPPDRAGSINFO_NOS_READ.adGroupName,
             ),
     )
 

@@ -16,6 +16,8 @@ import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
+import no.nav.sokos.oppdrag.common.ENHETSNUMMER_NOP
+import no.nav.sokos.oppdrag.common.ENHETSNUMMER_NOS
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
@@ -24,10 +26,9 @@ import no.nav.sokos.oppdrag.common.util.CacheUtil
 import no.nav.sokos.oppdrag.common.valkey.ValkeyCache
 import no.nav.sokos.oppdrag.config.SECURE_LOGGER
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
+import no.nav.sokos.oppdrag.security.AdGroup
 
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
-const val ENHETSNUMMER_NOS = "8020"
-const val ENHETSNUMMER_NOP = "4819"
 
 class AttestasjonService(
     private val attestasjonRepository: AttestasjonRepository = AttestasjonRepository(),
@@ -147,7 +148,7 @@ class AttestasjonService(
             ),
         )
 
-        if (!saksbehandler.hasWriteAccessAttestasjon()) {
+        if (!saksbehandler.hasAccessToAnyAdGroup(AdGroup.ATTESTASJON_NASJONALT_READ.adGroupName, AdGroup.ATTESTASJON_NOS_WRITE.adGroupName, AdGroup.ATTESTASJON_NOP_WRITE.adGroupName)) {
             return ZosResponse(
                 errorMessage = "Mangler rettigheter til å attestere oppdrag!",
             )
@@ -174,9 +175,9 @@ class AttestasjonService(
         saksbehandler: NavIdent,
     ): Boolean =
         when {
-            saksbehandler.hasReadAccessAttestasjonNasjonalt() -> true
-            saksbehandler.hasReadAccessAttestasjonNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
-            saksbehandler.hasReadAccessAttestasjonNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NASJONALT_READ.adGroupName) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NOS_READ.adGroupName) && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NOP_READ.adGroupName) && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
             else -> false
         }
 
@@ -185,9 +186,9 @@ class AttestasjonService(
         saksbehandler: NavIdent,
     ): Boolean =
         when {
-            saksbehandler.hasWriteAccessAttestasjonNasjonalt() -> true
-            saksbehandler.hasWriteAccessAttestasjonNOS() && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
-            saksbehandler.hasWriteAccessAttestasjonNOP() && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NASJONALT_WRITE.adGroupName) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NOS_WRITE.adGroupName) && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NOP_WRITE.adGroupName) && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
             else -> false
         }
 
