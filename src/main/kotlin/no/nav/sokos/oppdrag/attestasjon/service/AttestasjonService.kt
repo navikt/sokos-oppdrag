@@ -148,7 +148,7 @@ class AttestasjonService(
             ),
         )
 
-        if (!saksbehandler.hasAccessToAnyAdGroup(AdGroup.ATTESTASJON_NASJONALT_READ.adGroupName, AdGroup.ATTESTASJON_NOS_WRITE.adGroupName, AdGroup.ATTESTASJON_NOP_WRITE.adGroupName)) {
+        if (!saksbehandler.hasAccessToAnyAdGroup(AdGroup.ATTESTASJON_NASJONALT_WRITE, AdGroup.ATTESTASJON_NOS_WRITE, AdGroup.ATTESTASJON_NOP_WRITE)) {
             return ZosResponse(
                 errorMessage = "Mangler rettigheter til å attestere oppdrag!",
             )
@@ -175,9 +175,9 @@ class AttestasjonService(
         saksbehandler: NavIdent,
     ): Boolean =
         when {
-            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NASJONALT_READ.adGroupName) -> true
-            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NOS_READ.adGroupName) && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
-            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NOP_READ.adGroupName) && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NASJONALT_READ) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NOS_READ) && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NOP_READ) && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
             else -> false
         }
 
@@ -186,9 +186,9 @@ class AttestasjonService(
         saksbehandler: NavIdent,
     ): Boolean =
         when {
-            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NASJONALT_WRITE.adGroupName) -> true
-            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NOS_WRITE.adGroupName) && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
-            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NOP_WRITE.adGroupName) && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NASJONALT_WRITE) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NOS_WRITE) && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NOP_WRITE) && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
             else -> false
         }
 
