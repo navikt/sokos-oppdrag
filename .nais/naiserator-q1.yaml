@@ -153,9 +153,9 @@ spec:
     # Oppdragsinfo
     - name: GA_SOKOS_MF_OPPDRAGSINFO_NASJONALT_READ
       value: 992a8b83-5422-4cbf-af90-2d15fa0cfd88
-    - name: GA_SOKOS_MF_OPPDRAGSINFO_NØP_READ
+    - name: GA_SOKOS_MF_OPPDRAGSINFO_NOP_READ
       value: a6fb82bd-cbca-4577-9156-fcabeb32404a
-    - name: GA_SOKOS_MF_OPPDRAGSINFO_NØS_READ
+    - name: GA_SOKOS_MF_OPPDRAGSINFO_NOS_READ
       value: fae560aa-11da-4fcc-b794-508908ab9ed4
 
     # ZOS-Connect

@@ -73,23 +73,19 @@ class AttestasjonService(
         }
 
         val statusFilterOppdragList =
-            oppdragsListe
-                .takeIf { request.attestertStatus.filterEgenAttestert != null }
-                ?.filter { filterEgenAttestertOppdrag(it, request.attestertStatus.filterEgenAttestert!!, navIdent) } ?: oppdragsListe
+            oppdragsListe.takeIf { request.attestertStatus.filterEgenAttestert != null }?.filter { filterEgenAttestertOppdrag(it, request.attestertStatus.filterEgenAttestert!!, navIdent) }
+                ?: oppdragsListe
 
         return WrappedReponseWithErrorDTO(
             data =
-                statusFilterOppdragList
-                    .filter { hasSaksbehandlerReadAccess(it, navIdent) }
-                    .map { it.toDTO() }
-                    .let { list ->
-                        if (verifiedSkjermingForGjelderId) {
-                            list.map { it.copy(erSkjermetForSaksbehandler = false) }
-                        } else {
-                            val skjermingMap = skjermingService.getSkjermingForIdentListe(identer, navIdent)
-                            list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.oppdragGjelderId] == true) }
-                        }
-                    }.map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, navIdent)) },
+                statusFilterOppdragList.filter { hasSaksbehandlerReadAccess(it, navIdent) }.map { it.toDTO() }.let { list ->
+                    if (verifiedSkjermingForGjelderId) {
+                        list.map { it.copy(erSkjermetForSaksbehandler = false) }
+                    } else {
+                        val skjermingMap = skjermingService.getSkjermingForIdentListe(identer, navIdent)
+                        list.map { it.copy(erSkjermetForSaksbehandler = skjermingMap[it.oppdragGjelderId] == true) }
+                    }
+                }.map { it.copy(hasWriteAccess = hasSaksbehandlerWriteAccess(it, navIdent)) },
         )
     }
 
@@ -104,14 +100,13 @@ class AttestasjonService(
         }
 
         val oppdragslinjerMedDatoVedtakTom =
-            oppdragslinjer
-                .zipWithNext { current, next ->
-                    if (current.kodeKlasse == next.kodeKlasse) {
-                        current.copy(datoVedtakTom = current.datoVedtakTom ?: next.datoVedtakFom.minus(1, DateTimeUnit.DAY))
-                    } else {
-                        current
-                    }
-                }.toList() + oppdragslinjer.last()
+            oppdragslinjer.zipWithNext { current, next ->
+                if (current.kodeKlasse == next.kodeKlasse) {
+                    current.copy(datoVedtakTom = current.datoVedtakTom ?: next.datoVedtakFom.minus(1, DateTimeUnit.DAY))
+                } else {
+                    current
+                }
+            }.toList() + oppdragslinjer.last()
 
         val linjeIder = oppdragslinjer.map { l -> l.linjeId }.toList()
 
@@ -121,15 +116,14 @@ class AttestasjonService(
 
         val oppdragsdetaljer =
             OppdragsdetaljerDTO(
-                oppdragslinjerMedDatoVedtakTom
-                    .map { linje ->
-                        OppdragslinjeDTO(
-                            linje,
-                            ansvarssteder[linje.linjeId],
-                            kostnadssteder[linje.linjeId],
-                            attestasjoner[linje.linjeId] ?: emptyList(),
-                        )
-                    }.sortedBy { oppdragslinjeDTO -> oppdragslinjeDTO.oppdragsLinje.linjeId },
+                oppdragslinjerMedDatoVedtakTom.map { linje ->
+                    OppdragslinjeDTO(
+                        linje,
+                        ansvarssteder[linje.linjeId],
+                        kostnadssteder[linje.linjeId],
+                        attestasjoner[linje.linjeId] ?: emptyList(),
+                    )
+                }.sortedBy { oppdragslinjeDTO -> oppdragslinjeDTO.oppdragsLinje.linjeId },
                 saksbehandler.ident,
             )
 
@@ -187,8 +181,10 @@ class AttestasjonService(
     ): Boolean =
         when {
             saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NASJONALT_WRITE) -> true
-            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NOS_WRITE) && (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
-            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NOP_WRITE) && (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NOS_WRITE) &&
+                (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NOP_WRITE) &&
+                (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
             else -> false
         }
 
