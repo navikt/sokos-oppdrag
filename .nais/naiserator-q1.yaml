@@ -58,6 +58,10 @@ spec:
           - id: c67369c0-9918-4f31-a952-121fc9d6d9e3 # 0000-GA-SOKOS-MF-Attestasjon-NOP-WRITE
           - id: c8b782d6-12fd-4e1b-abed-04c6b09ad4e8 # 0000-GA-SOKOS-MF-Attestasjon-NOS-READ
           - id: b02c819d-91e5-4cac-baf5-3d2411869adf # 0000-GA-SOKOS-MF-Attestasjon-NOS-WRITE
+          - id: 992a8b83-5422-4cbf-af90-2d15fa0cfd88 # 0000-GA-SOKOS-MF-Oppdragsinfo-Nasjonalt-READ
+          - id: a6fb82bd-cbca-4577-9156-fcabeb32404a # 0000-GA-SOKOS-MF-Oppdragsinfo-NØP-READ
+          - id: fae560aa-11da-4fcc-b794-508908ab9ed4 # 0000-GA-SOKOS-MF-Oppdragsinfo-NØS-READ
+
   accessPolicy:
     inbound:
       rules:
@@ -132,6 +136,7 @@ spec:
     - name: GA_OKONOMI_STRENGT_FORTROLIG
       value: 9d135c69-105c-4364-86f4-e22916758e93
 
+    # Attestasjon
     - name: GA_SOKOS_MF_ATTESTASJON_NASJONALT_READ
       value: ae748b4f-90d8-4635-afb6-60c24122a640
     - name: GA_SOKOS_MF_ATTESTASJON_NASJONALT_WRITE
@@ -144,6 +149,14 @@ spec:
       value: c8b782d6-12fd-4e1b-abed-04c6b09ad4e8
     - name: GA_SOKOS_MF_ATTESTASJON_NOS_WRITE
       value: b02c819d-91e5-4cac-baf5-3d2411869adf
+
+    # Oppdragsinfo
+    - name: GA_SOKOS_MF_OPPDRAGSINFO_NASJONALT_READ
+      value: 992a8b83-5422-4cbf-af90-2d15fa0cfd88
+    - name: GA_SOKOS_MF_OPPDRAGSINFO_NOP_READ
+      value: a6fb82bd-cbca-4577-9156-fcabeb32404a
+    - name: GA_SOKOS_MF_OPPDRAGSINFO_NOS_READ
+      value: fae560aa-11da-4fcc-b794-508908ab9ed4
 
     # ZOS-Connect
     - name: ZOS_URL

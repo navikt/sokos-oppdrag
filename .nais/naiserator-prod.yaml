@@ -58,6 +58,7 @@ spec:
           - id: 93ab2dc2-50a6-4dfc-aaff-a7fae9afe6bd # 0000-GA-SOKOS-MF-Attestasjon-NOP-WRITE
           - id: 02606272-3cb4-49b8-b1f7-cb9b3b8f9b0e # 0000-GA-SOKOS-MF-Attestasjon-NOS-READ
           - id: 38cbf869-d707-45a7-998c-81cb245bebdf # 0000-GA-SOKOS-MF-Attestasjon-NOS-WRITE
+
   accessPolicy:
     inbound:
       rules:
@@ -126,6 +127,7 @@ spec:
     - name: GA_OKONOMI_STRENGT_FORTROLIG
       value: 22806019-fb74-41a5-a3cd-302624299935
 
+    # Attestasjon
     - name: GA_SOKOS_MF_ATTESTASJON_NASJONALT_READ
       value: 726bdce4-c2ff-4b63-9047-cb524a4663a1
     - name: GA_SOKOS_MF_ATTESTASJON_NASJONALT_WRITE

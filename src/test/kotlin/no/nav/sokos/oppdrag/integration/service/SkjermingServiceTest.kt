@@ -9,14 +9,12 @@ import no.nav.pdl.enums.AdressebeskyttelseGradering
 import no.nav.pdl.hentpersonbolk.Adressebeskyttelse
 import no.nav.pdl.hentpersonbolk.Navn
 import no.nav.pdl.hentpersonbolk.Person
-import no.nav.sokos.oppdrag.common.GRUPPE_EGNE_ANSATTE
-import no.nav.sokos.oppdrag.common.GRUPPE_FORTROLIG
-import no.nav.sokos.oppdrag.common.GRUPPE_STRENGT_FORTROLIG
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.valkey.ValkeyCache
 import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
 import no.nav.sokos.oppdrag.integration.client.skjerming.SkjermetClientService
 import no.nav.sokos.oppdrag.listener.Valkeylistener
+import no.nav.sokos.oppdrag.security.AdGroup
 
 private val pdlClientService = mockk<PdlClientService>()
 private val skjermetClientService = mockk<SkjermetClientService>()
@@ -43,7 +41,7 @@ internal class SkjermingServiceTest :
         test("saksbehandler med tilgang til egne ansatte skal kunne se person som er skjermet") {
 
             val ident = "12045678912"
-            val navIdentMedEgneAnsatte = NavIdent("Z999999", listOf(GRUPPE_EGNE_ANSATTE))
+            val navIdentMedEgneAnsatte = NavIdent("Z999999", listOf(AdGroup.EGNE_ANSATTE.adGroupName))
 
             coEvery { pdlClientService.getPerson(any()) } returns
                 mapOf(
@@ -67,7 +65,7 @@ internal class SkjermingServiceTest :
         test("saksbehandler med strengt fortrolig rolle skal kunne se person med adressebeskyttelse strengt fortrolig") {
 
             val ident = "12045678913"
-            val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_STRENGT_FORTROLIG))
+            val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(AdGroup.STRENGT_FORTROLIG.adGroupName))
 
             coEvery { pdlClientService.getPerson(any()) } returns
                 mapOf(
@@ -93,7 +91,7 @@ internal class SkjermingServiceTest :
         test("saksbehandler med fortrolig skal kunne se person med adressebeskyttelse fortrolig") {
 
             val ident = "12045678914"
-            val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
+            val navIdentMedFortrolig = NavIdent("Z999999", listOf(AdGroup.FORTROLIG.adGroupName))
 
             coEvery { pdlClientService.getPerson(any()) } returns
                 mapOf(
@@ -111,7 +109,7 @@ internal class SkjermingServiceTest :
                     ident to false,
                 )
 
-            val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentMedStrengtFortrolig)
+            val erPersonSkjermetForSakbehandler = skjermingService.getSkjermingForIdent(ident, navIdentMedFortrolig)
 
             erPersonSkjermetForSakbehandler shouldBe false
         }
@@ -119,7 +117,7 @@ internal class SkjermingServiceTest :
         test("saksbehandler med tilgang til fortrolig skal ikke få se person med adressebeskyttelse strengt fortrolig") {
 
             val ident = "12045678915"
-            val navIdentUtenTilgang = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
+            val navIdentUtenTilgang = NavIdent("Z999999", listOf(AdGroup.FORTROLIG.adGroupName))
 
             coEvery { pdlClientService.getPerson(any()) } returns
                 mapOf(
@@ -145,7 +143,7 @@ internal class SkjermingServiceTest :
         test("saksbehandler med tilgang til egne ansatte skal ikke få se person med adressebeskyttelse fortrolig") {
 
             val ident = "12045678916"
-            val navIdentUtenTilgang = NavIdent("Z999999", listOf(GRUPPE_EGNE_ANSATTE))
+            val navIdentUtenTilgang = NavIdent("Z999999", listOf(AdGroup.EGNE_ANSATTE.adGroupName))
 
             coEvery { pdlClientService.getPerson(any()) } returns
                 mapOf(
@@ -171,7 +169,7 @@ internal class SkjermingServiceTest :
         test("sjekk at saksbehandler uten tilgang til egne ansatte ikke får tilgang til enkeltperson som er skjermet med egen ansatte") {
 
             val ident = "12045678917"
-            val navIdentUtenTilgang = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
+            val navIdentUtenTilgang = NavIdent("Z999999", listOf(AdGroup.FORTROLIG.adGroupName))
 
             coEvery { pdlClientService.getPerson(any()) } returns
                 mapOf(
@@ -195,7 +193,7 @@ internal class SkjermingServiceTest :
         test("sjekk at saksbehandler med tilgang til strengt fortrolig kan se personer med strengt fortrolig utland") {
 
             val ident = "12045678924"
-            val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_STRENGT_FORTROLIG))
+            val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(AdGroup.STRENGT_FORTROLIG.adGroupName))
 
             coEvery { pdlClientService.getPerson(any()) } returns
                 mapOf(
@@ -221,7 +219,7 @@ internal class SkjermingServiceTest :
         test("sjekk at saksbehandler med fortrolig ikke får tilgang til strengt fortrolig utland") {
 
             val ident = "12045678927"
-            val navIdentMedFortrolig = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
+            val navIdentMedFortrolig = NavIdent("Z999999", listOf(AdGroup.FORTROLIG.adGroupName))
 
             coEvery { pdlClientService.getPerson(any()) } returns
                 mapOf(
@@ -248,7 +246,7 @@ internal class SkjermingServiceTest :
 
             val ident1 = "12045678918"
             val ident2 = "12045678919"
-            val navIdentMedEgneAnsatte = NavIdent("Z999999", listOf(GRUPPE_EGNE_ANSATTE))
+            val navIdentMedEgneAnsatte = NavIdent("Z999999", listOf(AdGroup.EGNE_ANSATTE.adGroupName))
 
             coEvery { pdlClientService.getPerson(any()) } returns
                 mapOf(
@@ -280,7 +278,7 @@ internal class SkjermingServiceTest :
 
             val ident1 = "12045678920"
             val ident2 = "12045678921"
-            val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_STRENGT_FORTROLIG))
+            val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(AdGroup.STRENGT_FORTROLIG.adGroupName))
 
             coEvery { pdlClientService.getPerson(any()) } returns
                 mapOf(
@@ -316,7 +314,7 @@ internal class SkjermingServiceTest :
 
             val ident1 = "12045678922"
             val ident2 = "12045678923"
-            val navIdentMedFortrolig = NavIdent("Z999999", listOf(GRUPPE_FORTROLIG))
+            val navIdentMedFortrolig = NavIdent("Z999999", listOf(AdGroup.FORTROLIG.adGroupName))
 
             coEvery { pdlClientService.getPerson(any()) } returns
                 mapOf(
@@ -383,7 +381,7 @@ internal class SkjermingServiceTest :
         test("saksbehandler skal ha tilgang til å se person når hen har tilgang til strengt fortrolig og personen har adressebeskyttelse strengt fortrolig og strengt fortrolig utland") {
 
             val ident1 = "12045678926"
-            val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(GRUPPE_STRENGT_FORTROLIG))
+            val navIdentMedStrengtFortrolig = NavIdent("Z999999", listOf(AdGroup.STRENGT_FORTROLIG.adGroupName))
 
             coEvery { pdlClientService.getPerson(any()) } returns
                 mapOf(

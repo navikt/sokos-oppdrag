@@ -29,18 +29,15 @@ import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
 import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
-import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NASJONALT_READ
-import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NASJONALT_WRITE
-import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_READ
-import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOP_WRITE
-import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_READ
-import no.nav.sokos.oppdrag.common.GRUPPE_ATTESTASJON_NOS_WRITE
+import no.nav.sokos.oppdrag.common.ENHETSNUMMER_NOP
+import no.nav.sokos.oppdrag.common.ENHETSNUMMER_NOS
 import no.nav.sokos.oppdrag.common.valkey.ValkeyCache
 import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import no.nav.sokos.oppdrag.listener.Db2Listener
 import no.nav.sokos.oppdrag.listener.Db2Listener.attestasjonRepository
 import no.nav.sokos.oppdrag.listener.Valkeylistener
+import no.nav.sokos.oppdrag.security.AdGroup
 
 internal class AttestasjonServiceTest :
     FunSpec({
@@ -71,7 +68,7 @@ internal class AttestasjonServiceTest :
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
 
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NASJONALT_READ, GRUPPE_ATTESTASJON_NASJONALT_WRITE))
+            val navIdent = navIdent.copy(roller = listOf(AdGroup.ATTESTASJON_NASJONALT_READ.adGroupName, AdGroup.ATTESTASJON_NASJONALT_WRITE.adGroupName))
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
@@ -98,7 +95,7 @@ internal class AttestasjonServiceTest :
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
 
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NASJONALT_READ, GRUPPE_ATTESTASJON_NASJONALT_WRITE))
+            val navIdent = navIdent.copy(roller = listOf(AdGroup.ATTESTASJON_NASJONALT_READ.adGroupName, AdGroup.ATTESTASJON_NASJONALT_WRITE.adGroupName))
             coEvery { skjermingService.getSkjermingForIdentListe(listOf(GJELDER_ID), any()) } returns mapOf(GJELDER_ID to false)
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata.copy(gjelderId = null, kodeFagOmraade = "FRIKORT1"), navIdent)
@@ -122,7 +119,7 @@ internal class AttestasjonServiceTest :
             val navIdent =
                 navIdent.copy(
                     ident = ident,
-                    roller = listOf(GRUPPE_ATTESTASJON_NASJONALT_READ, GRUPPE_ATTESTASJON_NASJONALT_WRITE),
+                    roller = listOf(AdGroup.ATTESTASJON_NASJONALT_READ.adGroupName, AdGroup.ATTESTASJON_NASJONALT_WRITE.adGroupName),
                 )
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
@@ -143,7 +140,7 @@ internal class AttestasjonServiceTest :
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
 
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOS_READ))
+            val navIdent = navIdent.copy(roller = listOf(AdGroup.ATTESTASJON_NOS_READ.adGroupName))
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
@@ -163,7 +160,7 @@ internal class AttestasjonServiceTest :
             Db2Listener.dataSource.transaction { session ->
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOS_READ, GRUPPE_ATTESTASJON_NOS_WRITE))
+            val navIdent = navIdent.copy(roller = listOf(AdGroup.ATTESTASJON_NOS_READ.adGroupName, AdGroup.ATTESTASJON_NOS_WRITE.adGroupName))
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
@@ -183,7 +180,7 @@ internal class AttestasjonServiceTest :
             Db2Listener.dataSource.transaction { session ->
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOP_READ))
+            val navIdent = navIdent.copy(roller = listOf(AdGroup.ATTESTASJON_NOP_READ.adGroupName))
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
@@ -202,7 +199,7 @@ internal class AttestasjonServiceTest :
             Db2Listener.dataSource.transaction { session ->
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOP_READ, GRUPPE_ATTESTASJON_NOP_WRITE))
+            val navIdent = navIdent.copy(roller = listOf(AdGroup.ATTESTASJON_NOP_READ.adGroupName, AdGroup.ATTESTASJON_NOP_WRITE.adGroupName))
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
@@ -221,7 +218,7 @@ internal class AttestasjonServiceTest :
             Db2Listener.dataSource.transaction { session ->
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NASJONALT_READ))
+            val navIdent = navIdent.copy(roller = listOf(AdGroup.ATTESTASJON_NASJONALT_READ.adGroupName))
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
@@ -239,7 +236,7 @@ internal class AttestasjonServiceTest :
             Db2Listener.dataSource.transaction { session ->
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NASJONALT_READ, GRUPPE_ATTESTASJON_NASJONALT_WRITE))
+            val navIdent = navIdent.copy(roller = listOf(AdGroup.ATTESTASJON_NASJONALT_READ.adGroupName, AdGroup.ATTESTASJON_NASJONALT_WRITE.adGroupName))
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
@@ -262,7 +259,7 @@ internal class AttestasjonServiceTest :
         }
 
         test("hent oppdrag kaster exception hvis det er over 1000 forskjellige identer i identifiserte oppdrag") {
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NOS_READ))
+            val navIdent = navIdent.copy(roller = listOf(AdGroup.ATTESTASJON_NOS_READ.adGroupName))
 
             coEvery { attestasjonRepository.getOppdrag(any(), any(), any(), any(), any()) } returns
                 List(1001) {
@@ -360,7 +357,7 @@ internal class AttestasjonServiceTest :
                 )
 
             coEvery { zosConnectService.attestereOppdrag(any(), any()) } returns response
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NASJONALT_WRITE))
+            val navIdent = navIdent.copy(roller = listOf(AdGroup.ATTESTASJON_NASJONALT_WRITE.adGroupName))
 
             attestasjonService.attestereOppdrag(request, navIdent) shouldBe response
         }
@@ -381,7 +378,7 @@ internal class AttestasjonServiceTest :
                     ),
                 )
 
-            val navIdent = navIdent.copy(roller = listOf(GRUPPE_ATTESTASJON_NASJONALT_READ))
+            val navIdent = navIdent.copy(roller = listOf(AdGroup.ATTESTASJON_NASJONALT_READ.adGroupName))
             coEvery { skjermingService.getSkjermingForIdent(request.gjelderId, navIdent) } returns true
 
             val result = attestasjonService.attestereOppdrag(request, navIdent)
