@@ -2,6 +2,8 @@ package no.nav.sokos.oppdrag.oppdragsinfo.service
 
 import mu.KotlinLogging
 
+import no.nav.sokos.oppdrag.common.ENHETSNUMMER_NOP
+import no.nav.sokos.oppdrag.common.ENHETSNUMMER_NOS
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
@@ -28,6 +30,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsEnhetDTO
 import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsLinjeDetaljerDTO
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragRepository
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsdetaljerRepository
+import no.nav.sokos.oppdrag.security.AdGroup
 
 private val logger = KotlinLogging.logger {}
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
@@ -56,7 +59,10 @@ class OppdragsInfoService(
             return WrappedReponseWithErrorDTO(errorMessage = "Mangler rettigheter til å se informasjon!")
         }
 
-        return WrappedReponseWithErrorDTO(data = oppdragsInfoRepository.getOppdrag(gjelderId, faggruppeKode))
+        val oppdrag = oppdragsInfoRepository.getOppdrag(gjelderId, faggruppeKode)
+        val filteredOppdrag = filterOppdragBasedOnAccess(oppdrag, saksbehandler)
+
+        return WrappedReponseWithErrorDTO(data = filteredOppdrag)
     }
 
     fun getOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> {
@@ -227,5 +233,27 @@ class OppdragsInfoService(
             korrigerteLinjeIder.add(linjeId.toInt())
         }
         return korrigerteLinjeIder
+    }
+
+    private fun filterOppdragBasedOnAccess(
+        oppdrag: List<Oppdrag>,
+        saksbehandler: NavIdent,
+    ): List<Oppdrag> {
+        if (saksbehandler.hasAdGroupAccess(AdGroup.OPPDRAGSINFO_NASJONALT_READ)) {
+            return oppdrag
+        }
+
+        val filteredOppdrag =
+            oppdrag.filter { o ->
+                when {
+                    saksbehandler.hasAdGroupAccess(AdGroup.OPPDRAGSINFO_NOS_READ) &&
+                        (ENHETSNUMMER_NOS == o.ansvarssted || o.ansvarssted == null && ENHETSNUMMER_NOS == o.kostnadssted) -> true
+                    saksbehandler.hasAdGroupAccess(AdGroup.OPPDRAGSINFO_NOP_READ) &&
+                        (ENHETSNUMMER_NOP == o.ansvarssted || o.ansvarssted == null && ENHETSNUMMER_NOP == o.kostnadssted) -> true
+                    else -> false
+                }
+            }
+
+        return filteredOppdrag
     }
 }

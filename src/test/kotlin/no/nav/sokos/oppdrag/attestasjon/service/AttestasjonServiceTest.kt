@@ -135,7 +135,7 @@ internal class AttestasjonServiceTest :
             }
         }
 
-        test("hent opopdrag for en gjelderId når saksbehandler har bare lesetilgang til NOS") {
+        test("hent oppdrag for en gjelderId når saksbehandler har bare lesetilgang til NOS") {
             Db2Listener.dataSource.transaction { session ->
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
@@ -156,7 +156,7 @@ internal class AttestasjonServiceTest :
             coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
         }
 
-        test("hent opopdrag for en gjelderId når saksbehandler har både lesetilgang og skrivetilgang til NOS") {
+        test("hent oppdrag for en gjelderId når saksbehandler har både lesetilgang og skrivetilgang til NOS") {
             Db2Listener.dataSource.transaction { session ->
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
@@ -232,7 +232,7 @@ internal class AttestasjonServiceTest :
             coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
         }
 
-        test("hent opopdrag for en gjelderId når saksbehandler har bare lesetilgang og skrivetilgang til Nasjonalt") {
+        test("hent oppdrag for en gjelderId når saksbehandler har bare lesetilgang og skrivetilgang til Nasjonalt") {
             Db2Listener.dataSource.transaction { session ->
                 session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
