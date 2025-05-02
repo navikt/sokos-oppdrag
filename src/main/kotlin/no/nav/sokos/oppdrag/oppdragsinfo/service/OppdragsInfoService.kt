@@ -59,10 +59,9 @@ class OppdragsInfoService(
             return WrappedReponseWithErrorDTO(errorMessage = "Mangler rettigheter til å se informasjon!")
         }
 
-        val oppdrag = oppdragsInfoRepository.getOppdrag(gjelderId, faggruppeKode)
-        val filteredOppdrag = filterOppdragBasedOnAccess(oppdrag, saksbehandler)
+        val oppdrag = oppdragsInfoRepository.getOppdrag(gjelderId, faggruppeKode).filter { hasSaksBehandlerReadAccess(it, saksbehandler) }
 
-        return WrappedReponseWithErrorDTO(data = filteredOppdrag)
+        return WrappedReponseWithErrorDTO(data = oppdrag)
     }
 
     fun getOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> {
@@ -235,25 +234,16 @@ class OppdragsInfoService(
         return korrigerteLinjeIder
     }
 
-    private fun filterOppdragBasedOnAccess(
-        oppdrag: List<Oppdrag>,
+    private fun hasSaksBehandlerReadAccess(
+        oppdrag: Oppdrag,
         saksbehandler: NavIdent,
-    ): List<Oppdrag> {
-        if (saksbehandler.hasAdGroupAccess(AdGroup.OPPDRAGSINFO_NASJONALT_READ)) {
-            return oppdrag
+    ): Boolean =
+        when {
+            saksbehandler.hasAdGroupAccess(AdGroup.OPPDRAGSINFO_NASJONALT_READ) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.OPPDRAGSINFO_NOS_READ) &&
+                (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.OPPDRAGSINFO_NOP_READ) &&
+                (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
+            else -> false
         }
-
-        val filteredOppdrag =
-            oppdrag.filter { o ->
-                when {
-                    saksbehandler.hasAdGroupAccess(AdGroup.OPPDRAGSINFO_NOS_READ) &&
-                        (ENHETSNUMMER_NOS == o.ansvarssted || o.ansvarssted == null && ENHETSNUMMER_NOS == o.kostnadssted) -> true
-                    saksbehandler.hasAdGroupAccess(AdGroup.OPPDRAGSINFO_NOP_READ) &&
-                        (ENHETSNUMMER_NOP == o.ansvarssted || o.ansvarssted == null && ENHETSNUMMER_NOP == o.kostnadssted) -> true
-                    else -> false
-                }
-            }
-
-        return filteredOppdrag
-    }
 }
