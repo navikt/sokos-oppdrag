@@ -142,7 +142,7 @@ class AttestasjonService(
             ),
         )
 
-        if (!saksbehandler.hasAccessToAnyAdGroup(AdGroup.ATTESTASJON_NASJONALT_WRITE, AdGroup.ATTESTASJON_NOS_WRITE, AdGroup.ATTESTASJON_NOP_WRITE)) {
+        if (!saksbehandler.hasAdGroupAccess(AdGroup.ATTESTASJON_NASJONALT_WRITE, AdGroup.ATTESTASJON_NOS_WRITE, AdGroup.ATTESTASJON_NOP_WRITE)) {
             return ZosResponse(
                 errorMessage = "Mangler rettigheter til å attestere oppdrag!",
             )
