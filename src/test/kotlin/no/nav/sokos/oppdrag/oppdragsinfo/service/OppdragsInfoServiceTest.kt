@@ -45,9 +45,10 @@ internal class OppdragsInfoServiceTest :
             }
         }
 
-        test("getOppdrag med saksbehandler har tilgang til personen") {
+        test("getOppdrag med saksbehandler med nasjonal tilgang og uskjermede oppdrag får tilgang til personen") {
             coEvery { skjermingService.getSkjermingForIdent(any(), any()) } returns false
-            val result = oppdragsInfoService.getOppdrag(GJELDER_ID, "", navIdent)
+            val navIdentNational = NavIdent("bruker1", listOf(AdGroup.OPPDRAGSINFO_NASJONALT_READ.adGroupName))
+            val result = oppdragsInfoService.getOppdrag(GJELDER_ID, "", navIdentNational)
 
             result.data.shouldNotBeEmpty()
             result.data.size shouldBe 10
@@ -61,7 +62,7 @@ internal class OppdragsInfoServiceTest :
             result.errorMessage shouldBe "Mangler rettigheter til å se informasjon!"
         }
 
-        test("getOppdrag skal returnere tom liste hvis ingen oppdrager finnes") {
+        test("getOppdrag skal returnere tom liste hvis ingen oppdrag finnes") {
             coEvery { skjermingService.getSkjermingForIdent(any(), any()) } returns false
             val result = oppdragsInfoService.getOppdrag("12345678901", "", navIdent)
 
@@ -380,15 +381,12 @@ internal class OppdragsInfoServiceTest :
         }
 
         test("filtrering av oppdrag basert på AdGroup tilganger") {
-            Db2Listener.dataSource.transaction { session ->
-                session.update(queryOf("database/oppdragsinfo/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
-            }
 
             coEvery { skjermingService.getSkjermingForIdent(no.nav.sokos.oppdrag.attestasjon.GJELDER_ID, any()) } returns false
 
             val navIdentNational = NavIdent("bruker1", listOf(AdGroup.OPPDRAGSINFO_NASJONALT_READ.adGroupName))
             val resultNational = oppdragsInfoService.getOppdrag("24029428499", null, navIdentNational)
-            resultNational.data.size shouldBe 40
+            resultNational.data.size shouldBe 10
 
             val navIdentNOS = NavIdent("bruker2", listOf(AdGroup.OPPDRAGSINFO_NOS_READ.adGroupName))
             val resultNOS = oppdragsInfoService.getOppdrag("24029428499", null, navIdentNOS)
@@ -415,12 +413,11 @@ internal class OppdragsInfoServiceTest :
 
         test("hent oppdrag for en gjelderId når saksbehandler har bare lesetilgang til NOP") {
             Db2Listener.dataSource.transaction { session ->
-                session.update(queryOf("database/oppdragsinfo/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
                 session.update(queryOf("database/oppdragsinfo/getOppdragsEnhetsHistorikk.sql".readFromResource())) shouldBeGreaterThan 0
             }
 
             val navIdent = navIdent.copy(roller = listOf(AdGroup.OPPDRAGSINFO_NOP_READ.adGroupName))
-            coEvery { skjermingService.getSkjermingForIdent(no.nav.sokos.oppdrag.attestasjon.GJELDER_ID, any()) } returns false
+            coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
             val result = oppdragsInfoService.getOppdrag("24029428499", null, navIdent)
             result.data.forEach { oppdrag ->
