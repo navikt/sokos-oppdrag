@@ -390,21 +390,21 @@ internal class OppdragsInfoServiceTest :
 
             val navIdentNOS = NavIdent("bruker2", listOf(AdGroup.OPPDRAGSINFO_NOS_READ.adGroupName))
             val resultNOS = oppdragsInfoService.getOppdrag("24029428499", null, navIdentNOS)
-            resultNOS.data.forEach { oppdrag ->
+            resultNOS.data.all { oppdrag ->
                 (
                     oppdrag.ansvarssted == ENHETSNUMMER_NOS ||
                         (oppdrag.ansvarssted == null && oppdrag.kostnadssted == ENHETSNUMMER_NOS)
-                ) shouldBe true
-            }
+                )
+            } shouldBe true
 
             val navIdentNOP = NavIdent("bruker3", listOf(AdGroup.OPPDRAGSINFO_NOP_READ.adGroupName))
             val resultNOP = oppdragsInfoService.getOppdrag("24029428499", null, navIdentNOP)
-            resultNOP.data.forEach { oppdrag ->
+            resultNOP.data.all { oppdrag ->
                 (
                     oppdrag.ansvarssted == ENHETSNUMMER_NOP ||
                         (oppdrag.ansvarssted == null && oppdrag.kostnadssted == ENHETSNUMMER_NOP)
-                ) shouldBe true
-            }
+                )
+            } shouldBe true
 
             val navIdentNoAccess = NavIdent("bruker4", emptyList())
             val resultNoAccess = oppdragsInfoService.getOppdrag("24029428499", null, navIdentNoAccess)
