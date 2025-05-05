@@ -8,16 +8,21 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldBeEmpty
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotliquery.queryOf
 
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.attestasjon.Testdata.navIdent
+import no.nav.sokos.oppdrag.common.ENHETSNUMMER_NOP
+import no.nav.sokos.oppdrag.common.ENHETSNUMMER_NOS
+import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import no.nav.sokos.oppdrag.listener.Db2Listener
 import no.nav.sokos.oppdrag.listener.Db2Listener.oppdragRepository
 import no.nav.sokos.oppdrag.listener.Db2Listener.oppdragsdetaljerRepository
+import no.nav.sokos.oppdrag.security.AdGroup
 
 private const val GJELDER_ID = "24029428499"
 private const val OPPDRAGSID = 964801
@@ -40,9 +45,10 @@ internal class OppdragsInfoServiceTest :
             }
         }
 
-        test("getOppdrag med saksbehandler har tilgang til personen") {
+        test("getOppdrag med saksbehandler med nasjonal tilgang og uskjermede oppdrag får tilgang til personen") {
             coEvery { skjermingService.getSkjermingForIdent(any(), any()) } returns false
-            val result = oppdragsInfoService.getOppdrag(GJELDER_ID, "", navIdent)
+            val navIdentNational = NavIdent("bruker1", listOf(AdGroup.OPPDRAGSINFO_NASJONALT_READ.adGroupName))
+            val result = oppdragsInfoService.getOppdrag(GJELDER_ID, "", navIdentNational)
 
             result.data.shouldNotBeEmpty()
             result.data.size shouldBe 10
@@ -56,7 +62,7 @@ internal class OppdragsInfoServiceTest :
             result.errorMessage shouldBe "Mangler rettigheter til å se informasjon!"
         }
 
-        test("getOppdrag skal returnere tom liste hvis ingen oppdrager finnes") {
+        test("getOppdrag skal returnere tom liste hvis ingen oppdrag finnes") {
             coEvery { skjermingService.getSkjermingForIdent(any(), any()) } returns false
             val result = oppdragsInfoService.getOppdrag("12345678901", "", navIdent)
 
@@ -372,5 +378,53 @@ internal class OppdragsInfoServiceTest :
             ovriger.vedtaksId shouldBe "20090101"
             ovriger.henvisning shouldBe "11008824"
             ovriger.typeSoknad shouldBe "NY"
+        }
+
+        test("filtrering av oppdrag basert på AdGroup tilganger") {
+
+            coEvery { skjermingService.getSkjermingForIdent(no.nav.sokos.oppdrag.attestasjon.GJELDER_ID, any()) } returns false
+
+            val navIdentNational = NavIdent("bruker1", listOf(AdGroup.OPPDRAGSINFO_NASJONALT_READ.adGroupName))
+            val resultNational = oppdragsInfoService.getOppdrag("24029428499", null, navIdentNational)
+            resultNational.data.size shouldBe 10
+
+            val navIdentNOS = NavIdent("bruker2", listOf(AdGroup.OPPDRAGSINFO_NOS_READ.adGroupName))
+            val resultNOS = oppdragsInfoService.getOppdrag("24029428499", null, navIdentNOS)
+            resultNOS.data.all { oppdrag ->
+                (
+                    oppdrag.ansvarssted == ENHETSNUMMER_NOS ||
+                        (oppdrag.ansvarssted == null && oppdrag.kostnadssted == ENHETSNUMMER_NOS)
+                )
+            } shouldBe true
+
+            val navIdentNOP = NavIdent("bruker3", listOf(AdGroup.OPPDRAGSINFO_NOP_READ.adGroupName))
+            val resultNOP = oppdragsInfoService.getOppdrag("24029428499", null, navIdentNOP)
+            resultNOP.data.all { oppdrag ->
+                (
+                    oppdrag.ansvarssted == ENHETSNUMMER_NOP ||
+                        (oppdrag.ansvarssted == null && oppdrag.kostnadssted == ENHETSNUMMER_NOP)
+                )
+            } shouldBe true
+
+            val navIdentNoAccess = NavIdent("bruker4", emptyList())
+            val resultNoAccess = oppdragsInfoService.getOppdrag("24029428499", null, navIdentNoAccess)
+            resultNoAccess.data shouldBe emptyList()
+        }
+
+        test("hent oppdrag for en gjelderId når saksbehandler har bare lesetilgang til NOP") {
+            Db2Listener.dataSource.transaction { session ->
+                session.update(queryOf("database/oppdragsinfo/getOppdragsEnhetsHistorikk.sql".readFromResource())) shouldBeGreaterThan 0
+            }
+
+            val navIdent = navIdent.copy(roller = listOf(AdGroup.OPPDRAGSINFO_NOP_READ.adGroupName))
+            coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
+
+            val result = oppdragsInfoService.getOppdrag("24029428499", null, navIdent)
+            result.data.forEach { oppdrag ->
+                oppdrag.ansvarssted shouldBe null
+                oppdrag.kostnadssted shouldBe ENHETSNUMMER_NOP
+            }
+
+            coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
         }
     })

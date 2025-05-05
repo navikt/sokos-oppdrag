@@ -2,6 +2,8 @@ package no.nav.sokos.oppdrag.oppdragsinfo.service
 
 import mu.KotlinLogging
 
+import no.nav.sokos.oppdrag.common.ENHETSNUMMER_NOP
+import no.nav.sokos.oppdrag.common.ENHETSNUMMER_NOS
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
@@ -28,6 +30,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsEnhetDTO
 import no.nav.sokos.oppdrag.oppdragsinfo.dto.OppdragsLinjeDetaljerDTO
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragRepository
 import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsdetaljerRepository
+import no.nav.sokos.oppdrag.security.AdGroup
 
 private val logger = KotlinLogging.logger {}
 private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
@@ -56,7 +59,9 @@ class OppdragsInfoService(
             return WrappedReponseWithErrorDTO(errorMessage = "Mangler rettigheter til å se informasjon!")
         }
 
-        return WrappedReponseWithErrorDTO(data = oppdragsInfoRepository.getOppdrag(gjelderId, faggruppeKode))
+        val oppdrag = oppdragsInfoRepository.getOppdrag(gjelderId, faggruppeKode).filter { hasSaksBehandlerReadAccess(it, saksbehandler) }
+
+        return WrappedReponseWithErrorDTO(data = oppdrag)
     }
 
     fun getOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> {
@@ -228,4 +233,17 @@ class OppdragsInfoService(
         }
         return korrigerteLinjeIder
     }
+
+    private fun hasSaksBehandlerReadAccess(
+        oppdrag: Oppdrag,
+        saksbehandler: NavIdent,
+    ): Boolean =
+        when {
+            saksbehandler.hasAdGroupAccess(AdGroup.OPPDRAGSINFO_NASJONALT_READ) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.OPPDRAGSINFO_NOS_READ) &&
+                (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
+            saksbehandler.hasAdGroupAccess(AdGroup.OPPDRAGSINFO_NOP_READ) &&
+                (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
+            else -> false
+        }
 }

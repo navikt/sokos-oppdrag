@@ -33,7 +33,29 @@ class OppdragRepository(
                     OP.KJOR_IDAG,
                     TRIM(OP.TYPE_BILAG) AS TYPE_BILAG,
                     TRIM(FG.NAVN_FAGGRUPPE) AS NAVN_FAGGRUPPE,
-                    OS.KODE_STATUS
+                    OS.KODE_STATUS,
+                    TRIM((SELECT OK.ENHET
+                    FROM T_OPPDRAGSENHET OK
+                    WHERE OK.OPPDRAGS_ID = OP.OPPDRAGS_ID
+                    AND OK.TYPE_ENHET = 'BOS'
+                    AND OK.TIDSPKT_REG = (
+                        SELECT MAX(TIDSPKT_REG)
+                        FROM T_OPPDRAGSENHET OK2
+                        WHERE OK2.OPPDRAGS_ID = OK.OPPDRAGS_ID
+                        AND OK2.TYPE_ENHET = OK.TYPE_ENHET
+                        AND OK2.DATO_FOM <= CURRENT DATE)
+                )) AS KOSTNADSSTED,
+                TRIM((SELECT OA.ENHET
+                    FROM T_OPPDRAGSENHET OA
+                    WHERE OA.OPPDRAGS_ID = OP.OPPDRAGS_ID
+                    AND OA.TYPE_ENHET = 'BEH'
+                    AND OA.TIDSPKT_REG = (
+                        SELECT MAX(TIDSPKT_REG)
+                        FROM T_OPPDRAGSENHET OA2
+                        WHERE OA2.OPPDRAGS_ID = OA.OPPDRAGS_ID
+                        AND OA2.TYPE_ENHET = OA.TYPE_ENHET
+                        AND OA2.DATO_FOM <= CURRENT DATE)
+                )) AS ANSVARSSTED
                 FROM T_OPPDRAG OP,
                     T_FAGOMRAADE FO, 
                     T_FAGGRUPPE FG,
@@ -349,6 +371,8 @@ class OppdragRepository(
             kjorIdag = row.string("KJOR_IDAG"),
             typeBilag = row.string("TYPE_BILAG"),
             kodeStatus = row.string("KODE_STATUS"),
+            kostnadssted = row.stringOrNull("KOSTNADSSTED"),
+            ansvarssted = row.stringOrNull("ANSVARSSTED"),
         )
     }
 

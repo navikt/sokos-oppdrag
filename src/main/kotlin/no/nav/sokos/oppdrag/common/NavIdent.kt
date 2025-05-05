@@ -6,9 +6,7 @@ data class NavIdent(
     val ident: String,
     val roller: List<String> = emptyList(),
 ) {
-    fun hasAdGroupAccess(adGroup: AdGroup): Boolean = adGroup.adGroupName in roller
-
-    fun hasAccessToAnyAdGroup(vararg adGroups: AdGroup): Boolean = adGroups.any { it.adGroupName in roller }
+    fun hasAdGroupAccess(vararg adGroups: AdGroup): Boolean = adGroups.any { it.adGroupName in roller }
 
     fun hasAccessFortrolig(): Boolean = AdGroup.FORTROLIG.adGroupName in roller
 

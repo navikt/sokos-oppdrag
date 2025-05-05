@@ -11,4 +11,6 @@ data class Oppdrag(
     val kjorIdag: String,
     val typeBilag: String? = null,
     val kodeStatus: String,
+    val kostnadssted: String? = null,
+    val ansvarssted: String? = null,
 )
