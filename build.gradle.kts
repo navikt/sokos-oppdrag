@@ -44,7 +44,7 @@ repositories {
 }
 
 // Ktor
-val ktorVersion = "3.1.2"
+val ktorVersion = "3.1.3"
 
 // Serialization
 val kotlinxSerializationVersion = "1.8.1"
@@ -86,9 +86,9 @@ val glassfishJaxbVersion = "4.0.5"
 val ibmMqVersion = "9.4.2.1"
 
 // Test
-val kotestVersion = "6.0.0.M3"
+val kotestVersion = "6.0.0.M4"
 val wiremockVersion = "3.13.0"
-val mockOAuth2ServerVersion = "2.1.10"
+val mockOAuth2ServerVersion = "2.1.11"
 val mockkVersion = "1.14.2"
 val swaggerRequestValidatorVersion = "2.44.1"
 val testcontainersVersion = "1.21.0"
