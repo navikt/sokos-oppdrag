@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    kotlin("jvm") version "2.1.20"
-    kotlin("plugin.serialization") version "2.1.20"
+    kotlin("jvm") version "2.1.21"
+    kotlin("plugin.serialization") version "2.1.21"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.expediagroup.graphql") version "8.7.0"
     id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
@@ -52,7 +52,7 @@ val kotlinxDatetimeVersion = "0.6.2"
 val kotlinxCoroutinesVersion = "1.10.2"
 
 // Monitorering
-val micrometerVersion = "1.14.6"
+val micrometerVersion = "1.15.0"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
