@@ -119,7 +119,7 @@ spec:
 
     # PDL
     - name: PDL_URL
-      value: "https://pdl-api.intern.nav.no/"
+      value: "https://pdl-api.intern.nav.no"
     - name: PDL_SCOPE
       value: "api://prod-fss.pdl.pdl-api/.default"
     - name: GA_OKONOMI_FORTROLIG
