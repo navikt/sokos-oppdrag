@@ -1,20 +1,20 @@
 package no.nav.sokos.oppdrag.config
 
-import java.util.UUID
-
 import kotlinx.serialization.json.Json
 
+import com.auth0.jwt.JWT
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.install
 import io.ktor.server.metrics.micrometer.MicrometerMetrics
-import io.ktor.server.plugins.callid.CallId
-import io.ktor.server.plugins.callid.callIdMdc
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.requestvalidation.RequestValidation
 import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.request.header
 import io.ktor.server.request.path
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.Routing
@@ -25,6 +25,7 @@ import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.core.instrument.binder.system.UptimeMetrics
+import mu.KotlinLogging
 import org.slf4j.event.Level
 
 import no.nav.sokos.oppdrag.attestasjon.metrics.Metrics as AttestasjonMetrics
@@ -39,17 +40,13 @@ import no.nav.sokos.oppdrag.oppdragsinfo.config.requestValidationOppdragsInfoCon
 const val SECURE_LOGGER = "secureLogger"
 const val AUDIT_LOGGER = "auditLogger"
 
-private const val TRACE_ID_HEADER = "trace_id"
+private const val X_KALLENDE_SYSTEM = "x-kallende-system"
+private val logger = KotlinLogging.logger {}
 
 fun Application.commonConfig() {
-    install(CallId) {
-        header(TRACE_ID_HEADER)
-        generate { UUID.randomUUID().toString() }
-        verify { callId: String -> callId.isNotEmpty() }
-    }
     install(CallLogging) {
         level = Level.INFO
-        callIdMdc(TRACE_ID_HEADER)
+        mdc(X_KALLENDE_SYSTEM) { it.extractCallingSystemFromJwtToken() }
         filter { call -> call.request.path().startsWith("/api") }
         disableDefaultColors()
     }
@@ -82,6 +79,17 @@ fun Application.commonConfig() {
                 ProcessorMetrics(),
             )
     }
+}
+
+private fun ApplicationCall.extractCallingSystemFromJwtToken(): String {
+    val token = request.header(HttpHeaders.Authorization)?.removePrefix("Bearer ")
+    return token?.let {
+        runCatching {
+            JWT.decode(it)
+        }.onFailure {
+            logger.warn("Failed to decode token: ", it)
+        }.getOrNull()?.let { it.claims["azp_name"]?.asString() ?: it.claims["client_id"]?.asString() }?.split(":")?.last()
+    } ?: "Ukjent"
 }
 
 fun Routing.internalNaisRoutes(
