@@ -71,9 +71,6 @@ spec:
         - application: sokos-utbetalingsportalen
           namespace: okonomi
           cluster: dev-gcp
-        - application: sokos-utbetalingsportalen-astro
-          namespace: okonomi
-          cluster: dev-gcp
   webproxy: true
   filesFrom:
     - secret: db2license
