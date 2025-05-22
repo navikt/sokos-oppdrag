@@ -8,7 +8,7 @@ import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
 import no.nav.sokos.oppdrag.common.dto.WrappedReponseWithErrorDTO
-import no.nav.sokos.oppdrag.config.SECURE_LOGGER
+import no.nav.sokos.oppdrag.config.TEAM_LOGS_MARKER
 import no.nav.sokos.oppdrag.integration.service.SkjermingService
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Attestant
 import no.nav.sokos.oppdrag.oppdragsinfo.domain.Grad
@@ -33,7 +33,6 @@ import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsdetaljerRepository
 import no.nav.sokos.oppdrag.security.AdGroup
 
 private val logger = KotlinLogging.logger {}
-private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
 class OppdragsInfoService(
     private val oppdragsInfoRepository: OppdragRepository = OppdragRepository(),
@@ -46,7 +45,7 @@ class OppdragsInfoService(
         faggruppeKode: String?,
         saksbehandler: NavIdent,
     ): WrappedReponseWithErrorDTO<Oppdrag> {
-        secureLogger.info { "Søker etter oppdrag med gjelderId: $gjelderId" }
+        logger.info(marker = TEAM_LOGS_MARKER) { "Søker etter oppdrag med gjelderId: $gjelderId" }
         auditLogger.auditLog(
             AuditLogg(
                 navIdent = saksbehandler.ident,
@@ -242,8 +241,10 @@ class OppdragsInfoService(
             saksbehandler.hasAdGroupAccess(AdGroup.OPPDRAGSINFO_NASJONALT_READ) -> true
             saksbehandler.hasAdGroupAccess(AdGroup.OPPDRAGSINFO_NOS_READ) &&
                 (ENHETSNUMMER_NOS == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOS == oppdrag.kostnadssted) -> true
+
             saksbehandler.hasAdGroupAccess(AdGroup.OPPDRAGSINFO_NOP_READ) &&
                 (ENHETSNUMMER_NOP == oppdrag.ansvarssted || oppdrag.ansvarssted == null && ENHETSNUMMER_NOP == oppdrag.kostnadssted) -> true
+
             else -> false
         }
 }

@@ -35,12 +35,14 @@ spec:
   prometheus:
     enabled: true
     path: /internal/metrics
-  secureLogs:
-    enabled: true
   observability:
     autoInstrumentation:
       enabled: true
       runtime: java
+    logging:
+      destinations:
+        - id: elastic
+        - id: loki
   azure:
     application:
       enabled: true
@@ -66,6 +68,10 @@ spec:
         - application: sokos-utbetalingsportalen-qx
           namespace: okonomi
           cluster: dev-gcp
+    outbound:
+      rules:
+        - application: logging
+          namespace: nais-system
   webproxy: true
   filesFrom:
     - secret: db2license

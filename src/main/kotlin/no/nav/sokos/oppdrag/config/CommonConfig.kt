@@ -26,6 +26,7 @@ import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics
 import io.micrometer.core.instrument.binder.system.UptimeMetrics
 import mu.KotlinLogging
+import org.slf4j.MarkerFactory
 import org.slf4j.event.Level
 
 import no.nav.sokos.oppdrag.attestasjon.metrics.Metrics as AttestasjonMetrics
@@ -37,7 +38,7 @@ import no.nav.sokos.oppdrag.integration.config.requestValidationIntegrationConfi
 import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import no.nav.sokos.oppdrag.oppdragsinfo.config.requestValidationOppdragsInfoConfig
 
-const val SECURE_LOGGER = "secureLogger"
+val TEAM_LOGS_MARKER = MarkerFactory.getMarker("TEAM_LOGS")
 const val AUDIT_LOGGER = "auditLogger"
 
 private const val X_KALLENDE_SYSTEM = "x-kallende-system"
@@ -88,7 +89,10 @@ private fun ApplicationCall.extractCallingSystemFromJwtToken(): String {
             JWT.decode(it)
         }.onFailure {
             logger.warn("Failed to decode token: ", it)
-        }.getOrNull()?.let { it.claims["azp_name"]?.asString() ?: it.claims["client_id"]?.asString() }?.split(":")?.last()
+        }.getOrNull()
+            ?.let { it.claims["azp_name"]?.asString() ?: it.claims["client_id"]?.asString() }
+            ?.split(":")
+            ?.last()
     } ?: "Ukjent"
 }
 
