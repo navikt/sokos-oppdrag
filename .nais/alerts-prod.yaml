@@ -41,7 +41,7 @@ spec:
               offset 15m) or vector(0)) > 5'
           for: 5m
           annotations:
-            action: "<https://logs.adeo.no/app/discover#/?_g=(time:(from:now-1d,to:now))&_a=(filters:!((query:(match_phrase:(application:'sokos-oppdrag'))),(query:(match_phrase:(cluster:'prod-fss'))),(query:(match_phrase:(level:'Error')))))|Sjekk loggene>"
+            action: "<https://grafana.nav.cloud.nais.io/a/grafana-lokiexplore-app/explore/service_name/sokos-oppdrag/logs?patterns=%5B%5D&from=now-24h&to=now&var-filters=service_name%7C%3D%7Csokos-oppdrag&var-ds=prod-gcp-loki&var-levels=detected_level%7C%3D%7Cerror|Sjekk loggene>"
             summary: "`kubectl logs -l app=sokos-oppdrag -n okonomi` for logger"
           labels:
             namespace: okonomi
@@ -57,7 +57,7 @@ spec:
               offset 15m) or vector(0)) > 5'
           for: 5m
           annotations:
-            action: "<https://logs.adeo.no/app/discover#/?_g=(time:(from:now-1d,to:now))&_a=(filters:!((query:(match_phrase:(application:'sokos-oppdrag'))),(query:(match_phrase:(cluster:'prod-fss'))),(query:(match_phrase:(level:'Warning')))))|Sjekk loggene>"
+            action: "<https://grafana.nav.cloud.nais.io/a/grafana-lokiexplore-app/explore/service_name/sokos-oppdrag/logs?patterns=%5B%5D&from=now-24h&to=now&var-filters=service_name%7C%3D%7Csokos-oppdrag&var-ds=prod-gcp-loki&var-levels=detected_level%7C%3D%7Cwarn|Sjekk loggene>"
             summary: "`kubectl logs -l app=sokos-oppdrag -n okonomi` for logger"
           labels:
             namespace: okonomi

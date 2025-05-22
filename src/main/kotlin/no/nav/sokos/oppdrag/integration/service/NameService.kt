@@ -7,12 +7,12 @@ import mu.KotlinLogging
 import no.nav.sokos.oppdrag.common.NavIdent
 import no.nav.sokos.oppdrag.common.audit.AuditLogg
 import no.nav.sokos.oppdrag.common.audit.AuditLogger
-import no.nav.sokos.oppdrag.config.SECURE_LOGGER
+import no.nav.sokos.oppdrag.config.TEAM_LOGS_MARKER
 import no.nav.sokos.oppdrag.integration.client.ereg.EregClientService
 import no.nav.sokos.oppdrag.integration.client.pdl.PdlClientService
 import no.nav.sokos.oppdrag.integration.client.samhandler.SamhandlerClientService
 
-private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
+private val logger = KotlinLogging.logger {}
 
 class NameService(
     private val pdlClientService: PdlClientService = PdlClientService(),
@@ -24,7 +24,7 @@ class NameService(
         gjelderId: String,
         saksbehandler: NavIdent,
     ): NameResponse {
-        secureLogger.info { "Henter navn for gjelderId: $gjelderId" }
+        logger.info(marker = TEAM_LOGS_MARKER) { "Henter navn for gjelderId: $gjelderId" }
         auditLogger.auditLog(
             AuditLogg(
                 navIdent = saksbehandler.ident,

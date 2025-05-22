@@ -17,13 +17,12 @@ import org.slf4j.MDC
 import no.nav.pdl.HentPersonBolk
 import no.nav.pdl.hentpersonbolk.Person
 import no.nav.sokos.oppdrag.config.PropertiesConfig
-import no.nav.sokos.oppdrag.config.SECURE_LOGGER
+import no.nav.sokos.oppdrag.config.TEAM_LOGS_MARKER
 import no.nav.sokos.oppdrag.config.createHttpClient
 import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import no.nav.sokos.oppdrag.security.AccessTokenClient
 
 private val logger = KotlinLogging.logger {}
-private val secureLogger = KotlinLogging.logger(SECURE_LOGGER)
 
 class PdlClientService(
     private val pdlUrl: String = PropertiesConfig.EksterneHostProperties().pdlUrl,
@@ -55,11 +54,14 @@ class PdlClientService(
                 if (result.errors?.isNotEmpty() == true) {
                     handleErrors(result.errors)
                 }
-                result.data?.hentPersonBolk
-                    ?.filter { item -> item.person != null }?.associate { item -> item.ident to item.person!! } ?: emptyMap()
+                result.data
+                    ?.hentPersonBolk
+                    ?.filter { item -> item.person != null }
+                    ?.associate { item -> item.ident to item.person!! } ?: emptyMap()
             }
+
             else -> {
-                secureLogger.error { "Noe gikk galt ved oppslag mot PDL for ident: $identer" }
+                logger.error(marker = TEAM_LOGS_MARKER) { "Noe gikk galt ved oppslag mot PDL for ident: $identer" }
                 throw ClientRequestException(
                     response,
                     "Noe gikk galt ved oppslag mot PDL",
