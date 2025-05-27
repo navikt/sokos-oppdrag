@@ -33,7 +33,6 @@ class PdlClientService(
     suspend fun getPerson(identer: List<String>): Map<String, Person> {
         val request = HentPersonBolk(HentPersonBolk.Variables(identer = identer))
 
-        logger.info { "Henter accesstoken for oppslag mot PDL" }
         val accessToken = accessTokenClient.getSystemToken()
 
         logger.info { "Henter Person fra PDL" }

@@ -15,14 +15,12 @@ class KodeverkService(
     private val valkeyCache: ValkeyCache = ValkeyCache(name = "kodeverkServcie"),
 ) {
     suspend fun getFagGrupper(): List<FagGruppe> {
-        logger.info { "Henter faggrupper" }
         return valkeyCache.getAsync(key = "faggrupper", codec = createCodec<List<FagGruppe>>("get-faggrupper")) {
             kodeverkRepository.getFagGrupper()
         }
     }
 
     suspend fun getFagOmraader(): List<FagOmraade> {
-        logger.info { "Henter fagområder" }
         return valkeyCache.getAsync(key = "fagomraader", codec = createCodec<List<FagOmraade>>("get-fagomraader")) {
             kodeverkRepository.getFagOmraader()
         }

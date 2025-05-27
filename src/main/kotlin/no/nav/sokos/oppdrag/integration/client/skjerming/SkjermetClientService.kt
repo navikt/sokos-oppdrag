@@ -42,11 +42,11 @@ class SkjermetClientService(
     private val accessTokenClient: AccessTokenClient = AccessTokenClient(azureAdScope = skjermetScope),
 ) {
     suspend fun isSkjermedePersonerInSkjermingslosningen(personIdenter: List<String>): Map<String, Boolean> {
-        logger.info("Henter accesstoken mot skjerming-tjenesten")
         val token = accessTokenClient.getSystemToken()
 
         val skjermetUrl = "$skjermetUrl/skjermetBulk"
 
+        logger.info { "Henter informasjon om personer er skjermet" }
         val response =
             httpClient.post(skjermetUrl) {
                 method = HttpMethod.Post

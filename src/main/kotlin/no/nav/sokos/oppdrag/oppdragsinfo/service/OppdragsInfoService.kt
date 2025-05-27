@@ -64,13 +64,10 @@ class OppdragsInfoService(
     }
 
     fun getOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> {
-        logger.info { "Henter oppdragslinjer med oppdragsId: $oppdragsId" }
-
         return oppdragsInfoRepository.getOppdragsLinjer(oppdragsId)
     }
 
     fun getBehandlendeEnhetForOppdrag(oppdragsId: Int): OppdragsEnhetDTO {
-        logger.info { "Henter behandlende enhet for oppdrag med oppdragsId: $oppdragsId" }
         val enhet = oppdragsInfoRepository.getOppdragsEnhet(oppdragsId = oppdragsId)
         val behandlendeEnhet = oppdragsInfoRepository.getOppdragsEnhet("BEH", oppdragsId).firstOrNull()
 
@@ -78,18 +75,14 @@ class OppdragsInfoService(
     }
 
     fun getOppdragsOmposteringer(oppdragsId: Int): List<Ompostering> {
-        logger.info { "Henter omposteringer med oppdragsId: $oppdragsId" }
-
         return oppdragsInfoRepository.getOppdragsOmposteringer(oppdragsId)
     }
 
     fun getOppdragsEnhetsHistorikk(oppdragsId: String): List<OppdragsEnhet> {
-        logger.info { "Henter enhetshistorikk for oppdragId: $oppdragsId" }
         return oppdragsInfoRepository.getOppdragsEnhetsHistorikk(oppdragsId.toInt())
     }
 
     fun getOppdragsStatusHistorikk(oppdragsId: String): List<OppdragsStatus> {
-        logger.info { "Henter statushistorikk for oppdragId: $oppdragsId" }
         return oppdragsInfoRepository.getOppdragsStatusHistorikk(oppdragsId.toInt())
     }
 
@@ -97,7 +90,6 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<LinjeStatus> {
-        logger.info { "Henter linjstatus for oppdrag: $oppdragsId, linje: $linjeId" }
         return oppdragsInfoRepository.getOppdragsLinjeStatuser(oppdragsId.toInt(), linjeId.toInt())
     }
 
@@ -105,7 +97,6 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Attestant> {
-        logger.info { "Henter attestant for oppdrag: $oppdragsId, linje : $linjeId" }
         return oppdragsInfoRepository.getOppdragsLinjeAttestanter(oppdragsId.toInt(), linjeId.toInt())
     }
 
@@ -113,7 +104,6 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): OppdragsLinjeDetaljerDTO {
-        logger.info { "Henter detaljer for oppdrag: $oppdragsId, linje : $linjeId" }
         val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
         val oppdragslinjer = oppdragsInfoRepository.getOppdragsLinjer(oppdragsId.toInt())
         val eksisterer = oppdragsInfoRepository.existsValutaSkyldnerKravhaverLinjeenhetGradTekstKidMaksDato(oppdragsId.toInt(), linjeId.toInt())
@@ -134,7 +124,6 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Valuta> {
-        logger.info { "Henter valuta for oppdrag: $oppdragsId, linje : $linjeId" }
         val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsdetaljerRepository.getValutaer(oppdragsId.toInt(), korrigerteLinjeIder)
     }
@@ -143,7 +132,6 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Skyldner> {
-        logger.info { "Henter skyldner for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsdetaljerRepository.getSkyldnere(oppdragsId.toInt(), korrigerteLinjeIder)
     }
@@ -152,7 +140,6 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Kravhaver> {
-        logger.info { "Henter kravhaver for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsdetaljerRepository.getKravhavere(oppdragsId.toInt(), korrigerteLinjeIder)
     }
@@ -161,7 +148,6 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<LinjeEnhet> {
-        logger.info { "Henter enheter liste for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsdetaljerRepository.getEnheter(oppdragsId.toInt(), korrigerteLinjeIder)
     }
@@ -170,7 +156,6 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Grad> {
-        logger.info { "Henter grad for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsdetaljerRepository.getGrader(oppdragsId.toInt(), korrigerteLinjeIder)
     }
@@ -179,7 +164,6 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Tekst> {
-        logger.info { "Henter tekst liste for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsdetaljerRepository.getTekster(oppdragsId.toInt(), korrigerteLinjeIder)
     }
@@ -188,7 +172,6 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Kid> {
-        logger.info { "Henter kid for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsdetaljerRepository.getKid(oppdragsId.toInt(), korrigerteLinjeIder)
     }
@@ -197,7 +180,6 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Maksdato> {
-        logger.info { "Henter maksdato for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsdetaljerRepository.getMaksDatoer(oppdragsId.toInt(), korrigerteLinjeIder)
     }
@@ -206,7 +188,6 @@ class OppdragsInfoService(
         oppdragsId: String,
         linjeId: String,
     ): List<Ovrig> {
-        logger.info { "Henter øvrig for oppdrag: $oppdragsId, linje: $linjeId" }
         val korrigerteLinjeIder: List<Int> = findKorrigerteLinjeIder(oppdragsId, linjeId)
         return oppdragsdetaljerRepository.getOvriger(oppdragsId.toInt(), korrigerteLinjeIder)
     }
