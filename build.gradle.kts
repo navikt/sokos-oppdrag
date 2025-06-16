@@ -44,7 +44,7 @@ repositories {
 }
 
 // Ktor
-val ktorVersion = "3.1.3"
+val ktorVersion = "3.2.0"
 
 // Serialization
 val kotlinxSerializationVersion = "1.8.1"
@@ -52,7 +52,7 @@ val kotlinxDatetimeVersion = "0.6.2"
 val kotlinxCoroutinesVersion = "1.10.2"
 
 // Monitorering
-val micrometerVersion = "1.15.0"
+val micrometerVersion = "1.15.1"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
@@ -66,7 +66,7 @@ val natpryceVersion = "1.6.10.0"
 
 // Database
 val hikariVersion = "6.3.0"
-val db2JccVersion = "12.1.0.0"
+val db2JccVersion = "12.1.2.0"
 val kotliqueryVersion = "1.9.1"
 
 // GraphQL
@@ -87,10 +87,10 @@ val ibmMqVersion = "9.4.2.1"
 
 // Test
 val kotestVersion = "6.0.0.M4"
-val wiremockVersion = "3.13.0"
+val wiremockVersion = "3.13.1"
 val mockOAuth2ServerVersion = "2.2.1"
 val mockkVersion = "1.14.2"
-val swaggerRequestValidatorVersion = "2.44.8"
+val swaggerRequestValidatorVersion = "2.44.9"
 val testcontainersVersion = "1.21.1"
 val h2Version = "2.3.232"
 val activemqVersion = "2.41.0"
