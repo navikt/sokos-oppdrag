@@ -34,11 +34,8 @@ spec:
             alert_type: custom
 
         - alert: Applikasjonen logger høy andel errors
-          expr:
-            'sum(max_over_time(log_messages_errors{namespace="okonomi",app="sokos-oppdrag",level="Error"}[15m])
-              or vector(0)) -
-              sum(max_over_time(log_messages_errors{namespace="okonomi",app="sokos-oppdrag",level="Error"}[15m]
-              offset 15m) or vector(0)) > 5'
+          expr: |
+            max_over_time((sum(loki:service:loglevel:count1m{service_name="sokos-oppdrag", detected_level="error"}) / sum(loki:service:loglevel:count1m{service_name="sokos-oppdrag"}))[15m:]) > 0.05
           for: 5m
           annotations:
             action: "<https://grafana.nav.cloud.nais.io/a/grafana-lokiexplore-app/explore/service_name/sokos-oppdrag/logs?patterns=%5B%5D&from=now-24h&to=now&var-filters=service_name%7C%3D%7Csokos-oppdrag&var-ds=dev-gcp-loki&var-levels=detected_level%7C%3D%7Cerror|Sjekk loggene>"
@@ -50,11 +47,8 @@ spec:
             alert_type: custom
 
         - alert: Applikasjonen logger høy andel warnings
-          expr:
-            'sum(max_over_time(log_messages_errors{namespace="okonomi",app="sokos-oppdrag",level="Warning"}[15m])
-              or vector(0)) -
-              sum(max_over_time(log_messages_errors{namespace="okonomi",app="sokos-oppdrag",level="Warning"}[15m]
-              offset 15m) or vector(0)) > 5'
+          expr: |
+            max_over_time((sum(loki:service:loglevel:count1m{service_name="sokos-oppdrag", detected_level="warn"}) / sum(loki:service:loglevel:count1m{service_name="sokos-oppdrag"}))[15m:]) > 0.05
           for: 5m
           annotations:
             action: "<https://grafana.nav.cloud.nais.io/a/grafana-lokiexplore-app/explore/service_name/sokos-oppdrag/logs?patterns=%5B%5D&from=now-24h&to=now&var-filters=service_name%7C%3D%7Csokos-oppdrag&var-ds=dev-gcp-loki&var-levels=detected_level%7C%3D%7Cwarn|Sjekk loggene>"
