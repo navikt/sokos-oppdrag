@@ -94,6 +94,7 @@ metadata:
   namespace: okonomi
   labels:
     alertmanagerConfig: sokos-oppdrag-slack
+
 spec:
   receivers:
     - name: sokos-oppdrag-receiver

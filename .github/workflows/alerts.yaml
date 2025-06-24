@@ -17,7 +17,7 @@ jobs:
     name: Deploy to dev-gcp
     uses: navikt/mob-gha-workflows/.github/workflows/nais-alert-deploy.yaml@main
     with:
-      cluster: dev-gco
+      cluster: dev-gcp
       resource: .nais/alerts-dev.yaml
 
 #  deploy-prod:
