@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    kotlin("jvm") version "2.1.21"
-    kotlin("plugin.serialization") version "2.1.21"
+    kotlin("jvm") version "2.2.0"
+    kotlin("plugin.serialization") version "2.2.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.expediagroup.graphql") version "8.8.1"
     id("org.jlleitschuh.gradle.ktlint") version "12.3.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
-    id("org.openapi.generator") version "7.13.0"
+    id("org.openapi.generator") version "7.14.0"
 }
 
 group = "no.nav.sokos"
@@ -47,8 +47,8 @@ repositories {
 val ktorVersion = "3.2.0"
 
 // Serialization
-val kotlinxSerializationVersion = "1.8.1"
-val kotlinxDatetimeVersion = "0.6.2"
+val kotlinxSerializationVersion = "1.9.0"
+val kotlinxDatetimeVersion = "0.7.0-0.6.x-compat"
 val kotlinxCoroutinesVersion = "1.10.2"
 
 // Monitorering
@@ -91,7 +91,7 @@ val wiremockVersion = "3.13.1"
 val mockOAuth2ServerVersion = "2.2.1"
 val mockkVersion = "1.14.4"
 val swaggerRequestValidatorVersion = "2.44.9"
-val testcontainersVersion = "1.21.2"
+val testcontainersVersion = "1.21.3"
 val h2Version = "2.3.232"
 val activemqVersion = "2.41.0"
 
