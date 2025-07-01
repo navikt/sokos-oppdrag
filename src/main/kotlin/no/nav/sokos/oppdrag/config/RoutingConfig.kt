@@ -16,6 +16,7 @@ import no.nav.sokos.oppdrag.kodeverk.api.kodeverkApi
 import no.nav.sokos.oppdrag.kodeverk.api.kodeverkSwaggerApi
 import no.nav.sokos.oppdrag.oppdragsinfo.api.oppdragsInfoApi
 import no.nav.sokos.oppdrag.venteregister.api.venteregisterApi
+import no.nav.sokos.oppdrag.venteregister.api.venteregisterSwaggerApi
 
 fun Application.routingConfig(
     useAuthentication: Boolean,
@@ -29,6 +30,7 @@ fun Application.routingConfig(
         attestasjonSwaggerApi()
         fastedataSwaggerApi()
         venteregisterApi()
+        venteregisterSwaggerApi()
         authenticate(useAuthentication, AUTHENTICATION_NAME) {
             kodeverkApi()
             integrationApi()
