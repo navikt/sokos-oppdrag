@@ -26,20 +26,28 @@ components:
       properties:
         GjelderId:
           type: string
+          example: "12345678901"
         UtbetalesTilId:
           type: string
+          example: "12345678901"
         Faggruppe:
           type: string
+          example: "BA"
         Fagomraade:
           type: string
+          example: "BA"
         FagsystemId:
           type: string
+          example: "12345678901-fagsystemid"
         OppdragsId:
           type: integer
+          example:
         EnhetBosted:
           type: string
+          example: "8020"
         EnhetBehand:
           type: string
+          example: "4819"
         DatoBeregnet:
           type: string
           format: date
@@ -51,19 +59,17 @@ components:
           format: date
         BrukerId:
           type: string
+          example: "A123456"
         SokBeregningsId:
           type: integer
         TypeBilag:
           type: string
-        KodeStatusTab:
+        KodeStatuser:
           type: array
           items:
-            $ref: '#/components/schemas/KodeStatus'
-    KodeStatus:
-      type: object
-      properties:
-        KodeStatus:
-          type: string
+              type: string
+              example: "AVVE"
+
     Beregning:
       type: object
       properties:
