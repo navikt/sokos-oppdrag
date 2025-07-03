@@ -1,0 +1,102 @@
+openapi: 3.0.3
+info:
+  title: Venteregister API
+  version: 1.0.0
+paths:
+  /hentBeregninger:
+    post:
+      summary: Hent beregninger
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HentBeregningerRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HentBeregningerResponse'
+components:
+  schemas:
+    HentBeregningerRequest:
+      type: object
+      properties:
+        GjelderId:
+          type: string
+          example: "12345678901"
+        UtbetalesTilId:
+          type: string
+          example: "12345678901"
+        Faggruppe:
+          type: string
+          example: "BA"
+        Fagomraade:
+          type: string
+          example: "BA"
+        FagsystemId:
+          type: string
+          example: "12345678901-fagsystemid"
+        OppdragsId:
+          type: integer
+          example:
+        EnhetBosted:
+          type: string
+          example: "8020"
+        EnhetBehand:
+          type: string
+          example: "4819"
+        DatoBeregnet:
+          type: string
+          format: date
+        DatoPeriodeFom:
+          type: string
+          format: date
+        DatoPeriodeTom:
+          type: string
+          format: date
+        BrukerId:
+          type: string
+          example: "A123456"
+        SokBeregningsId:
+          type: integer
+        TypeBilag:
+          type: string
+        KodeStatuser:
+          type: array
+          items:
+              type: string
+              example: "AVVE"
+
+    Beregning:
+      type: object
+      properties:
+        FaggruppeNavn:
+          type: string
+        DatoBeregnet:
+          type: string
+          format: date
+        BeregningsId:
+          type: integer
+        TypeBilag:
+          type: string
+        GjelderId:
+          type: string
+        Sum:
+          type: number
+          format: double
+        GjelderNavn:
+          type: string
+        EnhetBehandlet:
+          type: string
+        Faggruppe:
+          type: string
+    HentBeregningerResponse:
+      type: object
+      properties:
+        Beregninger:
+          type: array
+          items:
+            $ref: '#/components/schemas/Beregning'
