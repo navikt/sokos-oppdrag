@@ -60,7 +60,7 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
     route("$BASE_PATH/faggrupper") {
         get("") {
             call.respond(
-                HttpStatusCode.NotImplemented,
+                fasteDataService.getFaggrupper(),
             )
         }
         get("{kodeFaggruppe}/redusertSkatt") {
