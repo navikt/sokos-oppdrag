@@ -226,7 +226,6 @@ paths:
         - Faggrupper
       description: Returnerer redusert skatt for faggruppe.
       summary: Hent redusert skatt for faggruppe
-      operationId: getFaggrupper
       parameters:
         - name: kodeFaggruppe
           in: path
