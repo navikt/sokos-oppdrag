@@ -3,11 +3,13 @@ package no.nav.sokos.oppdrag.fastedata.service
 import mu.KotlinLogging
 
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
+import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
+import no.nav.sokos.oppdrag.fastedata.repository.FaggruppeRepository
 import no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentekriterierRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentestatuskodeRepository
@@ -16,6 +18,7 @@ private val logger = KotlinLogging.logger {}
 
 class FasteDataService(
     private val fagomraadeRepository: FagomraadeRepository = FagomraadeRepository(),
+    private val faggruppeRepository: FaggruppeRepository = FaggruppeRepository(),
     private val ventekriterierRepository: VentekriterierRepository = VentekriterierRepository(),
     private val ventestatuskodeRepository: VentestatuskodeRepository = VentestatuskodeRepository(),
 ) {
@@ -49,5 +52,10 @@ class FasteDataService(
     fun getKlassekoder(kodeFagomraade: String): List<Klassekode> {
         logger.info { "Henter klassekoder for fagområde $kodeFagomraade" }
         return fagomraadeRepository.getKlassekoder(kodeFagomraade)
+    }
+
+    fun getFaggrupper(): List<Faggruppe> {
+        logger.info { "Henter faggrupper" }
+        return faggruppeRepository.getFaggrupper()
     }
 }
