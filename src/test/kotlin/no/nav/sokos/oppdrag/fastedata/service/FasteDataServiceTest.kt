@@ -24,6 +24,7 @@ internal class FasteDataServiceTest : FunSpec({
             Db2Listener.fasteDataFagomraadeRepository,
             Db2Listener.venteKriterierRepository,
             Db2Listener.ventestatuskodeRepository,
+            Db2Listener.klassekoderRepository,
         )
 
     test("hentAlleFagomraader skal returnere en liste av Fagomraade") {
