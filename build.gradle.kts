@@ -44,7 +44,7 @@ repositories {
 }
 
 // Ktor
-val ktorVersion = "3.2.0"
+val ktorVersion = "3.2.1"
 
 // Serialization
 val kotlinxSerializationVersion = "1.9.0"
