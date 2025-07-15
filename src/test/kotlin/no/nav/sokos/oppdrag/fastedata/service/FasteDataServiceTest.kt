@@ -25,6 +25,7 @@ internal class FasteDataServiceTest :
                 Db2Listener.fasteDataFagomraadeRepository,
                 Db2Listener.venteKriterierRepository,
                 Db2Listener.ventestatuskodeRepository,
+                Db2Listener.klassekoderRepository,
             )
 
         test("hentAlleFagomraader skal returnere en liste av Fagomraade") {
