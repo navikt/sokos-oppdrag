@@ -1,6 +1,8 @@
 package no.nav.sokos.oppdrag.security
 
-enum class AdGroup(val adGroupName: String) {
+enum class AdGroup(
+    val adGroupName: String,
+) {
     FORTROLIG("0000-GA-okonomi-fortrolig"),
     STRENGT_FORTROLIG("0000-GA-okonomi-strengt_fortrolig"),
     EGNE_ANSATTE("0000-GA-okonomi-egne_ansatte"),

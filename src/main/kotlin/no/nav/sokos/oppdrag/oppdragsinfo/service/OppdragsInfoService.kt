@@ -63,9 +63,7 @@ class OppdragsInfoService(
         return WrappedReponseWithErrorDTO(data = oppdrag)
     }
 
-    fun getOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> {
-        return oppdragsInfoRepository.getOppdragsLinjer(oppdragsId)
-    }
+    fun getOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> = oppdragsInfoRepository.getOppdragsLinjer(oppdragsId)
 
     fun getBehandlendeEnhetForOppdrag(oppdragsId: Int): OppdragsEnhetDTO {
         val enhet = oppdragsInfoRepository.getOppdragsEnhet(oppdragsId = oppdragsId)
@@ -74,31 +72,21 @@ class OppdragsInfoService(
         return OppdragsEnhetDTO(enhet.first(), behandlendeEnhet)
     }
 
-    fun getOppdragsOmposteringer(oppdragsId: Int): List<Ompostering> {
-        return oppdragsInfoRepository.getOppdragsOmposteringer(oppdragsId)
-    }
+    fun getOppdragsOmposteringer(oppdragsId: Int): List<Ompostering> = oppdragsInfoRepository.getOppdragsOmposteringer(oppdragsId)
 
-    fun getOppdragsEnhetsHistorikk(oppdragsId: String): List<OppdragsEnhet> {
-        return oppdragsInfoRepository.getOppdragsEnhetsHistorikk(oppdragsId.toInt())
-    }
+    fun getOppdragsEnhetsHistorikk(oppdragsId: String): List<OppdragsEnhet> = oppdragsInfoRepository.getOppdragsEnhetsHistorikk(oppdragsId.toInt())
 
-    fun getOppdragsStatusHistorikk(oppdragsId: String): List<OppdragsStatus> {
-        return oppdragsInfoRepository.getOppdragsStatusHistorikk(oppdragsId.toInt())
-    }
+    fun getOppdragsStatusHistorikk(oppdragsId: String): List<OppdragsStatus> = oppdragsInfoRepository.getOppdragsStatusHistorikk(oppdragsId.toInt())
 
     fun getOppdragsLinjeStatuser(
         oppdragsId: String,
         linjeId: String,
-    ): List<LinjeStatus> {
-        return oppdragsInfoRepository.getOppdragsLinjeStatuser(oppdragsId.toInt(), linjeId.toInt())
-    }
+    ): List<LinjeStatus> = oppdragsInfoRepository.getOppdragsLinjeStatuser(oppdragsId.toInt(), linjeId.toInt())
 
     fun getOppdragsLinjeAttestanter(
         oppdragsId: String,
         linjeId: String,
-    ): List<Attestant> {
-        return oppdragsInfoRepository.getOppdragsLinjeAttestanter(oppdragsId.toInt(), linjeId.toInt())
-    }
+    ): List<Attestant> = oppdragsInfoRepository.getOppdragsLinjeAttestanter(oppdragsId.toInt(), linjeId.toInt())
 
     fun getOppdragsLinjeDetaljer(
         oppdragsId: String,

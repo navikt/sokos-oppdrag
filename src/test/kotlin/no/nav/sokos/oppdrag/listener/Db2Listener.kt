@@ -13,6 +13,7 @@ import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.config.DatabaseTestConfig
 import no.nav.sokos.oppdrag.config.transaction
+import no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository
 import no.nav.sokos.oppdrag.fastedata.repository.KlassekoderRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentekriterierRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentestatuskodeRepository
@@ -27,7 +28,7 @@ object Db2Listener : TestListener {
     val oppdragsdetaljerRepository = spyk(OppdragsdetaljerRepository(dataSource))
     val kodeverkRepository = spyk(KodeverkRepository(dataSource))
     val venteKriterierRepository = spyk(VentekriterierRepository(dataSource))
-    val fasteDataFagomraadeRepository = spyk(no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository(dataSource))
+    val fasteDataFagomraadeRepository = spyk(FagomraadeRepository(dataSource))
     val ventestatuskodeRepository = spyk(VentestatuskodeRepository(dataSource))
     val klassekoderRepository = spyk(KlassekoderRepository(dataSource))
 

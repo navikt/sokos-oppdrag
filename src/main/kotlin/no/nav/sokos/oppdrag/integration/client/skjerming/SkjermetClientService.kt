@@ -78,4 +78,6 @@ class SkjermetClientService(
 private suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject["message"]?.jsonPrimitive?.content
 
 @Serializable
-data class SkjermingRequest(val personidenter: List<String>)
+data class SkjermingRequest(
+    val personidenter: List<String>,
+)
