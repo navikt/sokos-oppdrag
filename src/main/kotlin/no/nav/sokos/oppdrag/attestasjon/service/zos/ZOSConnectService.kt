@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.attestasjon.service.zos
 
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -22,6 +23,7 @@ import no.nav.sokos.oppdrag.config.createHttpClient
 import no.nav.sokos.oppdrag.config.errorDetails
 import no.nav.sokos.oppdrag.config.errorMessage
 
+@OptIn(ExperimentalTime::class)
 class ZOSConnectService(
     private val zOsUrl: String = PropertiesConfig.EksterneHostProperties().zosUrl,
     private val client: HttpClient = createHttpClient(false),

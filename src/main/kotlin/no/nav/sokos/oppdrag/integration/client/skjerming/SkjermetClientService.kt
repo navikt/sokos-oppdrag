@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.integration.client.skjerming
 
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
@@ -41,6 +42,7 @@ class SkjermetClientService(
     private val skjermetScope: String = PropertiesConfig.EksterneHostProperties().skjermetScope,
     private val accessTokenClient: AccessTokenClient = AccessTokenClient(azureAdScope = skjermetScope),
 ) {
+    @OptIn(ExperimentalTime::class)
     suspend fun isSkjermedePersonerInSkjermingslosningen(personIdenter: List<String>): Map<String, Boolean> {
         val token = accessTokenClient.getSystemToken()
 

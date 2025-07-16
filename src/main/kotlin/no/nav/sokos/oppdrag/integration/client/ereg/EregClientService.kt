@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.integration.client.ereg
 
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
@@ -28,6 +29,7 @@ class EregClientService(
     private val eregUrl: String = PropertiesConfig.EksterneHostProperties().eregUrl,
     private val client: HttpClient = createHttpClient(),
 ) {
+    @OptIn(ExperimentalTime::class)
     suspend fun getOrganisasjonsNavn(organisasjonsNummer: String): Organisasjon {
         logger.info { "Henter organisasjonsnavn for $organisasjonsNummer fra Ereg." }
         val response =

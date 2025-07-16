@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.attestasjon.api
 
-import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.json.Json
 
@@ -50,6 +51,7 @@ private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplica
 private val validationFilter = OpenApiValidationFilter("openapi/attestasjon-v1-swagger.yaml")
 private val attestasjonService = mockk<AttestasjonService>()
 
+@OptIn(ExperimentalTime::class)
 internal class AttestasjonApiTest :
     FunSpec({
 

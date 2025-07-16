@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.fastedata.api
 
-import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 import kotlinx.serialization.json.Json
 
 import com.atlassian.oai.validator.restassured.OpenApiValidationFilter
@@ -51,7 +52,7 @@ private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplica
 private val validationFilter = OpenApiValidationFilter("openapi/fastedata-v1-swagger.yaml")
 private val fasteDataService = mockk<FasteDataService>()
 
-@OptIn(KotestInternal::class)
+@OptIn(KotestInternal::class, ExperimentalTime::class)
 internal class FasteDataApiTest :
     FunSpec({
 
