@@ -27,7 +27,6 @@ object DatabaseConfig {
             maximumPoolSize = 10
             connectionTimeout = Duration.ofSeconds(5).toMillis()
             idleTimeout = Duration.ofMinutes(1).toMillis()
-            maxLifetime = Duration.ofMinutes(5).toMillis()
             keepaliveTime = Duration.ofMinutes(5).toMillis()
             leakDetectionThreshold = Duration.ofSeconds(30).toMillis()
 
