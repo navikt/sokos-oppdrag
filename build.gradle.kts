@@ -44,7 +44,7 @@ repositories {
 }
 
 // Ktor
-val ktorVersion = "3.2.1"
+val ktorVersion = "3.2.2"
 
 // Serialization
 val kotlinxSerializationVersion = "1.9.0"
@@ -65,7 +65,7 @@ val papertrailappVersion = "1.0.0"
 val natpryceVersion = "1.6.10.0"
 
 // Database
-val hikariVersion = "6.3.0"
+val hikariVersion = "6.3.1"
 val db2JccVersion = "12.1.2.0"
 val kotliqueryVersion = "1.9.1"
 
@@ -79,7 +79,7 @@ val caffeineVersion = "3.2.2"
 val valkeyVersion = "6.7.1.RELEASE"
 
 // TSS
-val tjenestespesifikasjonVersion = "1.0_20250414143240_7082707"
+val tjenestespesifikasjonVersion = "1.0_20250715173022_23638f4"
 val glassfishJaxbVersion = "4.0.5"
 
 // IBM MQ
@@ -89,11 +89,11 @@ val ibmMqVersion = "9.4.3.0"
 val kotestVersion = "6.0.0.M5"
 val wiremockVersion = "3.13.1"
 val mockOAuth2ServerVersion = "2.2.1"
-val mockkVersion = "1.14.4"
+val mockkVersion = "1.14.5"
 val swaggerRequestValidatorVersion = "2.44.9"
 val testcontainersVersion = "1.21.3"
 val h2Version = "2.3.232"
-val activemqVersion = "2.41.0"
+val activemqVersion = "2.42.0"
 
 dependencies {
 
