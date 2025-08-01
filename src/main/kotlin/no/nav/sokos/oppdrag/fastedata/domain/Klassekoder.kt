@@ -8,7 +8,7 @@ data class Klassekoder(
     val kodeFagomraade: String,
     val artID: Int,
     val datoFom: String,
-    val datoTom: String?,
+    val datoTom: String,
     val hovedkontoNr: String,
     val underkontoNr: String,
 )

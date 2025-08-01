@@ -3,6 +3,7 @@ package no.nav.sokos.oppdrag.fastedata
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
+import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
@@ -66,6 +67,28 @@ val klassekoder =
     listOf(
         Klassekode(
             kodeKlasse = "String",
+        ),
+    )
+
+val alleKlassekoder =
+    listOf(
+        Klassekoder(
+            kodeKlasse = "TPTPTILTAK",
+            kodeFagomraade = "MTPARENA",
+            artID = 54,
+            datoFom = "2022-10-01",
+            datoTom = "9999-12-31",
+            hovedkontoNr = "776",
+            underkontoNr = "1010",
+        ),
+        Klassekoder(
+            kodeKlasse = "0301",
+            kodeFagomraade = "MSKATT",
+            artID = 50,
+            datoFom = "2003-01-01",
+            datoTom = "2017-12-31",
+            hovedkontoNr = "051",
+            underkontoNr = "0301",
         ),
     )
 

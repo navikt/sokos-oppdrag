@@ -41,7 +41,7 @@ class KlassekoderRepository(
                     kodeFagomraade = row.stringOrNull("KODE_FAGOMRAADE") ?: "",
                     artID = row.int("ART_ID"),
                     datoFom = row.string("DATO_FOM"),
-                    datoTom = row.stringOrNull("DATO_TOM"),
+                    datoTom = row.string("DATO_TOM"),
                     hovedkontoNr = row.string("HOVEDKONTONR"),
                     underkontoNr = row.string("UNDERKONTONR"),
                 )
