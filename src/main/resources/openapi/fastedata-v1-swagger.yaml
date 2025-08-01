@@ -231,9 +231,24 @@ paths:
         - Faste data
       summary: Hent tilgjengelige klassekoder
       description: Returnerer en liste av tilgjengelige klassekoder.
+      operationId: getAllKlassekoder
       responses:
-        400:
-          description: Ikke implementert ennå
+        200:
+          description: OK - Hvis klassekoder ikke finnes så returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Klassekoder'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
 
 components:
   schemas:
@@ -324,6 +339,32 @@ components:
         - kodeKlasse
       properties:
         kodeKlasse:
+          type: string
+
+    Klassekoder:
+      type: object
+      required:
+        - kodeKlasse
+        - kodeFagomraade
+        - artID
+        - datoFom
+        - datoTom
+        - hovedkontoNr
+        - underkontoNr
+      properties:
+        kodeKlasse:
+          type: string
+        kodeFagomraade:
+          type: string
+        artID:
+          type: integer
+        datoFom:
+          type: string
+        datoTom:
+          type: string
+        hovedkontoNr:
+          type: string
+        underkontoNr:
           type: string
 
     Ventekriterier:
