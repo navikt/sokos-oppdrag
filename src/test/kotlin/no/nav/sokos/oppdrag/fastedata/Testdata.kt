@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.fastedata
 
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
+import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
@@ -131,5 +132,45 @@ val ventestatuskoder =
             settesManuelt = "N",
             kodeArvesTil = "AVAV",
             kanManueltEndresTil = "REAK, REBE",
+        ),
+    )
+
+val faggrupper =
+    listOf(
+        Faggruppe(
+            kodeFaggruppe = "BA",
+            navnFaggruppe = "Barnetrygd",
+            skatteprosent = 0,
+            ventedager = 0,
+            klassekodeFeil = "KL_KODE_FEIL_BA",
+            klassekodeJustering = "KL_KODE_JUST_BA",
+            destinasjon = "OB01",
+            reskontroOppdrag = "BA",
+            klassekodeMotpFeil = "TBMOTOBS",
+            klassekodeMotpTrekk = "TBTREKK",
+            klassekodeMotpInnkr = "TBMOTFB",
+            prioritet = 99,
+            onlineBeregning = true,
+            pensjon = false,
+            oereavrunding = true,
+            samordnetBeregning = "F",
+        ),
+        Faggruppe(
+            kodeFaggruppe = "BIDRINKR",
+            navnFaggruppe = "Bidragsreskontro",
+            skatteprosent = 0,
+            ventedager = 0,
+            klassekodeFeil = "KL_KODE_FEIL",
+            klassekodeJustering = "KL_KODE_JUST",
+            destinasjon = "OB01",
+            reskontroOppdrag = "BRBATCH",
+            klassekodeMotpFeil = "TBMOTOBS",
+            klassekodeMotpTrekk = "TBTREKK",
+            klassekodeMotpInnkr = "TBMOTFB",
+            prioritet = 99,
+            onlineBeregning = true,
+            pensjon = false,
+            oereavrunding = true,
+            samordnetBeregning = "O",
         ),
     )

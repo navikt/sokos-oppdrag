@@ -31,12 +31,14 @@ import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.fastedata.alleKlassekoder
 import no.nav.sokos.oppdrag.fastedata.bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
+import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
+import no.nav.sokos.oppdrag.fastedata.faggrupper
 import no.nav.sokos.oppdrag.fastedata.fagomraader
 import no.nav.sokos.oppdrag.fastedata.klassekoder
 import no.nav.sokos.oppdrag.fastedata.korrigeringsaarsaker
@@ -419,6 +421,55 @@ internal class FasteDataApiTest :
                     status = HttpStatusCode.InternalServerError.value,
                     message = "En feil",
                     path = "$FASTEDATA_BASE_API_PATH/klassekoder",
+                    timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
+                )
+        }
+
+        test("faggrupper returnerer 200 OK") {
+            coEvery { fasteDataService.getFaggrupper() } returns faggrupper
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/faggrupper")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.OK.value)
+                    .extract()
+                    .response()
+
+            val actualFaggrupper: List<Faggruppe> = Json.decodeFromString(response.asString())
+
+            actualFaggrupper shouldBe faggrupper
+        }
+
+        test("faggrupper returnerer 500 Internal Server Error") {
+            coEvery { fasteDataService.getFaggrupper() } throws RuntimeException("En feil")
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/faggrupper")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()) shouldBe
+                ApiError(
+                    error = HttpStatusCode.InternalServerError.description,
+                    status = HttpStatusCode.InternalServerError.value,
+                    message = "En feil",
+                    path = "$FASTEDATA_BASE_API_PATH/faggrupper",
                     timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
                 )
         }
