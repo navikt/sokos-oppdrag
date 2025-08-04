@@ -63,7 +63,7 @@ val papertrailappVersion = "1.0.0"
 val natpryceVersion = "1.6.10.0"
 
 // Database
-val hikariVersion = "6.3.2"
+val hikariVersion = "7.0.0"
 val db2JccVersion = "12.1.2.0"
 val kotliqueryVersion = "1.9.1"
 
@@ -84,7 +84,7 @@ val glassfishJaxbVersion = "4.0.5"
 val ibmMqVersion = "9.4.3.0"
 
 // Test
-val kotestVersion = "6.0.0.M6"
+val kotestVersion = "6.0.0.M10"
 val wiremockVersion = "3.13.1"
 val mockOAuth2ServerVersion = "2.2.1"
 val mockkVersion = "1.14.5"
