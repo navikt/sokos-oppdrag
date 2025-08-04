@@ -13,6 +13,7 @@ import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.config.DatabaseTestConfig
 import no.nav.sokos.oppdrag.config.transaction
+import no.nav.sokos.oppdrag.fastedata.repository.FaggruppeRepository
 import no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository
 import no.nav.sokos.oppdrag.fastedata.repository.KlassekoderRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentekriterierRepository
@@ -24,6 +25,7 @@ import no.nav.sokos.oppdrag.oppdragsinfo.repository.OppdragsdetaljerRepository
 object Db2Listener : TestListener {
     val dataSource = HikariDataSource(DatabaseTestConfig.hikariConfig())
     val attestasjonRepository = spyk(AttestasjonRepository(dataSource))
+    val faggruppeRepository = spyk(FaggruppeRepository(dataSource))
     val oppdragRepository = spyk(OppdragRepository(dataSource))
     val oppdragsdetaljerRepository = spyk(OppdragsdetaljerRepository(dataSource))
     val kodeverkRepository = spyk(KodeverkRepository(dataSource))

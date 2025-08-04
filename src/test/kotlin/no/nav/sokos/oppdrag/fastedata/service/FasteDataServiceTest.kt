@@ -23,6 +23,7 @@ internal class FasteDataServiceTest :
         val fastedataService =
             FasteDataService(
                 Db2Listener.fasteDataFagomraadeRepository,
+                Db2Listener.faggruppeRepository,
                 Db2Listener.venteKriterierRepository,
                 Db2Listener.ventestatuskodeRepository,
                 Db2Listener.klassekoderRepository,

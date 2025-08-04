@@ -198,12 +198,27 @@ paths:
   /faggrupper:
     get:
       tags:
-        - Faste data
+        - Faggrupper
       summary: Hent tilgjengelige faggrupper
       description: Returnerer en liste av tilgjengelige faggrupper.
+      operationId: getFaggrupper
       responses:
-        400:
-          description: Ikke implementert ennå
+        200:
+          description: OK - Hvis faggrupper ikke finnes så returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Faggruppe'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
 
   /faggrupper/{kodeFaggruppe}/redusertSkatt:
     get:
@@ -211,7 +226,6 @@ paths:
         - Faggrupper
       description: Returnerer redusert skatt for faggruppe.
       summary: Hent redusert skatt for faggruppe
-      operationId: getFaggrupper
       parameters:
         - name: kodeFaggruppe
           in: path
@@ -446,6 +460,68 @@ components:
           type: string
           example: /api/v1/fastedata/fagomraader
           description: Endepunktet hvor feilen oppstå
+
+    Faggruppe:
+      type: object
+      required:
+        - kodeFaggruppe
+        - navnFaggruppe
+        - skatteprosent
+        - ventedager
+        - prioritet
+        - onlineBeregning
+        - oereavrunding
+        - samordnetBeregning
+      properties:
+        kodeFaggruppe:
+          type: string
+        navnFaggruppe:
+          type: string
+        skatteprosent:
+          type: integer
+        ventedager:
+          type: integer
+        kodeKlasseFeil:
+          type: string
+          nullable: true
+        kodeKlasseJust:
+          type: string
+          nullable: true
+        kodeDestinasjon:
+          type: string
+          nullable: true
+        klassekodeFeil:
+          type: string
+          nullable: true
+        klassekodeJustering:
+          type: string
+          nullable: true
+        destinasjon:
+          type: string
+          nullable: true
+        reskontroOppdrag:
+          type: string
+          nullable: true
+        klassekodeMotpFeil:
+          type: string
+          nullable: true
+        klassekodeMotpTrekk:
+          type: string
+          nullable: true
+        klassekodeMotpInnkr:
+          type: string
+          nullable: true
+        prioritet:
+          type: integer
+        onlineBeregning:
+          type: boolean
+        pensjon:
+          type: boolean
+          nullable: true
+        oereavrunding:
+          type: boolean
+        samordnetBeregning:
+          type: string
 
   securitySchemes:
     Bearer:
