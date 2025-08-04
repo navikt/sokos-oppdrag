@@ -73,7 +73,7 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
     route("$BASE_PATH/klassekoder") {
         get("") {
             call.respond(
-                HttpStatusCode.NotImplemented,
+                fasteDataService.getAllKlassekoder(),
             )
         }
     }

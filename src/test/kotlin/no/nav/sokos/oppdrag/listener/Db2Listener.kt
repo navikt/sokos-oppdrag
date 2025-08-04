@@ -4,7 +4,7 @@ import com.zaxxer.hikari.HikariDataSource
 import io.kotest.core.listeners.TestListener
 import io.kotest.core.spec.Spec
 import io.kotest.core.test.TestCase
-import io.kotest.core.test.TestResult
+import io.kotest.engine.test.TestResult
 import io.kotest.matchers.shouldNotBe
 import io.mockk.spyk
 import kotliquery.queryOf
@@ -14,6 +14,8 @@ import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.config.DatabaseTestConfig
 import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.fastedata.repository.FaggruppeRepository
+import no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository
+import no.nav.sokos.oppdrag.fastedata.repository.KlassekoderRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentekriterierRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentestatuskodeRepository
 import no.nav.sokos.oppdrag.kodeverk.repository.KodeverkRepository
@@ -28,8 +30,9 @@ object Db2Listener : TestListener {
     val oppdragsdetaljerRepository = spyk(OppdragsdetaljerRepository(dataSource))
     val kodeverkRepository = spyk(KodeverkRepository(dataSource))
     val venteKriterierRepository = spyk(VentekriterierRepository(dataSource))
-    val fasteDataFagomraadeRepository = spyk(no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository(dataSource))
+    val fasteDataFagomraadeRepository = spyk(FagomraadeRepository(dataSource))
     val ventestatuskodeRepository = spyk(VentestatuskodeRepository(dataSource))
+    val klassekoderRepository = spyk(KlassekoderRepository(dataSource))
 
     override suspend fun beforeSpec(spec: Spec) {
         dataSource shouldNotBe null

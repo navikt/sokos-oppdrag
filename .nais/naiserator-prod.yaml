@@ -27,8 +27,8 @@ spec:
     limits:
       memory: 4096Mi
     requests:
-      cpu: 2000m
-      memory: 4096Mi
+      cpu: 100m
+      memory: 512Mi
   ingresses:
     - https://sokos-oppdrag.intern.nav.no
     - https://sokos-oppdrag.prod-fss-pub.nais.io

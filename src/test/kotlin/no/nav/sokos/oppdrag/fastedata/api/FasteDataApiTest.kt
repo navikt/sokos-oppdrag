@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.fastedata.api
 
-import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 import kotlinx.serialization.json.Json
 
 import com.atlassian.oai.validator.restassured.OpenApiValidationFilter
@@ -27,10 +28,12 @@ import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
 import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
+import no.nav.sokos.oppdrag.fastedata.alleKlassekoder
 import no.nav.sokos.oppdrag.fastedata.bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
+import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
@@ -51,7 +54,7 @@ private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplica
 private val validationFilter = OpenApiValidationFilter("openapi/fastedata-v1-swagger.yaml")
 private val fasteDataService = mockk<FasteDataService>()
 
-@OptIn(KotestInternal::class)
+@OptIn(KotestInternal::class, ExperimentalTime::class)
 internal class FasteDataApiTest :
     FunSpec({
 
@@ -367,6 +370,55 @@ internal class FasteDataApiTest :
                     status = HttpStatusCode.InternalServerError.value,
                     message = "En feil",
                     path = "$FASTEDATA_BASE_API_PATH/ventestatuskoder",
+                    timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
+                )
+        }
+
+        test("klassekoder returnerer 200 OK") {
+            coEvery { fasteDataService.getAllKlassekoder() } returns alleKlassekoder
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/klassekoder")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.OK.value)
+                    .extract()
+                    .response()
+
+            val actualKlassekoder: List<Klassekoder> = Json.decodeFromString(response.asString())
+
+            actualKlassekoder shouldBe alleKlassekoder
+        }
+
+        test("klassekoder returnerer 500 Internal Server Error") {
+            coEvery { fasteDataService.getAllKlassekoder() } throws RuntimeException("En feil")
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/klassekoder")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()) shouldBe
+                ApiError(
+                    error = HttpStatusCode.InternalServerError.description,
+                    status = HttpStatusCode.InternalServerError.value,
+                    message = "En feil",
+                    path = "$FASTEDATA_BASE_API_PATH/klassekoder",
                     timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
                 )
         }

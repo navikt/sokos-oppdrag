@@ -13,7 +13,7 @@ plugins {
     kotlin("plugin.serialization") version "2.2.0"
     id("com.gradleup.shadow") version "8.3.8"
     id("com.expediagroup.graphql") version "8.8.1"
-    id("org.jlleitschuh.gradle.ktlint") version "12.3.0"
+    id("org.jlleitschuh.gradle.ktlint") version "13.0.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
     id("org.openapi.generator") version "7.14.0"
 }
@@ -39,20 +39,18 @@ repositories {
             }
         }
     }
-
-    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
 }
 
 // Ktor
-val ktorVersion = "3.2.0"
+val ktorVersion = "3.2.3"
 
 // Serialization
 val kotlinxSerializationVersion = "1.9.0"
-val kotlinxDatetimeVersion = "0.7.0-0.6.x-compat"
+val kotlinxDatetimeVersion = "0.7.1-0.6.x-compat"
 val kotlinxCoroutinesVersion = "1.10.2"
 
 // Monitorering
-val micrometerVersion = "1.15.1"
+val micrometerVersion = "1.15.2"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
@@ -65,7 +63,7 @@ val papertrailappVersion = "1.0.0"
 val natpryceVersion = "1.6.10.0"
 
 // Database
-val hikariVersion = "6.3.0"
+val hikariVersion = "7.0.0"
 val db2JccVersion = "12.1.2.0"
 val kotliqueryVersion = "1.9.1"
 
@@ -73,27 +71,27 @@ val kotliqueryVersion = "1.9.1"
 val graphqlClientVersion = "8.8.1"
 
 // Cache
-val caffeineVersion = "3.2.1"
+val caffeineVersion = "3.2.2"
 
 // Valkey
 val valkeyVersion = "6.7.1.RELEASE"
 
 // TSS
-val tjenestespesifikasjonVersion = "1.0_20250414143240_7082707"
+val tjenestespesifikasjonVersion = "1.0_20250715173022_23638f4"
 val glassfishJaxbVersion = "4.0.5"
 
 // IBM MQ
 val ibmMqVersion = "9.4.3.0"
 
 // Test
-val kotestVersion = "6.0.0.M4"
+val kotestVersion = "6.0.0.M10"
 val wiremockVersion = "3.13.1"
 val mockOAuth2ServerVersion = "2.2.1"
-val mockkVersion = "1.14.4"
+val mockkVersion = "1.14.5"
 val swaggerRequestValidatorVersion = "2.44.9"
 val testcontainersVersion = "1.21.3"
 val h2Version = "2.3.232"
-val activemqVersion = "2.41.0"
+val activemqVersion = "2.42.0"
 
 dependencies {
 

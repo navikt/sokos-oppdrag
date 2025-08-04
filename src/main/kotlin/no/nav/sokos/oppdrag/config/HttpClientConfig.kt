@@ -19,8 +19,8 @@ import org.apache.http.impl.conn.SystemDefaultRoutePlanner
 
 private val logger = KotlinLogging.logger {}
 
-fun createHttpClient(setProxy: Boolean = true): HttpClient {
-    return HttpClient(Apache) {
+fun createHttpClient(setProxy: Boolean = true): HttpClient =
+    HttpClient(Apache) {
         expectSuccess = false
 
         install(ContentNegotiation) {
@@ -49,7 +49,6 @@ fun createHttpClient(setProxy: Boolean = true): HttpClient {
             }
         }
     }
-}
 
 suspend fun HttpResponse.errorMessage() = body<JsonElement>().jsonObject["errorMessage"]?.jsonPrimitive?.content
 

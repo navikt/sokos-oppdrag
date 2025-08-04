@@ -3,7 +3,8 @@ package no.nav.sokos.oppdrag.oppdragsinfo.api
 import java.lang.Boolean.FALSE
 import java.lang.Boolean.TRUE
 
-import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 import kotlinx.serialization.json.Json
 
 import com.atlassian.oai.validator.restassured.OpenApiValidationFilter
@@ -60,6 +61,7 @@ private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplica
 private val validationFilter = OpenApiValidationFilter("openapi/oppdragsinfo-v1-swagger.yaml")
 private val oppdragsInfoService = mockk<OppdragsInfoService>()
 
+@OptIn(ExperimentalTime::class)
 internal class OppdragsInfoApiTest :
     FunSpec({
 
