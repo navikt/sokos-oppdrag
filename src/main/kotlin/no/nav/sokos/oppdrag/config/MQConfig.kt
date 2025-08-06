@@ -5,8 +5,6 @@ import com.ibm.msg.client.jakarta.jms.JmsConstants.JAKARTA_WMQ_PROVIDER
 import com.ibm.msg.client.jakarta.jms.JmsFactoryFactory
 import com.ibm.msg.client.jakarta.wmq.WMQConstants
 import jakarta.jms.ConnectionFactory
-import jakarta.jms.MessageProducer
-import jakarta.jms.Session
 
 private const val UTF_8_WITH_PUA = 1208
 
@@ -26,5 +24,3 @@ object MQConfig {
             setStringProperty(WMQConstants.PASSWORD, mqProperties.mqServicePassword)
         }
 }
-
-fun Session.producerForQueue(queueName: String): MessageProducer = createProducer(createQueue(queueName))
