@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    kotlin("jvm") version "2.2.0"
-    kotlin("plugin.serialization") version "2.2.0"
-    id("com.gradleup.shadow") version "9.0.0"
+    kotlin("jvm") version "2.2.10"
+    kotlin("plugin.serialization") version "2.2.10"
+    id("com.gradleup.shadow") version "9.0.2"
     id("com.expediagroup.graphql") version "8.8.1"
     id("org.jlleitschuh.gradle.ktlint") version "13.0.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
@@ -50,7 +50,7 @@ val kotlinxDatetimeVersion = "0.7.1-0.6.x-compat"
 val kotlinxCoroutinesVersion = "1.10.2"
 
 // Monitorering
-val micrometerVersion = "1.15.2"
+val micrometerVersion = "1.15.3"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
@@ -84,7 +84,7 @@ val glassfishJaxbVersion = "4.0.5"
 val ibmMqVersion = "9.4.3.0"
 
 // Test
-val kotestVersion = "6.0.0.M15"
+val kotestVersion = "6.0.0.M17"
 val wiremockVersion = "3.13.1"
 val mockOAuth2ServerVersion = "2.2.1"
 val mockkVersion = "1.14.5"
