@@ -14,10 +14,7 @@ on:
       - '.github/workflows/deploy-valkey.yaml'
       - '.github/workflows/manual-deploy.yaml'
       - '.github/workflows/security.yaml'
-      - '.github/workflows/alerts.yaml'
       - '.nais/valkey/**'
-      - '.nais/alerts-dev.yaml'
-      - '.nais/alerts-prod.yaml'
       - '.github/dependabot.yaml'
 
 jobs:
