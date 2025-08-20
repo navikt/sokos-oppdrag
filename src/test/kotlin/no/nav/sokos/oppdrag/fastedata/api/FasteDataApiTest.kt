@@ -37,6 +37,7 @@ import no.nav.sokos.oppdrag.fastedata.domain.Kjoreplan
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
+import no.nav.sokos.oppdrag.fastedata.domain.RedusertSkatt
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.fastedata.faggrupper
@@ -51,6 +52,7 @@ import no.nav.sokos.oppdrag.fastedata.ventestatuskoder
 private const val PORT = 9090
 private const val KODE_FAGOMRAADE_MYST = "MYST"
 private const val KODE_FAGOMRAADE_MYSTB = "MYSTB"
+private const val KODE_FAGGRUPPE_BA = "BA"
 
 private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
 
@@ -470,6 +472,61 @@ internal class FasteDataApiTest :
                     status = HttpStatusCode.InternalServerError.value,
                     message = "En feil",
                     path = "$FASTEDATA_BASE_API_PATH/faggrupper",
+                    timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
+                )
+        }
+        test("redusert skatt returnerer 200 OK") {
+            val redusertSkatt =
+                listOf(
+                    RedusertSkatt(
+                        kodeFaggruppe = KODE_FAGGRUPPE_BA,
+                        periode = "01.01.2024 - 31.03.2024",
+                        prosent = 25,
+                    ),
+                )
+            coEvery { fasteDataService.getRedusertSkatt(KODE_FAGGRUPPE_BA) } returns redusertSkatt
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/faggrupper/$KODE_FAGGRUPPE_BA/redusertSkatt")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.OK.value)
+                    .extract()
+                    .response()
+
+            val actual: List<RedusertSkatt> = Json.decodeFromString(response.asString())
+            actual shouldBe redusertSkatt
+        }
+
+        test("redusert skatt returnerer 500 Internal Server Error") {
+            coEvery { fasteDataService.getRedusertSkatt(any()) } throws RuntimeException("En feil")
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/faggrupper/$KODE_FAGGRUPPE_BA/redusertSkatt")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()) shouldBe
+                ApiError(
+                    error = HttpStatusCode.InternalServerError.description,
+                    status = HttpStatusCode.InternalServerError.value,
+                    message = "En feil",
+                    path = "$FASTEDATA_BASE_API_PATH/faggrupper/$KODE_FAGGRUPPE_BA/redusertSkatt",
                     timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
                 )
         }
