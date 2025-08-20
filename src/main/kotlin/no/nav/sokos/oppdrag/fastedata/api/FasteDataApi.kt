@@ -77,4 +77,11 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
             )
         }
     }
+    route("$BASE_PATH/kjoreplan") {
+        get("") {
+            call.respond(
+                fasteDataService.getKjoreplan(),
+            )
+        }
+    }
 }
