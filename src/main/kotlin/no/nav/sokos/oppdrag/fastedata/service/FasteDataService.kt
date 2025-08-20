@@ -5,6 +5,7 @@ import mu.KotlinLogging
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
+import no.nav.sokos.oppdrag.fastedata.domain.Kjoreplan
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
@@ -12,6 +13,7 @@ import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.fastedata.repository.FaggruppeRepository
 import no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository
+import no.nav.sokos.oppdrag.fastedata.repository.KjoreplanRepository
 import no.nav.sokos.oppdrag.fastedata.repository.KlassekoderRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentekriterierRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentestatuskodeRepository
@@ -24,6 +26,7 @@ class FasteDataService(
     private val ventekriterierRepository: VentekriterierRepository = VentekriterierRepository(),
     private val ventestatuskodeRepository: VentestatuskodeRepository = VentestatuskodeRepository(),
     private val klassekoderRepository: KlassekoderRepository = KlassekoderRepository(),
+    private val kjoreplanRepository: KjoreplanRepository = KjoreplanRepository(),
 ) {
     fun getAllVentestatuskoder(): List<Ventestatuskode> {
         logger.info { "Henter alle ventestatuskoder" }
@@ -65,5 +68,10 @@ class FasteDataService(
     fun getFaggrupper(): List<Faggruppe> {
         logger.info { "Henter faggrupper" }
         return faggruppeRepository.getFaggrupper()
+    }
+
+    fun getKjoreplan(): List<Kjoreplan> {
+        logger.info { "Henter kjøreplan" }
+        return kjoreplanRepository.getKjoreplan()
     }
 }
