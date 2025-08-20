@@ -1,4 +1,8 @@
+
 package no.nav.sokos.oppdrag.fastedata.repository
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 import com.zaxxer.hikari.HikariDataSource
 import kotliquery.LoanPattern.using
@@ -8,6 +12,7 @@ import kotliquery.sessionOf
 
 import no.nav.sokos.oppdrag.config.DatabaseConfig
 import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
+import no.nav.sokos.oppdrag.fastedata.domain.RedusertSkatt
 
 class FaggruppeRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource,
@@ -58,4 +63,35 @@ class FaggruppeRepository(
                 )
             }
         }
+
+    fun getRedusertSkatt(kodeFaggruppe: String): List<RedusertSkatt> {
+        val dbFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val uiFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+
+        return using(sessionOf(dataSource)) { session ->
+            session.list(
+                queryOf(
+                    """
+                    SELECT 
+                        TRIM(KODE_FAGGRUPPE) AS KODE_FAGGRUPPE,
+                        DATO_FOM,
+                        DATO_TOM,
+                        PROSENT_SATS
+                    FROM T_FAGGRUPPE_SKATTETREKK
+                    WHERE KODE_FAGGRUPPE = :KODE_FAGGRUPPE
+                    ORDER BY DATO_FOM
+                    """.trimIndent(),
+                    mapOf("KODE_FAGGRUPPE" to kodeFaggruppe),
+                ),
+            ) { row ->
+                val fom = LocalDate.parse(row.string("DATO_FOM"), dbFormatter).format(uiFormatter)
+                val tom = LocalDate.parse(row.string("DATO_TOM"), dbFormatter).format(uiFormatter)
+                RedusertSkatt(
+                    kodeFaggruppe = row.string("KODE_FAGGRUPPE"),
+                    periode = "$fom - $tom",
+                    prosent = row.int("PROSENT_SATS"),
+                )
+            }
+        }
+    }
 }

@@ -1,6 +1,5 @@
 package no.nav.sokos.oppdrag.fastedata.api
 
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
@@ -65,7 +64,9 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
         }
         get("{kodeFaggruppe}/redusertSkatt") {
             call.respond(
-                HttpStatusCode.NotImplemented,
+                fasteDataService.getRedusertSkatt(
+                    call.parameters["kodeFaggruppe"].orEmpty(),
+                ),
             )
         }
     }
@@ -77,6 +78,7 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
             )
         }
     }
+
     route("$BASE_PATH/kjoreplan") {
         get("") {
             call.respond(
