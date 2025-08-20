@@ -8,6 +8,6 @@ data class Kjoreplan(
     val datoKjores: String,
     val status: String,
     val datoForfall: String,
-    val datoOverfores: String?,
+    val datoOverfores: String? = null,
     val beregningsperiode: String,
 )

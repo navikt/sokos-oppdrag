@@ -264,6 +264,31 @@ paths:
       security:
         - Bearer: [ ]
 
+  /kjoreplan:
+    get:
+      tags:
+        - Faste data
+      summary: Hent kjøreplan
+      description: Returnerer kjøreplan-data.
+      operationId: getKjoreplan
+      responses:
+        200:
+          description: OK - Hvis kjøreplan ikke finnes så returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Kjoreplan'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
 components:
   schemas:
     Fagomraade:
@@ -521,6 +546,29 @@ components:
         oereavrunding:
           type: boolean
         samordnetBeregning:
+          type: string
+
+    Kjoreplan:
+      type: object
+      required:
+        - kodeFaggruppe
+        - datoKjores
+        - status
+        - datoForfall
+        - beregningsperiode
+      properties:
+        kodeFaggruppe:
+          type: string
+        datoKjores:
+          type: string
+        status:
+          type: string
+        datoForfall:
+          type: string
+        datoOverfores:
+          type: string
+          nullable: true
+        beregningsperiode:
           type: string
 
   securitySchemes:

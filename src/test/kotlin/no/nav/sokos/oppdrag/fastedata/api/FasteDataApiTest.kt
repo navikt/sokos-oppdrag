@@ -33,6 +33,7 @@ import no.nav.sokos.oppdrag.fastedata.bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
+import no.nav.sokos.oppdrag.fastedata.domain.Kjoreplan
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
@@ -446,7 +447,6 @@ internal class FasteDataApiTest :
 
             actualFaggrupper shouldBe faggrupper
         }
-
         test("faggrupper returnerer 500 Internal Server Error") {
             coEvery { fasteDataService.getFaggrupper() } throws RuntimeException("En feil")
 
@@ -470,6 +470,64 @@ internal class FasteDataApiTest :
                     status = HttpStatusCode.InternalServerError.value,
                     message = "En feil",
                     path = "$FASTEDATA_BASE_API_PATH/faggrupper",
+                    timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
+                )
+        }
+
+        test("kjoreplan returnerer 200 OK") {
+            val kjoreplanList =
+                listOf(
+                    Kjoreplan(
+                        kodeFaggruppe = "BA",
+                        datoKjores = "1989-01-08",
+                        status = "AVSL",
+                        datoForfall = "1989-01-28",
+                        datoOverfores = null,
+                        beregningsperiode = "13.12.1999-31.12.1999",
+                    ),
+                )
+            coEvery { fasteDataService.getKjoreplan() } returns kjoreplanList
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .accept(APPLICATION_JSON)
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/kjoreplan")
+                    .then()
+                    .statusCode(HttpStatusCode.OK.value)
+                    .extract()
+
+            val actual: List<Kjoreplan> = Json.decodeFromString(response.asString())
+            actual shouldBe kjoreplanList
+        }
+
+        test("kjoreplan returnerer 500 Internal Server Error") {
+            coEvery { fasteDataService.getKjoreplan() } throws RuntimeException("En feil")
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .accept(APPLICATION_JSON)
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/kjoreplan")
+                    .then()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()) shouldBe
+                ApiError(
+                    error = HttpStatusCode.InternalServerError.description,
+                    status = HttpStatusCode.InternalServerError.value,
+                    message = "En feil",
+                    path = "$FASTEDATA_BASE_API_PATH/kjoreplan",
                     timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
                 )
         }
