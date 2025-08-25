@@ -17,7 +17,7 @@ class KjoreplanRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT 
+                    SELECT
                         TRIM(KODE_FAGGRUPPE) AS KODE_FAGGRUPPE,
                         DATO_KJORES,
                         STATUS,
@@ -30,17 +30,14 @@ class KjoreplanRepository(
                     """.trimIndent(),
                 ),
             ) { row ->
-                val fom = row.stringOrNull("DATO_BEREGN_FOM")
-                val tom = row.stringOrNull("DATO_BEREGN_TOM")
-                val beregningsperiode = listOfNotNull(fom, tom).joinToString("-")
-
                 Kjoreplan(
                     kodeFaggruppe = row.string("KODE_FAGGRUPPE"),
                     datoKjores = row.string("DATO_KJORES"),
                     status = row.string("STATUS"),
                     datoForfall = row.string("DATO_FORFALL"),
                     datoOverfores = row.stringOrNull("DATO_OVERFORES"),
-                    beregningsperiode = beregningsperiode,
+                    datoBeregnFom = row.stringOrNull("DATO_BEREGN_FOM"),
+                    datoBeregnTom = row.stringOrNull("DATO_BEREGN_TOM"),
                 )
             }
         }

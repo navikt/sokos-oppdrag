@@ -569,7 +569,6 @@ components:
         - datoKjores
         - status
         - datoForfall
-        - beregningsperiode
       properties:
         kodeFaggruppe:
           type: string
@@ -582,7 +581,10 @@ components:
         datoOverfores:
           type: string
           nullable: true
-        beregningsperiode:
+        datoBeregnFom:
+          type: string
+          nullable: true
+        datoBeregnTom:
           type: string
 
     RedusertSkatt:

@@ -540,7 +540,8 @@ internal class FasteDataApiTest :
                         status = "AVSL",
                         datoForfall = "1989-01-28",
                         datoOverfores = null,
-                        beregningsperiode = "13.12.1999-31.12.1999",
+                        datoBeregnFom = "1999-12-13",
+                        datoBeregnTom = "1999-12-31",
                     ),
                 )
             coEvery { fasteDataService.getKjoreplan() } returns kjoreplanList

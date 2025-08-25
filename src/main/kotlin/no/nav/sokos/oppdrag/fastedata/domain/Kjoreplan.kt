@@ -9,5 +9,6 @@ data class Kjoreplan(
     val status: String,
     val datoForfall: String,
     val datoOverfores: String? = null,
-    val beregningsperiode: String,
+    val datoBeregnFom: String? = null,
+    val datoBeregnTom: String? = null,
 )
