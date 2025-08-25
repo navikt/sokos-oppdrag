@@ -22,8 +22,8 @@ Applikasjon er en proxy mellom OppdragZ og Utbetalingsportalen (intern arbeidsfl
 ### Forutsetninger
 
 * Java 21
-* Gradle 8
-* [Kotest](https://plugins.jetbrains.com/plugin/14080-kotest) plugin for å kjøre tester
+* [Gradle](https://gradle.org/)
+* [Kotest IntelliJ Plugin](https://plugins.jetbrains.com/plugin/14080-kotest)
 * [Docker](https://www.docker.com/)
     * for å starte opp en Valkey server lokalt
     * for å kjøre testcontainers
@@ -63,10 +63,8 @@ som må genereres for å teste mot dev-miljøet.
 
 ### Logging
 
-https://logs.adeo.no.
-
-Feilmeldinger og infomeldinger som ikke innheholder sensitive data logges til data view `Applikasjonslogger`.  
-Sensetive meldinger logges til data view `Securelogs` [sikker-utvikling/logging](https://sikkerhet.nav.no/docs/sikker-utvikling/logging)).
+Feilmeldinger og infomeldinger som ikke innheholder sensitive data logges til [Grafana Loki](https://docs.nais.io/observability/logging/#grafana-loki).  
+Sensitive meldinger logges til [Team Logs](https://doc.nais.io/observability/logging/how-to/team-logs/).
 
 ### Kubectl
 
