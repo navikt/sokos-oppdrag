@@ -480,7 +480,8 @@ internal class FasteDataApiTest :
                 listOf(
                     RedusertSkatt(
                         kodeFaggruppe = KODE_FAGGRUPPE_BA,
-                        periode = "01.01.2024 - 31.03.2024",
+                        datoFom = "2024-01-01",
+                        datoTom = "2024-03-31",
                         prosent = 25,
                     ),
                 )

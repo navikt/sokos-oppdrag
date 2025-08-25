@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RedusertSkatt(
     val kodeFaggruppe: String,
-    val periode: String,
+    val datoFom: String,
+    val datoTom: String,
     val prosent: Int,
 )

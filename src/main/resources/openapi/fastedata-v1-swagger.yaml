@@ -591,16 +591,20 @@ components:
       type: object
       required:
         - kodeFaggruppe
-        - periode
+        - datoFom
+        - datoTom
         - prosent
       properties:
         kodeFaggruppe:
           type: string
-        periode:
+        datoFom:
           type: string
+          format: date
+        datoTom:
+          type: string
+          format: date
         prosent:
           type: integer
-
   securitySchemes:
     Bearer:
       type: apiKey

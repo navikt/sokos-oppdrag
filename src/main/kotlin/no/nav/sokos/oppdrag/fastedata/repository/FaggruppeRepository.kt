@@ -1,8 +1,4 @@
-
 package no.nav.sokos.oppdrag.fastedata.repository
-
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 import com.zaxxer.hikari.HikariDataSource
 import kotliquery.LoanPattern.using
@@ -64,11 +60,8 @@ class FaggruppeRepository(
             }
         }
 
-    fun getRedusertSkatt(kodeFaggruppe: String): List<RedusertSkatt> {
-        val dbFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val uiFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-
-        return using(sessionOf(dataSource)) { session ->
+    fun getRedusertSkatt(kodeFaggruppe: String): List<RedusertSkatt> =
+        using(sessionOf(dataSource)) { session: Session ->
             session.list(
                 queryOf(
                     """
@@ -84,14 +77,12 @@ class FaggruppeRepository(
                     mapOf("KODE_FAGGRUPPE" to kodeFaggruppe),
                 ),
             ) { row ->
-                val fom = LocalDate.parse(row.string("DATO_FOM"), dbFormatter).format(uiFormatter)
-                val tom = LocalDate.parse(row.string("DATO_TOM"), dbFormatter).format(uiFormatter)
                 RedusertSkatt(
                     kodeFaggruppe = row.string("KODE_FAGGRUPPE"),
-                    periode = "$fom - $tom",
+                    datoFom = row.string("DATO_FOM"),
+                    datoTom = row.string("DATO_TOM"),
                     prosent = row.int("PROSENT_SATS"),
                 )
             }
         }
-    }
 }
