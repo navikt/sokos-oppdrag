@@ -15,7 +15,6 @@ import no.nav.sokos.oppdrag.config.DatabaseTestConfig
 import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.fastedata.repository.FaggruppeRepository
 import no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository
-import no.nav.sokos.oppdrag.fastedata.repository.KjoreplanRepository
 import no.nav.sokos.oppdrag.fastedata.repository.KlassekoderRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentekriterierRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentestatuskodeRepository
@@ -34,7 +33,6 @@ object Db2Listener : TestListener {
     val fasteDataFagomraadeRepository = spyk(FagomraadeRepository(dataSource))
     val ventestatuskodeRepository = spyk(VentestatuskodeRepository(dataSource))
     val klassekoderRepository = spyk(KlassekoderRepository(dataSource))
-    val kjoreplanRepository = spyk(KjoreplanRepository(dataSource))
 
     override suspend fun beforeSpec(spec: Spec) {
         dataSource shouldNotBe null

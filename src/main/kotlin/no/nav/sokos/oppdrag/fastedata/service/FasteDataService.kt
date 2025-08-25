@@ -14,7 +14,6 @@ import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.fastedata.repository.FaggruppeRepository
 import no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository
-import no.nav.sokos.oppdrag.fastedata.repository.KjoreplanRepository
 import no.nav.sokos.oppdrag.fastedata.repository.KlassekoderRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentekriterierRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentestatuskodeRepository
@@ -27,7 +26,6 @@ class FasteDataService(
     private val ventekriterierRepository: VentekriterierRepository = VentekriterierRepository(),
     private val ventestatuskodeRepository: VentestatuskodeRepository = VentestatuskodeRepository(),
     private val klassekoderRepository: KlassekoderRepository = KlassekoderRepository(),
-    private val kjoreplanRepository: KjoreplanRepository = KjoreplanRepository(),
 ) {
     fun getAllVentestatuskoder(): List<Ventestatuskode> {
         logger.info { "Henter alle ventestatuskoder" }
@@ -74,8 +72,8 @@ class FasteDataService(
         return faggruppeRepository.getRedusertSkatt(kodeFaggruppe)
     }
 
-    fun getKjoreplan(): List<Kjoreplan> {
-        logger.info { "Henter kjøreplan" }
-        return kjoreplanRepository.getKjoreplan()
+    fun getKjoreplan(kodeFaggruppe: String): List<Kjoreplan> {
+        logger.info { "Henter kjøreplan for faggruppe $kodeFaggruppe" }
+        return faggruppeRepository.getKjoreplan(kodeFaggruppe)
     }
 }

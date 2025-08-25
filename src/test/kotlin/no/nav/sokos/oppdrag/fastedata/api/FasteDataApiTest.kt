@@ -536,7 +536,7 @@ internal class FasteDataApiTest :
             val kjoreplanList =
                 listOf(
                     Kjoreplan(
-                        kodeFaggruppe = "BA",
+                        kodeFaggruppe = KODE_FAGGRUPPE_BA,
                         datoKjores = "1989-01-08",
                         status = "AVSL",
                         datoForfall = "1989-01-28",
@@ -545,7 +545,7 @@ internal class FasteDataApiTest :
                         datoBeregnTom = "1999-12-31",
                     ),
                 )
-            coEvery { fasteDataService.getKjoreplan() } returns kjoreplanList
+            coEvery { fasteDataService.getKjoreplan(KODE_FAGGRUPPE_BA) } returns kjoreplanList
 
             val response =
                 RestAssured
@@ -553,9 +553,8 @@ internal class FasteDataApiTest :
                     .filter(validationFilter)
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                    .accept(APPLICATION_JSON)
                     .port(PORT)
-                    .get("$FASTEDATA_BASE_API_PATH/kjoreplan")
+                    .get("$FASTEDATA_BASE_API_PATH/faggrupper/$KODE_FAGGRUPPE_BA/kjoreplan")
                     .then()
                     .statusCode(HttpStatusCode.OK.value)
                     .extract()
@@ -565,7 +564,7 @@ internal class FasteDataApiTest :
         }
 
         test("kjoreplan returnerer 500 Internal Server Error") {
-            coEvery { fasteDataService.getKjoreplan() } throws RuntimeException("En feil")
+            coEvery { fasteDataService.getKjoreplan(KODE_FAGGRUPPE_BA) } throws RuntimeException("En feil")
 
             val response =
                 RestAssured
@@ -573,9 +572,8 @@ internal class FasteDataApiTest :
                     .filter(validationFilter)
                     .header(HttpHeaders.ContentType, APPLICATION_JSON)
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
-                    .accept(APPLICATION_JSON)
                     .port(PORT)
-                    .get("$FASTEDATA_BASE_API_PATH/kjoreplan")
+                    .get("$FASTEDATA_BASE_API_PATH/faggrupper/$KODE_FAGGRUPPE_BA/kjoreplan")
                     .then()
                     .statusCode(HttpStatusCode.InternalServerError.value)
                     .extract()
@@ -586,7 +584,7 @@ internal class FasteDataApiTest :
                     error = HttpStatusCode.InternalServerError.description,
                     status = HttpStatusCode.InternalServerError.value,
                     message = "En feil",
-                    path = "$FASTEDATA_BASE_API_PATH/kjoreplan",
+                    path = "$FASTEDATA_BASE_API_PATH/faggrupper/$KODE_FAGGRUPPE_BA/kjoreplan",
                     timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
                 )
         }

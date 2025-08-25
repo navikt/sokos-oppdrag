@@ -69,20 +69,19 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
                 ),
             )
         }
+        get("{kodeFaggruppe}/kjoreplan") {
+            call.respond(
+                fasteDataService.getKjoreplan(
+                    call.parameters["kodeFaggruppe"].orEmpty(),
+                ),
+            )
+        }
     }
 
     route("$BASE_PATH/klassekoder") {
         get("") {
             call.respond(
                 fasteDataService.getAllKlassekoder(),
-            )
-        }
-    }
-
-    route("$BASE_PATH/kjoreplan") {
-        get("") {
-            call.respond(
-                fasteDataService.getKjoreplan(),
             )
         }
     }

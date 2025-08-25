@@ -8,6 +8,7 @@ import kotliquery.sessionOf
 
 import no.nav.sokos.oppdrag.config.DatabaseConfig
 import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
+import no.nav.sokos.oppdrag.fastedata.domain.Kjoreplan
 import no.nav.sokos.oppdrag.fastedata.domain.RedusertSkatt
 
 class FaggruppeRepository(
@@ -35,7 +36,7 @@ class FaggruppeRepository(
                         KODE_PENSJON AS PENSJON,
                         OREAVRUND AS OEREAVRUNDING,
                         SAMORD_BEREGNING AS SAMORDNET_BEREGNING
-                    FROM T_FAGGRUPPE;
+                    FROM T_FAGGRUPPE
                     """.trimIndent(),
                 ),
             ) { row ->
@@ -82,6 +83,38 @@ class FaggruppeRepository(
                     datoFom = row.string("DATO_FOM"),
                     datoTom = row.string("DATO_TOM"),
                     prosent = row.int("PROSENT_SATS"),
+                )
+            }
+        }
+
+    fun getKjoreplan(kodeFaggruppe: String): List<Kjoreplan> =
+        using(sessionOf(dataSource)) { session: Session ->
+            session.list(
+                queryOf(
+                    """
+                    SELECT 
+                        TRIM(KODE_FAGGRUPPE) AS KODE_FAGGRUPPE,
+                        DATO_KJORES,
+                        STATUS,
+                        DATO_FORFALL,
+                        DATO_OVERFORES,
+                        DATO_BEREGN_FOM,
+                        DATO_BEREGN_TOM
+                    FROM T1_KJOREPLAN_TREKK
+                    WHERE KODE_FAGGRUPPE = :KODE_FAGGRUPPE
+                    ORDER BY DATO_KJORES
+                    """.trimIndent(),
+                    mapOf("KODE_FAGGRUPPE" to kodeFaggruppe),
+                ),
+            ) { row ->
+                Kjoreplan(
+                    kodeFaggruppe = row.string("KODE_FAGGRUPPE"),
+                    datoKjores = row.string("DATO_KJORES"),
+                    status = row.string("STATUS"),
+                    datoForfall = row.string("DATO_FORFALL"),
+                    datoOverfores = row.stringOrNull("DATO_OVERFORES"),
+                    datoBeregnFom = row.stringOrNull("DATO_BEREGN_FOM"),
+                    datoBeregnTom = row.stringOrNull("DATO_BEREGN_TOM"),
                 )
             }
         }
