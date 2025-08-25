@@ -20,23 +20,23 @@ class FaggruppeRepository(
                 queryOf(
                     """
                     SELECT
-                        KODE_FAGGRUPPE AS KODE_FAGGRUPPE,
-                        NAVN_FAGGRUPPE AS NAVN_FAGGRUPPE,
-                        SKATTEPROSENT AS SKATTEPROSENT,
-                        ANT_VENTEDAGER AS VENTEDAGER,
-                        KODE_KLASSE_FEIL AS KLASSEKODE_FEIL,
-                        KODE_KLASSE_JUST AS KLASSEKODE_JUSTERING,
-                        KODE_DESTINASJON AS DESTINASJON,
-                        KODE_RESK_OPPDRAG AS RESKONTRO_OPPDRAG,
+                        KODE_FAGGRUPPE       AS KODE_FAGGRUPPE,
+                        NAVN_FAGGRUPPE       AS NAVN_FAGGRUPPE,
+                        SKATTEPROSENT        AS SKATTEPROSENT,
+                        ANT_VENTEDAGER       AS VENTEDAGER,
+                        KODE_KLASSE_FEIL     AS KLASSEKODE_FEIL,
+                        KODE_KLASSE_JUST     AS KLASSEKODE_JUSTERING,
+                        KODE_DESTINASJON     AS DESTINASJON,
+                        KODE_RESK_OPPDRAG    AS RESKONTRO_OPPDRAG,
                         KODE_KLASSE_MOTP_FEIL AS KLASSEKODE_MOTP_FEIL,
                         KODE_KLASSE_MOTP_TREKK AS KLASSEKODE_MOTP_TREKK,
                         KODE_KLASSE_MOTP_INNKR AS KLASSEKODE_MOTP_INNKR,
-                        PRIORITET_TABELL AS PRIORITET,
-                        ONLINE_BEREGNING AS ONLINE_BEREGNING,
-                        KODE_PENSJON AS PENSJON,
-                        OREAVRUND AS OEREAVRUNDING,
-                        SAMORD_BEREGNING AS SAMORDNET_BEREGNING
-                    FROM T_FAGGRUPPE
+                        PRIORITET_TABELL     AS PRIORITET,
+                        ONLINE_BEREGNING     AS ONLINE_BEREGNING,
+                        KODE_PENSJON         AS PENSJON,
+                        OREAVRUND            AS OEREAVRUNDING,
+                        SAMORD_BEREGNING     AS SAMORDNET_BEREGNING
+                    FROM T_FAGGRUPPE;
                     """.trimIndent(),
                 ),
             ) { row ->
@@ -71,8 +71,8 @@ class FaggruppeRepository(
                         DATO_FOM,
                         DATO_TOM,
                         PROSENT_SATS
-                    FROM T_FAGGRUPPE_SKATTETREKK
-                    WHERE KODE_FAGGRUPPE = :KODE_FAGGRUPPE
+                    FROM T_SKATT_REDUSERT
+                    WHERE TRIM(KODE_FAGGRUPPE) = :KODE_FAGGRUPPE
                     ORDER BY DATO_FOM
                     """.trimIndent(),
                     mapOf("KODE_FAGGRUPPE" to kodeFaggruppe),
@@ -92,7 +92,7 @@ class FaggruppeRepository(
             session.list(
                 queryOf(
                     """
-                    SELECT 
+                    SELECT
                         TRIM(KODE_FAGGRUPPE) AS KODE_FAGGRUPPE,
                         DATO_KJORES,
                         STATUS,
@@ -100,8 +100,8 @@ class FaggruppeRepository(
                         DATO_OVERFORES,
                         DATO_BEREGN_FOM,
                         DATO_BEREGN_TOM
-                    FROM T1_KJOREPLAN_TREKK
-                    WHERE KODE_FAGGRUPPE = :KODE_FAGGRUPPE
+                    FROM T_KJOREPLAN
+                    WHERE TRIM(KODE_FAGGRUPPE) = :KODE_FAGGRUPPE
                     ORDER BY DATO_KJORES
                     """.trimIndent(),
                     mapOf("KODE_FAGGRUPPE" to kodeFaggruppe),
