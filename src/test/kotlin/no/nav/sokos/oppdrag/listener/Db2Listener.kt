@@ -79,7 +79,6 @@ object Db2Listener : TestListener {
             session.update(queryOf("DELETE FROM T_TEKST"))
             session.update(queryOf("DELETE FROM T_VALUTA"))
             session.update(queryOf("DELETE FROM T_VENT_KRITERIUM"))
-            session.update(queryOf("DELETE FROM T1_KJOREPLAN_TREKK"))
         }
     }
 }
