@@ -13,7 +13,7 @@ plugins {
     kotlin("plugin.serialization") version "2.2.10"
     id("com.gradleup.shadow") version "9.0.2"
     id("com.expediagroup.graphql") version "8.8.1"
-    id("org.jlleitschuh.gradle.ktlint") version "13.0.0"
+    id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
     id("org.openapi.generator") version "7.14.0"
 }
@@ -63,7 +63,7 @@ val papertrailappVersion = "1.0.0"
 val natpryceVersion = "1.6.10.0"
 
 // Database
-val hikariVersion = "7.0.1"
+val hikariVersion = "7.0.2"
 val db2JccVersion = "12.1.2.0"
 val kotliqueryVersion = "1.9.1"
 
@@ -84,7 +84,7 @@ val glassfishJaxbVersion = "4.0.5"
 val ibmMqVersion = "9.4.3.0"
 
 // Test
-val kotestVersion = "6.0.0.M17"
+val kotestVersion = "6.0.1"
 val wiremockVersion = "3.13.1"
 val mockOAuth2ServerVersion = "2.2.1"
 val mockkVersion = "1.14.5"
