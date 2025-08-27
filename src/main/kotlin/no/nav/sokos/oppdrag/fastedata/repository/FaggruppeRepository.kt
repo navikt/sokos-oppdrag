@@ -113,8 +113,8 @@ class FaggruppeRepository(
                     status = row.string("STATUS"),
                     datoForfall = row.string("DATO_FORFALL"),
                     datoOverfores = row.stringOrNull("DATO_OVERFORES"),
-                    datoBeregnFom = row.stringOrNull("DATO_BEREGN_FOM"),
-                    datoBeregnTom = row.stringOrNull("DATO_BEREGN_TOM"),
+                    datoBeregnFom = row.string("DATO_BEREGN_FOM"),
+                    datoBeregnTom = row.string("DATO_BEREGN_TOM"),
                 )
             }
         }

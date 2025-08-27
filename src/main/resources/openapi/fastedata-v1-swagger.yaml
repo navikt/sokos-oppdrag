@@ -610,10 +610,8 @@ components:
           nullable: true
         datoBeregnFom:
           type: string
-          nullable: true
         datoBeregnTom:
           type: string
-          nullable: true
   securitySchemes:
     Bearer:
       type: apiKey
