@@ -229,15 +229,62 @@ paths:
       parameters:
         - name: kodeFaggruppe
           in: path
-          description: Fagområdets kode
+          description: Faggruppens kode
           required: true
           schema:
             type: string
             maxLength: 8
             pattern: '^[a-zA-Z0-9æøåÆØÅ]{0,8}$'
       responses:
-        400:
-          description: Ikke implementert ennå
+        200:
+          description: OK - Hvis redusert skatt ikke finnes så returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RedusertSkatt'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
+  /faggrupper/{kodeFaggruppe}/kjoreplan:
+    get:
+      tags:
+        - Faggrupper
+      description: Returnerer kjøreplan for faggruppe.
+      summary: Hent kjøreplan for faggruppe
+      parameters:
+        - name: kodeFaggruppe
+          in: path
+          description: Faggruppens kode
+          required: true
+          schema:
+            type: string
+            maxLength: 8
+            pattern: '^[a-zA-Z0-9æøåÆØÅ]{0,8}$'
+      responses:
+        200:
+          description: OK - Hvis kjøreplan ikke finnes så returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Kjoreplan'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
 
   /klassekoder:
     get:
@@ -523,6 +570,48 @@ components:
         samordnetBeregning:
           type: string
 
+    RedusertSkatt:
+      type: object
+      required:
+        - kodeFaggruppe
+        - datoFom
+        - datoTom
+        - prosent
+      properties:
+        kodeFaggruppe:
+          type: string
+        datoFom:
+          type: string
+          format: date
+        datoTom:
+          type: string
+          format: date
+        prosent:
+          type: integer
+
+    Kjoreplan:
+      type: object
+      required:
+        - kodeFaggruppe
+        - datoKjores
+        - status
+        - datoForfall
+      properties:
+        kodeFaggruppe:
+          type: string
+        datoKjores:
+          type: string
+        status:
+          type: string
+        datoForfall:
+          type: string
+        datoOverfores:
+          type: string
+          nullable: true
+        datoBeregnFom:
+          type: string
+        datoBeregnTom:
+          type: string
   securitySchemes:
     Bearer:
       type: apiKey

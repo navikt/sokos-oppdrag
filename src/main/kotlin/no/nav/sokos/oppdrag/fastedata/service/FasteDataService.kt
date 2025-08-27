@@ -5,9 +5,11 @@ import mu.KotlinLogging
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
+import no.nav.sokos.oppdrag.fastedata.domain.Kjoreplan
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
+import no.nav.sokos.oppdrag.fastedata.domain.RedusertSkatt
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.fastedata.repository.FaggruppeRepository
@@ -47,9 +49,7 @@ class FasteDataService(
 
     fun getKorrigeringsaarsaker(kodeFagomraade: String): List<Korrigeringsaarsak> {
         logger.info { "Henter korrigeringsårsaker for fagområde $kodeFagomraade" }
-        return fagomraadeRepository.getKorrigeringsaarsaker(
-            kodeFagomraade,
-        )
+        return fagomraadeRepository.getKorrigeringsaarsaker(kodeFagomraade)
     }
 
     fun getBilagstyper(kodeFagomraade: String): List<Bilagstype> {
@@ -65,5 +65,15 @@ class FasteDataService(
     fun getFaggrupper(): List<Faggruppe> {
         logger.info { "Henter faggrupper" }
         return faggruppeRepository.getFaggrupper()
+    }
+
+    fun getRedusertSkatt(kodeFaggruppe: String): List<RedusertSkatt> {
+        logger.info { "Henter redusert skatt for faggruppe $kodeFaggruppe" }
+        return faggruppeRepository.getRedusertSkatt(kodeFaggruppe)
+    }
+
+    fun getKjoreplan(kodeFaggruppe: String): List<Kjoreplan> {
+        logger.info { "Henter kjøreplan for faggruppe $kodeFaggruppe" }
+        return faggruppeRepository.getKjoreplan(kodeFaggruppe)
     }
 }
