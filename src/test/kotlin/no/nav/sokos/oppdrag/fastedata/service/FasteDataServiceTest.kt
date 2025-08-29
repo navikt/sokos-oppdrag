@@ -1,6 +1,7 @@
 package no.nav.sokos.oppdrag.fastedata.service
 
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
@@ -117,6 +118,14 @@ internal class FasteDataServiceTest :
             ventekriterier.belopNetto shouldBe 100000.00
             ventekriterier.antDagerEldreenn shouldBe null
             ventekriterier.tidligereAar shouldBe false
+        }
+
+        test("getFagomraaderForFaggruppe skal returnere listen av Fagområder som har den angitte Faggruppkoden") {
+            val result = fastedataService.getFagomraaderForFaggruppe("ARBTIL")
+            result.shouldNotBeEmpty()
+            result.size shouldBe 2
+            result shouldContain "TILLST"
+            result shouldContain "TILTPENG"
         }
 
         test("getAllVentestatuskoder skal returnere en liste av Ventestatuskode") {
