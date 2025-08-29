@@ -14,6 +14,24 @@ import no.nav.sokos.oppdrag.fastedata.domain.RedusertSkatt
 class FaggruppeRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource,
 ) {
+    fun getFagomraaderForFaggruppe(kodeFaggruppe: String): List<String> =
+        using(sessionOf(dataSource)) { session: Session ->
+            session.list(
+                queryOf(
+                    """
+                    SELECT
+                        KODE_FAGOMRAADE AS KODE_FAGOMRAADE
+                    FROM T_FAGOMRAADE
+                    WHERE KODE_FAGGRUPPE = ?
+                    ORDER BY KODE_FAGOMRAADE;
+                    """.trimIndent(),
+                    kodeFaggruppe,
+                ),
+            ) { row ->
+                row.string("KODE_FAGOMRAADE").trim()
+            }
+        }
+
     fun getFaggrupper(): List<Faggruppe> =
         using(sessionOf(dataSource)) { session: Session ->
             session.list(

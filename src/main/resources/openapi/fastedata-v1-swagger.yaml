@@ -220,6 +220,37 @@ paths:
       security:
         - Bearer: [ ]
 
+  /faggrupper/{kodeFaggruppe}/fagomraader:
+    get:
+        tags:
+            - Faggrupper
+        description: Returnerer fagområdene som faggruppen inkluderer.
+        summary: Hent fagområder for faggruppe
+        parameters:
+            - name: kodeFaggruppe
+              in: path
+              description: Faggruppens kode
+              required: true
+              schema:
+                  type: string
+                  maxLength: 8
+                  pattern: '^[a-zA-Z0-9æøåÆØÅ]{0,8}$'
+        responses:
+          200:
+            description: OK - Hvis slike fagomraader ikke finnes så returneres tom liste
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    type: string
+          500:
+            description: Annen feil
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ApiError'
+
   /faggrupper/{kodeFaggruppe}/redusertSkatt:
     get:
       tags:

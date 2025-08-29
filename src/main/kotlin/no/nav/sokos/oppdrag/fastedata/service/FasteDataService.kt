@@ -76,4 +76,9 @@ class FasteDataService(
         logger.info { "Henter kjøreplan for faggruppe $kodeFaggruppe" }
         return faggruppeRepository.getKjoreplan(kodeFaggruppe)
     }
+
+    fun getFagomraaderForFaggruppe(kodeFaggruppe: String): List<String> {
+        logger.info { "Henter fagområder for faggruppe $kodeFaggruppe" }
+        return faggruppeRepository.getFagomraaderForFaggruppe(kodeFaggruppe)
+    }
 }
