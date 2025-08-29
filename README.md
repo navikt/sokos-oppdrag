@@ -41,6 +41,9 @@ Pass på at hosts-fila inneholder følgende linjer hvis du sitter på egen pc(tr
 10.53.17.118    mqls02.preprod.local
 10.53.17.119    mqls03.preprod.local
 
+Vi gjenbruker Testcontainers. Derfor trengs en setting for at det skal kunne fungere ordentlig:
+Legg til testcontainers.reuse.enable=true i filen `~/.testcontainers.properties`. 
+
 Kjør `./setupLocalEnvironment.sh` for å sette opp prosjektet lokalt.
 
 Kjør `docker-compose up -d` for å starte opp en Valkey server lokalt.
