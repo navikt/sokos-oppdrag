@@ -53,8 +53,10 @@ class FaggruppeRepository(
                         ONLINE_BEREGNING     AS ONLINE_BEREGNING,
                         KODE_PENSJON         AS PENSJON,
                         OREAVRUND            AS OEREAVRUNDING,
-                        SAMORD_BEREGNING     AS SAMORDNET_BEREGNING
-                    FROM T_FAGGRUPPE;
+                        SAMORD_BEREGNING     AS SAMORDNET_BEREGNING,
+                        (SELECT COUNT(*) FROM T_FAGOMRAADE fo WHERE fo.KODE_FAGGRUPPE = f.KODE_FAGGRUPPE) 
+                                             AS ANTALL_FAGOMRAADER
+                    FROM T_FAGGRUPPE f;
                     """.trimIndent(),
                 ),
             ) { row ->
@@ -75,6 +77,7 @@ class FaggruppeRepository(
                     pensjon = row.stringOrNull("PENSJON")?.let { it == "J" },
                     oereavrunding = row.boolean("OEREAVRUNDING"),
                     samordnetBeregning = row.string("SAMORDNET_BEREGNING").trim(),
+                    antallFagomraader = row.int("ANTALL_FAGOMRAADER"),
                 )
             }
         }

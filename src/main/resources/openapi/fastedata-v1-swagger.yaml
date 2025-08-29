@@ -550,6 +550,7 @@ components:
         - onlineBeregning
         - oereavrunding
         - samordnetBeregning
+        - antallFagomraader
       properties:
         kodeFaggruppe:
           type: string
@@ -600,7 +601,8 @@ components:
           type: boolean
         samordnetBeregning:
           type: string
-
+        antallFagomraader:
+          type: integer
     RedusertSkatt:
       type: object
       required:

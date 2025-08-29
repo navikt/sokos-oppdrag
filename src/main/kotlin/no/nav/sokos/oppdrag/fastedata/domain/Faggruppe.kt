@@ -20,4 +20,5 @@ data class Faggruppe(
     val pensjon: Boolean?,
     val oereavrunding: Boolean,
     val samordnetBeregning: String,
+    val antallFagomraader: Int,
 )
