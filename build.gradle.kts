@@ -11,7 +11,7 @@ import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 plugins {
     kotlin("jvm") version "2.2.10"
     kotlin("plugin.serialization") version "2.2.10"
-    id("com.gradleup.shadow") version "9.0.2"
+    id("com.gradleup.shadow") version "9.1.0"
     id("com.expediagroup.graphql") version "8.8.1"
     id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
