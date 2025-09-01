@@ -1,5 +1,6 @@
 package no.nav.sokos.oppdrag.fastedata.service
 
+import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotBeEmpty
@@ -12,6 +13,7 @@ import kotliquery.using
 
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.config.transaction
+import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.listener.Db2Listener
 
@@ -54,6 +56,32 @@ internal class FasteDataServiceTest :
             fagomraade.bilagstypeFinnes shouldBe false
             fagomraade.klassekodeFinnes shouldBe false
             fagomraade.regelFinnes shouldBe true
+        }
+
+        test("hentAlleFaggrupper skal returnere en liste av Faggruppe") {
+            val result: List<Faggruppe> = fastedataService.getFaggrupper()
+            result.shouldNotBeEmpty()
+            result.size shouldBe 47
+
+            assertSoftly(result.first()) {
+                kodeFaggruppe shouldBe "BA"
+                navnFaggruppe shouldBe "Barnetrygd"
+                skatteprosent shouldBe 0
+                ventedager shouldBe 0
+                klassekodeFeil shouldBe "KL_KODE_FEIL_BA"
+                klassekodeJustering shouldBe "KL_KODE_JUST_BA"
+                destinasjon shouldBe "OB01"
+                reskontroOppdrag shouldBe "BA"
+                klassekodeMotpFeil shouldBe "TBMOTOBS"
+                klassekodeMotpTrekk shouldBe "TBTREKK"
+                klassekodeMotpInnkr shouldBe "TBMOTFB"
+                prioritet shouldBe 99
+                onlineBeregning shouldBe true
+                pensjon shouldBe false
+                oereavrunding shouldBe true
+                samordnetBeregning shouldBe "F"
+                antallFagomraader shouldBe 4
+            }
         }
 
         test("getBilagstyper skal returnere en liste av Bilagstype for valgt fagområde") {
