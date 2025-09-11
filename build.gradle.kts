@@ -2,7 +2,6 @@ import kotlinx.kover.gradle.plugin.dsl.tasks.KoverReport
 
 import com.expediagroup.graphql.plugin.gradle.config.GraphQLSerializer
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -11,11 +10,12 @@ import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 plugins {
     kotlin("jvm") version "2.2.10"
     kotlin("plugin.serialization") version "2.2.10"
-    id("com.gradleup.shadow") version "9.0.2"
     id("com.expediagroup.graphql") version "8.8.1"
     id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
     id("org.openapi.generator") version "7.14.0"
+
+    application
 }
 
 group = "no.nav.sokos"
@@ -172,6 +172,10 @@ configurations.ktlint {
     resolutionStrategy.force("ch.qos.logback:logback-classic:$logbackVersion")
 }
 
+application {
+    mainClass.set("no.nav.sokos.oppdrag.ApplicationKt")
+}
+
 sourceSets {
     main {
         java {
@@ -201,16 +205,6 @@ tasks {
         dependsOn("ktlintFormat")
         dependsOn("graphqlGenerateClient")
         dependsOn("openApiGenerate")
-    }
-
-    withType<ShadowJar>().configureEach {
-        enabled = true
-        archiveFileName.set("app.jar")
-        manifest {
-            attributes["Main-Class"] = "no.nav.sokos.oppdrag.ApplicationKt"
-            attributes["Class-Path"] = "/var/run/secrets/db2license/db2jcc_license_cisuz.jar"
-        }
-        finalizedBy(koverHtmlReport)
     }
 
     withType<KoverReport>().configureEach {
@@ -256,6 +250,8 @@ tasks {
         }
 
         reports.forEach { report -> report.required.value(false) }
+
+        finalizedBy(koverHtmlReport)
     }
 
     withType<GraphQLGenerateClientTask>().configureEach {
@@ -267,10 +263,6 @@ tasks {
 
     withType<Wrapper> {
         gradleVersion = "9.0.0"
-    }
-
-    ("jar") {
-        enabled = false
     }
 
     ("build") {
