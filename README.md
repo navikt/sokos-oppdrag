@@ -38,7 +38,7 @@ Kjør `./setupLocalEnvironment.sh` for å sette opp prosjektet lokalt.
 
 Kjør `docker-compose up -d` for å starte opp en Valkey server lokalt.
 
-Applikasjonen trenger en db2 lisens fil for å koble til DB2 lokalt. Kontakt en utvikler fra Team MOBY for å få denne filen.
+Applikasjonen trenger en db2 lisens fil for å koble til DB2 lokalt. Kontakt en utvikler fra Team Motta og Beregne for å få denne filen.
 
 # 3. Programvarearkitektur
 
