@@ -30,7 +30,7 @@ Applikasjon er en proxy mellom OppdragZ og Utbetalingsportalen (intern arbeidsfl
 
 ### Bygge prosjekt
 
-`./gradlew build shadowJar`
+`./gradlew build installDist`
 
 ### Lokal utvikling
 
