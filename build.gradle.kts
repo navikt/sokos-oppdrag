@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    kotlin("jvm") version "2.2.10"
-    kotlin("plugin.serialization") version "2.2.10"
-    id("com.gradleup.shadow") version "9.0.2"
+    kotlin("jvm") version "2.2.20"
+    kotlin("plugin.serialization") version "2.2.20"
+    id("com.gradleup.shadow") version "9.1.0"
     id("com.expediagroup.graphql") version "8.8.1"
     id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
-    id("org.openapi.generator") version "7.14.0"
+    id("org.openapi.generator") version "7.15.0"
 }
 
 group = "no.nav.sokos"
@@ -42,7 +42,7 @@ repositories {
 }
 
 // Ktor
-val ktorVersion = "3.2.3"
+val ktorVersion = "3.3.0"
 
 // Serialization
 val kotlinxSerializationVersion = "1.9.0"
@@ -50,7 +50,7 @@ val kotlinxDatetimeVersion = "0.7.1-0.6.x-compat"
 val kotlinxCoroutinesVersion = "1.10.2"
 
 // Monitorering
-val micrometerVersion = "1.15.3"
+val micrometerVersion = "1.15.4"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
@@ -74,19 +74,19 @@ val graphqlClientVersion = "8.8.1"
 val caffeineVersion = "3.2.2"
 
 // Valkey
-val valkeyVersion = "6.8.0.RELEASE"
+val valkeyVersion = "6.8.1.RELEASE"
 
 // TSS
 val tjenestespesifikasjonVersion = "1.0_20250715173022_23638f4"
 val glassfishJaxbVersion = "4.0.5"
 
 // IBM MQ
-val ibmMqVersion = "9.4.3.0"
+val ibmMqVersion = "9.4.3.1"
 
 // Test
-val kotestVersion = "6.0.1"
+val kotestVersion = "6.0.3"
 val wiremockVersion = "3.13.1"
-val mockOAuth2ServerVersion = "2.2.1"
+val mockOAuth2ServerVersion = "2.3.0"
 val mockkVersion = "1.14.5"
 val swaggerRequestValidatorVersion = "2.45.1"
 val testcontainersVersion = "1.21.3"
