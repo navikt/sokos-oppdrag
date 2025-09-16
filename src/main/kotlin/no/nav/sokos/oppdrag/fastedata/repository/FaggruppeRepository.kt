@@ -22,10 +22,10 @@ class FaggruppeRepository(
                     SELECT
                         KODE_FAGOMRAADE AS KODE_FAGOMRAADE
                     FROM T_FAGOMRAADE
-                    WHERE KODE_FAGGRUPPE = ?
+                    WHERE KODE_FAGGRUPPE = :KODE_FAGGRUPPE
                     ORDER BY KODE_FAGOMRAADE;
                     """.trimIndent(),
-                    kodeFaggruppe,
+                    mapOf("KODE_FAGGRUPPE" to kodeFaggruppe),
                 ),
             ) { row ->
                 row.string("KODE_FAGOMRAADE").trim()
