@@ -34,11 +34,37 @@ Applikasjon er en proxy mellom OppdragZ og Utbetalingsportalen (intern arbeidsfl
 
 ### Lokal utvikling
 
+Pass på at hosts-fila inneholder følgende linjer hvis du sitter på egen pc(trengs ikke i VDI):
+
+10.53.17.144    mqlclient02.preprod.local
+10.53.17.117    mqls01.preprod.local
+10.53.17.118    mqls02.preprod.local
+10.53.17.119    mqls03.preprod.local
+
+Vi gjenbruker Testcontainers. Derfor trengs en setting for at det skal kunne fungere ordentlig:
+Legg til testcontainers.reuse.enable=true i filen `~/.testcontainers.properties`. 
+
 Kjør `./setupLocalEnvironment.sh` for å sette opp prosjektet lokalt.
 
 Kjør `docker-compose up -d` for å starte opp en Valkey server lokalt.
 
-Applikasjonen trenger en db2 lisens fil for å koble til DB2 lokalt. Kontakt en utvikler fra Team MOBY for å få denne filen.
+Applikasjonen trenger en db2 lisens fil for å koble til DB2 lokalt. Kontakt en utvikler fra Team Motta og beregne for å få denne filen.
+
+### Database
+
+For å koble til databasen bør man også ha et innslag i hosts-fila(frivillig, man kan benytte ip-adressen om man foretrekker det):
+
+155.55.1.82   ztest.test.local
+
+Database-url er jdbc:db2://ztest.test.local:5025/QDB2 og skjema for Q0 er OS231Q0
+
+Man må ha samme lisensfil som man trenger for å starte applikasjonen bundlet med i driveren 
+
+Innlogging er trebokstavs-ident(som man finner om man søker seg selv opp på Navet/Sharepoint) og samme passord som man trenger for å logge inn i stormaskin. 
+Hvis det står at passordet og brukernavnet ikke er gyldig, så kan man logge inn i NAV Webapplikasjoner(https://felgen.ansatt.nav.no), 
+gå inn i Applikasjonsportalen og starte "Datasentral utvidet". Får man logget inn der, er brukernavnet og passordet gyldig. 
+
+Passordet må byttes ved jevne mellomrom, og man får et varsel om det i Datasentral utvidet, og mulighet til å bytte til nytt passord der.
 
 # 3. Programvarearkitektur
 

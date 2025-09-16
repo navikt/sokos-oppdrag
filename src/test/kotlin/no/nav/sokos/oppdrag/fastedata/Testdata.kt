@@ -154,6 +154,7 @@ val faggrupper =
             pensjon = false,
             oereavrunding = true,
             samordnetBeregning = "F",
+            antallFagomraader = 4,
         ),
         Faggruppe(
             kodeFaggruppe = "BIDRINKR",
@@ -172,5 +173,6 @@ val faggrupper =
             pensjon = false,
             oereavrunding = true,
             samordnetBeregning = "O",
+            antallFagomraader = 1,
         ),
     )
