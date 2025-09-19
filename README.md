@@ -30,16 +30,18 @@ Applikasjon er en proxy mellom OppdragZ og Utbetalingsportalen (intern arbeidsfl
 
 ### Bygge prosjekt
 
-`./gradlew build shadowJar`
+`./gradlew build installDist`
 
 ### Lokal utvikling
 
 Pass på at hosts-fila inneholder følgende linjer hvis du sitter på egen pc(trengs ikke i VDI):
 
+```
 10.53.17.144    mqlclient02.preprod.local
 10.53.17.117    mqls01.preprod.local
 10.53.17.118    mqls02.preprod.local
 10.53.17.119    mqls03.preprod.local
+```
 
 Vi gjenbruker Testcontainers. Derfor trengs en setting for at det skal kunne fungere ordentlig:
 Legg til testcontainers.reuse.enable=true i filen `~/.testcontainers.properties`. 
