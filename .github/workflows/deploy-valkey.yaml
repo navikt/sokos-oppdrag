@@ -1,9 +1,22 @@
 name: Deploy Valkey
+
 on:
   push:
-    paths:
-      - '.nais/valkey/**'
-      - '.github/workflows/deploy-valkey.yaml'
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'LICENCE'
+      - 'CODEOWNERS'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'setupLocalEnvironment.sh'
+      - 'dokumentasjon/**'
+      - '.github/workflows/build-pr.yaml'
+      - '.github/workflows/deploy.yaml'
+      - '.github/workflows/manual-deploy.yaml'
+      - '.github/workflows/security.yaml'
+      - '.github/dependabot.yaml'
 
 permissions:
   contents: read
