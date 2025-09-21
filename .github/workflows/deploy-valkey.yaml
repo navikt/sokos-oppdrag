@@ -49,7 +49,7 @@ jobs:
       image: ${{ needs.build-push-image.outputs.image }}
 
   deploy-dev-qx:
-    needs: [ deploy-dev-q1 ]
+    needs: [ build-push-image, deploy-dev-q1 ]
     name: Deploy valkey to dev-fss-qx
     uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
     with:
@@ -58,7 +58,7 @@ jobs:
       image: ${{ needs.build-push-image.outputs.image }}
 
   deploy-prod:
-    needs: [ deploy-dev-q1, deploy-dev-qx ]
+    needs: [ build-push-image, deploy-dev-q1, deploy-dev-qx ]
     name: Deploy valkey to prod-fss
     uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
     with:
