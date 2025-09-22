@@ -12,7 +12,7 @@ plugins {
     kotlin("plugin.serialization") version "2.2.20"
     id("com.expediagroup.graphql") version "8.8.1"
     id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
-    id("org.jetbrains.kotlinx.kover") version "0.9.1"
+    id("org.jetbrains.kotlinx.kover") version "0.9.2"
     id("org.openapi.generator") version "7.15.0"
 
     application
@@ -86,7 +86,7 @@ val ibmMqVersion = "9.4.3.1"
 // Test
 val kotestVersion = "6.0.3"
 val wiremockVersion = "3.13.1"
-val mockOAuth2ServerVersion = "2.3.0"
+val mockOAuth2ServerVersion = "3.0.0"
 val mockkVersion = "1.14.5"
 val swaggerRequestValidatorVersion = "2.45.1"
 val testcontainersVersion = "1.21.3"
