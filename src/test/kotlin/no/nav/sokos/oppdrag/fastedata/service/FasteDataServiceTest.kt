@@ -74,7 +74,7 @@ internal class FasteDataServiceTest :
 
         test("getKlassekoder skal returnere en liste av Klassekode for valgt fagområde") {
             Db2Listener.dataSource.transaction { session ->
-                session.update(queryOf("database/fastedata/getKlassekoder.sql".readFromResource())) shouldBeGreaterThan 0
+                session.update(queryOf("database/fastedata/getKlassekode.sql".readFromResource())) shouldBeGreaterThan 0
             }
 
             val result = fastedataService.getKlassekoder(KODE_FAGOMRAADE_MEFOGNY)
@@ -169,5 +169,28 @@ internal class FasteDataServiceTest :
             ventestatuskode.settesManuelt shouldBe "J"
             ventestatuskode.kodeArvesTil shouldBe "ADDR"
             ventestatuskode.kanManueltEndresTil shouldBe "AVVE"
+        }
+
+        test("getAllKlassekoder skal returnere en liste av Klassekoder") {
+            Db2Listener.dataSource.transaction { session ->
+                session.update(queryOf("database/fastedata/getKlassekoder.sql".readFromResource())) shouldBeGreaterThan 0
+            }
+
+            val result = fastedataService.getAllKlassekoder()
+            result.shouldNotBeEmpty()
+            result.size shouldBe 2
+
+            val klassekoder = result.first()
+            klassekoder.kodeKlasse shouldBe "0301"
+            klassekoder.kodeFagomraade shouldBe ""
+            klassekoder.artID shouldBe 50
+            klassekoder.datoFom shouldBe "2003-01-01"
+            klassekoder.datoTom shouldBe "2017-12-31"
+            klassekoder.hovedkontoNr shouldBe "051"
+            klassekoder.underkontoNr shouldBe "0301"
+            klassekoder.beskrKlasse shouldBe "Skattetrekk"
+            klassekoder.beskrArt shouldBe "Trekk"
+            klassekoder.hovedkontoNavn shouldBe "Skatt"
+            klassekoder.underkontoNavn shouldBe "Påleggstrekk skatt"
         }
     })

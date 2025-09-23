@@ -75,21 +75,29 @@ val alleKlassekoder =
     listOf(
         Klassekoder(
             kodeKlasse = "TPTPTILTAK",
-            kodeFagomraade = "MTPARENA",
+            kodeFagomraade = "",
             artID = 54,
             datoFom = "2022-10-01",
             datoTom = "9999-12-31",
             hovedkontoNr = "776",
             underkontoNr = "1010",
+            beskrKlasse = "Tiltakspenger tiltak",
+            beskrArt = "Overføringer",
+            hovedkontoNavn = "Arbeidskonto innbetaling",
+            underkontoNavn = "Bankkonto 7694.05.12146",
         ),
         Klassekoder(
             kodeKlasse = "0301",
-            kodeFagomraade = "MSKATT",
+            kodeFagomraade = "",
             artID = 50,
             datoFom = "2003-01-01",
             datoTom = "2017-12-31",
             hovedkontoNr = "051",
             underkontoNr = "0301",
+            beskrKlasse = "Skattetrekk",
+            beskrArt = "Trekk",
+            hovedkontoNavn = "Skatt",
+            underkontoNavn = "Påleggstrekk skatt",
         ),
     )
 
