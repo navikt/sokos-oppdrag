@@ -2,20 +2,20 @@ import kotlinx.kover.gradle.plugin.dsl.tasks.KoverReport
 
 import com.expediagroup.graphql.plugin.gradle.config.GraphQLSerializer
 import com.expediagroup.graphql.plugin.gradle.tasks.GraphQLGenerateClientTask
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    kotlin("jvm") version "2.2.10"
-    kotlin("plugin.serialization") version "2.2.10"
-    id("com.gradleup.shadow") version "9.0.2"
+    kotlin("jvm") version "2.2.20"
+    kotlin("plugin.serialization") version "2.2.20"
     id("com.expediagroup.graphql") version "8.8.1"
     id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.1"
-    id("org.openapi.generator") version "7.14.0"
+    id("org.openapi.generator") version "7.15.0"
+
+    application
 }
 
 group = "no.nav.sokos"
@@ -42,7 +42,7 @@ repositories {
 }
 
 // Ktor
-val ktorVersion = "3.2.3"
+val ktorVersion = "3.3.0"
 
 // Serialization
 val kotlinxSerializationVersion = "1.9.0"
@@ -50,7 +50,7 @@ val kotlinxDatetimeVersion = "0.7.1-0.6.x-compat"
 val kotlinxCoroutinesVersion = "1.10.2"
 
 // Monitorering
-val micrometerVersion = "1.15.3"
+val micrometerVersion = "1.15.4"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
@@ -74,19 +74,19 @@ val graphqlClientVersion = "8.8.1"
 val caffeineVersion = "3.2.2"
 
 // Valkey
-val valkeyVersion = "6.8.0.RELEASE"
+val valkeyVersion = "6.8.1.RELEASE"
 
 // TSS
 val tjenestespesifikasjonVersion = "1.0_20250715173022_23638f4"
 val glassfishJaxbVersion = "4.0.5"
 
 // IBM MQ
-val ibmMqVersion = "9.4.3.0"
+val ibmMqVersion = "9.4.3.1"
 
 // Test
-val kotestVersion = "6.0.1"
+val kotestVersion = "6.0.3"
 val wiremockVersion = "3.13.1"
-val mockOAuth2ServerVersion = "2.2.1"
+val mockOAuth2ServerVersion = "2.3.0"
 val mockkVersion = "1.14.5"
 val swaggerRequestValidatorVersion = "2.45.1"
 val testcontainersVersion = "1.21.3"
@@ -172,6 +172,10 @@ configurations.ktlint {
     resolutionStrategy.force("ch.qos.logback:logback-classic:$logbackVersion")
 }
 
+application {
+    mainClass.set("no.nav.sokos.oppdrag.ApplicationKt")
+}
+
 sourceSets {
     main {
         java {
@@ -201,16 +205,6 @@ tasks {
         dependsOn("ktlintFormat")
         dependsOn("graphqlGenerateClient")
         dependsOn("openApiGenerate")
-    }
-
-    withType<ShadowJar>().configureEach {
-        enabled = true
-        archiveFileName.set("app.jar")
-        manifest {
-            attributes["Main-Class"] = "no.nav.sokos.oppdrag.ApplicationKt"
-            attributes["Class-Path"] = "/var/run/secrets/db2license/db2jcc_license_cisuz.jar"
-        }
-        finalizedBy(koverHtmlReport)
     }
 
     withType<KoverReport>().configureEach {
@@ -256,6 +250,8 @@ tasks {
         }
 
         reports.forEach { report -> report.required.value(false) }
+
+        finalizedBy(koverHtmlReport)
     }
 
     withType<GraphQLGenerateClientTask>().configureEach {
@@ -266,11 +262,7 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "9.0.0"
-    }
-
-    ("jar") {
-        enabled = false
+        gradleVersion = "9.1.0"
     }
 
     ("build") {

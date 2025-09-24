@@ -1,9 +1,22 @@
-name: Build and deploy valkey
+name: Deploy Valkey
+
 on:
   push:
-    paths:
-      - '.nais/valkey/**'
-      - '.github/workflows/deploy-valkey.yaml'
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'LICENCE'
+      - 'CODEOWNERS'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'setupLocalEnvironment.sh'
+      - 'dokumentasjon/**'
+      - '.github/workflows/build-pr.yaml'
+      - '.github/workflows/deploy.yaml'
+      - '.github/workflows/manual-deploy.yaml'
+      - '.github/workflows/security.yaml'
+      - '.github/dependabot.yaml'
 
 permissions:
   contents: read
@@ -17,18 +30,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build valkey-image and push to GAR
+      - name: Build Valkey-image and push to GAR
         id: docker-build-push
         uses: nais/docker-build-push@v0
         with:
           team: okonomi
           dockerfile: .nais/valkey/Dockerfile
-          tag: ${{ inputs.image-tag }}
     outputs:
       image: ${{ steps.docker-build-push.outputs.image }}
 
-  deploy-dev:
-    needs: build-push-image
+  deploy-dev-q1:
+    needs: [ build-push-image ]
     name: Deploy valkey to dev-fss
     uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
     with:
@@ -37,7 +49,7 @@ jobs:
       image: ${{ needs.build-push-image.outputs.image }}
 
   deploy-dev-qx:
-    needs: [ build-push-image, deploy-dev ]
+    needs: [ build-push-image, deploy-dev-q1 ]
     name: Deploy valkey to dev-fss-qx
     uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
     with:
@@ -46,7 +58,7 @@ jobs:
       image: ${{ needs.build-push-image.outputs.image }}
 
   deploy-prod:
-    needs: [ build-push-image, deploy-dev, deploy-dev-qx ]
+    needs: [ build-push-image, deploy-dev-q1, deploy-dev-qx ]
     name: Deploy valkey to prod-fss
     uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
     with:

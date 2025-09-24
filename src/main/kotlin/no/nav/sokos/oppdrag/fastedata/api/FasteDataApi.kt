@@ -62,6 +62,13 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
                 fasteDataService.getFaggrupper(),
             )
         }
+        get("{kodeFaggruppe}/fagomraader") {
+            call.respond(
+                fasteDataService.getFagomraaderForFaggruppe(
+                    call.parameters["kodeFaggruppe"].orEmpty(),
+                ),
+            )
+        }
         get("{kodeFaggruppe}/redusertSkatt") {
             call.respond(
                 fasteDataService.getRedusertSkatt(

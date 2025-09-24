@@ -14,6 +14,24 @@ import no.nav.sokos.oppdrag.fastedata.domain.RedusertSkatt
 class FaggruppeRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource,
 ) {
+    fun getFagomraaderForFaggruppe(kodeFaggruppe: String): List<String> =
+        using(sessionOf(dataSource)) { session: Session ->
+            session.list(
+                queryOf(
+                    """
+                    SELECT
+                        KODE_FAGOMRAADE AS KODE_FAGOMRAADE
+                    FROM T_FAGOMRAADE
+                    WHERE KODE_FAGGRUPPE = :KODE_FAGGRUPPE
+                    ORDER BY KODE_FAGOMRAADE;
+                    """.trimIndent(),
+                    mapOf("KODE_FAGGRUPPE" to kodeFaggruppe),
+                ),
+            ) { row ->
+                row.string("KODE_FAGOMRAADE").trim()
+            }
+        }
+
     fun getFaggrupper(): List<Faggruppe> =
         using(sessionOf(dataSource)) { session: Session ->
             session.list(
@@ -35,8 +53,10 @@ class FaggruppeRepository(
                         ONLINE_BEREGNING     AS ONLINE_BEREGNING,
                         KODE_PENSJON         AS PENSJON,
                         OREAVRUND            AS OEREAVRUNDING,
-                        SAMORD_BEREGNING     AS SAMORDNET_BEREGNING
-                    FROM T_FAGGRUPPE;
+                        SAMORD_BEREGNING     AS SAMORDNET_BEREGNING,
+                        (SELECT COUNT(*) FROM T_FAGOMRAADE fo WHERE fo.KODE_FAGGRUPPE = f.KODE_FAGGRUPPE) 
+                                             AS ANTALL_FAGOMRAADER
+                    FROM T_FAGGRUPPE f;
                     """.trimIndent(),
                 ),
             ) { row ->
@@ -45,18 +65,19 @@ class FaggruppeRepository(
                     navnFaggruppe = row.string("NAVN_FAGGRUPPE").trim(),
                     skatteprosent = row.int("SKATTEPROSENT"),
                     ventedager = row.int("VENTEDAGER"),
-                    klassekodeFeil = row.stringOrNull("KLASSEKODE_FEIL")?.trim(),
-                    klassekodeJustering = row.stringOrNull("KLASSEKODE_JUSTERING")?.trim(),
-                    destinasjon = row.stringOrNull("DESTINASJON")?.trim(),
-                    reskontroOppdrag = row.stringOrNull("RESKONTRO_OPPDRAG")?.trim(),
-                    klassekodeMotpFeil = row.stringOrNull("KLASSEKODE_MOTP_FEIL")?.trim(),
-                    klassekodeMotpTrekk = row.stringOrNull("KLASSEKODE_MOTP_TREKK")?.trim(),
-                    klassekodeMotpInnkr = row.stringOrNull("KLASSEKODE_MOTP_INNKR")?.trim(),
+                    klassekodeFeil = row.string("KLASSEKODE_FEIL").trim(),
+                    klassekodeJustering = row.string("KLASSEKODE_JUSTERING").trim(),
+                    destinasjon = row.string("DESTINASJON").trim(),
+                    reskontroOppdrag = row.string("RESKONTRO_OPPDRAG").trim(),
+                    klassekodeMotpFeil = row.string("KLASSEKODE_MOTP_FEIL").trim(),
+                    klassekodeMotpTrekk = row.string("KLASSEKODE_MOTP_TREKK").trim(),
+                    klassekodeMotpInnkr = row.string("KLASSEKODE_MOTP_INNKR").trim(),
                     prioritet = row.int("PRIORITET"),
-                    onlineBeregning = row.boolean("ONLINE_BEREGNING"),
-                    pensjon = row.stringOrNull("PENSJON")?.let { it == "J" },
-                    oereavrunding = row.boolean("OEREAVRUNDING"),
+                    onlineBeregning = row.string("ONLINE_BEREGNING").let { it == "J" },
+                    pensjon = row.string("PENSJON").let { it == "J" },
+                    oereavrunding = row.string("OEREAVRUNDING").let { it == "J" },
                     samordnetBeregning = row.string("SAMORDNET_BEREGNING").trim(),
+                    antallFagomraader = row.int("ANTALL_FAGOMRAADER"),
                 )
             }
         }
