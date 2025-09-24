@@ -11,6 +11,7 @@ import kotliquery.using
 
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.config.transaction
+import no.nav.sokos.oppdrag.fastedata.alleKlassekoderMock
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.listener.Db2Listener
 
@@ -176,21 +177,23 @@ internal class FasteDataServiceTest :
                 session.update(queryOf("database/fastedata/getKlassekoder.sql".readFromResource())) shouldBeGreaterThan 0
             }
 
+            every { Db2Listener.klassekoderRepository.getAllKlassekoder() } returns alleKlassekoderMock
+
             val result = fastedataService.getAllKlassekoder()
             result.shouldNotBeEmpty()
-            result.size shouldBe 2
+            result.size shouldBe 4
 
             val klassekoder = result.first()
-            klassekoder.kodeKlasse shouldBe "0301"
-            klassekoder.kodeFagomraade shouldBe ""
-            klassekoder.artID shouldBe 50
-            klassekoder.datoFom shouldBe "2003-01-01"
-            klassekoder.datoTom shouldBe "2017-12-31"
-            klassekoder.hovedkontoNr shouldBe "051"
-            klassekoder.underkontoNr shouldBe "0301"
-            klassekoder.beskrKlasse shouldBe "Skattetrekk"
-            klassekoder.beskrArt shouldBe "Trekk"
-            klassekoder.hovedkontoNavn shouldBe "Skatt"
-            klassekoder.underkontoNavn shouldBe "Påleggstrekk skatt"
+            klassekoder.kodeKlasse shouldBe "AAPAAPFAF"
+            klassekoder.kodeFagomraade shouldBe "MTBBTARE,TBBTARE"
+            klassekoder.artID shouldBe 51
+            klassekoder.datoFom shouldBe "2022-11-01"
+            klassekoder.datoTom shouldBe "9999-12-31"
+            klassekoder.hovedkontoNr shouldBe "341"
+            klassekoder.underkontoNr shouldBe "2000"
+            klassekoder.beskrKlasse shouldBe "Arb.avkl.penger ferdig attført"
+            klassekoder.beskrArt shouldBe "Skatte-, trekk- og oppgavepliktig m/ompost"
+            klassekoder.hovedkontoNavn shouldBe "Arbeidsavklaringspenger"
+            klassekoder.underkontoNavn shouldBe "AAP"
         }
     })
