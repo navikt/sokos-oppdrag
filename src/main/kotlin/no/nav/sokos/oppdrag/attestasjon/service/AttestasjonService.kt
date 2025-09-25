@@ -13,7 +13,6 @@ import no.nav.sokos.oppdrag.attestasjon.domain.toDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
-import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.repository.AttestasjonRepository
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import no.nav.sokos.oppdrag.common.ENHETSNUMMER_NOP
@@ -70,7 +69,7 @@ class AttestasjonService(
 
         val identer = oppdragsListe.map { it.oppdragGjelderId }.distinct()
         if (identer.size > 1000) {
-            throw AttestasjonException("Oppgitte søkekriterier gir for stort treff. Vennligst avgrens søket.")
+            return WrappedReponseWithErrorDTO(errorMessage = "Oppgitte søkekriterier gir for stort treff. Vennligst avgrens søket.")
         }
 
         val statusFilterOppdragList =
