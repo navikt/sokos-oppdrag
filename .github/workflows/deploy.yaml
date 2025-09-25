@@ -50,7 +50,7 @@ jobs:
 
   deploy-dev-q1:
     needs: [ assemble-build-push-image-dev ]
-    name: Deploy to dev-fss
+    name: Deploy to dev-fss-q1
     uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
     with:
       cluster: dev-fss
@@ -59,7 +59,7 @@ jobs:
 
   deploy-dev-qx:
     needs: [ assemble-build-push-image-dev ]
-    name: Deploy to dev-fss
+    name: Deploy to dev-fss-qx
     uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
     with:
       cluster: dev-fss
