@@ -41,7 +41,7 @@ jobs:
 
   deploy-dev-q1:
     needs: [ build-push-image ]
-    name: Deploy valkey to dev-fss
+    name: Deploy valkey to dev-fss-q1
     uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
     with:
       cluster: dev-fss
