@@ -2,7 +2,6 @@ package no.nav.sokos.oppdrag.attestasjon.service
 
 import kotlinx.serialization.json.Json
 
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainExactly
@@ -27,7 +26,6 @@ import no.nav.sokos.oppdrag.attestasjon.api.model.ZosResponse
 import no.nav.sokos.oppdrag.attestasjon.domain.Oppdrag
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragsdetaljerDTO
 import no.nav.sokos.oppdrag.attestasjon.dto.OppdragslinjeDTO
-import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSConnectService
 import no.nav.sokos.oppdrag.common.ENHETSNUMMER_NOP
 import no.nav.sokos.oppdrag.common.ENHETSNUMMER_NOS
@@ -280,21 +278,19 @@ internal class AttestasjonServiceTest :
             coEvery { skjermingService.getSkjermingForIdentListe(any(), any()) } throws
                 AssertionError("getSkjermingForIdentListe should not be called for more than 1000 idents")
 
-            val exception =
-                shouldThrow<AttestasjonException> {
-                    attestasjonService.getOppdrag(
-                        OppdragsRequest(
-                            gjelderId = null,
-                            fagSystemId = "2960",
-                            kodeFagGruppe = null,
-                            kodeFagOmraade = "MSRBAL",
-                            attestertStatus = ALLE,
-                        ),
-                        navIdent,
-                    )
-                }
+            val response =
+                attestasjonService.getOppdrag(
+                    OppdragsRequest(
+                        gjelderId = null,
+                        fagSystemId = "2960",
+                        kodeFagGruppe = null,
+                        kodeFagOmraade = "MSRBAL",
+                        attestertStatus = ALLE,
+                    ),
+                    navIdent,
+                )
 
-            exception.message shouldBe "Oppgitte søkekriterier gir for stort treff. Vennligst avgrens søket."
+            response.errorMessage shouldBe "Oppgitte søkekriterier gir for stort treff. Vennligst avgrens søket."
         }
 
         test("getOppdragsdetaljer returnerer tom liste for et gitt oppdrag som ikke har attestasjonslinjer") {
