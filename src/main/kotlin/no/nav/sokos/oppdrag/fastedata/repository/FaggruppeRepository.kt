@@ -54,8 +54,12 @@ class FaggruppeRepository(
                         KODE_PENSJON         AS PENSJON,
                         OREAVRUND            AS OEREAVRUNDING,
                         SAMORD_BEREGNING     AS SAMORDNET_BEREGNING,
-                        (SELECT COUNT(*) FROM T_FAGOMRAADE fo WHERE fo.KODE_FAGGRUPPE = f.KODE_FAGGRUPPE) 
-                                             AS ANTALL_FAGOMRAADER
+                        (SELECT COUNT(*) FROM T_FAGOMRAADE fo WHERE fo.KODE_FAGGRUPPE = f.KODE_FAGGRUPPE)
+                            AS ANTALL_FAGOMRAADER,
+                        (SELECT COUNT(*) FROM T_SKATT_REDUSERT sr WHERE sr.KODE_FAGGRUPPE = f.KODE_FAGGRUPPE)
+                            AS ANTALL_REDUSERTSKATT,
+                        (SELECT COUNT(*) FROM T_KJOREPLAN kp WHERE kp.KODE_FAGGRUPPE = f.KODE_FAGGRUPPE)
+                            AS ANTALL_KJOREPLANER
                     FROM T_FAGGRUPPE f;
                     """.trimIndent(),
                 ),
@@ -78,6 +82,8 @@ class FaggruppeRepository(
                     oereavrunding = row.string("OEREAVRUNDING").let { it == "J" },
                     samordnetBeregning = row.string("SAMORDNET_BEREGNING").trim(),
                     antallFagomraader = row.int("ANTALL_FAGOMRAADER"),
+                    antallRedusertSkatt = row.int("ANTALL_REDUSERTSKATT"),
+                    antallKjoreplaner = row.int("ANTALL_KJOREPLANER"),
                 )
             }
         }

@@ -605,6 +605,11 @@ components:
           type: string
         antallFagomraader:
           type: integer
+        antallRedusertSkatt:
+          type: integer
+        antallKjoreplaner:
+          type: integer
+
     RedusertSkatt:
       type: object
       required:
