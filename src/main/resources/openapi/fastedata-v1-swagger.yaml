@@ -445,11 +445,14 @@ components:
         - datoTom
         - hovedkontoNr
         - underkontoNr
+        - beskrKlasse
+        - beskrArt
       properties:
         kodeKlasse:
           type: string
         kodeFagomraade:
           type: string
+          nullable: true
         artID:
           type: integer
         datoFom:
@@ -460,6 +463,18 @@ components:
           type: string
         underkontoNr:
           type: string
+          nullable: true
+        beskrKlasse:
+            type: string
+        beskrArt:
+            type: string
+            nullable: true
+        hovedkontoNavn:
+          type: string
+          nullable: true
+        underkontoNavn:
+          type: string
+          nullable: true
 
     Ventekriterier:
       type: object
