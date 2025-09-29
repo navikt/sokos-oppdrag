@@ -473,7 +473,6 @@ CREATE TABLE T_FAGO_BILAGSTYPE
 );
 
 DROP TABLE IF EXISTS T_KORR_AARSAK;
-
 CREATE TABLE T_KORR_AARSAK
 (
     KODE_AARSAK_KORR CHAR(4)                             NOT NULL,
@@ -791,4 +790,34 @@ create table T_VENT_STATUSREGEL
     KODE_VENTESTATUS_U CHAR(4)                             not null,
     BRUKERID           CHAR(8)      default 'CURRENT USER' not null,
     TIDSPKT_ENDRET     TIMESTAMP(6) default CURRENT TIMESTAMP not null
+);
+
+DROP TABLE IF EXISTS T_SKATT_REDUSERT;
+CREATE TABLE T_SKATT_REDUSERT
+(
+    KODE_FAGGRUPPE       CHAR(8)                                 not null,
+    SKATTETREKKTYPE      CHAR(4)                                 not null,
+    DATO_FOM             DATE                                    not null,
+    DATO_TOM             DATE,
+    PROSENT_SATS         SMALLINT                                not null,
+    BRUKERID             CHAR(8)       default 'CURRENT USER'    not null,
+    TIDSPKT_REG          TIMESTAMP(6)  default CURRENT TIMESTAMP not null,
+    ANTALL_MND_FOR_TREKK DECIMAL(5, 2) default 0                 not null
+);
+
+DROP TABLE IF EXISTS T_KJOREPLAN;
+CREATE TABLE T_KJOREPLAN
+(
+    KODE_FAGGRUPPE  CHAR(8)                                not null,
+    DATO_KJORES     DATE                                   not null,
+    ENHET_FOM       CHAR(13)                               not null,
+    ENHET_TOM       CHAR(13)                               not null,
+    STATUS          CHAR(4)                                not null,
+    FREKVENS        CHAR(4)                                not null,
+    DATO_FORFALL    DATE,
+    DATO_BEREGN_FOM DATE                                   not null,
+    DATO_BEREGN_TOM DATE                                   not null,
+    BRUKERID        CHAR(8)      default 'CURRENT USER'    not null,
+    TIDSPKT_REG     TIMESTAMP(6) default CURRENT TIMESTAMP not null,
+    DATO_OVERFORES  DATE
 );
