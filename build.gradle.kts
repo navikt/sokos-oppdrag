@@ -13,7 +13,7 @@ plugins {
     id("com.expediagroup.graphql") version "8.8.1"
     id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.2"
-    id("org.openapi.generator") version "7.15.0"
+    id("org.openapi.generator") version "7.16.0"
 
     application
 }
@@ -77,8 +77,8 @@ val caffeineVersion = "3.2.2"
 val valkeyVersion = "6.8.1.RELEASE"
 
 // TSS
-val tjenestespesifikasjonVersion = "1.0_20250715173022_23638f4"
-val glassfishJaxbVersion = "4.0.5"
+val tjenestespesifikasjonVersion = "1.0_20250925121216_22d0e01"
+val glassfishJaxbVersion = "4.0.6"
 
 // IBM MQ
 val ibmMqVersion = "9.4.3.1"
@@ -88,9 +88,9 @@ val kotestVersion = "6.0.3"
 val wiremockVersion = "3.13.1"
 val mockOAuth2ServerVersion = "3.0.0"
 val mockkVersion = "1.14.5"
-val swaggerRequestValidatorVersion = "2.45.1"
+val swaggerRequestValidatorVersion = "2.46.0"
 val testcontainersVersion = "1.21.3"
-val h2Version = "2.3.232"
+val h2Version = "2.4.240"
 val activemqVersion = "2.42.0"
 
 dependencies {
