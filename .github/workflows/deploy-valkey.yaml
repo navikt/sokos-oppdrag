@@ -15,7 +15,7 @@ on:
       - '.github/workflows/build-pr.yaml'
       - '.github/workflows/deploy.yaml'
       - '.github/workflows/manual-deploy.yaml'
-      - '.github/workflows/security.yaml'
+      - 'codeql-trivy-scan.yaml'
       - '.github/dependabot.yaml'
 
 permissions:
@@ -42,7 +42,7 @@ jobs:
   deploy-dev-q1:
     needs: [ build-push-image ]
     name: Deploy valkey to dev-fss-q1
-    uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
+    uses: navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@main
     with:
       cluster: dev-fss
       resource: .nais/valkey/valkey-q1.yaml
@@ -51,7 +51,7 @@ jobs:
   deploy-dev-qx:
     needs: [ build-push-image, deploy-dev-q1 ]
     name: Deploy valkey to dev-fss-qx
-    uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
+    uses: navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@main
     with:
       cluster: dev-fss
       resource: .nais/valkey/valkey-qx.yaml
@@ -60,7 +60,7 @@ jobs:
   deploy-prod:
     needs: [ build-push-image, deploy-dev-q1, deploy-dev-qx ]
     name: Deploy valkey to prod-fss
-    uses: navikt/mob-gha-workflows/.github/workflows/nais-app-deploy.yaml@main
+    uses: navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@main
     with:
       cluster: prod-fss
       resource: .nais/valkey/valkey-prod.yaml
