@@ -13,6 +13,7 @@ import kotliquery.using
 
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.config.transaction
+import no.nav.sokos.oppdrag.fastedata.alleKlassekoderMock
 import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.listener.Db2Listener
@@ -103,7 +104,7 @@ internal class FasteDataServiceTest :
 
         test("getKlassekoder skal returnere en liste av Klassekode for valgt fagområde") {
             Db2Listener.dataSource.transaction { session ->
-                session.update(queryOf("database/fastedata/getKlassekoder.sql".readFromResource())) shouldBeGreaterThan 0
+                session.update(queryOf("database/fastedata/getKlassekode.sql".readFromResource())) shouldBeGreaterThan 0
             }
 
             val result = fastedataService.getKlassekoder(KODE_FAGOMRAADE_MEFOGNY)
@@ -206,5 +207,30 @@ internal class FasteDataServiceTest :
             ventestatuskode.settesManuelt shouldBe "J"
             ventestatuskode.kodeArvesTil shouldBe "ADDR"
             ventestatuskode.kanManueltEndresTil shouldBe "AVVE"
+        }
+
+        test("getAllKlassekoder skal returnere en liste av Klassekoder") {
+            Db2Listener.dataSource.transaction { session ->
+                session.update(queryOf("database/fastedata/getKlassekoder.sql".readFromResource())) shouldBeGreaterThan 0
+            }
+
+            every { Db2Listener.klassekoderRepository.getAllKlassekoder() } returns alleKlassekoderMock
+
+            val result = fastedataService.getAllKlassekoder()
+            result.shouldNotBeEmpty()
+            result.size shouldBe 4
+
+            val klassekoder = result.first()
+            klassekoder.kodeKlasse shouldBe "AAPAAPFAF"
+            klassekoder.kodeFagomraade shouldBe "MTBBTARE,TBBTARE"
+            klassekoder.artID shouldBe 51
+            klassekoder.datoFom shouldBe "2022-11-01"
+            klassekoder.datoTom shouldBe "9999-12-31"
+            klassekoder.hovedkontoNr shouldBe "341"
+            klassekoder.underkontoNr shouldBe "2000"
+            klassekoder.beskrKlasse shouldBe "Arb.avkl.penger ferdig attført"
+            klassekoder.beskrArt shouldBe "Skatte-, trekk- og oppgavepliktig m/ompost"
+            klassekoder.hovedkontoNavn shouldBe "Arbeidsavklaringspenger"
+            klassekoder.underkontoNavn shouldBe "AAP"
         }
     })
