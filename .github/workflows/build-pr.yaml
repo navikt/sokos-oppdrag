@@ -19,6 +19,8 @@ on:
 
 jobs:
   build-test-pr:
+    permissions:
+      contents: read
     name: Build & test application
     uses: navikt/mob-gha-workflows/.github/workflows/gradle-run-test.yaml@new_workflow_release
     with:

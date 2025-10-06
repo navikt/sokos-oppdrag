@@ -22,16 +22,17 @@ on:
 env:
   TZ: Europe/Oslo
 
-permissions:
-  contents: "write"
-  id-token: "write"
-
 jobs:
   run-application-tests:
+    permissions:
+      contents: read
     name: Run application tests
     uses: navikt/mob-gha-workflows/.github/workflows/gradle-run-test.yaml@main
 
   assemble-build-push-image-dev:
+    permissions:
+      contents: read
+      id-token: write
     needs: [ run-application-tests ]
     name: Assemble application & build/push dev image
     uses: navikt/mob-gha-workflows/.github/workflows/gradle-assemble-build-push-image.yaml@main
@@ -41,6 +42,9 @@ jobs:
       dockerfile: './.nais/dev/Dockerfile'
 
   assemble-build-push-image-prod:
+    permissions:
+      contents: write
+      id-token: write
     needs: [ run-application-tests ]
     name: Assemble application & build/push prod image
     uses: navikt/mob-gha-workflows/.github/workflows/gradle-assemble-build-push-image.yaml@main
@@ -49,6 +53,11 @@ jobs:
       dockerfile: './.nais/prod/Dockerfile'
 
   deploy-dev-q1:
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+      deployments: write
     needs: [ assemble-build-push-image-dev ]
     name: Deploy to dev-fss-q1
     uses: navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@main
@@ -58,6 +67,11 @@ jobs:
       image: ${{ needs.assemble-build-push-image-dev.outputs.image }}
 
   deploy-dev-qx:
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+      deployments: write
     needs: [ assemble-build-push-image-dev ]
     name: Deploy to dev-fss-qx
     uses: navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@main
@@ -67,6 +81,11 @@ jobs:
       image: ${{ needs.assemble-build-push-image-dev.outputs.image }}
 
   deploy-prod:
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: write
+      deployments: write
     needs: [ assemble-build-push-image-prod, deploy-dev-q1, deploy-dev-qx ]
     name: Deploy to prod-fss
     uses: navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@main
