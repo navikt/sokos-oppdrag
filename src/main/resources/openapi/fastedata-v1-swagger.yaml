@@ -624,6 +624,9 @@ components:
           type: integer
         antallKjoreplaner:
           type: integer
+        nesteKjoredato:
+          type: string
+          nullable: true
 
     RedusertSkatt:
       type: object

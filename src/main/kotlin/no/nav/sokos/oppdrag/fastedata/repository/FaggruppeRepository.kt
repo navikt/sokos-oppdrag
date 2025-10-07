@@ -59,7 +59,12 @@ class FaggruppeRepository(
                         (SELECT COUNT(*) FROM T_SKATT_REDUSERT sr WHERE sr.KODE_FAGGRUPPE = f.KODE_FAGGRUPPE)
                             AS ANTALL_REDUSERTSKATT,
                         (SELECT COUNT(*) FROM T_KJOREPLAN kp WHERE kp.KODE_FAGGRUPPE = f.KODE_FAGGRUPPE)
-                            AS ANTALL_KJOREPLANER
+                            AS ANTALL_KJOREPLANER,
+                        (select min(kplan.DATO_KJORES)
+                             from T_KJOREPLAN kplan
+                             where kplan.KODE_FAGGRUPPE = f.KODE_FAGGRUPPE
+                             and kplan.STATUS='PLAN') 
+                             as NESTE_KJOREDATO
                     FROM T_FAGGRUPPE f;
                     """.trimIndent(),
                 ),
@@ -84,6 +89,7 @@ class FaggruppeRepository(
                     antallFagomraader = row.int("ANTALL_FAGOMRAADER"),
                     antallRedusertSkatt = row.int("ANTALL_REDUSERTSKATT"),
                     antallKjoreplaner = row.int("ANTALL_KJOREPLANER"),
+                    nesteKjoredato = row.stringOrNull("NESTE_KJOREDATO")?.trim(),
                 )
             }
         }
