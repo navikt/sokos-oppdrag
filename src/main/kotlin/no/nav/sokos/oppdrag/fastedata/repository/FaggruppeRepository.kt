@@ -60,7 +60,7 @@ class FaggruppeRepository(
                             AS ANTALL_REDUSERTSKATT,
                         (SELECT COUNT(*) FROM T_KJOREPLAN kp WHERE kp.KODE_FAGGRUPPE = f.KODE_FAGGRUPPE)
                             AS ANTALL_KJOREPLANER,
-                        (SELECT MIN(KPLAN.DATO_KJORES)
+                        (SELECT MIN(kplan.DATO_KJORES)
                              FROM T_KJOREPLAN kplan
                              WHERE kplan.KODE_FAGGRUPPE = F.KODE_FAGGRUPPE
                              AND kplan.STATUS='PLAN') 
