@@ -23,4 +23,5 @@ data class Faggruppe(
     val antallFagomraader: Int,
     val antallRedusertSkatt: Int,
     val antallKjoreplaner: Int,
+    val nesteKjoredato: String?,
 )

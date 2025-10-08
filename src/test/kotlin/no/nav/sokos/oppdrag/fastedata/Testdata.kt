@@ -165,6 +165,7 @@ val faggrupper =
             antallFagomraader = 4,
             antallRedusertSkatt = 35,
             antallKjoreplaner = 720,
+            nesteKjoredato = "2099-12-12",
         ),
         Faggruppe(
             kodeFaggruppe = "BIDRINKR",
@@ -186,6 +187,7 @@ val faggrupper =
             antallFagomraader = 1,
             antallRedusertSkatt = 0,
             antallKjoreplaner = 70,
+            nesteKjoredato = "2024-01-01",
         ),
     )
 
