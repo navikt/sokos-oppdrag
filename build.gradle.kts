@@ -42,7 +42,7 @@ repositories {
 }
 
 // Ktor
-val ktorVersion = "3.3.0"
+val ktorVersion = "3.3.1"
 
 // Serialization
 val kotlinxSerializationVersion = "1.9.0"
@@ -55,7 +55,7 @@ val micrometerVersion = "1.15.4"
 // Logging
 val kotlinLoggingVersion = "3.0.5"
 val janionVersion = "3.1.12"
-val logbackVersion = "1.5.18"
+val logbackVersion = "1.5.19"
 val logstashVersion = "8.1"
 val papertrailappVersion = "1.0.0"
 
@@ -77,7 +77,7 @@ val caffeineVersion = "3.2.2"
 val valkeyVersion = "6.8.1.RELEASE"
 
 // TSS
-val tjenestespesifikasjonVersion = "1.0_20250925121216_22d0e01"
+val tjenestespesifikasjonVersion = "1.0_20251006130758_015dee0"
 val glassfishJaxbVersion = "4.0.6"
 
 // IBM MQ
@@ -87,7 +87,7 @@ val ibmMqVersion = "9.4.3.1"
 val kotestVersion = "6.0.3"
 val wiremockVersion = "3.13.1"
 val mockOAuth2ServerVersion = "3.0.0"
-val mockkVersion = "1.14.5"
+val mockkVersion = "1.14.6"
 val swaggerRequestValidatorVersion = "2.46.0"
 val testcontainersVersion = "1.21.3"
 val h2Version = "2.4.240"
