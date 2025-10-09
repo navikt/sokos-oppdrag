@@ -6,7 +6,7 @@ import io.ktor.server.netty.Netty
 
 import no.nav.sokos.oppdrag.config.ApplicationState
 import no.nav.sokos.oppdrag.config.PropertiesConfig
-import no.nav.sokos.oppdrag.config.applicationLifeCycleConfig
+import no.nav.sokos.oppdrag.config.applicationLifecycleConfig
 import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.config.routingConfig
 import no.nav.sokos.oppdrag.config.securityConfig
@@ -19,7 +19,7 @@ fun Application.module() {
     val applicationState = ApplicationState()
     val useAuthentication = PropertiesConfig.Configuration().useAuthentication
 
-    applicationLifeCycleConfig(applicationState)
+    applicationLifecycleConfig(applicationState)
     commonConfig()
     securityConfig(useAuthentication)
     routingConfig(useAuthentication, applicationState)
