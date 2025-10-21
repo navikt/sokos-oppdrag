@@ -49,12 +49,15 @@ spec:
           - id: 420124f2-7456-4e3e-b035-7283bdabd51a # 0000-GA-okonomi-fortrolig
           - id: 22806019-fb74-41a5-a3cd-302624299935 # 0000-GA-okonomi-strengt_fortrolig
           - id: a3866f87-9b10-4b99-b4e9-a8c736d13b5b # 0000-GA-okonomi-egne_ansatte
-          - id: 726bdce4-c2ff-4b63-9047-cb524a4663a1 # 0000-GA-SOKOS-MF-Attestasjon-nasjonalt-READ
-          - id: bc45e68e-1497-43e9-a069-a5e2ab3eb964 # 0000-GA-SOKOS-MF-Attestasjon-nasjonalt-WRITE
-          - id: dcb37007-aeff-4e1c-bc10-7ddc00b37b27 # 0000-GA-SOKOS-MF-Attestasjon-NOP-READ
-          - id: 93ab2dc2-50a6-4dfc-aaff-a7fae9afe6bd # 0000-GA-SOKOS-MF-Attestasjon-NOP-WRITE
-          - id: 02606272-3cb4-49b8-b1f7-cb9b3b8f9b0e # 0000-GA-SOKOS-MF-Attestasjon-NOS-READ
-          - id: 38cbf869-d707-45a7-998c-81cb245bebdf # 0000-GA-SOKOS-MF-Attestasjon-NOS-WRITE
+          - id: 726bdce4-c2ff-4b63-9047-cb524a4663a1 # 0000-CA-SOKOS-MF-Attestasjon-Nasjonalt-READ
+          - id: bc45e68e-1497-43e9-a069-a5e2ab3eb964 # 0000-CA-SOKOS-MF-Attestasjon-Nasjonalt-WRITE
+          - id: dcb37007-aeff-4e1c-bc10-7ddc00b37b27 # 0000-CA-SOKOS-MF-Attestasjon-NØP-READ
+          - id: 93ab2dc2-50a6-4dfc-aaff-a7fae9afe6bd # 0000-CA-SOKOS-MF-Attestasjon-NØP-WRITE
+          - id: 02606272-3cb4-49b8-b1f7-cb9b3b8f9b0e # 0000-CA-SOKOS-MF-Attestasjon-NØS-READ
+          - id: 38cbf869-d707-45a7-998c-81cb245bebdf # 0000-CA-SOKOS-MF-Attestasjon-NØS-WRITE
+          - id: 1014dedb-0d98-4e76-b23b-e8a817c0245f # 0000-CA-SOKOS-MF-OppdragsInfo-NØP-READ
+          - id: b59d4b34-cf7e-4990-a785-0ad8f1d6d236 # 0000-CA-SOKOS-MF-OppdragsInfo-NØS-READ
+          - id: b851a85e-e58a-47dc-8f21-f95446b0171c # 0000-CA-SOKOS-MF-OppdragsInfo-nasjonalt-READ
 
   accessPolicy:
     inbound:
@@ -145,6 +148,14 @@ spec:
       value: 02606272-3cb4-49b8-b1f7-cb9b3b8f9b0e
     - name: GA_SOKOS_MF_ATTESTASJON_NOS_WRITE
       value: 38cbf869-d707-45a7-998c-81cb245bebdf
+
+    # Oppdragsinfo
+    - name: GA_SOKOS_MF_OPPDRAGSINFO_NASJONALT_READ
+      value: b851a85e-e58a-47dc-8f21-f95446b0171c
+    - name: GA_SOKOS_MF_OPPDRAGSINFO_NOP_READ
+      value: 1014dedb-0d98-4e76-b23b-e8a817c0245f
+    - name: GA_SOKOS_MF_OPPDRAGSINFO_NOS_READ
+      value: b59d4b34-cf7e-4990-a785-0ad8f1d6d236
 
     # ZOS-Connect
     - name: ZOS_URL
