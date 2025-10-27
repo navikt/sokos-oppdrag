@@ -8,8 +8,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    kotlin("jvm") version "2.2.20"
-    kotlin("plugin.serialization") version "2.2.20"
+    kotlin("jvm") version "2.2.21"
+    kotlin("plugin.serialization") version "2.2.21"
     id("com.expediagroup.graphql") version "8.8.1"
     id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.3"
@@ -56,7 +56,7 @@ val micrometerVersion = "1.15.5"
 val kotlinLoggingVersion = "3.0.5"
 val janionVersion = "3.1.12"
 val logbackVersion = "1.5.20"
-val logstashVersion = "8.1"
+val logstashVersion = "9.0"
 val papertrailappVersion = "1.0.0"
 
 // Config
@@ -74,7 +74,7 @@ val graphqlClientVersion = "8.8.1"
 val caffeineVersion = "3.2.2"
 
 // Valkey
-val valkeyVersion = "6.8.1.RELEASE"
+val valkeyVersion = "7.0.0.RELEASE"
 
 // TSS
 val tjenestespesifikasjonVersion = "1.0_20251006130758_015dee0"
