@@ -13,7 +13,7 @@ plugins {
     id("com.expediagroup.graphql") version "8.8.1"
     id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.3"
-    id("org.openapi.generator") version "7.16.0"
+    id("org.openapi.generator") version "7.17.0"
 
     application
 }
@@ -71,7 +71,7 @@ val kotliqueryVersion = "1.9.1"
 val graphqlClientVersion = "8.8.1"
 
 // Cache
-val caffeineVersion = "3.2.2"
+val caffeineVersion = "3.2.3"
 
 // Valkey
 val valkeyVersion = "7.0.0.RELEASE"
