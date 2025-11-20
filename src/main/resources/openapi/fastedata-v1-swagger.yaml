@@ -414,7 +414,6 @@ components:
         - typeBilag
         - datoFom
         - datoTom
-        - autoFagsystemId
       properties:
         kodeFagomraade:
           type: string
@@ -423,8 +422,6 @@ components:
         datoFom:
           type: string
         datoTom:
-          type: string
-        autoFagsystemId:
           type: string
 
     Klassekode:
