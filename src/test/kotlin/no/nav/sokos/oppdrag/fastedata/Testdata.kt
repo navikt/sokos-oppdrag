@@ -60,7 +60,6 @@ val bilagstype =
             typeBilag = "O",
             datoFom = "2024-12-01",
             datoTom = "2022-12-01",
-            autoFagsystemId = "ABC",
         ),
     )
 

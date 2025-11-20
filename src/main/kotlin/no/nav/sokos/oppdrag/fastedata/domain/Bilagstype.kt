@@ -8,5 +8,4 @@ data class Bilagstype(
     val typeBilag: String,
     val datoFom: String,
     val datoTom: String?,
-    val autoFagsystemId: String,
 )

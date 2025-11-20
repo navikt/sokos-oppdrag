@@ -97,8 +97,7 @@ class FagomraadeRepository(
                     select KODE_FAGOMRAADE,
                            TYPE_BILAG,
                            DATO_FOM,
-                           DATO_TOM,
-                           AUTO_FAGSYSTEMID
+                           DATO_TOM
                      from T_FAGO_BILAGSTYPE
                            WHERE KODE_FAGOMRAADE = :KODE_FAGOMRAADE   
                     """.trimIndent(),
@@ -112,7 +111,6 @@ class FagomraadeRepository(
                     typeBilag = row.string("TYPE_BILAG"),
                     datoFom = row.string("DATO_FOM"),
                     datoTom = row.stringOrNull("DATO_TOM"),
-                    autoFagsystemId = row.string("AUTO_FAGSYSTEMID"),
                 )
             }
         }

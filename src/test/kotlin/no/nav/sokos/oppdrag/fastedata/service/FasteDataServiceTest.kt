@@ -99,7 +99,6 @@ internal class FasteDataServiceTest :
             bilagstype.typeBilag shouldBe "MEMO"
             bilagstype.datoFom shouldBe "2013-01-01"
             bilagstype.datoTom shouldBe null
-            bilagstype.autoFagsystemId shouldBe "N"
         }
 
         test("getKlassekoder skal returnere en liste av Klassekode for valgt fagområde") {
