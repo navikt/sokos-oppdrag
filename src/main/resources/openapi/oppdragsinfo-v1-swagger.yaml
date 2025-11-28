@@ -52,6 +52,30 @@ paths:
       security:
         - Bearer: [ ]
 
+  /bestillSkattekort:
+    post:
+      tags:
+        - oppdragsinfo
+      summary: Søk etter oppdragsegenskaper
+      description: Returnerer oppdragsegenskaper tilknyttet person eller foretak.
+      operationId: hentOppdragsEgenskaper
+      requestBody:
+        description: gjelderId er et krav, men inntektsaar settes til inneværende år hvis ikke annet er spesifisert
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BestillSkattekortRequest'
+        required: true
+      responses:
+        200:
+          description: OK - Skattekort bestilles
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WrappedResponseWithErrorDTO'
+      security:
+        - Bearer: [ ]
+
   /{oppdragsId}/oppdragslinjer:
     get:
       tags:
@@ -679,6 +703,21 @@ components:
           type: string
           description: filtrering på faggruppeKode
           nullable: true
+
+    BestillSkattekortRequest:
+      type: object
+      required:
+        - gjelderId
+      properties:
+        gjelderId:
+          type: string
+          example: "9 eller 11 siffer"
+          description: 9 eller 11 siffer
+        inntektsAar:
+          type: string
+          description: Inntektsår for skattekort
+          nullable: true
+          default: <current year>
 
     OppdragsEnhetDTO:
       type: object

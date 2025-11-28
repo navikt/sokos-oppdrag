@@ -124,6 +124,16 @@ spec:
     - name: MQ_TSS_SAMHANDLER_SERVICE_QUEUE
       value: QA.Q1_415.AS10_SAMHANDLER_SERVICE
 
+    # SKATTEKORT MQ
+    - name: SKATTEKORT_MQ_HOSTNAME
+      value: mqls01.preprod.local
+    - name: SKATTEKORT_MQ_QUEUE_MANAGER_NAME
+      value: MQLS01
+    - name: SKATTEKORT_MQ_CHANNEL_NAME
+      value: Q2_OS_ESKATT
+    - name: SKATTEKORT_MQ_FRA_FORSYSTEM_QUEUE_NAME
+      value: QA.Q2_OS_ESKATT.FRA_FORSYSTEM
+
     # Pdl
     - name: PDL_URL
       value: "https://pdl-api.dev.intern.nav.no"

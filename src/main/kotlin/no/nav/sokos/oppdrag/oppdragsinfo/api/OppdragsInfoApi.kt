@@ -1,5 +1,8 @@
 package no.nav.sokos.oppdrag.oppdragsinfo.api
 
+import java.time.Year
+
+import SkattekortClientService
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -7,13 +10,17 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 
+import no.nav.sokos.oppdrag.oppdragsinfo.api.model.BestillSkattekortRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.api.model.OppdragsRequest
 import no.nav.sokos.oppdrag.oppdragsinfo.service.OppdragsInfoService
 import no.nav.sokos.oppdrag.security.AuthToken.getSaksbehandler
 
 private const val BASE_PATH = "/api/v1/oppdragsinfo"
 
-fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInfoService()) {
+fun Route.oppdragsInfoApi(
+    oppdragsInfoService: OppdragsInfoService = OppdragsInfoService(),
+    skattekortClientService: SkattekortClientService = SkattekortClientService(),
+) {
     route(BASE_PATH) {
         post("sok") {
             val request = call.receive<OppdragsRequest>()
@@ -25,6 +32,11 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
                     saksbehandler,
                 ),
             )
+        }
+
+        post("bestillSkattekort") {
+            val request = call.receive<BestillSkattekortRequest>()
+            call.respond(skattekortClientService.bestillSkattekort(request.gjelderId, request.inntektsAar ?: Year.now().value))
         }
 
         get("{oppdragsId}/oppdragslinjer") {
