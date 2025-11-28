@@ -23,4 +23,19 @@ object MQConfig {
             setStringProperty(WMQConstants.USERID, mqProperties.mqServiceUsername)
             setStringProperty(WMQConstants.PASSWORD, mqProperties.mqServicePassword)
         }
+
+    fun connectionFactorySkattekort(mqProperties: PropertiesConfig.MqProperties = PropertiesConfig.MqProperties()): ConnectionFactory =
+        JmsFactoryFactory.getInstance(JAKARTA_WMQ_PROVIDER).createConnectionFactory().apply {
+            setIntProperty(WMQConstants.WMQ_CONNECTION_MODE, WMQConstants.WMQ_CM_CLIENT)
+            setStringProperty(WMQConstants.WMQ_QUEUE_MANAGER, mqProperties.skattekortMqQueueManagerName)
+            setStringProperty(WMQConstants.WMQ_HOST_NAME, mqProperties.skattekortMqHostname)
+            setStringProperty(WMQConstants.WMQ_APPLICATIONNAME, PropertiesConfig.Configuration().naisAppName)
+            setIntProperty(WMQConstants.WMQ_PORT, mqProperties.mqPort)
+            setStringProperty(WMQConstants.WMQ_CHANNEL, mqProperties.skattekortMqChannelName)
+            setIntProperty(WMQConstants.WMQ_CCSID, UTF_8_WITH_PUA)
+            setIntProperty(WMQConstants.JMS_IBM_ENCODING, MQConstants.MQENC_NATIVE)
+            setIntProperty(WMQConstants.JMS_IBM_CHARACTER_SET, UTF_8_WITH_PUA)
+            setStringProperty(WMQConstants.USERID, mqProperties.mqServiceUsername)
+            setStringProperty(WMQConstants.PASSWORD, mqProperties.mqServicePassword)
+        }
 }

@@ -115,6 +115,10 @@ object PropertiesConfig {
         val mqServiceUsername: String = getOrEmpty("MQ_SERVICE_USERNAME"),
         val mqServicePassword: String = getOrEmpty("MQ_SERVICE_PASSWORD"),
         val mqTssSamhandlerServiceQueue: String = getOrEmpty("MQ_TSS_SAMHANDLER_SERVICE_QUEUE"),
+        val skattekortMqHostname: String = getOrEmpty("SKATTEKORT_MQ_HOSTNAME"),
+        val skattekortMqQueueManagerName: String = getOrEmpty("SKATTEKORT_MQ_QUEUE_MANAGER_NAME"),
+        val skattekortMqChannelName: String = getOrEmpty("SKATTEKORT_MQ_CHANNEL_NAME"),
+        val sokosSkattekortBestillingQueue: String = getOrEmpty("SKATTEKORT_MQ_FRA_FORSYSTEM_QUEUE_NAME"),
     )
 
     enum class Profile {
