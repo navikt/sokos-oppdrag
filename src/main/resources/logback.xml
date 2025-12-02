@@ -42,21 +42,12 @@
         </filter>
     </appender>
 
-    <appender name="auditLogger" class="com.papertrailapp.logback.Syslog4jAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>%m%n%xEx</pattern>
-        </layout>
-
-        <syslogConfig class="org.productivity.java.syslog4j.impl.net.tcp.TCPNetSyslogConfig">
-            <!-- remote system to log to -->
-            <host>audit.nais</host>
-            <!-- remote port to log to -->
-            <port>6514</port>
-            <!-- IMPORTANT: Set to your application name. -->
-            <ident>sokos-oppdrag</ident>
-            <!-- max log message length in bytes -->
-            <maxMessageLength>128000</maxMessageLength>
-        </syslogConfig>
+    <appender name="auditLogger" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>audit.nais:6514</destination>
+        <writeBufferSize>128000</writeBufferSize>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${HOSTNAME} ${NAIS_APP_NAME}: %msg%n</pattern>
+        </encoder>
     </appender>
 
     <if condition='isDefined("NAIS_CLUSTER_NAME")'>

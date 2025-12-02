@@ -57,7 +57,6 @@ val kotlinLoggingVersion = "3.0.5"
 val janionVersion = "3.1.12"
 val logbackVersion = "1.5.21"
 val logstashVersion = "9.0"
-val papertrailappVersion = "1.0.0"
 
 // Config
 val natpryceVersion = "1.6.10.0"
@@ -126,7 +125,6 @@ dependencies {
     runtimeOnly("org.codehaus.janino:janino:$janionVersion")
     runtimeOnly("ch.qos.logback:logback-classic:$logbackVersion")
     runtimeOnly("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
-    runtimeOnly("com.papertrailapp:logback-syslog4j:$papertrailappVersion")
 
     // Config
     implementation("com.natpryce:konfig:$natpryceVersion")
