@@ -77,7 +77,7 @@ val caffeineVersion = "3.2.3"
 val valkeyVersion = "7.1.0.RELEASE"
 
 // TSS
-val tjenestespesifikasjonVersion = "1.0_20251006130758_015dee0"
+val tjenestespesifikasjonVersion = "1.0_20251124093520_1e57298"
 val glassfishJaxbVersion = "4.0.6"
 
 // IBM MQ
