@@ -4,8 +4,8 @@ updates:
     directory: "/"
     schedule:
       interval: daily
-      time: "00:00"
-      timezone: "Europe/Oslo"
+    cooldown:
+      default-days: 7
     groups:
       gradle:
         patterns:
