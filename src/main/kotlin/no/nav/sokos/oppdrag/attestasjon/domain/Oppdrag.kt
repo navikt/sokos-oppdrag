@@ -16,6 +16,7 @@ data class Oppdrag(
     val kodeFagomraade: String,
     val kostnadssted: String,
     val oppdragsId: Int,
+    val typeBilag: String? = null,
     val attestanter: MutableMap<Int, List<String>> = mutableMapOf(),
 )
 
@@ -33,6 +34,7 @@ fun Oppdrag.toDTO(
     kodeFagomraade = this.kodeFagomraade,
     kostnadssted = this.kostnadssted,
     oppdragsId = this.oppdragsId,
+    typeBilag = this.typeBilag,
     erSkjermetForSaksbehandler = erSkjermetForSaksbehandler,
     hasWriteAccess = hasWriteAccess,
 )

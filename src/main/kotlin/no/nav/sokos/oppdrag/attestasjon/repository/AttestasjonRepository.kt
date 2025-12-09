@@ -243,6 +243,7 @@ class AttestasjonRepository(
             oppdragsId = row.int("OPPDRAGS_ID"),
             kodeFagomraade = row.string("KODE_FAGOMRAADE"),
             kodeFaggruppe = row.string("KODE_FAGGRUPPE"),
+            typeBilag = row.string("TYPE_BILAG"),
         )
     }
 
@@ -286,7 +287,7 @@ class AttestasjonRepository(
         sqlBuilder.append(
             """                         
             WITH 
-            FilteredOppdrag AS (SELECT OPPDRAGS_ID, KODE_FAGOMRAADE, FAGSYSTEM_ID, OPPDRAG_GJELDER_ID
+            FilteredOppdrag AS (SELECT OPPDRAGS_ID, KODE_FAGOMRAADE, FAGSYSTEM_ID, OPPDRAG_GJELDER_ID, TYPE_BILAG
                                 FROM T_OPPDRAG 
             """.trimIndent(),
         )
@@ -347,6 +348,7 @@ class AttestasjonRepository(
                     TRIM(O.FAGSYSTEM_ID)                               AS FAGSYSTEM_ID,
                     TRIM(O.OPPDRAG_GJELDER_ID)                         AS OPPDRAG_GJELDER_ID,
                     TRIM(O.KODE_FAGOMRAADE)                            AS KODE_FAGOMRAADE,
+                    TRIM(O.TYPE_BILAG)                                 AS TYPE_BILAG, 
                     TRIM(FO.NAVN_FAGOMRAADE)                           AS NAVN_FAGOMRAADE,
                     TRIM(FO.KODE_FAGGRUPPE)                            AS KODE_FAGGRUPPE,
                     FO.ANT_ATTESTANTER                                 AS ANT_ATTESTANTER,
