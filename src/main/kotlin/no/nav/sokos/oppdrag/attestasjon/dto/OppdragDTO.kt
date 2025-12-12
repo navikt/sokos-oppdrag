@@ -16,4 +16,5 @@ data class OppdragDTO(
     val oppdragsId: Int,
     val erSkjermetForSaksbehandler: Boolean,
     val hasWriteAccess: Boolean,
+    val typeBilag: String? = null,
 )
