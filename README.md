@@ -21,7 +21,7 @@ Applikasjon er en proxy mellom OppdragZ og Utbetalingsportalen (intern arbeidsfl
 
 ### Forutsetninger
 
-* Java 21
+* Java 25
 * [Gradle](https://gradle.org/)
 * [Kotest IntelliJ Plugin](https://plugins.jetbrains.com/plugin/14080-kotest)
 * [Docker](https://www.docker.com/)

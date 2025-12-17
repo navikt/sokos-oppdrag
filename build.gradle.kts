@@ -8,11 +8,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    kotlin("jvm") version "2.2.21"
-    kotlin("plugin.serialization") version "2.2.21"
+    kotlin("jvm") version "2.3.0"
+    kotlin("plugin.serialization") version "2.3.0"
     id("com.expediagroup.graphql") version "8.8.1"
     id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
-    id("org.jetbrains.kotlinx.kover") version "0.9.3"
+    id("org.jetbrains.kotlinx.kover") version "0.9.4"
     id("org.openapi.generator") version "7.17.0"
 
     application
@@ -50,7 +50,7 @@ val kotlinxDatetimeVersion = "0.7.1-0.6.x-compat"
 val kotlinxCoroutinesVersion = "1.10.2"
 
 // Monitorering
-val micrometerVersion = "1.16.0"
+val micrometerVersion = "1.16.1"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
@@ -73,20 +73,20 @@ val graphqlClientVersion = "8.8.1"
 val caffeineVersion = "3.2.3"
 
 // Valkey
-val valkeyVersion = "7.1.0.RELEASE"
+val valkeyVersion = "7.2.0.RELEASE"
 
 // TSS
-val tjenestespesifikasjonVersion = "1.0_20251124093520_1e57298"
+val tjenestespesifikasjonVersion = "1.0_20251208100419_f041bdd"
 val glassfishJaxbVersion = "4.0.6"
 
 // IBM MQ
 val ibmMqVersion = "9.4.4.0"
 
 // Test
-val kotestVersion = "6.0.5"
+val kotestVersion = "6.0.7"
 val wiremockVersion = "3.13.2"
 val mockOAuth2ServerVersion = "3.0.1"
-val mockkVersion = "1.14.6"
+val mockkVersion = "1.14.7"
 val swaggerRequestValidatorVersion = "2.46.0"
 val testcontainersVersion = "2.0.2"
 val h2Version = "2.4.240"
@@ -157,6 +157,7 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
+    testImplementation("net.bytebuddy:byte-buddy:1.18.2") // TEMP: Needed for mockk 1.14.6 with java25. Remove when Mockk is updated and bytebuddy is no longer needed.
     testImplementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
     testImplementation("org.wiremock:wiremock:$wiremockVersion")
     testImplementation("com.atlassian.oai:swagger-request-validator-restassured:$swaggerRequestValidatorVersion")
@@ -179,7 +180,7 @@ sourceSets {
 
 kotlin {
     jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
 }
 
@@ -255,7 +256,7 @@ tasks {
     }
 
     withType<Wrapper> {
-        gradleVersion = "9.1.0"
+        gradleVersion = "9.2.1"
     }
 
     ("build") {
