@@ -1,4 +1,4 @@
-FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/jre:openjdk-21@sha256:eae0a7d9b53ce3c6d6cac1f588c450b9d28729f793ecbf5b74f2e391159262b2
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/jre:openjdk-21@sha256:5c0fb9affebfdafb53da5f084d1e61f6ed3f4e5095cb65c2eb25a8cc14723d55
 
 COPY build/install/*/lib /lib
 
