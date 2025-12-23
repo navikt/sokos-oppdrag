@@ -55,7 +55,7 @@ val micrometerVersion = "1.16.1"
 // Logging
 val kotlinLoggingVersion = "3.0.5"
 val janionVersion = "3.1.12"
-val logbackVersion = "1.5.21"
+val logbackVersion = "1.5.22"
 val logstashVersion = "9.0"
 
 // Config
@@ -73,7 +73,7 @@ val graphqlClientVersion = "8.8.1"
 val caffeineVersion = "3.2.3"
 
 // Valkey
-val valkeyVersion = "7.2.0.RELEASE"
+val valkeyVersion = "7.2.1.RELEASE"
 
 // TSS
 val tjenestespesifikasjonVersion = "1.0_20251208100419_f041bdd"
