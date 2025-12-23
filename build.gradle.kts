@@ -88,7 +88,7 @@ val wiremockVersion = "3.13.2"
 val mockOAuth2ServerVersion = "3.0.1"
 val mockkVersion = "1.14.7"
 val swaggerRequestValidatorVersion = "2.46.0"
-val testcontainersVersion = "2.0.2"
+val testcontainersVersion = "2.0.3"
 val h2Version = "2.4.240"
 val activemqVersion = "2.44.0"
 
