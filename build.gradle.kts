@@ -76,11 +76,11 @@ val caffeineVersion = "3.2.3"
 val valkeyVersion = "7.2.1.RELEASE"
 
 // TSS
-val tjenestespesifikasjonVersion = "1.0_20251208100419_f041bdd"
+val tjenestespesifikasjonVersion = "1.0_20251217153210_84e9478"
 val glassfishJaxbVersion = "4.0.6"
 
 // IBM MQ
-val ibmMqVersion = "9.4.4.0"
+val ibmMqVersion = "9.4.4.1"
 
 // Test
 val kotestVersion = "6.0.7"
@@ -88,7 +88,7 @@ val wiremockVersion = "3.13.2"
 val mockOAuth2ServerVersion = "3.0.1"
 val mockkVersion = "1.14.7"
 val swaggerRequestValidatorVersion = "2.46.0"
-val testcontainersVersion = "2.0.2"
+val testcontainersVersion = "2.0.3"
 val h2Version = "2.4.240"
 val activemqVersion = "2.44.0"
 
@@ -157,7 +157,7 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
-    testImplementation("net.bytebuddy:byte-buddy:1.18.2") // TEMP: Needed for mockk 1.14.6 with java25. Remove when Mockk is updated and bytebuddy is no longer needed.
+    testImplementation("net.bytebuddy:byte-buddy:1.18.3") // TEMP: Needed for mockk 1.14.6 with java25. Remove when Mockk is updated and bytebuddy is no longer needed.
     testImplementation("no.nav.security:mock-oauth2-server:$mockOAuth2ServerVersion")
     testImplementation("org.wiremock:wiremock:$wiremockVersion")
     testImplementation("com.atlassian.oai:swagger-request-validator-restassured:$swaggerRequestValidatorVersion")
