@@ -13,7 +13,7 @@ plugins {
     id("com.expediagroup.graphql") version "8.8.1"
     id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
     id("org.jetbrains.kotlinx.kover") version "0.9.4"
-    id("org.openapi.generator") version "7.17.0"
+    id("org.openapi.generator") version "7.18.0"
 
     application
 }
@@ -55,7 +55,7 @@ val micrometerVersion = "1.16.1"
 // Logging
 val kotlinLoggingVersion = "3.0.5"
 val janionVersion = "3.1.12"
-val logbackVersion = "1.5.22"
+val logbackVersion = "1.5.23"
 val logstashVersion = "9.0"
 
 // Config
