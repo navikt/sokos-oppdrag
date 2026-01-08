@@ -67,6 +67,14 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
             )
         }
 
+        get("{oppdragsId}/skattepliktig") {
+            call.respond(
+                oppdragsInfoService.isOppdragSkattepliktig(
+                    call.parameters["oppdragsId"].orEmpty(),
+                ),
+            )
+        }
+
         get("{oppdragsId}/{linjeId}/statuser") {
             call.respond(
                 oppdragsInfoService.getOppdragsLinjeStatuser(

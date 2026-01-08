@@ -177,6 +177,38 @@ paths:
                 $ref: '#/components/schemas/ApiError'
       security:
         - Bearer: [ ]
+          
+  /{oppdragsId}/skattepliktig:
+    get:
+      tags:
+        - oppdragsinfo
+      summary: Sjekk om oppdraget er skattepliktig
+      description: Returnerer true hvis oppdraget er skattepliktig
+      operationId: isOppdragSkattepliktig
+      parameters:
+        - name: oppdragsId
+          in: path
+          description: Oppdrags id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: boolean
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
 
   /{oppdragsId}/statushistorikk:
     get:
@@ -209,7 +241,7 @@ paths:
                 $ref: '#/components/schemas/ApiError'
       security:
         - Bearer: [ ]
-
+          
   /{oppdragsId}/{linjeId}/statuser:
     get:
       tags:

@@ -216,4 +216,7 @@ class OppdragsInfoService(
 
             else -> false
         }
+
+    fun isOppdragSkattepliktig(oppdragsId: String): Boolean =
+        oppdragsInfoRepository.isOppdragSkattepliktig(oppdragsId.toInt()) ?: throw RuntimeException("Kunne ikke finne ut om oppdraget er skattepliktig")
 }
