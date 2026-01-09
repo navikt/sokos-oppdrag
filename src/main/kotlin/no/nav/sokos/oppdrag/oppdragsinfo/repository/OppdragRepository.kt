@@ -240,6 +240,24 @@ class OppdragRepository(
             )
         }
 
+    fun isOppdragSkattepliktig(oppdragsID: Int): Boolean? =
+        using(sessionOf(dataSource)) { session ->
+            session.single(
+                queryOf(
+                    """
+                    SELECT (CASE WHEN G.SKATTEPROSENT>0 THEN 1 ELSE 0 END) AS SKATTEPLIKTIG
+                    FROM T_OPPDRAG O
+                    JOIN T_FAGOMRAADE F ON O.KODE_FAGOMRAADE = F.KODE_FAGOMRAADE
+                    JOIN T_FAGGRUPPE G ON F.KODE_FAGGRUPPE = G.KODE_FAGGRUPPE
+                    WHERE O.OPPDRAGS_ID=:oppdragsID 
+                    """.trimIndent(),
+                    mapOf(
+                        "oppdragsID" to oppdragsID,
+                    ),
+                ),
+            ) { row -> row.intOrNull("SKATTEPLIKTIG")?.let { it == 1 } }
+        }
+
     fun getOppdragsLinjeStatuser(
         oppdragsId: Int,
         linjeId: Int,
