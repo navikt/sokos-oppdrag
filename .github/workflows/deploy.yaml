@@ -52,6 +52,7 @@ jobs:
     uses: navikt/mob-gha-workflows/.github/workflows/gradle-assemble-build-push-image.yaml@main
     secrets: inherit
     with:
+      generate-dependency-graph: true
       dockerfile: './.nais/prod/Dockerfile'
 
   deploy-dev-q1:
