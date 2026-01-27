@@ -3,12 +3,12 @@ package no.nav.sokos.oppdrag.integration.client.skjerming
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import org.junit.jupiter.api.assertThrows
 
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
@@ -66,7 +66,7 @@ internal class SkjermetClientServiceTest :
             )
 
             val exception =
-                assertThrows<IntegrationException> {
+                shouldThrow<IntegrationException> {
                     skjermetClientService.isSkjermedePersonerInSkjermingslosningen(emptyList())
                 }
 

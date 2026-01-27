@@ -9,18 +9,18 @@ import kotlinx.serialization.json.jsonPrimitive
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.engine.apache.Apache
+import io.ktor.client.engine.apache5.Apache5
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.statement.HttpResponse
 import io.ktor.serialization.kotlinx.json.json
 import mu.KotlinLogging
-import org.apache.http.impl.conn.SystemDefaultRoutePlanner
+import org.apache.hc.client5.http.impl.routing.SystemDefaultRoutePlanner
 
 private val logger = KotlinLogging.logger {}
 
 fun createHttpClient(setProxy: Boolean = true): HttpClient =
-    HttpClient(Apache) {
+    HttpClient(Apache5) {
         expectSuccess = false
 
         install(ContentNegotiation) {

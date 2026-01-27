@@ -1,12 +1,12 @@
 package no.nav.sokos.oppdrag.security
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.server.application.ApplicationCall
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.jupiter.api.assertThrows
 
 import no.nav.sokos.oppdrag.attestasjon.Testdata.tokenWithNavIdent
 import no.nav.sokos.oppdrag.attestasjon.Testdata.tokenWithoutNavIdent
@@ -29,7 +29,7 @@ internal class AuthTokenTest :
             every { call.request.headers[HttpHeaders.Authorization] } returns "Bearer $tokenWithoutNavIdent"
 
             val result =
-                assertThrows<RuntimeException> {
+                shouldThrow<RuntimeException> {
                     AuthToken.getSaksbehandler(call)
                 }
 
@@ -42,7 +42,7 @@ internal class AuthTokenTest :
             every { call.request.headers[HttpHeaders.Authorization] } returns null
 
             val exception =
-                assertThrows<Error> {
+                shouldThrow<Error> {
                     AuthToken.getSaksbehandler(call)
                 }
 
