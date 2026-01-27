@@ -3,11 +3,11 @@ package no.nav.sokos.oppdrag.integration.client.pdl
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import org.junit.jupiter.api.assertThrows
 
 import no.nav.pdl.enums.AdressebeskyttelseGradering
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
@@ -99,7 +99,7 @@ internal class PdlClientServiceTest :
             )
 
             val exception =
-                assertThrows<PdlException> {
+                shouldThrow<PdlException> {
                     pdlClientService.getPerson(listOf(FNR))
                 }
 
@@ -121,7 +121,7 @@ internal class PdlClientServiceTest :
             )
 
             val exception =
-                assertThrows<PdlException> {
+                shouldThrow<PdlException> {
                     pdlClientService.getPerson(listOf(FNR))
                 }
 

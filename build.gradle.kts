@@ -13,7 +13,7 @@ plugins {
     id("com.expediagroup.graphql") version "8.8.1"
     id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
     id("org.jetbrains.kotlinx.kover") version "0.9.4"
-    id("org.openapi.generator") version "7.18.0"
+    id("org.openapi.generator") version "7.19.0"
 
     application
 }
@@ -42,7 +42,7 @@ repositories {
 }
 
 // Ktor
-val ktorVersion = "3.3.3"
+val ktorVersion = "3.4.0"
 
 // Serialization
 val kotlinxSerializationVersion = "1.9.0"
@@ -55,7 +55,7 @@ val micrometerVersion = "1.16.2"
 // Logging
 val kotlinLoggingVersion = "3.0.5"
 val janionVersion = "3.1.12"
-val logbackVersion = "1.5.24"
+val logbackVersion = "1.5.25"
 val logstashVersion = "9.0"
 
 // Config
@@ -83,7 +83,7 @@ val glassfishJaxbVersion = "4.0.6"
 val ibmMqVersion = "9.4.4.1"
 
 // Test
-val kotestVersion = "6.0.7"
+val kotestVersion = "6.1.0"
 val wiremockVersion = "3.13.2"
 val mockOAuth2ServerVersion = "3.0.1"
 val mockkVersion = "1.14.7"
@@ -104,7 +104,7 @@ dependencies {
 
     // Ktor client
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-client-apache-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-apache5-jvm:$ktorVersion")
 
     // Security
     implementation("io.ktor:ktor-server-auth-jvm:$ktorVersion")

@@ -4,12 +4,12 @@ import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.okJson
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import org.junit.jupiter.api.assertThrows
 
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
@@ -67,7 +67,7 @@ internal class EregClientServiceTest :
             )
 
             val exception =
-                assertThrows<IntegrationException> {
+                shouldThrow<IntegrationException> {
                     eregClientService.getOrganisasjonsNavn(UGYLDIG_ORGANISASJONSNUMMER)
                 }
 
@@ -93,7 +93,7 @@ internal class EregClientServiceTest :
             )
 
             val exception =
-                assertThrows<IntegrationException> {
+                shouldThrow<IntegrationException> {
                     eregClientService.getOrganisasjonsNavn(IKKE_FUNNET_ORGANISASJONSNUMMER)
                 }
 
