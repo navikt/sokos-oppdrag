@@ -8,6 +8,7 @@ import kotlinx.serialization.json.Json
 import com.atlassian.oai.validator.restassured.OpenApiValidationFilter
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -20,7 +21,6 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import io.restassured.RestAssured
 
-import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.attestasjon.ATTESTASJON_BASE_API_PATH
 import no.nav.sokos.oppdrag.attestasjon.GJELDER_ID
 import no.nav.sokos.oppdrag.attestasjon.Testdata.oppdragDTOTestdata
@@ -71,7 +71,7 @@ internal class AttestasjonApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .body(OppdragsRequest(gjelderId = GJELDER_ID))
                     .port(PORT)
@@ -93,7 +93,7 @@ internal class AttestasjonApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .body(OppdragsRequest(gjelderId = "123"))
                     .port(PORT)
@@ -120,7 +120,7 @@ internal class AttestasjonApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .body(OppdragsRequest(kodeFagGruppe = "BP", attestertStatus = ATTESTERT))
                     .port(PORT)
@@ -148,7 +148,7 @@ internal class AttestasjonApiTest :
             RestAssured
                 .given()
                 .filter(validationFilter)
-                .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                 .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                 .body(OppdragsRequest(kodeFagOmraade = "BP", attestertStatus = IKKE_FERDIG_ATTESTERT_INKL_EGNE))
                 .port(PORT)
@@ -164,7 +164,7 @@ internal class AttestasjonApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "dummytoken")
                     .body(GjelderIdRequest(gjelderId = "123456789"))
                     .port(PORT)
@@ -224,7 +224,7 @@ internal class AttestasjonApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$ATTESTASJON_BASE_API_PATH/12341234/oppdragsdetaljer")
@@ -245,7 +245,7 @@ internal class AttestasjonApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$ATTESTASJON_BASE_API_PATH/12341234/oppdragsdetaljer")
@@ -292,7 +292,7 @@ internal class AttestasjonApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .body(request)
@@ -328,7 +328,7 @@ internal class AttestasjonApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .body(request)

@@ -10,6 +10,7 @@ import kotlinx.serialization.json.Json
 import com.atlassian.oai.validator.restassured.OpenApiValidationFilter
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -23,7 +24,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.restassured.RestAssured
 
-import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.attestasjon.OPPDRAGSINFO_BASE_API_PATH
 import no.nav.sokos.oppdrag.attestasjon.Testdata.tokenWithNavIdent
 import no.nav.sokos.oppdrag.common.dto.WrappedReponseWithErrorDTO
@@ -93,7 +93,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .body(OppdragsRequest(gjelderId = "12345678901", fagGruppeKode = ""))
                     .port(PORT)
@@ -115,7 +115,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .body(OppdragsRequest(gjelderId = "123"))
                     .port(PORT)
@@ -142,7 +142,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "dummytoken")
                     .body(OppdragsRequest(gjelderId = "12345678901"))
                     .port(PORT)
@@ -195,7 +195,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/oppdragslinjer")
@@ -216,7 +216,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/oppdragslinjer")
@@ -260,7 +260,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/enheter")
@@ -281,7 +281,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/enheter")
@@ -325,7 +325,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/omposteringer")
@@ -346,7 +346,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/omposteringer")
@@ -383,7 +383,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/enhetshistorikk")
@@ -404,7 +404,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/enhetshistorikk")
@@ -441,7 +441,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/statushistorikk")
@@ -462,7 +462,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/statushistorikk")
@@ -500,7 +500,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/statuser")
@@ -521,7 +521,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/statuser")
@@ -557,7 +557,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/attestanter")
@@ -578,7 +578,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/attestanter")
@@ -641,7 +641,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/detaljer")
@@ -662,7 +662,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/detaljer")
@@ -703,7 +703,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/valutaer")
@@ -724,7 +724,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/valutaer")
@@ -763,7 +763,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/skyldnere")
@@ -784,7 +784,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/skyldnere")
@@ -823,7 +823,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/kravhavere")
@@ -844,7 +844,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/kravhavere")
@@ -885,7 +885,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/enheter")
@@ -906,7 +906,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/enheter")
@@ -945,7 +945,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/grader")
@@ -966,7 +966,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/grader")
@@ -1002,7 +1002,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/tekster")
@@ -1023,7 +1023,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/tekster")
@@ -1062,7 +1062,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/kid")
@@ -1083,7 +1083,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/kid")
@@ -1122,7 +1122,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/maksdatoer")
@@ -1143,7 +1143,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/maksdatoer")
@@ -1181,7 +1181,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/ovrig")
@@ -1202,7 +1202,7 @@ internal class OppdragsInfoApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/$LINJE_ID/ovrig")

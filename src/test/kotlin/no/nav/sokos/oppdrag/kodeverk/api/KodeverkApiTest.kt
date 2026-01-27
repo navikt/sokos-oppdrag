@@ -7,6 +7,7 @@ import kotlinx.serialization.json.Json
 import com.atlassian.oai.validator.restassured.OpenApiValidationFilter
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -19,7 +20,6 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import io.restassured.RestAssured
 
-import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.attestasjon.KODERVERK_BASE_API_PATH
 import no.nav.sokos.oppdrag.attestasjon.Testdata
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
@@ -65,7 +65,7 @@ internal class KodeverkApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer ${Testdata.tokenWithNavIdent}")
                     .port(PORT)
                     .get("$KODERVERK_BASE_API_PATH/faggrupper")
@@ -86,7 +86,7 @@ internal class KodeverkApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer ${Testdata.tokenWithNavIdent}")
                     .port(PORT)
                     .get("$KODERVERK_BASE_API_PATH/faggrupper")
@@ -122,7 +122,7 @@ internal class KodeverkApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer ${Testdata.tokenWithNavIdent}")
                     .port(PORT)
                     .get("$KODERVERK_BASE_API_PATH/fagomraader")
@@ -143,7 +143,7 @@ internal class KodeverkApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer ${Testdata.tokenWithNavIdent}")
                     .port(PORT)
                     .get("$KODERVERK_BASE_API_PATH/fagomraader")

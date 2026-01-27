@@ -5,13 +5,13 @@ import kotlinx.serialization.json.Json
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+import com.github.tomakehurst.wiremock.common.ContentTypes
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 
-import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.attestasjon.Testdata.attestasjonRequestTestdata
 import no.nav.sokos.oppdrag.attestasjon.Testdata.navIdent
 import no.nav.sokos.oppdrag.listener.WiremockListener
@@ -33,7 +33,7 @@ internal class ZOSConnectServiceTest :
                 post(urlEqualTo("/oppdaterAttestasjon"))
                     .willReturn(
                         aResponse()
-                            .withHeader(HttpHeaders.ContentType, APPLICATION_JSON)
+                            .withHeader(HttpHeaders.ContentType, ContentTypes.APPLICATION_JSON)
                             .withStatus(HttpStatusCode.OK.value)
                             .withBody(Json.encodeToString(jsonResponseOppdragslinjeFunnet)),
                     ),
@@ -53,7 +53,7 @@ internal class ZOSConnectServiceTest :
                 post(urlEqualTo("/oppdaterAttestasjon"))
                     .willReturn(
                         aResponse()
-                            .withHeader(HttpHeaders.ContentType, APPLICATION_JSON)
+                            .withHeader(HttpHeaders.ContentType, ContentTypes.APPLICATION_JSON)
                             .withStatus(HttpStatusCode.OK.value)
                             .withBody(Json.encodeToString(jsonResponseOppdragslinjeIkkeFunnet)),
                     ),

@@ -3,6 +3,7 @@ package no.nav.sokos.oppdrag.integration.client.skjerming
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+import com.github.tomakehurst.wiremock.common.ContentTypes
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -11,7 +12,6 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 
 import no.nav.sokos.oppdrag.TestUtil.readFromResource
-import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.integration.exception.IntegrationException
 import no.nav.sokos.oppdrag.listener.WiremockListener
 import no.nav.sokos.oppdrag.listener.WiremockListener.wiremock
@@ -39,7 +39,7 @@ internal class SkjermetClientServiceTest :
                 post(urlEqualTo("/skjermetBulk"))
                     .willReturn(
                         aResponse()
-                            .withHeader(HttpHeaders.ContentType, APPLICATION_JSON)
+                            .withHeader(HttpHeaders.ContentType, ContentTypes.APPLICATION_JSON)
                             .withStatus(HttpStatusCode.OK.value)
                             .withBody(personerSkjermetResponse),
                     ),
@@ -59,7 +59,7 @@ internal class SkjermetClientServiceTest :
                 post(urlEqualTo("/skjermetBulk"))
                     .willReturn(
                         aResponse()
-                            .withHeader(HttpHeaders.ContentType, APPLICATION_JSON)
+                            .withHeader(HttpHeaders.ContentType, ContentTypes.APPLICATION_JSON)
                             .withStatus(HttpStatusCode.BadRequest.value)
                             .withBody(personerSkjermetBadRequestResponse),
                     ),

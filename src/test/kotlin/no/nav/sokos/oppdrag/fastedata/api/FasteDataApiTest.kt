@@ -8,6 +8,7 @@ import com.atlassian.oai.validator.restassured.OpenApiValidationFilter
 import io.kotest.common.KotestInternal
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -21,7 +22,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.restassured.RestAssured
 
-import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.attestasjon.FASTEDATA_BASE_API_PATH
 import no.nav.sokos.oppdrag.attestasjon.Testdata.tokenWithNavIdent
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
@@ -78,7 +78,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/fagomraader")
@@ -98,7 +98,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/fagomraader")
@@ -125,7 +125,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE_MYSTB/korrigeringsaarsaker")
@@ -143,7 +143,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/fagomraader/''!/korrigeringsaarsaker")
@@ -165,7 +165,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE_MYST/korrigeringsaarsaker")
@@ -192,7 +192,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE_MYST/bilagstyper")
@@ -212,7 +212,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE_MYST/bilagstyper")
@@ -239,7 +239,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE_MYST/klassekoder")
@@ -259,7 +259,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/fagomraader/$KODE_FAGOMRAADE_MYST/klassekoder")
@@ -287,7 +287,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/ventekriterier")
@@ -309,7 +309,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/ventekriterier")
@@ -337,7 +337,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/ventestatuskoder")
@@ -359,7 +359,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/ventestatuskoder")
@@ -386,7 +386,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/klassekoder")
@@ -408,7 +408,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/klassekoder")
@@ -435,7 +435,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/faggrupper")
@@ -456,7 +456,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/faggrupper")
@@ -491,7 +491,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/faggrupper/$KODE_FAGGRUPPE_BA/redusertSkatt")
@@ -512,7 +512,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/faggrupper/$KODE_FAGGRUPPE_BA/redusertSkatt")
@@ -551,7 +551,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/faggrupper/$KODE_FAGGRUPPE_BA/kjoreplan")
@@ -570,7 +570,7 @@ internal class FasteDataApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .port(PORT)
                     .get("$FASTEDATA_BASE_API_PATH/faggrupper/$KODE_FAGGRUPPE_BA/kjoreplan")

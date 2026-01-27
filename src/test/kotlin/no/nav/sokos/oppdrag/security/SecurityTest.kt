@@ -9,6 +9,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
@@ -20,7 +21,6 @@ import io.mockk.mockk
 import no.nav.security.mock.oauth2.MockOAuth2Server
 import no.nav.security.mock.oauth2.token.DefaultOAuth2TokenCallback
 import no.nav.security.mock.oauth2.withMockOAuth2Server
-import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.attestasjon.OPPDRAGSINFO_BASE_API_PATH
 import no.nav.sokos.oppdrag.common.dto.WrappedReponseWithErrorDTO
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
@@ -93,7 +93,7 @@ internal class SecurityTest :
                     val response =
                         client.post("$OPPDRAGSINFO_BASE_API_PATH/sok") {
                             header(HttpHeaders.Authorization, "Bearer ${token()}")
-                            header(HttpHeaders.ContentType, APPLICATION_JSON)
+                            header(HttpHeaders.ContentType, ContentType.Application.Json)
                             setBody(GjelderIdRequest("12345678901"))
                         }
 

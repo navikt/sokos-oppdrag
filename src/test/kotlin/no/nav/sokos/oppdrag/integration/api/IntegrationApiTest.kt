@@ -7,6 +7,7 @@ import kotlinx.serialization.json.Json
 import com.atlassian.oai.validator.restassured.OpenApiValidationFilter
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -19,7 +20,6 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import io.restassured.RestAssured
 
-import no.nav.sokos.oppdrag.attestasjon.APPLICATION_JSON
 import no.nav.sokos.oppdrag.attestasjon.INTEGRATION_BASE_API_PATH
 import no.nav.sokos.oppdrag.attestasjon.Testdata.tokenWithNavIdent
 import no.nav.sokos.oppdrag.config.AUTHENTICATION_NAME
@@ -59,7 +59,7 @@ internal class IntegrationApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .body(GjelderIdRequest(gjelderId = "12345678901"))
                     .port(PORT)
@@ -79,7 +79,7 @@ internal class IntegrationApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
                     .body(GjelderIdRequest(gjelderId = "1234567"))
                     .port(PORT)
@@ -106,7 +106,7 @@ internal class IntegrationApiTest :
                 RestAssured
                     .given()
                     .filter(validationFilter)
-                    .header(HttpHeaders.ContentType, APPLICATION_JSON)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     .header(HttpHeaders.Authorization, "dummytoken")
                     .body(GjelderIdRequest(gjelderId = "123456789"))
                     .port(PORT)
