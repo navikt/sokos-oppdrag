@@ -45,7 +45,7 @@ repositories {
 val ktorVersion = "3.4.0"
 
 // Serialization
-val kotlinxSerializationVersion = "1.9.0"
+val kotlinxSerializationVersion = "1.10.0"
 val kotlinxDatetimeVersion = "0.7.1-0.6.x-compat"
 val kotlinxCoroutinesVersion = "1.10.2"
 
