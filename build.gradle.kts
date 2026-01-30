@@ -45,7 +45,7 @@ repositories {
 val ktorVersion = "3.4.0"
 
 // Serialization
-val kotlinxSerializationVersion = "1.9.0"
+val kotlinxSerializationVersion = "1.10.0"
 val kotlinxDatetimeVersion = "0.7.1-0.6.x-compat"
 val kotlinxCoroutinesVersion = "1.10.2"
 
@@ -83,14 +83,14 @@ val glassfishJaxbVersion = "4.0.6"
 val ibmMqVersion = "9.4.4.1"
 
 // Test
-val kotestVersion = "6.1.0"
+val kotestVersion = "6.1.1"
 val wiremockVersion = "3.13.2"
 val mockOAuth2ServerVersion = "3.0.1"
 val mockkVersion = "1.14.7"
 val swaggerRequestValidatorVersion = "2.46.0"
 val testcontainersVersion = "2.0.3"
 val h2Version = "2.4.240"
-val activemqVersion = "2.44.0"
+val activemqVersion = "2.50.0"
 
 dependencies {
 
