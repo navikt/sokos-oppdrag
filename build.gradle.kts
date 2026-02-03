@@ -83,7 +83,7 @@ val glassfishJaxbVersion = "4.0.6"
 val ibmMqVersion = "9.4.4.1"
 
 // Test
-val kotestVersion = "6.1.1"
+val kotestVersion = "6.1.2"
 val wiremockVersion = "3.13.2"
 val mockOAuth2ServerVersion = "3.0.1"
 val mockkVersion = "1.14.9"
