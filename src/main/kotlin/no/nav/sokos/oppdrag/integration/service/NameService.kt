@@ -46,7 +46,7 @@ class NameService(
     }
 
     private suspend fun getPersonName(gjelderId: String): NameResponse {
-        val person = pdlClientService.getPerson(listOf(gjelderId))[gjelderId]?.navn?.first()
+        val person = pdlClientService.getPerson(listOf(gjelderId))[gjelderId]?.navn?.firstOrNull()
         val personName =
             person?.let {
                 when (person.mellomnavn) {
