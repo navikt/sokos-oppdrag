@@ -64,7 +64,7 @@ val natpryceVersion = "1.6.10.0"
 // Database
 val hikariVersion = "7.0.2"
 val db2JccVersion = "12.1.3.0"
-val kotliqueryVersion = "1.9.1"
+val kotliqueryVersion = "2.0.1"
 
 // GraphQL
 val graphqlClientVersion = "8.8.1"
@@ -132,7 +132,7 @@ dependencies {
     // Database
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("com.ibm.db2:jcc:$db2JccVersion")
-    implementation("com.github.seratch:kotliquery:$kotliqueryVersion")
+    implementation("no.nav:kotliquery:$kotliqueryVersion")
 
     // GraphQL
     implementation("com.expediagroup:graphql-kotlin-ktor-client:$graphqlClientVersion") {
