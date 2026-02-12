@@ -8,10 +8,8 @@ import kotlinx.serialization.Serializable
 
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.log
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import io.ktor.server.plugins.statuspages.StatusPagesConfig
-import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
 import io.ktor.server.response.respond
 
@@ -29,11 +27,6 @@ fun StatusPagesConfig.statusPageConfig() {
                 is IllegalArgumentException -> createApiError(HttpStatusCode.BadRequest, cause.message, call)
                 else -> createApiError(HttpStatusCode.InternalServerError, cause.message ?: "En teknisk feil har oppstått. Ta kontakt med utviklerne", call)
             }
-
-        call.application.log.error(
-            "Feilet håndtering av ${call.request.httpMethod} - ${call.request.path()} - Status=$responseStatus - Message=${cause.message}",
-            cause,
-        )
         call.respond(responseStatus, apiError)
     }
 }
