@@ -21,6 +21,9 @@ on:
       - '.github/workflows/manual-deploy.yaml'
       - '.github/dependabot.yaml'
 
+env:
+  TZ: Europe/Oslo
+
 jobs:
   build-push-image:
     permissions:
