@@ -4,22 +4,9 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - '**.md'
-      - 'LICENCE'
-      - 'CODEOWNERS'
-      - '.gitignore'
-      - '.editorconfig'
-      - 'setupLocalEnvironment.sh'
-      - '.scripts'
-      - 'dokumentasjon/**'
-      - '.github/workflows/build-pr.yaml'
-      - '.github/workflows/codeql-trivy-scan.yaml'
-      - '.github/workflows/deploy.yaml'
-      - '.github/workflows/digestabot-automerge.yaml'
-      - '.github/workflows/digestabot-update.yaml'
-      - '.github/workflows/manual-deploy.yaml'
-      - '.github/dependabot.yaml'
+    paths:
+      - '.github/workflows/deploy-valkey.yaml'
+      - '.nais/valkey/**'
 
 env:
   TZ: Europe/Oslo
