@@ -81,10 +81,6 @@ spec:
     - name: USE_AUTHENTICATION
       value: "true"
 
-    # OpenTelemetry
-    - name: OTEL_RESOURCE_ATTRIBUTES
-      value: "deployment.environment.name=p"
-
     # Redis
     - name: VALKEY_HOST
       value: "sokos-oppdrag-valkey.okonomi.svc.nais.local"
