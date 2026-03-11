@@ -73,9 +73,7 @@ spec:
     - secret: db2license
       mountPath: /var/run/secrets/db2license
   envFrom:
-    - secret: oppdrag-qx-credentials
-    - secret: sokos-oppdrag-mq-credentials
-    - secret: sokos-oppdrag-qx-valkey-password
+    - secret: sokos-oppdrag-qx-secrets
   env:
     - name: USE_AUTHENTICATION
       value: "true"
