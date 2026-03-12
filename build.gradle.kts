@@ -67,7 +67,7 @@ val db2JccVersion = "12.1.3.0"
 val kotliqueryVersion = "2.0.4"
 
 // GraphQL
-val graphqlClientVersion = "8.8.1"
+val graphqlClientVersion = "9.0.0"
 
 // Cache
 val caffeineVersion = "3.2.3"
