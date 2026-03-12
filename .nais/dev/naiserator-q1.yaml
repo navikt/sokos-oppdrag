@@ -74,8 +74,8 @@ spec:
           namespace: nais-system
   webproxy: true
   filesFrom:
-    - secret: db2license
-      mountPath: /var/run/secrets/db2license
+    - secret: sokos-db2license
+      mountPath: /var/run/secrets/sokos-db2license
   envFrom:
     - secret: sokos-oppdrag-q1-secrets
   env:
