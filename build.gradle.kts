@@ -77,13 +77,13 @@ val valkeyVersion = "7.5.0.RELEASE"
 
 // TSS
 val tjenestespesifikasjonVersion = "1.0_20251217153210_84e9478"
-val glassfishJaxbVersion = "4.0.6"
+val glassfishJaxbVersion = "4.0.7"
 
 // IBM MQ
 val ibmMqVersion = "9.4.5.0"
 
 // Test
-val kotestVersion = "6.1.6"
+val kotestVersion = "6.1.7"
 val wiremockVersion = "3.13.2"
 val mockOAuth2ServerVersion = "3.0.1"
 val mockkVersion = "1.14.9"
