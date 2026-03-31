@@ -10,7 +10,7 @@ import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 plugins {
     kotlin("jvm") version "2.3.10"
     kotlin("plugin.serialization") version "2.3.10"
-    id("com.expediagroup.graphql") version "9.0.0"
+    id("com.expediagroup.graphql") version "9.1.0"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.7"
     id("org.openapi.generator") version "7.20.0"
@@ -67,7 +67,7 @@ val db2JccVersion = "12.1.4.0"
 val kotliqueryVersion = "2.0.4"
 
 // GraphQL
-val graphqlClientVersion = "9.0.0"
+val graphqlClientVersion = "9.1.0"
 
 // Cache
 val caffeineVersion = "3.2.3"
@@ -83,14 +83,14 @@ val glassfishJaxbVersion = "4.0.7"
 val ibmMqVersion = "9.4.5.0"
 
 // Test
-val kotestVersion = "6.1.7"
+val kotestVersion = "6.1.8"
 val wiremockVersion = "3.13.2"
 val mockOAuth2ServerVersion = "3.0.1"
 val mockkVersion = "1.14.9"
-val swaggerRequestValidatorVersion = "2.46.0"
-val testcontainersVersion = "2.0.3"
+val swaggerRequestValidatorVersion = "2.46.1"
+val testcontainersVersion = "2.0.4"
 val h2Version = "2.4.240"
-val activemqVersion = "2.52.0"
+val activemqVersion = "2.53.0"
 
 dependencies {
 
