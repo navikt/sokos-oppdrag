@@ -93,10 +93,10 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
         }
     }
 
-    route("$BASE_PATH/trekktyper") {
+    route("$BASE_PATH/trekkgrupper") {
         get("") {
             call.respond(
-                fasteDataService.getTrekktyper(),
+                fasteDataService.getTrekkgrupper(),
             )
         }
     }

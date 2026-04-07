@@ -344,22 +344,22 @@ paths:
       security:
         - Bearer: [ ]
 
-  /trekktyper:
+  /trekkgrupper:
     get:
       tags:
         - Faste data
-      summary: Hent tilgjengelige trekktyper
-      description: Returnerer en liste av tilgjengelige trekktyper.
-      operationId: getTrekktyper
+      summary: Hent Trekkgrupper
+      description: Returnerer en liste av Trekkgrupper.
+      operationId: getTrekkgrupper
       responses:
         200:
-          description: OK - Hvis trekktyper ikke finnes så returneres tom liste
+          description: OK - Hvis det ikke finnes Trekkgrupper returneres tom liste
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Trekktype'
+                  $ref: '#/components/schemas/Trekkgruppe'
         500:
           description: Annen feil
           content:
@@ -693,31 +693,16 @@ components:
         datoBeregnTom:
           type: string
 
-    Trekktype:
+    Trekkgruppe:
       type: object
       required:
-        - kodeTrekktype
-        - beskrivelse
-        - prioritet
+        - kodeTrekkgruppe
+        - kodeFagomraade
       properties:
-        kodeTrekktype:
+        kodeTrekkgruppe:
           type: string
-        beskrivelse:
+        kodeFagomraade:
           type: string
-        prioritet:
-          type: string
-        reduserSkattegrl:
-          type: string
-          nullable: true
-        kodeKlasseTrekk:
-          type: string
-          nullable: true
-        kodeTrekkategori:
-          type: string
-          nullable: true
-        typeTrekkberegning:
-          type: string
-          nullable: true
   securitySchemes:
     Bearer:
       type: apiKey

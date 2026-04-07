@@ -10,13 +10,13 @@ import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.RedusertSkatt
-import no.nav.sokos.oppdrag.fastedata.domain.Trekktype
+import no.nav.sokos.oppdrag.fastedata.domain.Trekkgruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.fastedata.repository.FaggruppeRepository
 import no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository
 import no.nav.sokos.oppdrag.fastedata.repository.KlassekoderRepository
-import no.nav.sokos.oppdrag.fastedata.repository.TrekktypeRepository
+import no.nav.sokos.oppdrag.fastedata.repository.TrekkgruppeRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentekriterierRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentestatuskodeRepository
 
@@ -28,7 +28,7 @@ class FasteDataService(
     private val ventekriterierRepository: VentekriterierRepository = VentekriterierRepository(),
     private val ventestatuskodeRepository: VentestatuskodeRepository = VentestatuskodeRepository(),
     private val klassekoderRepository: KlassekoderRepository = KlassekoderRepository(),
-    private val trekkTypeRepository: TrekktypeRepository = TrekktypeRepository(),
+    private val trekkgruppeRepository: TrekkgruppeRepository = TrekkgruppeRepository(),
 ) {
     fun getAllVentestatuskoder(): List<Ventestatuskode> {
         logger.info { "Henter alle ventestatuskoder" }
@@ -70,6 +70,11 @@ class FasteDataService(
         return faggruppeRepository.getFaggrupper()
     }
 
+    fun getTrekkgrupper(): List<Trekkgruppe> {
+        logger.info { "Henter trekkgrupper" }
+        return trekkgruppeRepository.getTrekkgrupper()
+    }
+
     fun getRedusertSkatt(kodeFaggruppe: String): List<RedusertSkatt> {
         logger.info { "Henter redusert skatt for faggruppe $kodeFaggruppe" }
         return faggruppeRepository.getRedusertSkatt(kodeFaggruppe)
@@ -83,10 +88,5 @@ class FasteDataService(
     fun getFagomraaderForFaggruppe(kodeFaggruppe: String): List<String> {
         logger.info { "Henter fagområder for faggruppe $kodeFaggruppe" }
         return faggruppeRepository.getFagomraaderForFaggruppe(kodeFaggruppe)
-    }
-
-    fun getTrekktyper(): List<Trekktype> {
-        logger.info { "Henter trekktyper" }
-        return trekkTypeRepository.getTrekktyper()
     }
 }
