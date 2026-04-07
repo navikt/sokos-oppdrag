@@ -344,6 +344,31 @@ paths:
       security:
         - Bearer: [ ]
 
+  /trekktyper:
+    get:
+      tags:
+        - Faste data
+      summary: Hent tilgjengelige trekktyper
+      description: Returnerer en liste av tilgjengelige trekktyper.
+      operationId: getTrekktyper
+      responses:
+        200:
+          description: OK - Hvis trekktyper ikke finnes så returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trekktype'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
 components:
   schemas:
     Fagomraade:
@@ -667,6 +692,32 @@ components:
           type: string
         datoBeregnTom:
           type: string
+
+    Trekktype:
+      type: object
+      required:
+        - kodeTrekktype
+        - beskrivelse
+        - prioritet
+      properties:
+        kodeTrekktype:
+          type: string
+        beskrivelse:
+          type: string
+        prioritet:
+          type: string
+        reduserSkattegrl:
+          type: string
+          nullable: true
+        kodeKlasseTrekk:
+          type: string
+          nullable: true
+        kodeTrekkategori:
+          type: string
+          nullable: true
+        typeTrekkberegning:
+          type: string
+          nullable: true
   securitySchemes:
     Bearer:
       type: apiKey
