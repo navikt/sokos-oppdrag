@@ -28,4 +28,4 @@ spec:
     port: 6379
     protocol: redis
   envFrom:
-    - secret: sokos-oppdrag-valkey-password
+    - secret: sokos-oppdrag-q1-secrets
