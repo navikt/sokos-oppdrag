@@ -84,11 +84,12 @@ fun Application.commonConfig() {
 
 private fun ApplicationCall.extractCallingSystemFromJwtToken(): String {
     val token = request.header(HttpHeaders.Authorization)?.removePrefix("Bearer ")
-    return token?.let {
+    return token?.let { param ->
         runCatching {
-            JWT.decode(it)
-        }.onFailure {
-            logger.warn("Failed to decode token: ", it)
+            JWT.decode(param)
+        }.onFailure { exception ->
+            logger.warn("Failed to decode token: ", exception)
+            logger.warn(marker = TEAM_LOGS_MARKER) { "$token could not be decoded" }
         }.getOrNull()
             ?.let { it.claims["azp_name"]?.asString() ?: it.claims["client_id"]?.asString() }
             ?.split(":")
@@ -104,22 +105,30 @@ fun Routing.internalNaisRoutes(
     route("internal") {
         get("isAlive") {
             when (alivenessCheck()) {
-                true -> call.respondText { "I'm alive :)" }
-                else ->
+                true -> {
+                    call.respondText { "I'm alive :)" }
+                }
+
+                else -> {
                     call.respondText(
                         text = "I'm dead x_x",
                         status = HttpStatusCode.InternalServerError,
                     )
+                }
             }
         }
         get("isReady") {
             when (readynessCheck()) {
-                true -> call.respondText { "I'm ready! :)" }
-                else ->
+                true -> {
+                    call.respondText { "I'm ready! :)" }
+                }
+
+                else -> {
                     call.respondText(
                         text = "Wait! I'm not ready yet! :O",
                         status = HttpStatusCode.InternalServerError,
                     )
+                }
             }
         }
         get("metrics") {
