@@ -73,7 +73,7 @@ val graphqlClientVersion = "9.1.0"
 val caffeineVersion = "3.2.3"
 
 // Valkey
-val valkeyVersion = "7.5.0.RELEASE"
+val valkeyVersion = "7.5.1.RELEASE"
 
 // TSS
 val tjenestespesifikasjonVersion = "1.0_20260311085905_5544925"
