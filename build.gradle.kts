@@ -73,7 +73,7 @@ val graphqlClientVersion = "9.1.0"
 val caffeineVersion = "3.2.3"
 
 // Valkey
-val valkeyVersion = "7.5.0.RELEASE"
+val valkeyVersion = "7.5.1.RELEASE"
 
 // TSS
 val tjenestespesifikasjonVersion = "1.0_20260311085905_5544925"
@@ -83,7 +83,7 @@ val glassfishJaxbVersion = "4.0.7"
 val ibmMqVersion = "9.4.5.0"
 
 // Test
-val kotestVersion = "6.1.10"
+val kotestVersion = "6.1.11"
 val wiremockVersion = "3.13.2"
 val mockOAuth2ServerVersion = "3.0.1"
 val mockkVersion = "1.14.9"
