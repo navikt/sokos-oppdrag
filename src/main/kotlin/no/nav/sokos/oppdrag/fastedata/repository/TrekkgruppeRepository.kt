@@ -20,7 +20,7 @@ class TrekkgruppeRepository(
                     SELECT 
                         KODE_TREKKGRUPPE,
                         KODE_FAGOMRAADE
-                    FROM T1_TREKKGRUPPE
+                    FROM T1_FAGOMR_GRUPPE
                     ORDER BY KODE_TREKKGRUPPE, KODE_FAGOMRAADE
                     """.trimIndent(),
                 ),

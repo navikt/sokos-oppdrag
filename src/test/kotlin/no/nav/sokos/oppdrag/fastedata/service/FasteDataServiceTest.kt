@@ -3,6 +3,7 @@ package no.nav.sokos.oppdrag.fastedata.service
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
@@ -216,10 +217,10 @@ internal class FasteDataServiceTest :
 
             val result = fastedataService.getTrekkgrupper()
             result.shouldNotBeEmpty()
-            result.size shouldBe 1
+            result.size shouldBe 3
 
             result.first().kodeTrekkgruppe shouldBe "AVRG"
-            result.first().kodeFagomraade shouldBe "MEFOGNY"
+            result.map { it.kodeFagomraade } shouldContainExactlyInAnyOrder listOf("MEFOGNY", "EFOGNY", "PENAFP")
         }
 
         test("getAllKlassekoder skal returnere en liste av Klassekoder") {
