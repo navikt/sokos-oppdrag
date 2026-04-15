@@ -344,6 +344,31 @@ paths:
       security:
         - Bearer: [ ]
 
+  /trekkgrupper:
+    get:
+      tags:
+        - Faste data
+      summary: Hent Trekkgrupper
+      description: Returnerer en liste av Trekkgrupper.
+      operationId: getTrekkgrupper
+      responses:
+        200:
+          description: OK - Hvis det ikke finnes Trekkgrupper returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trekkgruppe'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
 components:
   schemas:
     Fagomraade:
@@ -666,6 +691,17 @@ components:
         datoBeregnFom:
           type: string
         datoBeregnTom:
+          type: string
+
+    Trekkgruppe:
+      type: object
+      required:
+        - kodeTrekkgruppe
+        - kodeFagomraade
+      properties:
+        kodeTrekkgruppe:
+          type: string
+        kodeFagomraade:
           type: string
   securitySchemes:
     Bearer:

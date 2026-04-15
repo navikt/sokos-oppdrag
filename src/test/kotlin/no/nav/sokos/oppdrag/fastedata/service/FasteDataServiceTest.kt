@@ -3,6 +3,7 @@ package no.nav.sokos.oppdrag.fastedata.service
 import io.kotest.assertions.assertSoftly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
@@ -31,6 +32,7 @@ internal class FasteDataServiceTest :
                 Db2Listener.venteKriterierRepository,
                 Db2Listener.ventestatuskodeRepository,
                 Db2Listener.klassekoderRepository,
+                Db2Listener.trekkgruppeRepository,
             )
 
         test("hentAlleFagomraader skal returnere en liste av Fagomraade") {
@@ -206,6 +208,19 @@ internal class FasteDataServiceTest :
             ventestatuskode.settesManuelt shouldBe "J"
             ventestatuskode.kodeArvesTil shouldBe "ADDR"
             ventestatuskode.kanManueltEndresTil shouldBe "AVVE"
+        }
+
+        test("getTrekkgrupper skal returnere en liste av Trekkgruppe") {
+            Db2Listener.dataSource.transaction { session ->
+                session.update(queryOf("database/fastedata/getTrekkgrupper.sql".readFromResource())) shouldBeGreaterThan 0
+            }
+
+            val result = fastedataService.getTrekkgrupper()
+            result.shouldNotBeEmpty()
+            result.size shouldBe 3
+
+            result.first().kodeTrekkgruppe shouldBe "AVRG"
+            result.map { it.kodeFagomraade } shouldContainExactlyInAnyOrder listOf("MEFOGNY", "EFOGNY", "PENAFP")
         }
 
         test("getAllKlassekoder skal returnere en liste av Klassekoder") {

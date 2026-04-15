@@ -6,6 +6,7 @@ import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
+import no.nav.sokos.oppdrag.fastedata.domain.Trekkgruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 
@@ -139,6 +140,14 @@ val ventestatuskoder =
             settesManuelt = "N",
             kodeArvesTil = "AVAV",
             kanManueltEndresTil = "REAK, REBE",
+        ),
+    )
+
+val trekgrupper =
+    listOf(
+        Trekkgruppe(
+            kodeTrekkgruppe = "AVRG",
+            kodeFagomraade = "MEFOGNY",
         ),
     )
 
