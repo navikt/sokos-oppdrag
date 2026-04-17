@@ -45,7 +45,7 @@ repositories {
 val ktorVersion = "3.4.2"
 
 // Serialization
-val kotlinxSerializationVersion = "1.10.0"
+val kotlinxSerializationVersion = "1.11.0"
 val kotlinxDatetimeVersion = "0.7.1-0.6.x-compat"
 val kotlinxCoroutinesVersion = "1.10.2"
 
@@ -64,7 +64,7 @@ val natpryceVersion = "1.6.10.0"
 // Database
 val hikariVersion = "7.0.2"
 val db2JccVersion = "12.1.4.0"
-val kotliqueryVersion = "2.0.4"
+val kotliqueryVersion = "2.0.5"
 
 // GraphQL
 val graphqlClientVersion = "9.1.0"
