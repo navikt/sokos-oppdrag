@@ -50,7 +50,7 @@ val kotlinxDatetimeVersion = "0.7.1-0.6.x-compat"
 val kotlinxCoroutinesVersion = "1.10.2"
 
 // Monitorering
-val micrometerVersion = "1.16.4"
+val micrometerVersion = "1.16.5"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
