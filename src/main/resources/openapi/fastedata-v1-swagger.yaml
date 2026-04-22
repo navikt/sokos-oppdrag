@@ -369,6 +369,31 @@ paths:
       security:
         - Bearer: [ ]
 
+  /trekkregler:
+    get:
+      tags:
+        - Faste data
+      summary: Hent Trekkregler
+      description: Returnerer en liste av Trekkregler.
+      operationId: getTrekkregler
+      responses:
+        200:
+          description: OK - Hvis det ikke finnes Trekkregler returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trekkregel'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
 components:
   schemas:
     Fagomraade:
@@ -702,6 +727,44 @@ components:
         kodeTrekkgruppe:
           type: string
         kodeFagomraade:
+          type: string
+
+    Trekkregel:
+      type: object
+      required:
+        - kodeTrekktype
+        - beskrivelse
+        - prioritet
+        - kodeKlasseTrekk
+        - kodeFagomraade
+        - belopsgrense
+        - oppfolging
+        - kodeOppgjorstype
+        - kodeOppgjorstypeNeg
+      properties:
+        kodeTrekktype:
+          type: string
+        beskrivelse:
+          type: string
+        prioritet:
+          type: integer
+        kodeKlasseTrekk:
+          type: string
+        kodeFagomraade:
+          type: string
+        antDagerOppf:
+          type: integer
+          nullable: true
+        antDagerOppfUtf:
+          type: integer
+          nullable: true
+        belopsgrense:
+          type: number
+        oppfolging:
+          type: string
+        kodeOppgjorstype:
+          type: string
+        kodeOppgjorstypeNeg:
           type: string
   securitySchemes:
     Bearer:

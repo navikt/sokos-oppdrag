@@ -7,6 +7,7 @@ import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.Trekkgruppe
+import no.nav.sokos.oppdrag.fastedata.domain.Trekkregel
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 
@@ -148,6 +149,23 @@ val trekgrupper =
         Trekkgruppe(
             kodeTrekkgruppe = "AVRG",
             kodeFagomraade = "MEFOGNY",
+        ),
+    )
+
+val trekkregler =
+    listOf(
+        Trekkregel(
+            kodeTrekktype = "UTBE",
+            beskrivelse = "Utbetaling",
+            prioritet = 10,
+            kodeKlasseTrekk = "UTBETALING",
+            kodeFagomraade = "MEFOGNY",
+            antDagerOppf = 2,
+            antDagerOppfUtf = 2,
+            belopsgrense = 10000.0,
+            oppfolging = "10000",
+            kodeOppgjorstype = "IUTR",
+            kodeOppgjorstypeNeg = "IUTR",
         ),
     )
 
