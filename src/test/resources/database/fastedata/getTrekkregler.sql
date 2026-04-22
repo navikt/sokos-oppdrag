@@ -1,0 +1,36 @@
+INSERT INTO T1_TREKKTYPE (
+    KODE_TREKKTYPE,
+    BESKRIVELSE,
+    PRIORITET,
+    KODE_KLASSE_TREKK,
+    KODE_TREKKATEGORI,
+    REDUSER_SKATTEGR,
+    KODE_BEHANDLING,
+    KODE_OPPGJORSTYPE,
+    KODE_KLASSE_OPPGJ,
+    KODE_OPPGJORSTYPE_NEG,
+    KODE_KLASSE_MOTP,
+    OPPFOLGING,
+    ANT_DAGER_OPPF,
+    ANT_DAGER_OPPF_UTF,
+    KRAV_TIL_GYLDIGHET,
+    BELOPSGRENSE,
+    BRUKERID,
+    TIDSPKT_ENDRET,
+    ABETAL,
+    TYPE_TREKKBEREGNING
+)
+VALUES
+    ('UTBE', 'Utbetaling                              ', '10', 'UTBETALING                                        ', 'INTE', 'N', '0 ', 'IUTR', 'UTBETALINGOPPGJ                                   ', 'IUTR', NULL, '10000', 2, 2, 'N', 10000.00, 'TESTUSER', '2024-01-01 00:00:00', 'N', 'YTELPER '),
+    ('TAVG', 'Trygdeavgift                            ', '13', 'TAVGINTE                                          ', 'INTE', 'N', '0 ', 'IUTR', 'TAVGINTEOPPGJ                                     ', 'NEGK', NULL, 'N', NULL, NULL, 'N', 0.00, 'TESTUSER', '2024-01-02 00:00:00', 'N', 'UTBDATO ');
+
+INSERT INTO T1_TREKKREGEL (
+    KODE_TREKKTYPE,
+    KODE_FAGOMRAADE,
+    BRUKERID,
+    TIDSPKT_ENDRET
+)
+VALUES
+    ('UTBE', 'MEFOGNY', 'TESTUSER', '2024-01-01 00:00:00'),
+    ('UTBE', 'EFOGNY', 'TESTUSER', '2024-01-02 00:00:00'),
+    ('TAVG', 'PENAFP', 'TESTUSER', '2024-01-03 00:00:00');
