@@ -6,7 +6,7 @@ metadata:
   annotations:
     "nais.io/run-as-group": "0"
     "nais.io/read-only-file-system": "false"
-  name: sokos-oppdrag-valkey
+  name: sokos-oppdrag-q1-valkey
   namespace: okonomi
 spec:
   image: {{image}}
