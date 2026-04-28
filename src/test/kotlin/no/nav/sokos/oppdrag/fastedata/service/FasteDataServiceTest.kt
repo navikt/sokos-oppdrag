@@ -16,6 +16,7 @@ import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.fastedata.alleKlassekoderMock
 import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
+import no.nav.sokos.oppdrag.fastedata.domain.Trekkregel
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.listener.Db2Listener
 
@@ -33,6 +34,7 @@ internal class FasteDataServiceTest :
                 Db2Listener.ventestatuskodeRepository,
                 Db2Listener.klassekoderRepository,
                 Db2Listener.trekkgruppeRepository,
+                Db2Listener.trekkregelRepository,
             )
 
         test("hentAlleFagomraader skal returnere en liste av Fagomraade") {
@@ -220,6 +222,29 @@ internal class FasteDataServiceTest :
             result.size shouldBe 3
 
             result.first().kodeTrekkgruppe shouldBe "AVRG"
+            result.map { it.kodeFagomraade } shouldContainExactlyInAnyOrder listOf("MEFOGNY", "EFOGNY", "PENAFP")
+        }
+
+        test("getTrekkregler skal returnere en liste av Trekkregel") {
+            Db2Listener.dataSource.transaction { session ->
+                session.update(queryOf("database/fastedata/getTrekkregler.sql".readFromResource())) shouldBeGreaterThan 0
+            }
+
+            val result: List<Trekkregel> = fastedataService.getTrekkregler()
+            result.shouldNotBeEmpty()
+            result.size shouldBe 3
+
+            val trekkregel = result.first()
+            trekkregel.kodeTrekktype shouldBe "UTBE"
+            trekkregel.beskrivelse shouldBe "Utbetaling"
+            trekkregel.prioritet shouldBe 10
+            trekkregel.kodeKlasseTrekk shouldBe "UTBETALING"
+            trekkregel.antDagerOppf shouldBe 2
+            trekkregel.antDagerOppfUtf shouldBe 2
+            trekkregel.belopsgrense shouldBe 10000.0
+            trekkregel.oppfolging shouldBe "10000"
+            trekkregel.kodeOppgjorstype shouldBe "IUTR"
+            trekkregel.kodeOppgjorstypeNeg shouldBe "IUTR"
             result.map { it.kodeFagomraade } shouldContainExactlyInAnyOrder listOf("MEFOGNY", "EFOGNY", "PENAFP")
         }
 
