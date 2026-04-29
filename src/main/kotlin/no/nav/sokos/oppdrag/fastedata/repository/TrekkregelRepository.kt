@@ -20,7 +20,7 @@ class TrekkregelRepository(
                     SELECT
                         tt.KODE_TREKKTYPE,
                         tt.BESKRIVELSE,
-                        tt.PRIORITET,
+                        CAST(TRIM(tt.PRIORITET) AS INTEGER) AS PRIORITET,
                         tt.KODE_KLASSE_TREKK,
                         tr.KODE_FAGOMRAADE,
                         tt.ANT_DAGER_OPPF,
