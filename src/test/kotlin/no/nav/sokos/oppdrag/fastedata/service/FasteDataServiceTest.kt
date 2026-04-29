@@ -245,6 +245,11 @@ internal class FasteDataServiceTest :
             trekkregel.oppfolging shouldBe "10000"
             trekkregel.kodeOppgjorstype shouldBe "IUTR"
             trekkregel.kodeOppgjorstypeNeg shouldBe "IUTR"
+
+            val trekkregelTavg = result.first { it.kodeTrekktype == "TAVG" }
+            trekkregelTavg.kodeOppgjorstype shouldBe "IUTR"
+            trekkregelTavg.kodeOppgjorstypeNeg shouldBe "NEGK"
+
             result.map { it.kodeFagomraade } shouldContainExactlyInAnyOrder listOf("MEFOGNY", "EFOGNY", "PENAFP")
         }
 
