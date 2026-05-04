@@ -8,6 +8,7 @@ import kotliquery.sessionOf
 
 import no.nav.sokos.oppdrag.config.DatabaseConfig
 import no.nav.sokos.oppdrag.fastedata.domain.Trekkregel
+import no.nav.sokos.oppdrag.fastedata.domain.TrekkregelKjoreplan
 
 class TrekkregelRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource,
@@ -48,6 +49,34 @@ class TrekkregelRepository(
                     oppfolging = row.string("OPPFOLGING").trim(),
                     kodeOppgjorstype = row.string("KODE_OPPGJORSTYPE").trim(),
                     kodeOppgjorstypeNeg = row.string("KODE_OPPGJORSTYPE_NEG").trim(),
+                )
+            }
+        }
+
+    fun getKjoreplan(kodeTrekktype: String): List<TrekkregelKjoreplan> =
+        using(sessionOf(dataSource)) { session: Session ->
+            session.list(
+                queryOf(
+                    """
+                    SELECT
+                        TRIM(k.KODE_OPPGJORSTYPE) AS KODE_OPPGJORSTYPE,
+                        k.DATO_KJORES,
+                        k.STATUS,
+                        CONCAT(k.DATO_PERIODE_FOM, '-', k.DATO_PERIODE_TOM) AS BEREGNINGSPERIODE
+                    FROM T1_KJOREPLAN_TREKK k
+                    INNER JOIN T1_TREKKTYPE t
+                        ON t.KODE_OPPGJORSTYPE = k.KODE_OPPGJORSTYPE
+                    WHERE TRIM(t.KODE_TREKKTYPE) = :KODE_TREKKTYPE
+                    ORDER BY k.DATO_KJORES
+                    """.trimIndent(),
+                    mapOf("KODE_TREKKTYPE" to kodeTrekktype),
+                ),
+            ) { row ->
+                TrekkregelKjoreplan(
+                    kodeOppgjorstype = row.string("KODE_OPPGJORSTYPE"),
+                    datoKjores = row.string("DATO_KJORES"),
+                    status = row.string("STATUS"),
+                    beregningsperiode = row.string("BEREGNINGSPERIODE"),
                 )
             }
         }
