@@ -109,7 +109,7 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
         }
         get("{kodeTrekktype}/kjoreplan") {
             call.respond(
-                fasteDataService.getTrekkregelKjoreplan(
+                fasteDataService.getKjoreplanTrekk(
                     call.parameters["kodeTrekktype"].orEmpty(),
                 ),
             )

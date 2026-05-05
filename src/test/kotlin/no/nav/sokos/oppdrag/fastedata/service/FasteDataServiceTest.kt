@@ -254,12 +254,12 @@ internal class FasteDataServiceTest :
             result.map { it.kodeFagomraade } shouldContainExactlyInAnyOrder listOf("MEFOGNY", "EFOGNY", "PENAFP")
         }
 
-        test("getTrekkregelKjoreplan skal returnere kjoreplan for valgt trekktype") {
+        test("getKjoreplanTrekk skal returnere kjoreplan for valgt trekktype") {
             Db2Listener.dataSource.transaction { session ->
-                session.update(queryOf("database/fastedata/getTrekkregelKjoreplan.sql".readFromResource())) shouldBeGreaterThan 0
+                session.update(queryOf("database/fastedata/getKjoreplanTrekk.sql".readFromResource())) shouldBeGreaterThan 0
             }
 
-            val result = fastedataService.getTrekkregelKjoreplan(KODE_TREKKTYPE_FSKT)
+            val result = fastedataService.getKjoreplanTrekk(KODE_TREKKTYPE_FSKT)
             result.shouldNotBeEmpty()
             result.size shouldBe 2
 

@@ -170,7 +170,7 @@ val trekkregler =
         ),
     )
 
-val trekkregelKjoreplan =
+val kjoreplanTrekk =
     listOf(
         KjoreplanTrekk(
             kodeOppgjorstype = "SKAT",

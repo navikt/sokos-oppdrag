@@ -400,7 +400,7 @@ paths:
         - Faste data
       summary: Hent kjøreplan for trekkregel
       description: Returnerer en liste av kjøreplaner for valgt trekktype.
-      operationId: getTrekkregelKjoreplan
+      operationId: getKjoreplanTrekk
       parameters:
         - in: path
           name: kodeTrekktype
@@ -416,7 +416,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TrekkregelKjoreplan'
+                  $ref: '#/components/schemas/KjoreplanTrekk'
         500:
           description: Annen feil
           content:
@@ -799,7 +799,7 @@ components:
         kodeOppgjorstypeNeg:
           type: string
 
-    TrekkregelKjoreplan:
+    KjoreplanTrekk:
       type: object
       required:
         - kodeOppgjorstype
@@ -812,12 +812,15 @@ components:
           type: string
         datoKjores:
           type: string
+          format: date
         status:
           type: string
         datoPeriodeFom:
           type: string
+          format: date
         datoPeriodeTom:
           type: string
+          format: date
   securitySchemes:
     Bearer:
       type: apiKey

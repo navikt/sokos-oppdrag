@@ -84,7 +84,7 @@ class FasteDataService(
         return trekkregelRepository.getTrekkregler()
     }
 
-    fun getTrekkregelKjoreplan(kodeTrekktype: String): List<KjoreplanTrekk> {
+    fun getKjoreplanTrekk(kodeTrekktype: String): List<KjoreplanTrekk> {
         logger.info { "Henter kjøreplan for trekktype $kodeTrekktype" }
         return trekkregelRepository.getKjoreplan(kodeTrekktype)
     }

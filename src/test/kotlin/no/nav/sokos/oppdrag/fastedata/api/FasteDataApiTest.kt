@@ -45,11 +45,11 @@ import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.fastedata.faggrupper
 import no.nav.sokos.oppdrag.fastedata.fagomraader
+import no.nav.sokos.oppdrag.fastedata.kjoreplanTrekk
 import no.nav.sokos.oppdrag.fastedata.klassekoder
 import no.nav.sokos.oppdrag.fastedata.korrigeringsaarsaker
 import no.nav.sokos.oppdrag.fastedata.service.FasteDataService
 import no.nav.sokos.oppdrag.fastedata.trekgrupper
-import no.nav.sokos.oppdrag.fastedata.trekkregelKjoreplan
 import no.nav.sokos.oppdrag.fastedata.trekkregler
 import no.nav.sokos.oppdrag.fastedata.validator.INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
 import no.nav.sokos.oppdrag.fastedata.ventekriterier
@@ -577,8 +577,8 @@ internal class FasteDataApiTest :
                 )
         }
 
-        test("trekkregel kjoreplan returnerer 200 OK") {
-            coEvery { fasteDataService.getTrekkregelKjoreplan(KODE_TREKKTYPE_FSKT) } returns trekkregelKjoreplan
+        test("kjoreplan trekk returnerer 200 OK") {
+            coEvery { fasteDataService.getKjoreplanTrekk(KODE_TREKKTYPE_FSKT) } returns kjoreplanTrekk
 
             val response =
                 RestAssured
@@ -594,11 +594,11 @@ internal class FasteDataApiTest :
                     .extract()
                     .response()
 
-            Json.decodeFromString<List<KjoreplanTrekk>>(response.asString()) shouldBe trekkregelKjoreplan
+            Json.decodeFromString<List<KjoreplanTrekk>>(response.asString()) shouldBe kjoreplanTrekk
         }
 
-        test("trekkregel kjoreplan returnerer 500 Internal Server Error") {
-            coEvery { fasteDataService.getTrekkregelKjoreplan(KODE_TREKKTYPE_FSKT) } throws RuntimeException("En feil")
+        test("kjoreplan trekk returnerer 500 Internal Server Error") {
+            coEvery { fasteDataService.getKjoreplanTrekk(KODE_TREKKTYPE_FSKT) } throws RuntimeException("En feil")
 
             val response =
                 RestAssured
