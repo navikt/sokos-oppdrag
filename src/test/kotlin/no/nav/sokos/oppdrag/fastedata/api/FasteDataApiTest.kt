@@ -40,6 +40,7 @@ import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.RedusertSkatt
 import no.nav.sokos.oppdrag.fastedata.domain.Trekkgruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Trekkregel
+import no.nav.sokos.oppdrag.fastedata.domain.TrekkregelKjoreplan
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.fastedata.faggrupper
@@ -48,6 +49,7 @@ import no.nav.sokos.oppdrag.fastedata.klassekoder
 import no.nav.sokos.oppdrag.fastedata.korrigeringsaarsaker
 import no.nav.sokos.oppdrag.fastedata.service.FasteDataService
 import no.nav.sokos.oppdrag.fastedata.trekgrupper
+import no.nav.sokos.oppdrag.fastedata.trekkregelKjoreplan
 import no.nav.sokos.oppdrag.fastedata.trekkregler
 import no.nav.sokos.oppdrag.fastedata.validator.INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
 import no.nav.sokos.oppdrag.fastedata.ventekriterier
@@ -57,6 +59,7 @@ private const val PORT = 9090
 private const val KODE_FAGOMRAADE_MYST = "MYST"
 private const val KODE_FAGOMRAADE_MYSTB = "MYSTB"
 private const val KODE_FAGGRUPPE_BA = "BA"
+private const val KODE_TREKKTYPE_FSKT = "FSKT"
 
 private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
 
@@ -570,6 +573,53 @@ internal class FasteDataApiTest :
                     status = HttpStatusCode.InternalServerError.value,
                     message = "En feil",
                     path = "$FASTEDATA_BASE_API_PATH/trekkregler",
+                    timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
+                )
+        }
+
+        test("trekkregel kjoreplan returnerer 200 OK") {
+            coEvery { fasteDataService.getTrekkregelKjoreplan(KODE_TREKKTYPE_FSKT) } returns trekkregelKjoreplan
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/trekkregler/$KODE_TREKKTYPE_FSKT/kjoreplan")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.OK.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<List<TrekkregelKjoreplan>>(response.asString()) shouldBe trekkregelKjoreplan
+        }
+
+        test("trekkregel kjoreplan returnerer 500 Internal Server Error") {
+            coEvery { fasteDataService.getTrekkregelKjoreplan(KODE_TREKKTYPE_FSKT) } throws RuntimeException("En feil")
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/trekkregler/$KODE_TREKKTYPE_FSKT/kjoreplan")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()) shouldBe
+                ApiError(
+                    error = HttpStatusCode.InternalServerError.description,
+                    status = HttpStatusCode.InternalServerError.value,
+                    message = "En feil",
+                    path = "$FASTEDATA_BASE_API_PATH/trekkregler/$KODE_TREKKTYPE_FSKT/kjoreplan",
                     timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
                 )
         }

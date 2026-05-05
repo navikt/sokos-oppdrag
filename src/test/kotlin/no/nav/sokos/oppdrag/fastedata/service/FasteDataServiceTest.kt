@@ -21,6 +21,7 @@ import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.listener.Db2Listener
 
 private const val KODE_FAGOMRAADE_MEFOGNY = "MEFOGNY"
+private const val KODE_TREKKTYPE_FSKT = "FSKT"
 
 internal class FasteDataServiceTest :
     FunSpec({
@@ -251,6 +252,27 @@ internal class FasteDataServiceTest :
             trekkregelTavg.kodeOppgjorstypeNeg shouldBe "NEGK"
 
             result.map { it.kodeFagomraade } shouldContainExactlyInAnyOrder listOf("MEFOGNY", "EFOGNY", "PENAFP")
+        }
+
+        test("getTrekkregelKjoreplan skal returnere kjoreplan for valgt trekktype") {
+            Db2Listener.dataSource.transaction { session ->
+                session.update(queryOf("database/fastedata/getTrekkregelKjoreplan.sql".readFromResource())) shouldBeGreaterThan 0
+            }
+
+            val result = fastedataService.getTrekkregelKjoreplan(KODE_TREKKTYPE_FSKT)
+            result.shouldNotBeEmpty()
+            result.size shouldBe 2
+
+            val kjoreplan = result.first()
+            kjoreplan.kodeOppgjorstype shouldBe "SKAT"
+            kjoreplan.datoKjores shouldBe "2026-11-30"
+            kjoreplan.status shouldBe "PLAN"
+            kjoreplan.datoPeriodeFom shouldBe "2026-11-01"
+            kjoreplan.datoPeriodeTom shouldBe "2026-11-30"
+
+            result.last().datoKjores shouldBe "2026-12-29"
+            result.last().datoPeriodeFom shouldBe "2026-12-01"
+            result.last().datoPeriodeTom shouldBe "2026-12-31"
         }
 
         test("getAllKlassekoder skal returnere en liste av Klassekoder") {

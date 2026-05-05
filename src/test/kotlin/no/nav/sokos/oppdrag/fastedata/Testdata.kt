@@ -8,6 +8,7 @@ import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.Trekkgruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Trekkregel
+import no.nav.sokos.oppdrag.fastedata.domain.TrekkregelKjoreplan
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 
@@ -166,6 +167,24 @@ val trekkregler =
             oppfolging = "10000",
             kodeOppgjorstype = "IUTR",
             kodeOppgjorstypeNeg = "IUTR",
+        ),
+    )
+
+val trekkregelKjoreplan =
+    listOf(
+        TrekkregelKjoreplan(
+            kodeOppgjorstype = "SKAT",
+            datoKjores = "2026-12-29",
+            status = "PLAN",
+            datoPeriodeFom = "2026-12-01",
+            datoPeriodeTom = "2026-12-31",
+        ),
+        TrekkregelKjoreplan(
+            kodeOppgjorstype = "SKAT",
+            datoKjores = "2026-11-30",
+            status = "PLAN",
+            datoPeriodeFom = "2026-11-01",
+            datoPeriodeTom = "2026-11-30",
         ),
     )
 

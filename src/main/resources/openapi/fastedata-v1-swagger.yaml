@@ -394,6 +394,38 @@ paths:
       security:
         - Bearer: [ ]
 
+  /trekkregler/{kodeTrekktype}/kjoreplan:
+    get:
+      tags:
+        - Faste data
+      summary: Hent kjøreplan for trekkregel
+      description: Returnerer en liste av kjøreplaner for valgt trekktype.
+      operationId: getTrekkregelKjoreplan
+      parameters:
+        - in: path
+          name: kodeTrekktype
+          required: true
+          schema:
+            type: string
+          description: Kode for trekktype
+      responses:
+        200:
+          description: OK - Hvis det ikke finnes kjøreplaner returneres tom liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrekkregelKjoreplan'
+        500:
+          description: Annen feil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      security:
+        - Bearer: [ ]
+
 components:
   schemas:
     Fagomraade:
@@ -765,6 +797,26 @@ components:
         kodeOppgjorstype:
           type: string
         kodeOppgjorstypeNeg:
+          type: string
+
+    TrekkregelKjoreplan:
+      type: object
+      required:
+        - kodeOppgjorstype
+        - datoKjores
+        - status
+        - datoPeriodeFom
+        - datoPeriodeTom
+      properties:
+        kodeOppgjorstype:
+          type: string
+        datoKjores:
+          type: string
+        status:
+          type: string
+        datoPeriodeFom:
+          type: string
+        datoPeriodeTom:
           type: string
   securitySchemes:
     Bearer:

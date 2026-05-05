@@ -12,6 +12,7 @@ import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.RedusertSkatt
 import no.nav.sokos.oppdrag.fastedata.domain.Trekkgruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Trekkregel
+import no.nav.sokos.oppdrag.fastedata.domain.TrekkregelKjoreplan
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.fastedata.repository.FaggruppeRepository
@@ -81,6 +82,11 @@ class FasteDataService(
     fun getTrekkregler(): List<Trekkregel> {
         logger.info { "Henter trekkregler" }
         return trekkregelRepository.getTrekkregler()
+    }
+
+    fun getTrekkregelKjoreplan(kodeTrekktype: String): List<TrekkregelKjoreplan> {
+        logger.info { "Henter kjøreplan for trekktype $kodeTrekktype" }
+        return trekkregelRepository.getKjoreplan(kodeTrekktype)
     }
 
     fun getRedusertSkatt(kodeFaggruppe: String): List<RedusertSkatt> {
