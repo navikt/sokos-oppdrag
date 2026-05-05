@@ -62,7 +62,8 @@ class TrekkregelRepository(
                         TRIM(k.KODE_OPPGJORSTYPE) AS KODE_OPPGJORSTYPE,
                         k.DATO_KJORES,
                         k.STATUS,
-                        CONCAT(k.DATO_PERIODE_FOM, '-', k.DATO_PERIODE_TOM) AS BEREGNINGSPERIODE
+                        k.DATO_PERIODE_FOM,
+                        k.DATO_PERIODE_TOM
                     FROM T1_KJOREPLAN_TREKK k
                     INNER JOIN T1_TREKKTYPE t
                         ON t.KODE_OPPGJORSTYPE = k.KODE_OPPGJORSTYPE
@@ -76,7 +77,8 @@ class TrekkregelRepository(
                     kodeOppgjorstype = row.string("KODE_OPPGJORSTYPE"),
                     datoKjores = row.string("DATO_KJORES"),
                     status = row.string("STATUS"),
-                    beregningsperiode = row.string("BEREGNINGSPERIODE"),
+                    datoPeriodeFom = row.string("DATO_PERIODE_FOM"),
+                    datoPeriodeTom = row.string("DATO_PERIODE_TOM"),
                 )
             }
         }

@@ -7,5 +7,6 @@ data class TrekkregelKjoreplan(
     val kodeOppgjorstype: String,
     val datoKjores: String,
     val status: String,
-    val beregningsperiode: String,
+    val datoPeriodeFom: String,
+    val datoPeriodeTom: String,
 )
