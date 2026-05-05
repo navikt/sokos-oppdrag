@@ -3,12 +3,12 @@ package no.nav.sokos.oppdrag.fastedata
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
+import no.nav.sokos.oppdrag.fastedata.domain.KjoreplanTrekk
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.Trekkgruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Trekkregel
-import no.nav.sokos.oppdrag.fastedata.domain.TrekkregelKjoreplan
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 
@@ -172,14 +172,14 @@ val trekkregler =
 
 val trekkregelKjoreplan =
     listOf(
-        TrekkregelKjoreplan(
+        KjoreplanTrekk(
             kodeOppgjorstype = "SKAT",
             datoKjores = "2026-12-29",
             status = "PLAN",
             datoPeriodeFom = "2026-12-01",
             datoPeriodeTom = "2026-12-31",
         ),
-        TrekkregelKjoreplan(
+        KjoreplanTrekk(
             kodeOppgjorstype = "SKAT",
             datoKjores = "2026-11-30",
             status = "PLAN",

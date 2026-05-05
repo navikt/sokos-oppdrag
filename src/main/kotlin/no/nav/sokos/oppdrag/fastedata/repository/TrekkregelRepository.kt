@@ -7,8 +7,8 @@ import kotliquery.queryOf
 import kotliquery.sessionOf
 
 import no.nav.sokos.oppdrag.config.DatabaseConfig
+import no.nav.sokos.oppdrag.fastedata.domain.KjoreplanTrekk
 import no.nav.sokos.oppdrag.fastedata.domain.Trekkregel
-import no.nav.sokos.oppdrag.fastedata.domain.TrekkregelKjoreplan
 
 class TrekkregelRepository(
     private val dataSource: HikariDataSource = DatabaseConfig.db2DataSource,
@@ -53,7 +53,7 @@ class TrekkregelRepository(
             }
         }
 
-    fun getKjoreplan(kodeTrekktype: String): List<TrekkregelKjoreplan> =
+    fun getKjoreplan(kodeTrekktype: String): List<KjoreplanTrekk> =
         using(sessionOf(dataSource)) { session: Session ->
             session.list(
                 queryOf(
@@ -73,7 +73,7 @@ class TrekkregelRepository(
                     mapOf("KODE_TREKKTYPE" to kodeTrekktype),
                 ),
             ) { row ->
-                TrekkregelKjoreplan(
+                KjoreplanTrekk(
                     kodeOppgjorstype = row.string("KODE_OPPGJORSTYPE"),
                     datoKjores = row.string("DATO_KJORES"),
                     status = row.string("STATUS"),

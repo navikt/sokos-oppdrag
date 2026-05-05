@@ -34,13 +34,13 @@ import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Kjoreplan
+import no.nav.sokos.oppdrag.fastedata.domain.KjoreplanTrekk
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.RedusertSkatt
 import no.nav.sokos.oppdrag.fastedata.domain.Trekkgruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Trekkregel
-import no.nav.sokos.oppdrag.fastedata.domain.TrekkregelKjoreplan
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.fastedata.faggrupper
@@ -594,7 +594,7 @@ internal class FasteDataApiTest :
                     .extract()
                     .response()
 
-            Json.decodeFromString<List<TrekkregelKjoreplan>>(response.asString()) shouldBe trekkregelKjoreplan
+            Json.decodeFromString<List<KjoreplanTrekk>>(response.asString()) shouldBe trekkregelKjoreplan
         }
 
         test("trekkregel kjoreplan returnerer 500 Internal Server Error") {
