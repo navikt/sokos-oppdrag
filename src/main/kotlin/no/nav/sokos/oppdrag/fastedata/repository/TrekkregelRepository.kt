@@ -45,7 +45,7 @@ class TrekkregelRepository(
                     kodeFagomraade = row.string("KODE_FAGOMRAADE").trim(),
                     antDagerOppf = row.intOrNull("ANT_DAGER_OPPF"),
                     antDagerOppfUtf = row.intOrNull("ANT_DAGER_OPPF_UTF"),
-                    belopsgrense = row.double("BELOPSGRENSE"),
+                    belopsgrense = row.bigDecimal("BELOPSGRENSE"),
                     oppfolging = row.string("OPPFOLGING").trim(),
                     kodeOppgjorstype = row.string("KODE_OPPGJORSTYPE").trim(),
                     kodeOppgjorstypeNeg = row.string("KODE_OPPGJORSTYPE_NEG").trim(),
