@@ -10,7 +10,7 @@ import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 plugins {
     kotlin("jvm") version "2.3.20"
     kotlin("plugin.serialization") version "2.3.20"
-    id("com.expediagroup.graphql") version "9.1.0"
+    id("com.expediagroup.graphql") version "9.2.0"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.8"
     id("org.openapi.generator") version "7.21.0"
@@ -67,7 +67,7 @@ val db2JccVersion = "12.1.4.0"
 val kotliqueryVersion = "2.0.5"
 
 // GraphQL
-val graphqlClientVersion = "9.1.0"
+val graphqlClientVersion = "9.2.0"
 
 // Cache
 val caffeineVersion = "3.2.3"
@@ -88,7 +88,7 @@ val wiremockVersion = "3.13.2"
 val mockOAuth2ServerVersion = "3.0.1"
 val mockkVersion = "1.14.9"
 val swaggerRequestValidatorVersion = "2.46.1"
-val testcontainersVersion = "2.0.4"
+val testcontainersVersion = "2.0.5"
 val h2Version = "2.4.240"
 val activemqVersion = "2.53.0"
 
@@ -183,6 +183,10 @@ configurations.all {
             if (requested.group == "io.netty" && requested.name == "netty-codec-http2") {
                 useVersion("4.2.11.Final")
                 because("Netty HTTP/2 CONTINUATION Frame Flood DoS via Zero-Byte Frame Bypass. Affected version >= 4.2.0.Alpha1, < 4.2.10.Final")
+            }
+            if (requested.group == "org.bouncycastle" && requested.name == "bcprov-jdk18on") {
+                useVersion("1.84")
+                because("Bouncy Castle Has Covert Timing Channel Vulnerability. Affected version >= 1.71, < 1.84")
             }
         }
     }
