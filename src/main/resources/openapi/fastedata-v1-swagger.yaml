@@ -767,12 +767,15 @@ components:
         - kodeTrekktype
         - beskrivelse
         - prioritet
+        - reduserSkattegr
         - kodeKlasseTrekk
         - kodeFagomraade
         - belopsgrense
         - oppfolging
+        - kodeBehandling
         - kodeOppgjorstype
         - kodeOppgjorstypeNeg
+        - brukerId
       properties:
         kodeTrekktype:
           type: string
@@ -780,8 +783,13 @@ components:
           type: string
         prioritet:
           type: integer
+        reduserSkattegr:
+          type: string
         kodeKlasseTrekk:
           type: string
+        typeTrekkberegning:
+          type: string
+          nullable: true
         kodeFagomraade:
           type: string
         antDagerOppf:
@@ -794,9 +802,13 @@ components:
           type: number
         oppfolging:
           type: string
+        kodeBehandling:
+          type: string
         kodeOppgjorstype:
           type: string
         kodeOppgjorstypeNeg:
+          type: string
+        brukerId:
           type: string
 
     KjoreplanTrekk:

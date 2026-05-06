@@ -159,14 +159,18 @@ val trekkregler =
             kodeTrekktype = "UTBE",
             beskrivelse = "Utbetaling",
             prioritet = 10,
+            reduserSkattegr = "N",
             kodeKlasseTrekk = "UTBETALING",
+            typeTrekkberegning = "YTELPER",
             kodeFagomraade = "MEFOGNY",
             antDagerOppf = 2,
             antDagerOppfUtf = 2,
             belopsgrense = 10000.0,
             oppfolging = "10000",
+            kodeBehandling = "0",
             kodeOppgjorstype = "IUTR",
             kodeOppgjorstypeNeg = "IUTR",
+            brukerId = "TESTUSER",
         ),
     )
 

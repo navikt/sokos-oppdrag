@@ -22,14 +22,18 @@ class TrekkregelRepository(
                         tt.KODE_TREKKTYPE,
                         tt.BESKRIVELSE,
                         CAST(TRIM(tt.PRIORITET) AS INTEGER) AS PRIORITET,
+                        tt.REDUSER_SKATTEGR,
                         tt.KODE_KLASSE_TREKK,
+                        tt.TYPE_TREKKBEREGNING,
                         tr.KODE_FAGOMRAADE,
                         tt.ANT_DAGER_OPPF,
                         tt.ANT_DAGER_OPPF_UTF,
                         tt.BELOPSGRENSE,
                         tt.OPPFOLGING,
+                        tt.KODE_BEHANDLING,
                         tt.KODE_OPPGJORSTYPE,
-                        tt.KODE_OPPGJORSTYPE_NEG
+                        tt.KODE_OPPGJORSTYPE_NEG,
+                        tt.BRUKERID
                     FROM T1_TREKKTYPE tt
                     INNER JOIN T1_TREKKREGEL tr
                         ON tr.KODE_TREKKTYPE = tt.KODE_TREKKTYPE
@@ -41,14 +45,18 @@ class TrekkregelRepository(
                     kodeTrekktype = row.string("KODE_TREKKTYPE").trim(),
                     beskrivelse = row.string("BESKRIVELSE").trim(),
                     prioritet = row.int("PRIORITET"),
+                    reduserSkattegr = row.string("REDUSER_SKATTEGR").trim(),
                     kodeKlasseTrekk = row.string("KODE_KLASSE_TREKK").trim(),
+                    typeTrekkberegning = row.stringOrNull("TYPE_TREKKBEREGNING")?.trim(),
                     kodeFagomraade = row.string("KODE_FAGOMRAADE").trim(),
                     antDagerOppf = row.intOrNull("ANT_DAGER_OPPF"),
                     antDagerOppfUtf = row.intOrNull("ANT_DAGER_OPPF_UTF"),
                     belopsgrense = row.double("BELOPSGRENSE"),
                     oppfolging = row.string("OPPFOLGING").trim(),
+                    kodeBehandling = row.string("KODE_BEHANDLING").trim(),
                     kodeOppgjorstype = row.string("KODE_OPPGJORSTYPE").trim(),
                     kodeOppgjorstypeNeg = row.string("KODE_OPPGJORSTYPE_NEG").trim(),
+                    brukerId = row.string("BRUKERID").trim(),
                 )
             }
         }
