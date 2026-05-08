@@ -25,7 +25,7 @@ object ValkeyConfig {
                 .withHost(valkeyProperties.host)
                 .withPort(valkeyProperties.port.toInt())
                 .withSsl(valkeyProperties.ssl)
-                .withAuthentication("", valkeyProperties.password)
+                .withAuthentication(valkeyProperties.username, valkeyProperties.password)
                 .build()
         return valkeyURI
     }
