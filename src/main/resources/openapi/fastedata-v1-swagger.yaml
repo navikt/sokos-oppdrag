@@ -776,6 +776,7 @@ components:
         - kodeOppgjorstype
         - kodeOppgjorstypeNeg
         - brukerId
+        - antallKjoreplaner
       properties:
         kodeTrekktype:
           type: string
@@ -810,6 +811,8 @@ components:
           type: string
         brukerId:
           type: string
+        antallKjoreplaner:
+          type: integer
 
     KjoreplanTrekk:
       type: object
