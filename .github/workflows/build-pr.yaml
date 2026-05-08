@@ -13,7 +13,6 @@ on:
       - 'dokumentasjon/**'
       - '.github/workflows/codeql-trivy-scan.yaml'
       - '.github/workflows/deploy.yaml'
-      - '.github/workflows/deploy-valkey.yaml'
       - '.github/workflows/digestabot-automerge.yaml'
       - '.github/workflows/digestabot-update.yaml'
       - '.github/workflows/manual-deploy.yaml'

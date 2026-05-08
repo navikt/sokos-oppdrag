@@ -75,15 +75,16 @@ spec:
       mountPath: /var/run/secrets/db2license
   envFrom:
     - secret: sokos-oppdrag-secrets
+  valkey:
+    - instance: sokos-oppdrag
+      access: readwrite
   env:
     - name: USE_AUTHENTICATION
       value: "true"
 
-    # Redis
-    - name: VALKEY_HOST
-      value: "sokos-oppdrag-valkey.okonomi.svc.nais.local"
-    - name: VALKEY_PORT
-      value: "6379"
+    # Valkey
+    - name: VALKEY_INSTANCE_NAME
+      value: "SOKOS_OPPDRAG"
 
     # Db2
     - name: DATABASE_HOST
