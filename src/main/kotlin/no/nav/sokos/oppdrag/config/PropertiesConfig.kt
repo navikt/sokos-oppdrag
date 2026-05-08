@@ -18,7 +18,6 @@ object PropertiesConfig {
                 "NAIS_APP_NAME" to "sokos-oppdrag",
                 "NAIS_NAMESPACE" to "okonomi",
                 "USE_AUTHENTICATION" to "true",
-                "VALKEY_SSL" to "true",
             ),
         )
 
@@ -30,15 +29,7 @@ object PropertiesConfig {
                 "ZOS_URL" to "http://155.55.1.82:9080/osattestasjonapi",
                 "VALKEY_HOST" to "localhost",
                 "VALKEY_PORT" to "6379",
-                "VALKEY_USERNAME" to "",
                 "VALKEY_PASSWORD" to "password",
-                "VALKEY_INSTANCE" to "SOKOS_OPPDRAG",
-                "VALKEY_SSL" to "false",
-                "EREG_URL" to "http://localhost:8080/api/v1/ereg",
-                "SKJERMING_CLIENT_ID" to "sokos-oppdrag-q1",
-                "SKJERMING_URL" to "http://localhost:8080/api/v1/skjermet",
-                "PDL_SCOPE" to "pdl-api",
-                "PDL_URL" to "http://localhost:8080/api/v1/pdl",
                 "MQ_HOSTNAME" to "10.53.17.118",
                 "MQ_PORT" to "1413",
             ),
@@ -49,20 +40,13 @@ object PropertiesConfig {
 
     private val config =
         when (System.getenv("NAIS_CLUSTER_NAME") ?: System.getProperty("NAIS_CLUSTER_NAME")) {
-            "dev-fss" -> {
-                ConfigurationProperties.systemProperties() overriding EnvironmentVariables() overriding devProperties overriding defaultProperties
-            }
-
-            "prod-fss" -> {
-                ConfigurationProperties.systemProperties() overriding EnvironmentVariables() overriding prodProperties overriding defaultProperties
-            }
-
-            else -> {
+            "dev-fss" -> ConfigurationProperties.systemProperties() overriding EnvironmentVariables() overriding devProperties overriding defaultProperties
+            "prod-fss" -> ConfigurationProperties.systemProperties() overriding EnvironmentVariables() overriding prodProperties overriding defaultProperties
+            else ->
                 ConfigurationProperties.systemProperties() overriding EnvironmentVariables() overriding
                     ConfigurationProperties.fromOptionalFile(
                         File("defaults.properties"),
                     ) overriding localDevProperties overriding defaultProperties
-            }
         }
 
     operator fun get(key: String): String = config[Key(key, stringType)]
@@ -108,11 +92,9 @@ object PropertiesConfig {
     )
 
     data class ValkeyProperties(
-        val instance: String = getOrEmpty("VALKEY_INSTANCE"),
-        val host: String = getOrEmpty("VALKEY_HOST_$instance"),
-        val port: String = getOrEmpty("VALKEY_PORT_$instance"),
-        val username: String = getOrEmpty("VALKEY_USERNAME_$instance"),
-        val password: String = getOrEmpty("VALKEY_PASSWORD_$instance"),
+        val host: String = getOrEmpty("VALKEY_HOST"),
+        val port: String = getOrEmpty("VALKEY_PORT"),
+        val password: String = getOrEmpty("VALKEY_PASSWORD"),
         val ssl: Boolean = getOrEmpty("VALKEY_SSL").toBoolean(),
     )
 
