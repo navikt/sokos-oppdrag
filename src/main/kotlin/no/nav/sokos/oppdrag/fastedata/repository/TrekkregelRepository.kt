@@ -33,7 +33,9 @@ class TrekkregelRepository(
                         tt.KODE_BEHANDLING,
                         tt.KODE_OPPGJORSTYPE,
                         tt.KODE_OPPGJORSTYPE_NEG,
-                        tt.BRUKERID
+                        tt.BRUKERID,
+                        (SELECT COUNT(*) FROM T1_KJOREPLAN_TREKK kp WHERE kp.KODE_OPPGJORSTYPE = tt.KODE_OPPGJORSTYPE)
+                            AS ANTALL_KJOREPLANER
                     FROM T1_TREKKTYPE tt
                     INNER JOIN T1_TREKKREGEL tr
                         ON tr.KODE_TREKKTYPE = tt.KODE_TREKKTYPE
@@ -57,6 +59,7 @@ class TrekkregelRepository(
                     kodeOppgjorstype = row.string("KODE_OPPGJORSTYPE").trim(),
                     kodeOppgjorstypeNeg = row.string("KODE_OPPGJORSTYPE_NEG").trim(),
                     brukerId = row.string("BRUKERID").trim(),
+                    antallKjoreplaner = row.int("ANTALL_KJOREPLANER"),
                 )
             }
         }

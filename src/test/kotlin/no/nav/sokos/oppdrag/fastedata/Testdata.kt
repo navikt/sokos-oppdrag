@@ -171,6 +171,7 @@ val trekkregler =
             kodeOppgjorstype = "IUTR",
             kodeOppgjorstypeNeg = "IUTR",
             brukerId = "TESTUSER",
+            antallKjoreplaner = 0,
         ),
     )
 

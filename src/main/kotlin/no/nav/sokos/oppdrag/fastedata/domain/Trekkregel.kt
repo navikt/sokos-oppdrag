@@ -19,4 +19,5 @@ data class Trekkregel(
     val kodeOppgjorstype: String,
     val kodeOppgjorstypeNeg: String,
     val brukerId: String,
+    val antallKjoreplaner: Int,
 )

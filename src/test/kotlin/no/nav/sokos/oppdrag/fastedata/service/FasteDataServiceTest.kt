@@ -246,6 +246,7 @@ internal class FasteDataServiceTest :
             trekkregel.oppfolging shouldBe "10000"
             trekkregel.kodeOppgjorstype shouldBe "IUTR"
             trekkregel.kodeOppgjorstypeNeg shouldBe "IUTR"
+            trekkregel.antallKjoreplaner shouldBe 0
 
             val trekkregelTavg = result.first { it.kodeTrekktype == "TAVG" }
             trekkregelTavg.kodeOppgjorstype shouldBe "IUTR"
