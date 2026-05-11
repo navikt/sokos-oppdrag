@@ -176,6 +176,10 @@ configurations.all {
                 useVersion("2.21.1")
                 because("jackson-core: Number Length Constraint Bypass in Async Parser Leads to Potential DoS Condition. Affected version >= 2.19.0, < 2.21.1")
             }
+            if (requested.group == "io.netty" && requested.name == "netty-codec") {
+                useVersion("4.1.133.Final")
+                because("Netty Lz4FrameDecoder resource exhaustion (CVE-2026-42583 / GHSA-mj4r-2hfc-f8p6). Affected version = 4.1.131.Final")
+            }
             if (requested.group == "io.netty" && requested.name == "netty-codec-http") {
                 useVersion("4.2.13.Final")
                 because("Netty: HTTP Request Smuggling via Chunked Extension Quoted-String Parsing. Affected version >= 4.2.0.Alpha1, < 4.2.10.Final")
