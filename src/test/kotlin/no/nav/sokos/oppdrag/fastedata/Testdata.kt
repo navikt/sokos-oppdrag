@@ -3,10 +3,12 @@ package no.nav.sokos.oppdrag.fastedata
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
+import no.nav.sokos.oppdrag.fastedata.domain.KjoreplanTrekk
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.Trekkgruppe
+import no.nav.sokos.oppdrag.fastedata.domain.Trekkregel
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 
@@ -148,6 +150,46 @@ val trekgrupper =
         Trekkgruppe(
             kodeTrekkgruppe = "AVRG",
             kodeFagomraade = "MEFOGNY",
+        ),
+    )
+
+val trekkregler =
+    listOf(
+        Trekkregel(
+            kodeTrekktype = "UTBE",
+            beskrivelse = "Utbetaling",
+            prioritet = 10,
+            reduserSkattegr = "N",
+            kodeKlasseTrekk = "UTBETALING",
+            typeTrekkberegning = "YTELPER",
+            fagomraader = listOf("MEFOGNY"),
+            antDagerOppf = 2,
+            antDagerOppfUtf = 2,
+            belopsgrense = 10000.0,
+            oppfolging = "10000",
+            kodeBehandling = "0",
+            kodeOppgjorstype = "IUTR",
+            kodeOppgjorstypeNeg = "IUTR",
+            brukerId = "TESTUSER",
+            antallKjoreplaner = 0,
+        ),
+    )
+
+val kjoreplanTrekk =
+    listOf(
+        KjoreplanTrekk(
+            kodeOppgjorstype = "SKAT",
+            datoKjores = "2026-12-29",
+            status = "PLAN",
+            datoPeriodeFom = "2026-12-01",
+            datoPeriodeTom = "2026-12-31",
+        ),
+        KjoreplanTrekk(
+            kodeOppgjorstype = "SKAT",
+            datoKjores = "2026-11-30",
+            status = "PLAN",
+            datoPeriodeFom = "2026-11-01",
+            datoPeriodeTom = "2026-11-30",
         ),
     )
 

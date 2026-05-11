@@ -6,17 +6,20 @@ import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Kjoreplan
+import no.nav.sokos.oppdrag.fastedata.domain.KjoreplanTrekk
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.RedusertSkatt
 import no.nav.sokos.oppdrag.fastedata.domain.Trekkgruppe
+import no.nav.sokos.oppdrag.fastedata.domain.Trekkregel
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.fastedata.repository.FaggruppeRepository
 import no.nav.sokos.oppdrag.fastedata.repository.FagomraadeRepository
 import no.nav.sokos.oppdrag.fastedata.repository.KlassekoderRepository
 import no.nav.sokos.oppdrag.fastedata.repository.TrekkgruppeRepository
+import no.nav.sokos.oppdrag.fastedata.repository.TrekkregelRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentekriterierRepository
 import no.nav.sokos.oppdrag.fastedata.repository.VentestatuskodeRepository
 
@@ -29,6 +32,7 @@ class FasteDataService(
     private val ventestatuskodeRepository: VentestatuskodeRepository = VentestatuskodeRepository(),
     private val klassekoderRepository: KlassekoderRepository = KlassekoderRepository(),
     private val trekkgruppeRepository: TrekkgruppeRepository = TrekkgruppeRepository(),
+    private val trekkregelRepository: TrekkregelRepository = TrekkregelRepository(),
 ) {
     fun getAllVentestatuskoder(): List<Ventestatuskode> {
         logger.info { "Henter alle ventestatuskoder" }
@@ -73,6 +77,16 @@ class FasteDataService(
     fun getTrekkgrupper(): List<Trekkgruppe> {
         logger.info { "Henter trekkgrupper" }
         return trekkgruppeRepository.getTrekkgrupper()
+    }
+
+    fun getTrekkregler(): List<Trekkregel> {
+        logger.info { "Henter trekkregler" }
+        return trekkregelRepository.getTrekkregler()
+    }
+
+    fun getKjoreplanTrekk(kodeTrekktype: String): List<KjoreplanTrekk> {
+        logger.info { "Henter kjøreplan for trekktype $kodeTrekktype" }
+        return trekkregelRepository.getKjoreplan(kodeTrekktype)
     }
 
     fun getRedusertSkatt(kodeFaggruppe: String): List<RedusertSkatt> {

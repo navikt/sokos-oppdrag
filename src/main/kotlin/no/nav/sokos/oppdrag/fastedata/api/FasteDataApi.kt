@@ -100,4 +100,19 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
             )
         }
     }
+
+    route("$BASE_PATH/trekkregler") {
+        get("") {
+            call.respond(
+                fasteDataService.getTrekkregler(),
+            )
+        }
+        get("{kodeTrekktype}/kjoreplan") {
+            call.respond(
+                fasteDataService.getKjoreplanTrekk(
+                    call.parameters["kodeTrekktype"].orEmpty(),
+                ),
+            )
+        }
+    }
 }

@@ -34,19 +34,23 @@ import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
 import no.nav.sokos.oppdrag.fastedata.domain.Kjoreplan
+import no.nav.sokos.oppdrag.fastedata.domain.KjoreplanTrekk
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekode
 import no.nav.sokos.oppdrag.fastedata.domain.Klassekoder
 import no.nav.sokos.oppdrag.fastedata.domain.Korrigeringsaarsak
 import no.nav.sokos.oppdrag.fastedata.domain.RedusertSkatt
 import no.nav.sokos.oppdrag.fastedata.domain.Trekkgruppe
+import no.nav.sokos.oppdrag.fastedata.domain.Trekkregel
 import no.nav.sokos.oppdrag.fastedata.domain.Ventekriterier
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.fastedata.faggrupper
 import no.nav.sokos.oppdrag.fastedata.fagomraader
+import no.nav.sokos.oppdrag.fastedata.kjoreplanTrekk
 import no.nav.sokos.oppdrag.fastedata.klassekoder
 import no.nav.sokos.oppdrag.fastedata.korrigeringsaarsaker
 import no.nav.sokos.oppdrag.fastedata.service.FasteDataService
 import no.nav.sokos.oppdrag.fastedata.trekgrupper
+import no.nav.sokos.oppdrag.fastedata.trekkregler
 import no.nav.sokos.oppdrag.fastedata.validator.INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
 import no.nav.sokos.oppdrag.fastedata.ventekriterier
 import no.nav.sokos.oppdrag.fastedata.ventestatuskoder
@@ -55,6 +59,7 @@ private const val PORT = 9090
 private const val KODE_FAGOMRAADE_MYST = "MYST"
 private const val KODE_FAGOMRAADE_MYSTB = "MYSTB"
 private const val KODE_FAGGRUPPE_BA = "BA"
+private const val KODE_TREKKTYPE_FSKT = "FSKT"
 
 private lateinit var server: EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
 
@@ -524,6 +529,101 @@ internal class FasteDataApiTest :
                     timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
                 )
         }
+
+        test("trekkregler returnerer 200 OK") {
+            coEvery { fasteDataService.getTrekkregler() } returns trekkregler
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/trekkregler")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.OK.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<List<Trekkregel>>(response.asString()) shouldBe trekkregler
+        }
+
+        test("trekkregler returnerer 500 Internal Server Error") {
+            coEvery { fasteDataService.getTrekkregler() } throws RuntimeException("En feil")
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/trekkregler")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()) shouldBe
+                ApiError(
+                    error = HttpStatusCode.InternalServerError.description,
+                    status = HttpStatusCode.InternalServerError.value,
+                    message = "En feil",
+                    path = "$FASTEDATA_BASE_API_PATH/trekkregler",
+                    timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
+                )
+        }
+
+        test("kjoreplan trekk returnerer 200 OK") {
+            coEvery { fasteDataService.getKjoreplanTrekk(KODE_TREKKTYPE_FSKT) } returns kjoreplanTrekk
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/trekkregler/$KODE_TREKKTYPE_FSKT/kjoreplan")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.OK.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<List<KjoreplanTrekk>>(response.asString()) shouldBe kjoreplanTrekk
+        }
+
+        test("kjoreplan trekk returnerer 500 Internal Server Error") {
+            coEvery { fasteDataService.getKjoreplanTrekk(KODE_TREKKTYPE_FSKT) } throws RuntimeException("En feil")
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    .header(HttpHeaders.Authorization, "Bearer $tokenWithNavIdent")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/trekkregler/$KODE_TREKKTYPE_FSKT/kjoreplan")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()) shouldBe
+                ApiError(
+                    error = HttpStatusCode.InternalServerError.description,
+                    status = HttpStatusCode.InternalServerError.value,
+                    message = "En feil",
+                    path = "$FASTEDATA_BASE_API_PATH/trekkregler/$KODE_TREKKTYPE_FSKT/kjoreplan",
+                    timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
+                )
+        }
+
         test("redusert skatt returnerer 200 OK") {
             val redusertSkatt =
                 listOf(

@@ -16,10 +16,12 @@ import no.nav.sokos.oppdrag.TestUtil.readFromResource
 import no.nav.sokos.oppdrag.config.transaction
 import no.nav.sokos.oppdrag.fastedata.alleKlassekoderMock
 import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
+import no.nav.sokos.oppdrag.fastedata.domain.Trekkregel
 import no.nav.sokos.oppdrag.fastedata.domain.Ventestatuskode
 import no.nav.sokos.oppdrag.listener.Db2Listener
 
 private const val KODE_FAGOMRAADE_MEFOGNY = "MEFOGNY"
+private const val KODE_TREKKTYPE_FSKT = "FSKT"
 
 internal class FasteDataServiceTest :
     FunSpec({
@@ -33,6 +35,7 @@ internal class FasteDataServiceTest :
                 Db2Listener.ventestatuskodeRepository,
                 Db2Listener.klassekoderRepository,
                 Db2Listener.trekkgruppeRepository,
+                Db2Listener.trekkregelRepository,
             )
 
         test("hentAlleFagomraader skal returnere en liste av Fagomraade") {
@@ -221,6 +224,55 @@ internal class FasteDataServiceTest :
 
             result.first().kodeTrekkgruppe shouldBe "AVRG"
             result.map { it.kodeFagomraade } shouldContainExactlyInAnyOrder listOf("MEFOGNY", "EFOGNY", "PENAFP")
+        }
+
+        test("getTrekkregler skal returnere en liste av Trekkregel") {
+            Db2Listener.dataSource.transaction { session ->
+                session.update(queryOf("database/fastedata/getTrekkregler.sql".readFromResource())) shouldBeGreaterThan 0
+            }
+
+            val result: List<Trekkregel> = fastedataService.getTrekkregler()
+            result.shouldNotBeEmpty()
+            result.size shouldBe 2
+
+            val trekkregel = result.first { it.kodeTrekktype == "UTBE" }
+            trekkregel.beskrivelse shouldBe "Utbetaling"
+            trekkregel.prioritet shouldBe 10
+            trekkregel.kodeKlasseTrekk shouldBe "UTBETALING"
+            trekkregel.antDagerOppf shouldBe 2
+            trekkregel.antDagerOppfUtf shouldBe 2
+            trekkregel.belopsgrense shouldBe 10000.0
+            trekkregel.oppfolging shouldBe "10000"
+            trekkregel.kodeOppgjorstype shouldBe "IUTR"
+            trekkregel.kodeOppgjorstypeNeg shouldBe "IUTR"
+            trekkregel.antallKjoreplaner shouldBe 0
+            trekkregel.fagomraader shouldContainExactlyInAnyOrder listOf("MEFOGNY", "EFOGNY")
+
+            val trekkregelTavg = result.first { it.kodeTrekktype == "TAVG" }
+            trekkregelTavg.kodeOppgjorstype shouldBe "IUTR"
+            trekkregelTavg.kodeOppgjorstypeNeg shouldBe "NEGK"
+            trekkregelTavg.fagomraader shouldContainExactlyInAnyOrder listOf("PENAFP")
+        }
+
+        test("getKjoreplanTrekk skal returnere kjoreplan for valgt trekktype") {
+            Db2Listener.dataSource.transaction { session ->
+                session.update(queryOf("database/fastedata/getKjoreplanTrekk.sql".readFromResource())) shouldBeGreaterThan 0
+            }
+
+            val result = fastedataService.getKjoreplanTrekk(KODE_TREKKTYPE_FSKT)
+            result.shouldNotBeEmpty()
+            result.size shouldBe 2
+
+            val kjoreplan = result.first()
+            kjoreplan.kodeOppgjorstype shouldBe "SKAT"
+            kjoreplan.datoKjores shouldBe "2026-11-30"
+            kjoreplan.status shouldBe "PLAN"
+            kjoreplan.datoPeriodeFom shouldBe "2026-11-01"
+            kjoreplan.datoPeriodeTom shouldBe "2026-11-30"
+
+            result.last().datoKjores shouldBe "2026-12-29"
+            result.last().datoPeriodeFom shouldBe "2026-12-01"
+            result.last().datoPeriodeTom shouldBe "2026-12-31"
         }
 
         test("getAllKlassekoder skal returnere en liste av Klassekoder") {
