@@ -233,10 +233,9 @@ internal class FasteDataServiceTest :
 
             val result: List<Trekkregel> = fastedataService.getTrekkregler()
             result.shouldNotBeEmpty()
-            result.size shouldBe 3
+            result.size shouldBe 2
 
-            val trekkregel = result.first()
-            trekkregel.kodeTrekktype shouldBe "UTBE"
+            val trekkregel = result.first { it.kodeTrekktype == "UTBE" }
             trekkregel.beskrivelse shouldBe "Utbetaling"
             trekkregel.prioritet shouldBe 10
             trekkregel.kodeKlasseTrekk shouldBe "UTBETALING"
@@ -247,12 +246,12 @@ internal class FasteDataServiceTest :
             trekkregel.kodeOppgjorstype shouldBe "IUTR"
             trekkregel.kodeOppgjorstypeNeg shouldBe "IUTR"
             trekkregel.antallKjoreplaner shouldBe 0
+            trekkregel.fagomraader shouldContainExactlyInAnyOrder listOf("MEFOGNY", "EFOGNY")
 
             val trekkregelTavg = result.first { it.kodeTrekktype == "TAVG" }
             trekkregelTavg.kodeOppgjorstype shouldBe "IUTR"
             trekkregelTavg.kodeOppgjorstypeNeg shouldBe "NEGK"
-
-            result.map { it.kodeFagomraade } shouldContainExactlyInAnyOrder listOf("MEFOGNY", "EFOGNY", "PENAFP")
+            trekkregelTavg.fagomraader shouldContainExactlyInAnyOrder listOf("PENAFP")
         }
 
         test("getKjoreplanTrekk skal returnere kjoreplan for valgt trekktype") {

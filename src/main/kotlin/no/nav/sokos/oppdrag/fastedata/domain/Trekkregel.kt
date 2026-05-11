@@ -10,7 +10,7 @@ data class Trekkregel(
     val reduserSkattegr: String,
     val kodeKlasseTrekk: String,
     val typeTrekkberegning: String?,
-    val kodeFagomraade: String,
+    val fagomraader: List<String>,
     val antDagerOppf: Int?,
     val antDagerOppfUtf: Int?,
     val belopsgrense: Double,

@@ -769,7 +769,7 @@ components:
         - prioritet
         - reduserSkattegr
         - kodeKlasseTrekk
-        - kodeFagomraade
+        - fagomraader
         - belopsgrense
         - oppfolging
         - kodeBehandling
@@ -791,8 +791,10 @@ components:
         typeTrekkberegning:
           type: string
           nullable: true
-        kodeFagomraade:
-          type: string
+        fagomraader:
+          type: array
+          items:
+            type: string
         antDagerOppf:
           type: integer
           nullable: true
