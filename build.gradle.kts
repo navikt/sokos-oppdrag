@@ -177,8 +177,8 @@ configurations.all {
                 because("jackson-core: Number Length Constraint Bypass in Async Parser Leads to Potential DoS Condition. Affected version >= 2.19.0, < 2.21.1")
             }
             if (requested.group == "io.netty") {
-                useVersion("4.2.13.Final")
-                because("Align Netty to 4.2.13.Final due to CVE-2026-42579")
+                useVersion("4.2.15.Final")
+                because("Resolves production Dependabot alerts CVE-2026-44249 and CVE-2026-45416")
             }
             if (requested.group == "org.bouncycastle" && requested.name == "bcprov-jdk18on") {
                 useVersion("1.84")
