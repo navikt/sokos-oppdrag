@@ -13,7 +13,7 @@ plugins {
     id("com.expediagroup.graphql") version "9.2.0"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.8"
-    id("org.openapi.generator") version "7.21.0"
+    id("org.openapi.generator") version "7.23.0"
 
     application
 }
@@ -46,16 +46,16 @@ val ktorVersion = "3.4.3"
 
 // Serialization
 val kotlinxSerializationVersion = "1.11.0"
-val kotlinxDatetimeVersion = "0.7.1-0.6.x-compat"
-val kotlinxCoroutinesVersion = "1.10.2"
+val kotlinxDatetimeVersion = "0.8.0-0.6.x-compat"
+val kotlinxCoroutinesVersion = "1.11.0"
 
 // Monitorering
-val micrometerVersion = "1.16.5"
+val micrometerVersion = "1.17.0"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
 val janionVersion = "3.1.12"
-val logbackVersion = "1.5.32"
+val logbackVersion = "1.5.34"
 val logstashVersion = "9.0"
 
 // Config
@@ -64,20 +64,20 @@ val natpryceVersion = "1.6.10.0"
 // Database
 val hikariVersion = "7.0.2"
 val db2JccVersion = "12.1.4.0"
-val kotliqueryVersion = "2.0.5"
+val kotliqueryVersion = "2.0.8"
 
 // GraphQL
 val graphqlClientVersion = "9.2.0"
 
 // Cache
-val caffeineVersion = "3.2.3"
+val caffeineVersion = "3.2.4"
 
 // Valkey
-val valkeyVersion = "7.5.1.RELEASE"
+val valkeyVersion = "7.6.0.RELEASE"
 
 // TSS
 val tjenestespesifikasjonVersion = "1.0_20260311085905_5544925"
-val glassfishJaxbVersion = "4.0.7"
+val glassfishJaxbVersion = "4.0.9"
 
 // IBM MQ
 val ibmMqVersion = "9.4.5.0"
@@ -86,11 +86,11 @@ val ibmMqVersion = "9.4.5.0"
 val kotestVersion = "6.1.11"
 val wiremockVersion = "3.13.2"
 val mockOAuth2ServerVersion = "3.0.1"
-val mockkVersion = "1.14.9"
+val mockkVersion = "1.14.11"
 val swaggerRequestValidatorVersion = "2.46.1"
 val testcontainersVersion = "2.0.5"
 val h2Version = "2.4.240"
-val activemqVersion = "2.53.0"
+val activemqVersion = "2.54.0"
 
 dependencies {
 
