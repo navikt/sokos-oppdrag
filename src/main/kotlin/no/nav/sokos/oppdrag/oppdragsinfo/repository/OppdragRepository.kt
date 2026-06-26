@@ -100,6 +100,7 @@ class OppdragRepository(
                     FROM T_OPPDRAGSENHET
                     WHERE OPPDRAGS_ID = :oppdragsId
                          ${if (typeEnhet != null) " AND TYPE_ENHET = :typeEnhet)" else " AND TYPE_ENHET IN (SELECT TYPE_ENHET FROM T_ENHETSTYPE WHERE TYPE_ENHET != 'BEH'))"}
+                    ORDER BY TIDSPKT_REG DESC    
                     """.trimIndent(),
                     mapOf(
                         "oppdragsId" to oppdragsId,
