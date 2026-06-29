@@ -80,7 +80,7 @@ class AttestasjonRepository(
                              FROM T_LINJE_STATUS KORRANNUOPPH
                              WHERE KORRANNUOPPH.LINJE_ID = L.LINJE_ID
                                AND KORRANNUOPPH.OPPDRAGS_ID = L.OPPDRAGS_ID
-                               AND KORRANNUOPPH.KODE_STATUS IN ('KORR', 'ANNU', 'OPPH')
+                               AND KORRANNUOPPH.KODE_STATUS IN ('KORR', 'ANNU')
                                AND KORRANNUOPPH.DATO_FOM = STATUSNY.DATO_FOM
                                AND NOT EXISTS(SELECT 1
                                               FROM T_LINJE_STATUS ANDRESTATUSER
