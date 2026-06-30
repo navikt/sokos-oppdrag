@@ -145,26 +145,27 @@ class OppdragRepository(
                     AND KONT.KODE_KLASSE = OPLI.KODE_KLASSE
                     AND LIST.OPPDRAGS_ID = OPLI.OPPDRAGS_ID
                     AND LIST.LINJE_ID = OPLI.LINJE_ID
-                    AND LIST.TIDSPKT_REG = (SELECT MAX(LIS1.TIDSPKT_REG)
-                                        FROM T_LINJE_STATUS LIS1
-                                        WHERE LIS1.OPPDRAGS_ID = LIST.OPPDRAGS_ID
-                                        AND LIS1.LINJE_ID = LIST.LINJE_ID
-                                        AND (CASE WHEN LIS1.DATO_FOM <= KJDA.KJOREDATO
-                                        THEN (SELECT MAX(LIS2.DATO_FOM)
-                                              FROM T_LINJE_STATUS LIS2
-                                              WHERE  LIS2.OPPDRAGS_ID = LIST.OPPDRAGS_ID
-                                              AND LIS2.LINJE_ID = LIST.LINJE_ID 
-                                              AND LIS2.DATO_FOM <= CURRENT_DATE)
-                                              WHEN 1 < (SELECT COUNT(*)
-                                                        FROM T_LINJE_STATUS LIS3
-                                                        WHERE LIS3.OPPDRAGS_ID = LIST.OPPDRAGS_ID
-                                                        AND LIS3.LINJE_ID = LIST.LINJE_ID
-                                                        AND LIS3.KODE_STATUS = 'KORR')
-                                                        THEN LIS1.DATO_FOM
-                                                        ELSE (SELECT MIN(LIS4.DATO_FOM)
-                                                              FROM T_LINJE_STATUS LIS4
-                                                              WHERE LIS4.OPPDRAGS_ID = LIST.OPPDRAGS_ID
-                                                              AND LIS4.LINJE_ID = LIST.LINJE_ID) END) = LIS1.DATO_FOM)
+                    AND LIST.TIDSPKT_REG = (CASE
+                         WHEN LIST.DATO_FOM <= KJDA.KJOREDATO
+                             THEN (SELECT LIS2.TIDSPKT_REG
+                                   FROM T_LINJE_STATUS LIS2
+                                   WHERE LIS2.OPPDRAGS_ID = LIST.OPPDRAGS_ID
+                                     AND LIS2.LINJE_ID = LIST.LINJE_ID
+                                     AND LIS2.DATO_FOM <= KJDA.KJOREDATO
+                                   ORDER BY LIS2.DATO_FOM DESC, LIS2.TIDSPKT_REG DESC
+                                   LIMIT 1)
+                         WHEN 1 < (SELECT COUNT(*)
+                                   FROM T_LINJE_STATUS LIS3
+                                   WHERE LIS3.OPPDRAGS_ID = LIST.OPPDRAGS_ID
+                                     AND LIS3.LINJE_ID = LIST.LINJE_ID
+                                     AND LIS3.KODE_STATUS = 'KORR')
+                             THEN LIST.TIDSPKT_REG
+                         ELSE (SELECT LIS4.TIDSPKT_REG
+                               FROM T_LINJE_STATUS LIS4
+                               WHERE LIS4.OPPDRAGS_ID = LIST.OPPDRAGS_ID
+                                 AND LIS4.LINJE_ID = LIST.LINJE_ID
+                               ORDER BY LIS4.DATO_FOM, LIS4.TIDSPKT_REG
+                               LIMIT 1) END);
                     """.trimIndent(),
                     mapOf(
                         "oppdragsId" to oppdragsId,
