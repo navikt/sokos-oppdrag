@@ -149,18 +149,19 @@ class OppdragRepository(
                                         FROM T_LINJE_STATUS LIS1
                                         WHERE LIS1.OPPDRAGS_ID = LIST.OPPDRAGS_ID
                                         AND LIS1.LINJE_ID = LIST.LINJE_ID
-                                        AND (CASE WHEN KJDA.KJOREDATO <= LIS1.DATO_FOM
-                                        THEN (SELECT MIN(LIS2.DATO_FOM)
+                                        AND (CASE WHEN LIS1.DATO_FOM <= KJDA.KJOREDATO
+                                        THEN (SELECT MAX(LIS2.DATO_FOM)
                                               FROM T_LINJE_STATUS LIS2
                                               WHERE  LIS2.OPPDRAGS_ID = LIST.OPPDRAGS_ID
-                                              AND LIS2.LINJE_ID = LIST.LINJE_ID)
+                                              AND LIS2.LINJE_ID = LIST.LINJE_ID 
+                                              AND LIS2.DATO_FOM <= CURRENT_DATE)
                                               WHEN 1 < (SELECT COUNT(*)
                                                         FROM T_LINJE_STATUS LIS3
                                                         WHERE LIS3.OPPDRAGS_ID = LIST.OPPDRAGS_ID
                                                         AND LIS3.LINJE_ID = LIST.LINJE_ID
                                                         AND LIS3.KODE_STATUS = 'KORR')
                                                         THEN LIS1.DATO_FOM
-                                                        ELSE (SELECT MAX(LIS4.DATO_FOM)
+                                                        ELSE (SELECT MIN(LIS4.DATO_FOM)
                                                               FROM T_LINJE_STATUS LIS4
                                                               WHERE LIS4.OPPDRAGS_ID = LIST.OPPDRAGS_ID
                                                               AND LIS4.LINJE_ID = LIST.LINJE_ID) END) = LIS1.DATO_FOM)
