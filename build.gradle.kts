@@ -80,7 +80,7 @@ val tjenestespesifikasjonVersion = "1.0_20260311085905_5544925"
 val glassfishJaxbVersion = "4.0.9"
 
 // IBM MQ
-val ibmMqVersion = "9.4.5.1"
+val ibmMqVersion = "10.0.0.0"
 
 // Test
 val kotestVersion = "6.1.11"
