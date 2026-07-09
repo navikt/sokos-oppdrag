@@ -67,7 +67,7 @@ val db2JccVersion = "12.1.4.0"
 val kotliqueryVersion = "2.0.8"
 
 // GraphQL
-val graphqlClientVersion = "9.2.0"
+val graphqlClientVersion = "10.0.0"
 
 // Cache
 val caffeineVersion = "3.2.4"
@@ -80,12 +80,12 @@ val tjenestespesifikasjonVersion = "1.0_20260311085905_5544925"
 val glassfishJaxbVersion = "4.0.9"
 
 // IBM MQ
-val ibmMqVersion = "9.4.5.0"
+val ibmMqVersion = "9.4.5.1"
 
 // Test
 val kotestVersion = "6.1.11"
 val wiremockVersion = "3.13.2"
-val mockOAuth2ServerVersion = "3.0.1"
+val mockOAuth2ServerVersion = "4.0.0"
 val mockkVersion = "1.14.11"
 val swaggerRequestValidatorVersion = "3.0.0"
 val testcontainersVersion = "2.0.5"
@@ -168,25 +168,25 @@ dependencies {
 configurations.all {
     resolutionStrategy {
         eachDependency {
-            if (requested.group == "tools.jackson.core" && requested.name == "jackson-core") {
-                useVersion("3.1.1")
-                because("Jackson Core: Document length constraint bypass in blocking, async, and DataInput parsers. Affected version >= 3.0.0, <= 3.1.0")
-            }
-            if (requested.group == "com.fasterxml.jackson.core" && requested.name == "jackson-core") {
-                useVersion("2.21.1")
-                because("jackson-core: Number Length Constraint Bypass in Async Parser Leads to Potential DoS Condition. Affected version >= 2.19.0, < 2.21.1")
-            }
             if (requested.group == "io.netty") {
                 useVersion("4.2.15.Final")
-                because("Resolves production Dependabot alerts CVE-2026-44249 and CVE-2026-45416")
+                because("Multiple versions of netty has vulnerable dependencies. Affected version < 4.2.15.Final")
             }
-            if (requested.group == "org.bouncycastle" && requested.name == "bcprov-jdk18on") {
-                useVersion("1.84")
-                because("Bouncy Castle Has Covert Timing Channel Vulnerability. Affected version >= 1.71, < 1.84")
+            if (requested.group == "tools.jackson.core" && requested.name == "jackson-databind") {
+                useVersion("3.2.0")
+                because("Multiple versions of jackson-databind has vulnerable dependencies. Affected version < >= 3.0.0, <= 3.1.3")
             }
-            if (requested.group == "org.bouncycastle" && requested.name == "bcpkix-jdk18on") {
-                useVersion("1.84")
-                because("CVE-2026-5588: Affected version >= 1.71, < 1.84")
+            if (requested.group == "tools.jackson.core" && requested.name == "jackson-core") {
+                useVersion("3.2.0")
+                because("Multiple versions of jackson-core has vulnerable dependencies. Affected version >= 3.0.0, <= 3.1.0")
+            }
+            if (requested.group == "com.fasterxml.jackson.core" && requested.name == "jackson-databind") {
+                useVersion("2.21.4")
+                because("Multiple versions of jackson-databind has vulnerable dependencies. Affected version >= 2.19.0, <= 2.21.3")
+            }
+            if (requested.group == "com.fasterxml.jackson.core" && requested.name == "jackson-core") {
+                useVersion("2.21.4")
+                because("Multiple versions of jackson-core has vulnerable dependencies.. Affected version >= 2.19.0, <= 2.21.1")
             }
         }
     }
