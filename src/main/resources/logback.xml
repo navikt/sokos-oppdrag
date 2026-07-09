@@ -50,15 +50,21 @@
         </encoder>
     </appender>
 
-    <if condition='isDefined("NAIS_CLUSTER_NAME")'>
+    <condition class="ch.qos.logback.core.boolex.IsPropertyDefinedCondition">
+        <key>NAIS_CLUSTER_NAME</key>
+    </condition>
+    <if>
         <then>
             <logger level="INFO" name="auditLogger" additivity="false">
-                <appender-ref ref="${LOG_APPENDER:-auditLogger}"/>
+                <appender-ref ref="auditLogger"/>
             </logger>
         </then>
     </if>
 
-    <if condition='isDefined("NAIS_CLUSTER_NAME")'>
+    <condition class="ch.qos.logback.core.boolex.IsPropertyDefinedCondition">
+        <key>NAIS_CLUSTER_NAME</key>
+    </condition>
+    <if>
         <then>
             <root level="INFO">
                 <appender-ref ref="${LOG_APPENDER:-default-json}"/>
