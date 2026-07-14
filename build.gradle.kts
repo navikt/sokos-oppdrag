@@ -10,7 +10,7 @@ import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 plugins {
     kotlin("jvm") version "2.3.20"
     kotlin("plugin.serialization") version "2.3.20"
-    id("com.expediagroup.graphql") version "10.0.0"
+    id("com.expediagroup.graphql") version "10.1.2"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.8"
     id("org.openapi.generator") version "7.23.0"
@@ -54,19 +54,19 @@ val micrometerVersion = "1.17.0"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
-val logbackVersion = "1.5.34"
+val logbackVersion = "1.5.37"
 val logstashVersion = "9.0"
 
 // Config
 val natpryceVersion = "1.6.10.0"
 
 // Database
-val hikariVersion = "7.0.2"
-val db2JccVersion = "12.1.4.0"
-val kotliqueryVersion = "2.0.8"
+val hikariVersion = "7.1.0"
+val db2JccVersion = "12.1.5.0"
+val kotliqueryVersion = "2.0.9"
 
 // GraphQL
-val graphqlClientVersion = "10.0.0"
+val graphqlClientVersion = "10.1.2"
 
 // Cache
 val caffeineVersion = "3.2.4"
@@ -82,14 +82,14 @@ val glassfishJaxbVersion = "4.0.9"
 val ibmMqVersion = "9.4.5.1"
 
 // Test
-val kotestVersion = "6.1.11"
+val kotestVersion = "6.2.1"
 val wiremockVersion = "3.13.2"
 val mockOAuth2ServerVersion = "4.0.0"
 val mockkVersion = "1.14.11"
 val swaggerRequestValidatorVersion = "3.0.0"
 val testcontainersVersion = "2.0.5"
 val h2Version = "2.4.240"
-val activemqVersion = "2.54.0"
+val activemqVersion = "2.55.0"
 
 dependencies {
 
