@@ -171,19 +171,19 @@ configurations.all {
                 because("Multiple versions of netty has vulnerable dependencies. Affected version < 4.2.15.Final")
             }
             if (requested.group == "tools.jackson.core" && requested.name == "jackson-databind") {
-                useVersion("3.2.0")
+                useVersion("3.2.1")
                 because("Multiple versions of jackson-databind has vulnerable dependencies. Affected version < >= 3.0.0, <= 3.1.3")
             }
             if (requested.group == "tools.jackson.core" && requested.name == "jackson-core") {
-                useVersion("3.2.0")
+                useVersion("3.2.1")
                 because("Multiple versions of jackson-core has vulnerable dependencies. Affected version >= 3.0.0, <= 3.1.0")
             }
             if (requested.group == "com.fasterxml.jackson.core" && requested.name == "jackson-databind") {
-                useVersion("2.21.4")
+                useVersion("2.22.1")
                 because("Multiple versions of jackson-databind has vulnerable dependencies. Affected version >= 2.19.0, <= 2.21.3")
             }
             if (requested.group == "com.fasterxml.jackson.core" && requested.name == "jackson-core") {
-                useVersion("2.21.4")
+                useVersion("2.22.1")
                 because("Multiple versions of jackson-core has vulnerable dependencies.. Affected version >= 2.19.0, <= 2.21.1")
             }
         }
