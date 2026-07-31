@@ -167,7 +167,7 @@ configurations.all {
     resolutionStrategy {
         eachDependency {
             if (requested.group == "io.netty") {
-                useVersion("4.2.15.Final")
+                useVersion("4.2.16.Final")
                 because("Multiple versions of netty has vulnerable dependencies. Affected version < 4.2.15.Final")
             }
             if (requested.group == "tools.jackson.core" && requested.name == "jackson-databind") {
