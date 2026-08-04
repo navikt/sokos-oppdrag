@@ -54,7 +54,7 @@ val micrometerVersion = "1.17.0"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
-val logbackVersion = "1.5.38"
+val logbackVersion = "1.6.0"
 val logstashVersion = "9.0"
 
 // Config
@@ -82,7 +82,7 @@ val glassfishJaxbVersion = "4.0.9"
 val ibmMqVersion = "10.0.0.0"
 
 // Test
-val kotestVersion = "6.2.2"
+val kotestVersion = "6.2.3"
 val wiremockVersion = "3.13.2"
 val mockOAuth2ServerVersion = "5.0.2"
 val mockkVersion = "1.14.11"
