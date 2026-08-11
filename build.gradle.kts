@@ -10,7 +10,7 @@ import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 plugins {
     kotlin("jvm") version "2.4.10"
     kotlin("plugin.serialization") version "2.4.10"
-    id("com.expediagroup.graphql") version "10.1.2"
+    id("com.expediagroup.graphql") version "10.2.0"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.9"
     id("org.openapi.generator") version "7.24.0"
@@ -54,7 +54,7 @@ val micrometerVersion = "1.17.0"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
-val logbackVersion = "1.6.0"
+val logbackVersion = "1.6.1"
 val logstashVersion = "9.0"
 
 // Config
@@ -63,10 +63,10 @@ val natpryceVersion = "1.6.10.0"
 // Database
 val hikariVersion = "7.1.0"
 val db2JccVersion = "12.1.5.0"
-val kotliqueryVersion = "2.0.9"
+val kotliqueryVersion = "2.1.0"
 
 // GraphQL
-val graphqlClientVersion = "10.1.2"
+val graphqlClientVersion = "10.2.0"
 
 // Cache
 val caffeineVersion = "3.2.4"
