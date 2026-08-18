@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-       - uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # ratchet:step-security/harden-runner@v2.20.0
+       - uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # ratchet:step-security/harden-runner@v2.21.0
          with:
           egress-policy: audit
 
@@ -29,7 +29,7 @@ jobs:
 
        - name: Build Valkey-image and push to GAR
          id: docker-build-push
-         uses: nais/docker-build-push@31c3a7321909bcb20799fdf46153fec721fd9512 # ratchet:nais/docker-build-push@v0
+         uses: nais/docker-build-push@8e41f1f58749b9248e376c25d33bfbdd2b1163c0 # ratchet:nais/docker-build-push@v0
          with:
            team: okonomi
            dockerfile: .nais/valkey/Dockerfile
