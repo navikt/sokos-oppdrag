@@ -167,7 +167,7 @@ configurations.all {
     resolutionStrategy {
         eachDependency {
             if (requested.group == "io.netty") {
-                useVersion("4.2.16.Final")
+                useVersion("4.2.17.Final")
                 because("Multiple versions of netty has vulnerable dependencies. Affected version < 4.2.15.Final")
             }
             if (requested.group == "tools.jackson.core" && requested.name == "jackson-databind") {
@@ -185,6 +185,10 @@ configurations.all {
             if (requested.group == "com.fasterxml.jackson.core" && requested.name == "jackson-core") {
                 useVersion("2.22.1")
                 because("Multiple versions of jackson-core has vulnerable dependencies.. Affected version >= 2.19.0, <= 2.21.1")
+            }
+            if (requested.group == "org.apache.httpcomponents.client5" && requested.name == "httpclient5") {
+                useVersion("5.6.3")
+                because("Multiple versions of httpclient5 has vulnerable dependencies. Affected version >= 5.0-alpha1, < 5.6.3")
             }
         }
     }
