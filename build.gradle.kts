@@ -89,7 +89,7 @@ val mockkVersion = "1.14.11"
 val swaggerRequestValidatorVersion = "3.0.0"
 val testcontainersVersion = "2.0.5"
 val h2Version = "2.4.240"
-val activemqVersion = "2.55.0"
+val activemqVersion = "2.56.0"
 
 dependencies {
 
