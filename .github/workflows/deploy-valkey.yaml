@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-       - uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # ratchet:step-security/harden-runner@v2.21.0
+       - uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # ratchet:step-security/harden-runner@v2.21.1
          with:
           egress-policy: audit
 
@@ -29,7 +29,7 @@ jobs:
 
        - name: Build Valkey-image and push to GAR
          id: docker-build-push
-         uses: nais/docker-build-push@8e41f1f58749b9248e376c25d33bfbdd2b1163c0 # ratchet:nais/docker-build-push@v0
+         uses: nais/docker-build-push@0e73849f69ff260ee27597553c0a7848ca4e9795 # ratchet:nais/docker-build-push@v0
          with:
            team: okonomi
            dockerfile: .nais/valkey/Dockerfile
@@ -44,7 +44,7 @@ jobs:
       deployments: write
     needs: [ build-push-valkey-image ]
     name: Deploy valkey to dev-fss-q1
-    uses: navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@6d597f4b49bff3f5e59833b784eb63aa5ddc8603 # ratchet:navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@v1.0.2
+    uses: navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@4e30b004e60632c052461b9ce66a0d802d580f89 # ratchet:navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@v1.1.1
     with:
       cluster: dev-fss
       resource: .nais/valkey/valkey-q1.yaml
@@ -58,7 +58,7 @@ jobs:
       deployments: write
     needs: [ build-push-valkey-image, deploy-dev-q1 ]
     name: Deploy valkey to dev-fss-qx
-    uses: navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@6d597f4b49bff3f5e59833b784eb63aa5ddc8603 # ratchet:navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@v1.0.2
+    uses: navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@4e30b004e60632c052461b9ce66a0d802d580f89 # ratchet:navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@v1.1.1
     with:
       cluster: dev-fss
       resource: .nais/valkey/valkey-qx.yaml
@@ -72,7 +72,7 @@ jobs:
       deployments: write
     needs: [ build-push-valkey-image, deploy-dev-q1, deploy-dev-qx ]
     name: Deploy valkey to prod-fss
-    uses: navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@6d597f4b49bff3f5e59833b784eb63aa5ddc8603 # ratchet:navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@v1.0.2
+    uses: navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@4e30b004e60632c052461b9ce66a0d802d580f89 # ratchet:navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@v1.1.1
     with:
       cluster: prod-fss
       resource: .nais/valkey/valkey-prod.yaml
