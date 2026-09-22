@@ -63,7 +63,7 @@ val natpryceVersion = "1.6.10.0"
 // Database
 val hikariVersion = "7.1.0"
 val db2JccVersion = "12.1.5.0"
-val kotliqueryVersion = "2.1.0"
+val kotliqueryVersion = "2.1.1"
 
 // GraphQL
 val graphqlClientVersion = "10.2.2"
@@ -82,14 +82,14 @@ val glassfishJaxbVersion = "4.0.9"
 val ibmMqVersion = "10.0.0.0"
 
 // Test
-val kotestVersion = "6.2.4"
+val kotestVersion = "6.2.5"
 val wiremockVersion = "3.13.2"
 val mockOAuth2ServerVersion = "6.0.2"
 val mockkVersion = "1.14.11"
 val swaggerRequestValidatorVersion = "3.0.0"
 val testcontainersVersion = "2.0.5"
-val h2Version = "2.4.240"
-val activemqVersion = "2.56.0"
+val h2Version = "2.5.250"
+val activemqVersion = "2.57.0"
 
 dependencies {
 
