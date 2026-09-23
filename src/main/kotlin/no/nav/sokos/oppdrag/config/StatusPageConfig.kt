@@ -12,10 +12,13 @@ import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import io.ktor.server.plugins.statuspages.StatusPagesConfig
 import io.ktor.server.request.path
 import io.ktor.server.response.respond
+import mu.KotlinLogging
 
 import no.nav.sokos.oppdrag.attestasjon.exception.AttestasjonException
 import no.nav.sokos.oppdrag.attestasjon.service.zos.ZOSException
 import no.nav.sokos.oppdrag.integration.exception.IntegrationException
+
+private val logger = KotlinLogging.logger {}
 
 fun StatusPagesConfig.statusPageConfig() {
     exception<Throwable> { call, cause ->
@@ -25,7 +28,12 @@ fun StatusPagesConfig.statusPageConfig() {
                 is AttestasjonException, is IntegrationException -> createApiError(HttpStatusCode.BadRequest, cause.message, call)
                 is ZOSException -> Pair(HttpStatusCode.allStatusCodes.find { it.value == cause.apiError.status }!!, cause.apiError)
                 is IllegalArgumentException -> createApiError(HttpStatusCode.BadRequest, cause.message, call)
-                else -> createApiError(HttpStatusCode.InternalServerError, cause.message ?: "En teknisk feil har oppstått. Ta kontakt med utviklerne", call)
+                else -> {
+                    logger.error(marker = TEAM_LOGS_MARKER, cause) {
+                        "Uhåndtert feil på ${call.request.path()}: ${cause.message}"
+                    }
+                    createApiError(HttpStatusCode.InternalServerError, cause.message ?: "En teknisk feil har oppstått. Ta kontakt med utviklerne", call)
+                }
             }
         call.respond(responseStatus, apiError)
     }
