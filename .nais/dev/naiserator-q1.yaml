@@ -72,6 +72,8 @@ spec:
       rules:
         - application: logging
           namespace: nais-system
+        - application: sokos-oppdrag-valkey
+          namespace: okonomi
   webproxy: true
   filesFrom:
     - secret: db2license
