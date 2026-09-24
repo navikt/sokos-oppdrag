@@ -30,6 +30,7 @@ import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.fastedata.alleKlassekoder
 import no.nav.sokos.oppdrag.fastedata.bilagstype
+import no.nav.sokos.oppdrag.fastedata.config.INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
@@ -51,7 +52,6 @@ import no.nav.sokos.oppdrag.fastedata.korrigeringsaarsaker
 import no.nav.sokos.oppdrag.fastedata.service.FasteDataService
 import no.nav.sokos.oppdrag.fastedata.trekgrupper
 import no.nav.sokos.oppdrag.fastedata.trekkregler
-import no.nav.sokos.oppdrag.fastedata.validator.INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
 import no.nav.sokos.oppdrag.fastedata.ventekriterier
 import no.nav.sokos.oppdrag.fastedata.ventestatuskoder
 
