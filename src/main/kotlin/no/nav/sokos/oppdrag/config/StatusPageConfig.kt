@@ -11,6 +11,7 @@ import io.ktor.server.application.ApplicationCall
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.requestvalidation.RequestValidationException
 import io.ktor.server.plugins.statuspages.StatusPagesConfig
+import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
 import io.ktor.server.response.respond
 import mu.KotlinLogging
@@ -66,9 +67,13 @@ private suspend fun ApplicationCall.logOgResponder(
     cause: Throwable,
 ) {
     if (status.value >= 500) {
-        logger.error(marker = TEAM_LOGS_MARKER, cause) { "Feil på ${request.path()}: ${cause.message}" }
+        logger.error(marker = TEAM_LOGS_MARKER, cause) {
+            "HTTP-forespørsel feilet: status=${status.value}, metode=${request.httpMethod.value}, path=${request.path()}"
+        }
     } else {
-        logger.warn(marker = TEAM_LOGS_MARKER) { "Feil på ${request.path()}: ${cause.message}" }
+        logger.warn(marker = TEAM_LOGS_MARKER) {
+            "HTTP-forespørsel avvist: status=${status.value}, metode=${request.httpMethod.value}, path=${request.path()}"
+        }
     }
     respond(status, apiError)
 }
