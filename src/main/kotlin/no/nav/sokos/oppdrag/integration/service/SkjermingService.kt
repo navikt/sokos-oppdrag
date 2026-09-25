@@ -13,6 +13,10 @@ class SkjermingService(
     private val skjermetClientService: SkjermetClientService = SkjermetClientService(),
     private val valkeyCache: ValkeyCache = ValkeyCache(name = "skjermingService"),
 ) {
+    // Codec-instanser opprettes én gang og gjenbrukes, slik at ValkeyCache kan cache tilkoblingen per codec i stedet for å åpne en ny per kall.
+    private val egneAnsatteCodec = createCodec<Map<String, Boolean>>("hent-egne-ansatte")
+    private val pdlCodec = createCodec<Map<String, Person>>("hent-pdl")
+
     suspend fun getSkjermingForIdentListe(
         identer: List<String>,
         navIdent: NavIdent,
@@ -26,13 +30,13 @@ class SkjermingService(
 
         val egenAnsattMap =
             valkeyCache
-                .getAsync(key = personIdenter.joinToString(), codec = createCodec<Map<String, Boolean>>("hent-egne-ansatte")) {
+                .getAsync(key = personIdenter.joinToString(), codec = egneAnsatteCodec) {
                     skjermetClientService.isSkjermedePersonerInSkjermingslosningen(personIdenter)
                 }.mapValues { (_, skjermet) -> !navIdent.hasAccessEgneAnsatte() && skjermet }
 
         val adressebeskyttelseMap =
             valkeyCache
-                .getAsync(key = personIdenter.joinToString(), codec = createCodec<Map<String, Person>>("hent-pdl")) {
+                .getAsync(key = personIdenter.joinToString(), codec = pdlCodec) {
                     pdlClientService.getPerson(identer = personIdenter)
                 }.mapValues { (_, person) ->
                     val graderinger = person.adressebeskyttelse.map { it.gradering }

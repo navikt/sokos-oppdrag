@@ -14,13 +14,17 @@ class KodeverkService(
     private val kodeverkRepository: KodeverkRepository = KodeverkRepository(),
     private val valkeyCache: ValkeyCache = ValkeyCache(name = "kodeverkServcie"),
 ) {
+    // Codec-instanser opprettes én gang og gjenbrukes, slik at ValkeyCache kan cache tilkoblingen per codec i stedet for å åpne en ny per kall.
+    private val fagGrupperCodec = createCodec<List<FagGruppe>>("get-faggrupper")
+    private val fagOmraaderCodec = createCodec<List<FagOmraade>>("get-fagomraader")
+
     suspend fun getFagGrupper(): List<FagGruppe> =
-        valkeyCache.getAsync(key = "faggrupper", codec = createCodec<List<FagGruppe>>("get-faggrupper")) {
+        valkeyCache.getAsync(key = "faggrupper", codec = fagGrupperCodec) {
             kodeverkRepository.getFagGrupper()
         }
 
     suspend fun getFagOmraader(): List<FagOmraade> =
-        valkeyCache.getAsync(key = "fagomraader", codec = createCodec<List<FagOmraade>>("get-fagomraader")) {
+        valkeyCache.getAsync(key = "fagomraader", codec = fagOmraaderCodec) {
             kodeverkRepository.getFagOmraader()
         }
 }
