@@ -34,7 +34,7 @@ class AttestasjonService(
     private val auditLogger: AuditLogger = AuditLogger(),
     private val zosConnectService: ZOSConnectService = ZOSConnectService(),
     private val skjermingService: SkjermingService = SkjermingService(),
-    private val valkeyCache: ValkeyCache = ValkeyCache("attestasjonService"),
+    private val valkeyCache: ValkeyCache = ValkeyCache(name = "attestasjonService"),
 ) {
     suspend fun getOppdrag(
         request: OppdragsRequest,

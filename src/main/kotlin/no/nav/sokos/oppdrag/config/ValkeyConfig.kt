@@ -4,11 +4,8 @@ import java.nio.ByteBuffer
 
 import kotlinx.serialization.json.Json
 
-import io.lettuce.core.ExperimentalLettuceCoroutinesApi
 import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisURI
-import io.lettuce.core.api.coroutines
-import io.lettuce.core.api.coroutines.RedisCoroutinesCommands
 import io.lettuce.core.codec.RedisCodec
 import io.lettuce.core.codec.StringCodec
 import mu.KotlinLogging
@@ -25,18 +22,22 @@ object ValkeyConfig {
                 .withHost(valkeyProperties.host)
                 .withPort(valkeyProperties.port.toInt())
                 .withSsl(valkeyProperties.ssl)
-                .withAuthentication("", valkeyProperties.password)
+                .withPassword(valkeyProperties.password.toCharArray())
                 .build()
         return valkeyURI
     }
 
-    fun getValkeyClient(valkeyURI: RedisURI = getValkeyURI()): RedisClient {
-        val client = RedisClient.create(valkeyURI)
+    // Én RedisClient deles på tvers av alle ValkeyCache-instanser i applikasjonen. Lettuce anbefaler å
+    // gjenbruke én klient per applikasjon, siden hver klient eier egne Netty-tråder/ressurser.
+    private val sharedValkeyClient: RedisClient by lazy {
+        val client = RedisClient.create(getValkeyURI())
         client.connect().use { connection ->
             logger.info { "Connected to Valkey: ${connection.sync().ping()}" }
         }
-        return client
+        client
     }
+
+    fun getValkeyClient(): RedisClient = sharedValkeyClient
 
     inline fun <reified T> createCodec(prefix: String): RedisCodec<String, T> =
         object : RedisCodec<String, T> {
@@ -56,15 +57,5 @@ object ValkeyConfig {
                 Json.encodeToString(value).let {
                     stringCodec.encodeValue(it)
                 }
-        }
-
-    @OptIn(ExperimentalLettuceCoroutinesApi::class)
-    suspend fun <T : Any> RedisClient.useConnection(
-        codec: RedisCodec<String, T>,
-        body: suspend (RedisCoroutinesCommands<String, T>) -> T?,
-    ): T? =
-        this.connect(codec).use { connection ->
-            val api = connection.coroutines()
-            body(api)
         }
 }
