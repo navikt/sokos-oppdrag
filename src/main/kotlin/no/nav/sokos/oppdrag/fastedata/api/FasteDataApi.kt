@@ -6,16 +6,23 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 
-import no.nav.sokos.oppdrag.fastedata.api.model.KodeFagOmraadeRequest
-import no.nav.sokos.oppdrag.fastedata.config.validateKodeFagOmraade
+import no.nav.sokos.oppdrag.fastedata.api.parameter.KodeFagOmraadePathParameter
+import no.nav.sokos.oppdrag.fastedata.api.parameter.KodeFaggruppePathParameter
+import no.nav.sokos.oppdrag.fastedata.api.parameter.validateKodeFagOmraade
+import no.nav.sokos.oppdrag.fastedata.api.parameter.validateKodeFaggruppe
 import no.nav.sokos.oppdrag.fastedata.service.FasteDataService
 
 private const val BASE_PATH = "/api/v1/fastedata"
 
 private fun ApplicationCall.validertKodeFagOmraade(): String =
-    KodeFagOmraadeRequest(parameters["kodeFagomraade"].orEmpty())
+    KodeFagOmraadePathParameter(parameters["kodeFagomraade"].orEmpty())
         .also { it.validateKodeFagOmraade() }
         .kodeFagOmraade
+
+private fun ApplicationCall.validertKodeFaggruppe(): String =
+    KodeFaggruppePathParameter(parameters["kodeFaggruppe"].orEmpty())
+        .also { it.validateKodeFaggruppe() }
+        .kodeFaggruppe
 
 fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) {
     route("$BASE_PATH/fagomraader") {
@@ -72,21 +79,21 @@ fun Route.fastedataApi(fasteDataService: FasteDataService = FasteDataService()) 
         get("{kodeFaggruppe}/fagomraader") {
             call.respond(
                 fasteDataService.getFagomraaderForFaggruppe(
-                    call.parameters["kodeFaggruppe"].orEmpty(),
+                    call.validertKodeFaggruppe(),
                 ),
             )
         }
         get("{kodeFaggruppe}/redusertSkatt") {
             call.respond(
                 fasteDataService.getRedusertSkatt(
-                    call.parameters["kodeFaggruppe"].orEmpty(),
+                    call.validertKodeFaggruppe(),
                 ),
             )
         }
         get("{kodeFaggruppe}/kjoreplan") {
             call.respond(
                 fasteDataService.getKjoreplan(
-                    call.parameters["kodeFaggruppe"].orEmpty(),
+                    call.validertKodeFaggruppe(),
                 ),
             )
         }

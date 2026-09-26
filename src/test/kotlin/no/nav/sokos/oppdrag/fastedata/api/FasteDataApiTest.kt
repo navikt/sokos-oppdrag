@@ -29,8 +29,9 @@ import no.nav.sokos.oppdrag.config.ApiError
 import no.nav.sokos.oppdrag.config.authenticate
 import no.nav.sokos.oppdrag.config.commonConfig
 import no.nav.sokos.oppdrag.fastedata.alleKlassekoder
+import no.nav.sokos.oppdrag.fastedata.api.parameter.INVALID_KODE_FAGGRUPPE_PATH_PARAMETER_MESSAGE
+import no.nav.sokos.oppdrag.fastedata.api.parameter.INVALID_KODE_FAGOMRAADE_PATH_PARAMETER_MESSAGE
 import no.nav.sokos.oppdrag.fastedata.bilagstype
-import no.nav.sokos.oppdrag.fastedata.config.INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
 import no.nav.sokos.oppdrag.fastedata.domain.Bilagstype
 import no.nav.sokos.oppdrag.fastedata.domain.Faggruppe
 import no.nav.sokos.oppdrag.fastedata.domain.Fagomraade
@@ -145,7 +146,7 @@ internal class FasteDataApiTest :
             Json.decodeFromString<List<Korrigeringsaarsak>>(response.asString()) shouldBe korrigeringsaarsaker
         }
 
-        test("korrigeringsårsaker tilhørende fagområde med ugyldig query parameter returnerer 400 Bad Request") {
+        test("korrigeringsårsaker tilhørende fagområde med ugyldig path-parameter returnerer 400 Bad Request") {
             val response =
                 RestAssured
                     .given()
@@ -161,7 +162,61 @@ internal class FasteDataApiTest :
                     .response()
 
             Json.decodeFromString<ApiError>(response.asString()).status shouldBe HttpStatusCode.BadRequest.value
-            Json.decodeFromString<ApiError>(response.asString()).message shouldBe INVALID_FAGOMRAADE_QUERY_PARAMETER_MESSAGE
+            Json.decodeFromString<ApiError>(response.asString()).message shouldBe INVALID_KODE_FAGOMRAADE_PATH_PARAMETER_MESSAGE
+        }
+
+        test("fagområder tilhørende faggruppe med ugyldig path-parameter returnerer 400 Bad Request") {
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    .header(HttpHeaders.Authorization, "******")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/faggrupper/''!/fagomraader")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.BadRequest.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()).message shouldBe INVALID_KODE_FAGGRUPPE_PATH_PARAMETER_MESSAGE
+        }
+
+        test("bilagstyper tilhørende fagområde med ugyldig path-parameter returnerer 400 Bad Request") {
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    .header(HttpHeaders.Authorization, "******")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/''!/bilagstyper")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.BadRequest.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()).message shouldBe INVALID_KODE_FAGOMRAADE_PATH_PARAMETER_MESSAGE
+        }
+
+        test("klassekoder tilhørende fagområde med ugyldig path-parameter returnerer 400 Bad Request") {
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    .header(HttpHeaders.Authorization, "******")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/fagomraader/''!/klassekoder")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.BadRequest.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()).message shouldBe INVALID_KODE_FAGOMRAADE_PATH_PARAMETER_MESSAGE
         }
 
         test("hent korrigeringsaarsaker returnerer 500 Internal Server Error") {
@@ -483,6 +538,54 @@ internal class FasteDataApiTest :
                 )
         }
 
+        test("fagområder tilhørende faggruppe returnerer 200 OK") {
+            val fagomraaderForFaggruppe = listOf(KODE_FAGOMRAADE_MYST)
+            coEvery { fasteDataService.getFagomraaderForFaggruppe(KODE_FAGGRUPPE_BA) } returns fagomraaderForFaggruppe
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    .header(HttpHeaders.Authorization, "******")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/faggrupper/$KODE_FAGGRUPPE_BA/fagomraader")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.OK.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<List<String>>(response.asString()) shouldBe fagomraaderForFaggruppe
+        }
+
+        test("fagområder tilhørende faggruppe returnerer 500 Internal Server Error") {
+            coEvery { fasteDataService.getFagomraaderForFaggruppe(KODE_FAGGRUPPE_BA) } throws RuntimeException("En feil")
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    .header(HttpHeaders.Authorization, "******")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/faggrupper/$KODE_FAGGRUPPE_BA/fagomraader")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()) shouldBe
+                ApiError(
+                    error = HttpStatusCode.InternalServerError.description,
+                    status = HttpStatusCode.InternalServerError.value,
+                    message = "En feil",
+                    path = "$FASTEDATA_BASE_API_PATH/faggrupper/$KODE_FAGGRUPPE_BA/fagomraader",
+                    timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
+                )
+        }
+
         test("trekkgrupper returnerer 200 OK") {
             coEvery { fasteDataService.getTrekkgrupper() } returns trekgrupper
 
@@ -681,6 +784,24 @@ internal class FasteDataApiTest :
                 )
         }
 
+        test("redusert skatt med ugyldig path-parameter returnerer 400 Bad Request") {
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    .header(HttpHeaders.Authorization, "******")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/faggrupper/''!/redusertSkatt")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.BadRequest.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()).message shouldBe INVALID_KODE_FAGGRUPPE_PATH_PARAMETER_MESSAGE
+        }
+
         test("kjoreplan returnerer 200 OK") {
             val kjoreplanList =
                 listOf(
@@ -736,6 +857,24 @@ internal class FasteDataApiTest :
                     path = "$FASTEDATA_BASE_API_PATH/faggrupper/$KODE_FAGGRUPPE_BA/kjoreplan",
                     timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
                 )
+        }
+
+        test("kjøreplan med ugyldig path-parameter returnerer 400 Bad Request") {
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    .header(HttpHeaders.Authorization, "******")
+                    .port(PORT)
+                    .get("$FASTEDATA_BASE_API_PATH/faggrupper/''!/kjoreplan")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.BadRequest.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()).message shouldBe INVALID_KODE_FAGGRUPPE_PATH_PARAMETER_MESSAGE
         }
     })
 

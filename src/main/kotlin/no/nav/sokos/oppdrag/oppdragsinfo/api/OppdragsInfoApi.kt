@@ -30,7 +30,7 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
         get("{oppdragsId}/oppdragslinjer") {
             call.respond(
                 oppdragsInfoService.getOppdragsLinjer(
-                    call.parameters["oppdragsId"].orEmpty().toInt(),
+                    call.parameters["oppdragsId"].orEmpty(),
                 ),
             )
         }
@@ -38,7 +38,7 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
         get("{oppdragsId}/enheter") {
             call.respond(
                 oppdragsInfoService.getBehandlendeEnhetForOppdrag(
-                    call.parameters["oppdragsId"].orEmpty().toInt(),
+                    call.parameters["oppdragsId"].orEmpty(),
                 ),
             )
         }
@@ -46,7 +46,7 @@ fun Route.oppdragsInfoApi(oppdragsInfoService: OppdragsInfoService = OppdragsInf
         get("{oppdragsId}/omposteringer") {
             call.respond(
                 oppdragsInfoService.getOppdragsOmposteringer(
-                    call.parameters["oppdragsId"].orEmpty().toInt(),
+                    call.parameters["oppdragsId"].orEmpty(),
                 ),
             )
         }

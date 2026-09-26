@@ -74,7 +74,7 @@ internal class OppdragsInfoServiceTest :
                 session.update(queryOf("database/oppdragsinfo/getBehandlendeEnhetForOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
             }
 
-            val result = oppdragsInfoService.getBehandlendeEnhetForOppdrag(OPPDRAGSID)
+            val result = oppdragsInfoService.getBehandlendeEnhetForOppdrag(OPPDRAGSID.toString())
             result shouldNotBe null
             result.enhet.typeEnhet shouldNotBe "BEH"
             result.behandlendeEnhet?.typeEnhet shouldBe "BEH"
@@ -85,7 +85,7 @@ internal class OppdragsInfoServiceTest :
                 session.update(queryOf("database/oppdragsinfo/getOppdragsLinjer.sql".readFromResource())) shouldBeGreaterThan 0
             }
 
-            val result = oppdragsInfoService.getOppdragsLinjer(OPPDRAGSID)
+            val result = oppdragsInfoService.getOppdragsLinjer(OPPDRAGSID.toString())
             result.shouldNotBeEmpty()
             result.size shouldBe 10
 
@@ -112,7 +112,7 @@ internal class OppdragsInfoServiceTest :
                 session.update(queryOf("database/oppdragsinfo/getOppdragsOmposteringer.sql".readFromResource())) shouldBeGreaterThan 0
             }
 
-            val result = oppdragsInfoService.getOppdragsOmposteringer(73195442)
+            val result = oppdragsInfoService.getOppdragsOmposteringer("73195442")
             result.shouldNotBeEmpty()
             result.size shouldBe 2
 

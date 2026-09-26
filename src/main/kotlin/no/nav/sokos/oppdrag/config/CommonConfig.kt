@@ -34,7 +34,6 @@ import no.nav.sokos.oppdrag.common.valkey.Metrics as RedisMetrics
 import no.nav.sokos.oppdrag.integration.metrics.Metrics as IntegrationMetrics
 import no.nav.sokos.oppdrag.oppdragsinfo.metrics.Metrics as OppdragsInfoMetrics
 import no.nav.sokos.oppdrag.attestasjon.config.requestValidationAttestasjonConfig
-import no.nav.sokos.oppdrag.fastedata.config.requestValidationFasteDataConfig
 import no.nav.sokos.oppdrag.integration.config.requestValidationIntegrationConfig
 import no.nav.sokos.oppdrag.integration.metrics.Metrics
 import no.nav.sokos.oppdrag.oppdragsinfo.config.requestValidationOppdragsInfoConfig
@@ -67,7 +66,6 @@ fun Application.commonConfig() {
     }
     install(RequestValidation) {
         requestValidationIntegrationConfig()
-        requestValidationFasteDataConfig()
         requestValidationOppdragsInfoConfig()
         requestValidationAttestasjonConfig()
     }

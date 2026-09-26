@@ -63,16 +63,17 @@ class OppdragsInfoService(
         return WrappedReponseWithErrorDTO(data = oppdrag)
     }
 
-    fun getOppdragsLinjer(oppdragsId: Int): List<OppdragsLinje> = oppdragsInfoRepository.getOppdragsLinjer(oppdragsId)
+    fun getOppdragsLinjer(oppdragsId: String): List<OppdragsLinje> = oppdragsInfoRepository.getOppdragsLinjer(oppdragsId.toInt())
 
-    fun getBehandlendeEnhetForOppdrag(oppdragsId: Int): OppdragsEnhetDTO {
-        val enhet = oppdragsInfoRepository.getOppdragsEnhet(oppdragsId = oppdragsId)
-        val behandlendeEnhet = oppdragsInfoRepository.getOppdragsEnhet("BEH", oppdragsId).firstOrNull()
+    fun getBehandlendeEnhetForOppdrag(oppdragsId: String): OppdragsEnhetDTO {
+        val oppdragsIdAsInt = oppdragsId.toInt()
+        val enhet = oppdragsInfoRepository.getOppdragsEnhet(oppdragsId = oppdragsIdAsInt)
+        val behandlendeEnhet = oppdragsInfoRepository.getOppdragsEnhet("BEH", oppdragsIdAsInt).firstOrNull()
 
         return OppdragsEnhetDTO(enhet.first(), behandlendeEnhet)
     }
 
-    fun getOppdragsOmposteringer(oppdragsId: Int): List<Ompostering> = oppdragsInfoRepository.getOppdragsOmposteringer(oppdragsId)
+    fun getOppdragsOmposteringer(oppdragsId: String): List<Ompostering> = oppdragsInfoRepository.getOppdragsOmposteringer(oppdragsId.toInt())
 
     fun getOppdragsEnhetsHistorikk(oppdragsId: String): List<OppdragsEnhet> = oppdragsInfoRepository.getOppdragsEnhetsHistorikk(oppdragsId.toInt())
 

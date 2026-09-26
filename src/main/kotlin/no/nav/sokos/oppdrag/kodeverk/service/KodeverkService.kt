@@ -12,7 +12,7 @@ private val logger = KotlinLogging.logger {}
 
 class KodeverkService(
     private val kodeverkRepository: KodeverkRepository = KodeverkRepository(),
-    private val valkeyCache: ValkeyCache = ValkeyCache(name = "kodeverkServcie"),
+    private val valkeyCache: ValkeyCache = ValkeyCache(name = "kodeverkService"),
 ) {
     // Codec-instanser opprettes én gang og gjenbrukes, slik at ValkeyCache kan cache tilkoblingen per codec i stedet for å åpne en ny per kall.
     private val fagGrupperCodec = createCodec<List<FagGruppe>>("get-faggrupper")

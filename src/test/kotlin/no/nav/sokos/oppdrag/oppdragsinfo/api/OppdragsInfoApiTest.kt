@@ -1221,6 +1221,53 @@ internal class OppdragsInfoApiTest :
                     timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
                 )
         }
+
+        test("sjekk om oppdrag er skattepliktig returnerer 200 OK") {
+            every { oppdragsInfoService.isOppdragSkattepliktig(OPPDRAGS_ID) } returns TRUE
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    .header(HttpHeaders.Authorization, "******")
+                    .port(PORT)
+                    .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/skattepliktig")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.OK.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<Boolean>(response.asString()) shouldBe TRUE
+        }
+
+        test("sjekk om oppdrag er skattepliktig returnerer 500 Internal Server Error") {
+            every { oppdragsInfoService.isOppdragSkattepliktig(OPPDRAGS_ID) } throws RuntimeException("En feil")
+
+            val response =
+                RestAssured
+                    .given()
+                    .filter(validationFilter)
+                    .header(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                    .header(HttpHeaders.Authorization, "******")
+                    .port(PORT)
+                    .get("$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/skattepliktig")
+                    .then()
+                    .assertThat()
+                    .statusCode(HttpStatusCode.InternalServerError.value)
+                    .extract()
+                    .response()
+
+            Json.decodeFromString<ApiError>(response.asString()) shouldBe
+                ApiError(
+                    error = HttpStatusCode.InternalServerError.description,
+                    status = HttpStatusCode.InternalServerError.value,
+                    message = "En feil",
+                    path = "$OPPDRAGSINFO_BASE_API_PATH/$OPPDRAGS_ID/skattepliktig",
+                    timestamp = Instant.parse(response.body.jsonPath().getString("timestamp")),
+                )
+        }
     })
 
 private fun Application.applicationTestModule() {

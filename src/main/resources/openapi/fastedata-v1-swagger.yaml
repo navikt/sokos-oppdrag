@@ -102,6 +102,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Bilagstype'
+        400:
+          description: Ugyldig input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
         500:
           description: Annen feil
           content:
@@ -125,8 +131,6 @@ paths:
           required: true
           schema:
             type: string
-            maxLength: 8
-            pattern: '^[a-zA-Z0-9æøåÆØÅ]{0,8}$'
       responses:
         200:
           description: OK - Hvis fagområder ikke finnes så returneres tom liste
@@ -136,6 +140,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Klassekode'
+        400:
+          description: Ugyldig input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
         500:
           description: Annen feil
           content:
@@ -232,9 +242,7 @@ paths:
               description: Faggruppens kode
               required: true
               schema:
-                  type: string
-                  maxLength: 8
-                  pattern: '^[a-zA-Z0-9æøåÆØÅ]{0,8}$'
+                type: string
         responses:
           200:
             description: OK - Hvis slike fagomraader ikke finnes så returneres tom liste
@@ -244,6 +252,12 @@ paths:
                   type: array
                   items:
                     type: string
+          400:
+            description: Ugyldig input
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ApiError'
           500:
             description: Annen feil
             content:
@@ -266,8 +280,6 @@ paths:
           required: true
           schema:
             type: string
-            maxLength: 8
-            pattern: '^[a-zA-Z0-9æøåÆØÅ]{0,8}$'
       responses:
         200:
           description: OK - Hvis redusert skatt ikke finnes så returneres tom liste
@@ -277,6 +289,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/RedusertSkatt'
+        400:
+          description: Ugyldig input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
         500:
           description: Annen feil
           content:
@@ -299,8 +317,6 @@ paths:
           required: true
           schema:
             type: string
-            maxLength: 8
-            pattern: '^[a-zA-Z0-9æøåÆØÅ]{0,8}$'
       responses:
         200:
           description: OK - Hvis kjøreplan ikke finnes så returneres tom liste
@@ -310,6 +326,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Kjoreplan'
+        400:
+          description: Ugyldig input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
         500:
           description: Annen feil
           content:
