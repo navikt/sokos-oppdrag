@@ -69,7 +69,7 @@ val kotliqueryVersion = "2.1.1"
 val graphqlClientVersion = "10.2.2"
 
 // Cache
-val caffeineVersion = "3.2.4"
+val caffeineVersion = "3.3.0"
 
 // Valkey
 val valkeyVersion = "7.7.0.RELEASE"
