@@ -2,7 +2,6 @@ package no.nav.sokos.oppdrag.attestasjon.service
 
 import kotlinx.serialization.json.Json
 
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainExactly
@@ -262,11 +261,10 @@ internal class AttestasjonServiceTest :
             val navIdent = navIdent.copy(roller = listOf(AdGroup.ATTESTASJON_NASJONALT_READ.adGroupName))
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
 
-            val error =
-                shouldThrow<IllegalStateException> {
-                    attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
-                }
-            error.message shouldBe "Mangler KOSTNADSSTED"
+            val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
+
+            val oppdrag = result.data.first { it.oppdragsId == 25798519 }
+            oppdrag.kostnadssted shouldBe null
         }
 
         test("ansvarssted kan være null når BEH-enhet er lagt frem i tid") {
