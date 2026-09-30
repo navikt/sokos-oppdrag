@@ -237,7 +237,7 @@ class AttestasjonRepository(
             antAttestanter = row.int("ANT_ATTESTANTER"),
             fagSystemId = row.string("FAGSYSTEM_ID"),
             oppdragGjelderId = row.string("OPPDRAG_GJELDER_ID"),
-            kostnadssted = row.string("KOSTNADSSTED"),
+            kostnadssted = row.stringOrNull("KOSTNADSSTED") ?: error("Mangler KOSTNADSSTED"),
             navnFaggruppe = row.string("NAVN_FAGGRUPPE"),
             navnFagomraade = row.string("NAVN_FAGOMRAADE"),
             oppdragsId = row.int("OPPDRAGS_ID"),
