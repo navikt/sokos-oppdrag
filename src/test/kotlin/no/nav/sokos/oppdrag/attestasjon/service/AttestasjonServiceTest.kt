@@ -286,7 +286,7 @@ internal class AttestasjonServiceTest :
             oppdrag.ansvarssted shouldBe null
             oppdrag.kostnadssted shouldBe "2360"
         }
-        
+
         test("getOppdrag for en gjelderId kaster exception når saksbehandler ikke har tilgang til personen pga skjerming") {
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, navIdent) } returns true
 
