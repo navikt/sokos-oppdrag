@@ -44,7 +44,7 @@ jobs:
       deployments: write
     needs: [ build-push-valkey-image ]
     name: Deploy valkey to dev-fss-q1
-    uses: navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@eeb9163c47db1ceaadebd3130fa5f03c0fbf0b45 # ratchet:navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@v1.2.1
+    uses: navikt/beregningsplattform-gha-workflows/.github/workflows/nais-deploy.yaml@d9f047707da888caa7b9ba04a7716eb2f3564f27 # ratchet:navikt/beregningsplattform-gha-workflows/.github/workflows/nais-deploy.yaml@v1.1.0
     with:
       cluster: dev-fss
       resource: .nais/valkey/valkey-q1.yaml
@@ -58,7 +58,7 @@ jobs:
       deployments: write
     needs: [ build-push-valkey-image, deploy-dev-q1 ]
     name: Deploy valkey to dev-fss-qx
-    uses: navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@eeb9163c47db1ceaadebd3130fa5f03c0fbf0b45 # ratchet:navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@v1.2.1
+    uses: navikt/beregningsplattform-gha-workflows/.github/workflows/nais-deploy.yaml@d9f047707da888caa7b9ba04a7716eb2f3564f27 # ratchet:navikt/beregningsplattform-gha-workflows/.github/workflows/nais-deploy.yaml@v1.1.0
     with:
       cluster: dev-fss
       resource: .nais/valkey/valkey-qx.yaml
@@ -72,7 +72,7 @@ jobs:
       deployments: write
     needs: [ build-push-valkey-image, deploy-dev-q1, deploy-dev-qx ]
     name: Deploy valkey to prod-fss
-    uses: navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@eeb9163c47db1ceaadebd3130fa5f03c0fbf0b45 # ratchet:navikt/mob-gha-workflows/.github/workflows/nais-deploy.yaml@v1.2.1
+    uses: navikt/beregningsplattform-gha-workflows/.github/workflows/nais-deploy.yaml@d9f047707da888caa7b9ba04a7716eb2f3564f27 # ratchet:navikt/beregningsplattform-gha-workflows/.github/workflows/nais-deploy.yaml@v1.1.0
     with:
       cluster: prod-fss
       resource: .nais/valkey/valkey-prod.yaml

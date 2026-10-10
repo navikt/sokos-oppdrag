@@ -141,12 +141,12 @@ Alarmene overvåker metrics som:
 
 Varsler blir sendt til følgende Slack-kanaler:
 
-- Dev-miljø: [#utbetaling-team-beregning-alerts-dev](https://nav-it.slack.com/archives/C0BHK19HMPD)
-- Prod-miljø: [#utbetaling-team-beregning-alerts-prod](https://nav-it.slack.com/archives/C0BUZH3FLLF)
+- Dev-miljø: [#utbetaling-team-beregningsplattform-alerts-dev](https://nav-it.slack.com/archives/C0BHK19HMPD)
+- Prod-miljø: [#utbetaling-team-beregningsplattform-alerts-prod](https://nav-it.slack.com/archives/C0BUZH3FLLF)
 
 ### Grafana
 
-- [sokos-oppdrag](https://grafana.nav.cloud.nais.io/d/fds82z8c0pq0wf/sokos-oppdrag?orgId=1)
+- [sokos-oppdrag](https://grafana.nav.cloud.nais.io/d/fds82z8c0pq0wf/sokos-oppdrag?var-interval=2m&from=now-12h&to=now&timezone=browser&var-datasource=000000011&var-app=sokos-oppdrag&var-namespace=okonomi&var-memory_pool_heap=$__all&refresh=30s)
 
 ---
 
