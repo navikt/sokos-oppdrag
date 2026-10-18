@@ -12,7 +12,7 @@ data class OppdragDTO(
     val oppdragGjelderId: String,
     val kodeFaggruppe: String,
     val kodeFagomraade: String,
-    val kostnadssted: String,
+    val kostnadssted: String?,
     val oppdragsId: Int,
     val erSkjermetForSaksbehandler: Boolean,
     val hasWriteAccess: Boolean,
