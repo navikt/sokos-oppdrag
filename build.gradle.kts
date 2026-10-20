@@ -69,7 +69,7 @@ val kotliqueryVersion = "2.1.1"
 val graphqlClientVersion = "10.2.2"
 
 // Cache
-val caffeineVersion = "3.3.0"
+val caffeineVersion = "3.3.1"
 
 // Valkey
 val valkeyVersion = "7.8.0.RELEASE"
@@ -84,7 +84,7 @@ val ibmMqVersion = "10.0.0.5"
 // Test
 val kotestVersion = "6.2.5"
 val wiremockVersion = "3.13.2"
-val mockOAuth2ServerVersion = "6.0.4"
+val mockOAuth2ServerVersion = "6.0.6"
 val mockkVersion = "1.14.11"
 val swaggerRequestValidatorVersion = "3.0.0"
 val testcontainersVersion = "2.0.5"
