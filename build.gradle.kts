@@ -45,7 +45,7 @@ repositories {
 val ktorVersion = "3.6.0"
 
 // Serialization
-val kotlinxSerializationVersion = "1.11.0"
+val kotlinxSerializationVersion = "1.12.0"
 val kotlinxDatetimeVersion = "0.8.0-0.6.x-compat"
 val kotlinxCoroutinesVersion = "1.11.0"
 
@@ -63,7 +63,7 @@ val natpryceVersion = "1.6.10.0"
 // Database
 val hikariVersion = "7.1.0"
 val db2JccVersion = "12.1.5.0"
-val kotliqueryVersion = "2.1.1"
+val kotliqueryVersion = "2.1.2"
 
 // GraphQL
 val graphqlClientVersion = "11.0.0"
@@ -72,7 +72,7 @@ val graphqlClientVersion = "11.0.0"
 val caffeineVersion = "3.3.1"
 
 // Valkey
-val valkeyVersion = "7.8.0.RELEASE"
+val valkeyVersion = "7.9.0.RELEASE"
 
 // TSS
 val tjenestespesifikasjonVersion = "1.0_20260926225036_7c46943"
@@ -82,9 +82,9 @@ val glassfishJaxbVersion = "4.0.9"
 val ibmMqVersion = "10.0.0.5"
 
 // Test
-val kotestVersion = "6.2.5"
+val kotestVersion = "6.2.6"
 val wiremockVersion = "3.13.2"
-val mockOAuth2ServerVersion = "6.0.6"
+val mockOAuth2ServerVersion = "6.1.2"
 val mockkVersion = "1.14.11"
 val swaggerRequestValidatorVersion = "3.0.0"
 val testcontainersVersion = "2.0.5"
