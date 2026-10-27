@@ -1,6 +1,8 @@
 name: Deploy Valkey
 
 on:
+  schedule:
+    - cron: '0 5 * * 1'
   push:
     branches:
       - main

@@ -1,6 +1,8 @@
 name: Deploy application
 
 on:
+  schedule:
+    - cron: '0 5 * * 1'
   push:
     branches:
       - main
@@ -16,8 +18,6 @@ on:
       - '.github/workflows/build-pr.yaml'
       - '.github/workflows/codeql-scan.yaml'
       - '.github/workflows/deploy-valkey.yaml'
-      - '.github/workflows/digestabot-automerge.yaml'
-      - '.github/workflows/digestabot-update.yaml'
       - '.github/workflows/manual-deploy.yaml'
       - '.nais/valkey/**'
       - '.github/dependabot.yaml'
