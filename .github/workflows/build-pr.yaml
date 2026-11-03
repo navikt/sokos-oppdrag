@@ -27,4 +27,4 @@ jobs:
   build-and-test:
     permissions:
       contents: read
-    uses: navikt/beregningsplattform-gha-workflows/.github/workflows/gradle-build-test-app.yaml@f73c3476dd098d2530c777a60576c7b0b941b3a6 # ratchet:navikt/beregningsplattform-gha-workflows/.github/workflows/gradle-build-test-app.yaml@v1.1.1
+    uses: navikt/beregningsplattform-gha-workflows/.github/workflows/gradle-build-test-app.yaml@02ef55dcef76850a0c319cdf705904401e77a002 # ratchet:navikt/beregningsplattform-gha-workflows/.github/workflows/gradle-build-test-app.yaml@v1.1.3
