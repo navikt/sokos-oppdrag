@@ -14,7 +14,7 @@ data class Oppdrag(
     val oppdragGjelderId: String,
     val kodeFaggruppe: String,
     val kodeFagomraade: String,
-    val kostnadssted: String,
+    val kostnadssted: String?,
     val oppdragsId: Int,
     val typeBilag: String? = null,
     val attestanter: MutableMap<Int, List<String>> = mutableMapOf(),
