@@ -13,7 +13,7 @@ plugins {
     id("com.expediagroup.graphql") version "11.0.0"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("org.jetbrains.kotlinx.kover") version "0.9.11"
-    id("org.openapi.generator") version "7.26.0"
+    id("org.openapi.generator") version "7.27.0"
 
     application
 }
@@ -84,7 +84,7 @@ val ibmMqVersion = "10.0.1.0"
 // Test
 val kotestVersion = "6.2.6"
 val wiremockVersion = "3.13.2"
-val mockOAuth2ServerVersion = "6.1.3"
+val mockOAuth2ServerVersion = "6.1.4"
 val mockkVersion = "1.14.11"
 val swaggerRequestValidatorVersion = "3.0.0"
 val testcontainersVersion = "2.0.5"
@@ -163,20 +163,20 @@ dependencies {
     testImplementation("org.apache.activemq:artemis-jakarta-server:$activemqVersion")
 
     // Sårbarheter
-    implementation(platform("io.netty:netty-bom:4.2.19.Final")) {
+    implementation(platform("io.netty:netty-bom:4.2.20.Final")) {
         because("Align Netty modules on the latest stable patch release")
     }
 
     constraints {
-        implementation("com.google.guava:guava:33.7.2-jre") {
+        implementation("com.google.guava:guava:33.8.0-jre") {
             because("GHSA-xxph-c9ww-hj94 affects Guava versions before 33.7.2")
         }
         listOf("implementation", "graphqlClient", "graphqlGraalVM", "graphqlSDL").forEach { configuration ->
-            add(configuration, "tools.jackson.core:jackson-databind:3.2.3") {
+            add(configuration, "tools.jackson.core:jackson-databind:3.2.4") {
                 because("Multiple versions of jackson-databind has vulnerable dependencies. Affected version >= 3.2.0, <= 3.2.2")
             }
         }
-        implementation("com.fasterxml.jackson.core:jackson-databind:2.22.3") {
+        implementation("com.fasterxml.jackson.core:jackson-databind:2.22.4") {
             because("Multiple versions of jackson-databind has vulnerable dependencies. Affected version >= 2.22.0, < 2.22.2")
         }
     }
