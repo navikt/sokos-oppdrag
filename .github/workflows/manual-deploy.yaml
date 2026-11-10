@@ -19,7 +19,7 @@ jobs:
     permissions:
       contents: read
     name: Build and test
-    uses: navikt/beregningsplattform-gha-workflows/.github/workflows/gradle-build-test-app.yaml@02ef55dcef76850a0c319cdf705904401e77a002 # ratchet:navikt/beregningsplattform-gha-workflows/.github/workflows/gradle-build-test-app.yaml@v1.1.3
+    uses: navikt/beregningsplattform-gha-workflows/.github/workflows/gradle-build-test-app.yaml@f76a78f10742990ced901927ed5113f6a0803961 # ratchet:navikt/beregningsplattform-gha-workflows/.github/workflows/gradle-build-test-app.yaml@v1.1.4
     with:
       upload-artifact: true
 
@@ -29,7 +29,7 @@ jobs:
       id-token: write
     needs: [build-and-test]
     name: Build push dev image
-    uses: navikt/beregningsplattform-gha-workflows/.github/workflows/gradle-build-push-image.yaml@02ef55dcef76850a0c319cdf705904401e77a002 # ratchet:navikt/beregningsplattform-gha-workflows/.github/workflows/gradle-build-push-image.yaml@v1.1.3
+    uses: navikt/beregningsplattform-gha-workflows/.github/workflows/gradle-build-push-image.yaml@f76a78f10742990ced901927ed5113f6a0803961 # ratchet:navikt/beregningsplattform-gha-workflows/.github/workflows/gradle-build-push-image.yaml@v1.1.4
     secrets: inherit
     with:
       image-suffix: "dev"
@@ -45,7 +45,7 @@ jobs:
       deployments: write
     needs: [ build-push-image-dev ]
     name: Deploy to dev-fss-${{ inputs.environment }}
-    uses: navikt/beregningsplattform-gha-workflows/.github/workflows/nais-deploy.yaml@02ef55dcef76850a0c319cdf705904401e77a002 # ratchet:navikt/beregningsplattform-gha-workflows/.github/workflows/nais-deploy.yaml@v1.1.3
+    uses: navikt/beregningsplattform-gha-workflows/.github/workflows/nais-deploy.yaml@f76a78f10742990ced901927ed5113f6a0803961 # ratchet:navikt/beregningsplattform-gha-workflows/.github/workflows/nais-deploy.yaml@v1.1.4
     with:
       cluster: dev-fss
       resource: .nais/dev/naiserator-${{ inputs.environment }}.yaml
