@@ -1,0 +1,19 @@
+{
+  "description": "Fiks åpne Dependabot-varsler og kontroller om eksisterende sikkerhetsconstraints fortsatt trengs i Gradle/Kotlin-prosjekter. Gjør bare nødvendige endringer knyttet til varsler eller eksisterende constraints, uten en generell sårbarhetsskanning. Kjør relevante tester og bygg ved endringer, og la endringene være ustaget uten commit eller push.",
+  "domain": "platform",
+  "tags": ["gradle", "kotlin", "vulnerabilities", "dependabot", "constraints", "bom"],
+  "examples": [
+    {
+      "prompt": "Fiks sårbarheter",
+      "scenario": "Behandle åpne Dependabot-varsler og kontroller eksisterende sikkerhetsconstraints uten å utvide oppdraget"
+    },
+    {
+      "prompt": "Fiks Dependabot-varsler",
+      "scenario": "Koble varsler til faktisk valgte Gradle-versjoner, rett funn og kjør verifikasjon"
+    },
+    {
+      "prompt": "Sjekk om noen constraints kan fjernes",
+      "scenario": "Sammenlign avhengighetstreet med og uten hver eksisterende sikkerhetsconstraint og kontroller kandidatversjoner mot advisories"
+    }
+  ]
+}

@@ -1,0 +1,235 @@
+import groovy.json.JsonOutput
+
+def constraintData = { constraint ->
+    [
+        group: constraint.group,
+        name: constraint.name,
+        required: constraint.versionConstraint.requiredVersion,
+        strict: constraint.versionConstraint.strictVersion,
+        preferred: constraint.versionConstraint.preferredVersion,
+        rejected: constraint.versionConstraint.rejectedVersions.toList().sort(),
+        reason: constraint.reason
+    ]
+}
+
+def externalDependencyData = { dependency ->
+    def version = dependency.version
+    def category = dependency.attributes.getAttribute(Category.CATEGORY_ATTRIBUTE)
+    [
+        group: dependency.group,
+        name: dependency.name,
+        version: version,
+        coordinate: "${dependency.group}:${dependency.name}:${version ?: ''}",
+        category: category?.name
+    ]
+}
+
+def configurationData = { configuration ->
+    def externalDependencies = configuration.dependencies
+        .findAll { it instanceof ExternalModuleDependency }
+        .collect { externalDependencyData(it) }
+        .sort { a, b -> a.coordinate <=> b.coordinate }
+    def constraints = configuration.dependencyConstraints
+        .collect { constraintData(it) }
+        .sort { a, b -> "${a.group}:${a.name}:${a.required}" <=> "${b.group}:${b.name}:${b.required}" }
+    [
+        name: configuration.name,
+        canBeResolved: configuration.canBeResolved,
+        extendsFrom: configuration.extendsFrom.collect { it.name }.sort(),
+        directExternalDependencies: externalDependencies,
+        dependencyConstraints: constraints
+    ]
+}
+
+def writeReport = { outputPath, report ->
+    def path = new File(outputPath).toPath()
+    def parent = path.parent
+    if (parent != null) {
+        java.nio.file.Files.createDirectories(parent)
+    }
+    java.nio.file.Files.write(path, JsonOutput.prettyPrint(JsonOutput.toJson(report)).getBytes('UTF-8'))
+}
+
+def requireOutputPath = { root ->
+    def value = root.findProperty('vulnerabilityAuditOutput')?.toString()
+    if (!value) {
+        throw new GradleException('Set -PvulnerabilityAuditOutput=<absolute JSON output path>')
+    }
+    if (!new File(value).isAbsolute()) {
+        throw new GradleException('vulnerabilityAuditOutput must be an absolute path')
+    }
+    value
+}
+
+gradle.projectsEvaluated {
+    def root = gradle.rootProject
+
+    root.tasks.register('vulnerabilityAuditInventory') {
+        group = 'verification'
+        description = 'Write dependency declarations and configuration inventory as JSON.'
+        doLast {
+            def outputPath = requireOutputPath(root)
+            def projects = root.allprojects
+            def configurations = projects.collectMany { project ->
+                project.configurations.collect { configuration ->
+                    [projectPath: project.path, configuration: configurationData(configuration)]
+                }
+            }.sort { a, b ->
+                "${a.projectPath}:${a.configuration.name}" <=> "${b.projectPath}:${b.configuration.name}"
+            }
+            def buildscriptConfigurations = projects.collectMany { project ->
+                project.buildscript.configurations.collect { configuration ->
+                    [projectPath: project.path, configuration: configurationData(configuration)]
+                }
+            }.sort { a, b ->
+                "${a.projectPath}:${a.configuration.name}" <=> "${b.projectPath}:${b.configuration.name}"
+            }
+            writeReport(outputPath, [
+                task: 'vulnerabilityAuditInventory',
+                configurations: configurations,
+                buildscriptConfigurations: buildscriptConfigurations
+            ])
+        }
+    }
+
+    root.tasks.register('vulnerabilityAuditGraph') {
+        group = 'verification'
+        description = 'Resolve selected configurations and write the dependency graph as JSON.'
+        doLast {
+            def outputPath = requireOutputPath(root)
+            def rawConfigurations = root.findProperty('vulnerabilityAuditConfigurations')?.toString()
+            if (!rawConfigurations) {
+                throw new GradleException('Set -PvulnerabilityAuditConfigurations=:runtimeClasspath,:testRuntimeClasspath')
+            }
+
+            def requestedPaths = rawConfigurations.split(',').collect { it.trim() }.findAll { it }
+            if (requestedPaths.isEmpty()) {
+                throw new GradleException('vulnerabilityAuditConfigurations must name at least one configuration')
+            }
+
+            def selectedConfigurations = requestedPaths.collect { requestedPath ->
+                def segments = requestedPath.split(':').findAll { it }
+                if (segments.isEmpty() || !requestedPath.startsWith(':')) {
+                    throw new GradleException("Invalid configuration path: ${requestedPath}")
+                }
+                def configurationName = segments[-1]
+                def projectPath = segments.size() == 1 ? ':' : ':' + segments[0..-2].join(':')
+                def project = root.findProject(projectPath)
+                if (project == null) {
+                    throw new GradleException("Unknown project in configuration path: ${requestedPath}")
+                }
+                def configuration = project.configurations.findByName(configurationName)
+                if (configuration == null) {
+                    throw new GradleException("Unknown configuration: ${requestedPath}")
+                }
+                if (!configuration.canBeResolved) {
+                    throw new GradleException("Configuration is not resolvable: ${requestedPath}")
+                }
+                [
+                    path: project.path == ':' ? ":${configuration.name}" : "${project.path}:${configuration.name}",
+                    configuration: configuration
+                ]
+            }.unique { it.path }
+
+            def removedConstraints = []
+            def dropCoordinate = root.findProperty('vulnerabilityAuditDropConstraint')?.toString()
+            def constraintProjectPath = root.findProperty('vulnerabilityAuditConstraintProject')?.toString()
+            if (dropCoordinate && !constraintProjectPath) {
+                throw new GradleException('vulnerabilityAuditConstraintProject is required when dropping a constraint')
+            }
+            if (!dropCoordinate && constraintProjectPath) {
+                throw new GradleException('vulnerabilityAuditDropConstraint is required with vulnerabilityAuditConstraintProject')
+            }
+            if (dropCoordinate) {
+                def parts = dropCoordinate.split(':', -1)
+                if (parts.length != 2 || !parts[0] || !parts[1]) {
+                    throw new GradleException('vulnerabilityAuditDropConstraint must be group:artifact')
+                }
+                def project = root.findProject(constraintProjectPath)
+                if (project == null) {
+                    throw new GradleException("Unknown constraint project: ${constraintProjectPath}")
+                }
+                project.configurations.each { configuration ->
+                    def matches = configuration.dependencyConstraints.findAll {
+                        it.group == parts[0] && it.name == parts[1]
+                    }.toList()
+                    matches.each { constraint ->
+                        removedConstraints << [
+                            projectPath: project.path,
+                            configuration: configuration.name,
+                            declaration: constraintData(constraint)
+                        ]
+                        configuration.dependencyConstraints.remove(constraint)
+                    }
+                }
+            }
+
+            def report = [
+                task: 'vulnerabilityAuditGraph',
+                requestedConfigurations: selectedConfigurations.collect { it.path },
+                removedConstraints: removedConstraints,
+                selectedComponents: [],
+                dependencyEdges: [],
+                unresolvedFailures: []
+            ]
+            if (dropCoordinate && removedConstraints.isEmpty()) {
+                writeReport(outputPath, report)
+                throw new GradleException("No locally declared ${dropCoordinate} constraint found in ${constraintProjectPath}")
+            }
+
+            selectedConfigurations.each { selected ->
+                try {
+                    def result = selected.configuration.incoming.resolutionResult
+                    result.allComponents.each { component ->
+                        report.selectedComponents << [
+                            configuration: selected.path,
+                            id: component.id.displayName,
+                            moduleVersion: component.moduleVersion?.toString()
+                        ]
+                        component.dependencies.each { dependency ->
+                            report.dependencyEdges << [
+                                configuration: selected.path,
+                                from: component.id.displayName,
+                                to: dependency instanceof ResolvedDependencyResult ? dependency.selected.id.displayName : null,
+                                requested: dependency.requested.displayName,
+                                isConstraint: dependency.constraint
+                            ]
+                            if (dependency instanceof UnresolvedDependencyResult) {
+                                report.unresolvedFailures << [
+                                    configuration: selected.path,
+                                    from: component.id.displayName,
+                                    requested: dependency.requested.displayName,
+                                    failure: dependency.failure?.message ?: 'Unresolved dependency'
+                                ]
+                            }
+                        }
+                    }
+                } catch (Exception exception) {
+                    report.unresolvedFailures << [
+                        configuration: selected.path,
+                        from: null,
+                        requested: null,
+                        failure: exception.message ?: exception.class.name
+                    ]
+                }
+            }
+
+            report.selectedComponents = report.selectedComponents.sort { a, b ->
+                "${a.configuration}|${a.id}" <=> "${b.configuration}|${b.id}"
+            }
+            report.dependencyEdges = report.dependencyEdges.sort { a, b ->
+                "${a.configuration}|${a.from}|${a.to}|${a.requested}|${a.isConstraint}" <=>
+                    "${b.configuration}|${b.from}|${b.to}|${b.requested}|${b.isConstraint}"
+            }
+            report.unresolvedFailures = report.unresolvedFailures.sort { a, b ->
+                "${a.configuration}|${a.from}|${a.requested}|${a.failure}" <=>
+                    "${b.configuration}|${b.from}|${b.requested}|${b.failure}"
+            }
+
+            writeReport(outputPath, report)
+            if (!report.unresolvedFailures.isEmpty()) {
+                throw new GradleException("Dependency graph is incomplete; see ${outputPath}")
+            }
+        }
+    }
+}

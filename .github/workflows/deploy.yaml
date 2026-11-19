@@ -15,6 +15,7 @@ on:
       - 'setupLocalEnvironment.sh'
       - '.scripts'
       - 'dokumentasjon/**'
+      - '.github/skills/**'
       - '.github/workflows/build-pr.yaml'
       - '.github/workflows/codeql-scan.yaml'
       - '.github/workflows/deploy-valkey.yaml'
