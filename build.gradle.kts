@@ -45,7 +45,7 @@ repositories {
 val ktorVersion = "3.6.1"
 
 // Serialization
-val kotlinxSerializationVersion = "1.12.0"
+val kotlinxSerializationVersion = "1.13.0"
 val kotlinxDatetimeVersion = "0.8.0-0.6.x-compat"
 val kotlinxCoroutinesVersion = "1.11.0"
 
@@ -54,7 +54,7 @@ val micrometerVersion = "1.17.2"
 
 // Logging
 val kotlinLoggingVersion = "3.0.5"
-val logbackVersion = "1.6.6"
+val logbackVersion = "1.6.7"
 val logstashVersion = "9.0"
 
 // Config
@@ -63,7 +63,7 @@ val natpryceVersion = "1.6.10.0"
 // Database
 val hikariVersion = "7.1.0"
 val db2JccVersion = "12.1.5.0"
-val kotliqueryVersion = "2.1.2"
+val kotliqueryVersion = "2.1.3"
 
 // GraphQL
 val graphqlClientVersion = "11.0.0"
@@ -82,7 +82,7 @@ val glassfishJaxbVersion = "4.0.9"
 val ibmMqVersion = "10.0.1.0"
 
 // Test
-val kotestVersion = "6.2.6"
+val kotestVersion = "6.2.7"
 val wiremockVersion = "3.13.2"
 val mockOAuth2ServerVersion = "6.1.5"
 val mockkVersion = "1.14.12"
@@ -163,7 +163,7 @@ dependencies {
     testImplementation("org.apache.activemq:artemis-jakarta-server:$activemqVersion")
 
     // Sårbarheter
-    implementation(platform("io.netty:netty-bom:4.2.20.Final")) {
+    implementation(platform("io.netty:netty-bom:4.2.21.Final")) {
         because("Align Netty modules on the latest stable patch release")
     }
 
