@@ -248,6 +248,45 @@ internal class AttestasjonServiceTest :
             coVerify(exactly = 0) { skjermingService.getSkjermingForIdentListe(any(), any()) }
         }
 
+        test("kostnadssted mangler når BOS-enhet er lagt frem i tid") {
+            Db2Listener.dataSource.transaction { session ->
+                session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
+                session.update(
+                    queryOf(
+                        "update T_OPPDRAGSENHET set DATO_FOM = '2999-01-01' where OPPDRAGS_ID = 25798519 and TYPE_ENHET = 'BOS '",
+                    ),
+                ) shouldBeGreaterThan 0
+            }
+
+            val navIdent = navIdent.copy(roller = listOf(AdGroup.ATTESTASJON_NASJONALT_READ.adGroupName))
+            coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
+
+            val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
+
+            val oppdrag = result.data.first { it.oppdragsId == 25798519 }
+            oppdrag.kostnadssted shouldBe null
+        }
+
+        test("ansvarssted kan være null når BEH-enhet er lagt frem i tid") {
+            Db2Listener.dataSource.transaction { session ->
+                session.update(queryOf("database/attestasjon/getOppdrag.sql".readFromResource())) shouldBeGreaterThan 0
+                session.update(
+                    queryOf(
+                        "update T_OPPDRAGSENHET set DATO_FOM = '2999-01-01' where OPPDRAGS_ID = 25798519 and TYPE_ENHET = 'BEH '",
+                    ),
+                ) shouldBeGreaterThan 0
+            }
+
+            val navIdent = navIdent.copy(roller = listOf(AdGroup.ATTESTASJON_NASJONALT_READ.adGroupName))
+            coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, any()) } returns false
+
+            val result = attestasjonService.getOppdrag(oppdragRequestTestdata, navIdent)
+
+            val oppdrag = result.data.first { it.oppdragsId == 25798519 }
+            oppdrag.ansvarssted shouldBe null
+            oppdrag.kostnadssted shouldBe "2360"
+        }
+
         test("getOppdrag for en gjelderId kaster exception når saksbehandler ikke har tilgang til personen pga skjerming") {
             coEvery { skjermingService.getSkjermingForIdent(GJELDER_ID, navIdent) } returns true
 
